@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5fc15cf4.js";
+            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -203,6 +203,9 @@
 <h2 id="hand-written-protocols-as-upgrades"><a class="header" href="#hand-written-protocols-as-upgrades">Hand-written protocols as upgrades</a></h2>
 <p>For languages whose semantic structure panproto needs to reason about (Rust, when a migration is rewriting trait bounds in a way that requires understanding trait inheritance, for example), a hand-written protocol can be layered on top of the tree-sitter-derived one. The hand-written protocol’s theory imports the derived theory through a theory morphism, then adds new sorts (trait resolution tables, type environments) and operations that encode the semantic structure. Migrations under the hand-written protocol have access to the richer information and can perform transformations the derived protocol alone could not verify.</p>
 <p>Panproto’s Rust protocol has this shape today only partially: the sort structure is derived, but a small number of operations (name resolution for <code>use</code> declarations, basic type-environment construction) are added by hand. The expectation is that language-specific semantic protocols will be contributed over time; the derived-from-tree-sitter substrate gives every such contribution a working starting point.</p>
+<h2 id="further-reading"><a class="header" href="#further-reading">Further reading</a></h2>
+<p>Brunsfeld (<a href="../bibliography.html#brunsfeld2018treesitter">2018</a>) is the original presentation of tree-sitter and the best overview of its design goals. The incremental-parsing algorithm is in the lineage of Wagner &amp; Graham (<a href="../bibliography.html#wagnergraham1998efficient">1998</a>), and the parsing-expression-grammar tradition it extends is documented in Ford (<a href="../bibliography.html#ford2002packrat">2002</a>). The tree-sitter project’s documentation at https://tree-sitter.github.io/tree-sitter/ covers the grammar authoring process and the <code>node-types.json</code> schema that panproto’s derivation reads.</p>
+<p>For the broader category-theoretic framing of grammars as theories, the institutions framework of Goguen &amp; Burstall (<a href="../bibliography.html#goguenburstall1992institutions">1992</a>) is the formal setting. Panproto’s derivation does not depend on that framework explicitly — the translation is simple enough not to need it — but the underlying identification of a grammar with a specification of a theory is institutional.</p>
 <h2 id="closing"><a class="header" href="#closing">Closing</a></h2>
 <p>Part IV ends with this chapter. Part V turns to <a href="../vcs/git-background.html">version control</a> and applies Part II’s constructions to a new category: schemas under a fixed protocol rather than protocols themselves.</p>
 

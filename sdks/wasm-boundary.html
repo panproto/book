@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5fc15cf4.js";
+            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -201,6 +201,8 @@
 <p>The WASM module compiles to about three megabytes after <a href="https://github.com/WebAssembly/binaryen"><code>wasm-opt</code></a> passes and gzip compression. Tree-sitter grammars are the dominant size contributor; a build that disables <a href="https://docs.rs/panproto-parse/latest/panproto_parse/"><code>panproto-parse</code></a> through the feature flags comes down to about one megabyte. Both sizes are within the budget a typical web application allocates for a first-party module, and the lazy-load pattern (load the module only when a user action requires it) is the common deployment strategy.</p>
 <h2 id="what-the-typescript-sdk-adds-on-top"><a class="header" href="#what-the-typescript-sdk-adds-on-top">What the TypeScript SDK adds on top</a></h2>
 <p>The TypeScript SDK (<a href="https://www.npmjs.com/package/@panproto/core"><code>@panproto/core</code></a>, covered in <a href="./typescript.html">the TypeScript SDK chapter</a>) layers three things on the WASM boundary: ergonomic wrappers that hide handle manipulation behind ordinary JavaScript object lifetimes; MessagePack serialisation and deserialisation with type-safe bindings generated from the Rust types; and a fluent builder API for common operations (schema construction, migration composition) that would otherwise require many discrete WASM calls.</p>
+<h2 id="further-reading"><a class="header" href="#further-reading">Further reading</a></h2>
+<p>Haas et al. (<a href="../bibliography.html#haas2017bringing">2017</a>) is the original paper introducing WebAssembly and the clearest source on what the platform guarantees and what it does not. W3C WebAssembly Working Group (<a href="../bibliography.html#w3c2019wasm">2019</a>) is the normative W3C specification. For the Rust-specific machinery the panproto-wasm crate uses, the <a href="https://rustwasm.github.io/wasm-bindgen/">wasm-bindgen</a> documentation is authoritative; Rust and WebAssembly Working Group (<a href="../bibliography.html#wasmbindgen">2024</a>) is the BibTeX entry for the project itself. For MessagePack’s wire format, Furuhashi (<a href="../bibliography.html#messagepack">2024</a>) is the specification.</p>
 <h2 id="closing"><a class="header" href="#closing">Closing</a></h2>
 <p>The next chapter, <a href="./rust.html">the Rust SDK</a>, turns to the cross-language core: <a href="https://docs.rs/panproto-core/latest/panproto_core/"><code>panproto-core</code></a>, the facade crate that re-exports every subsystem’s public API and gates the optional ones behind Cargo features.</p>
 

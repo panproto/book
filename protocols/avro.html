@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5fc15cf4.js";
+            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -201,6 +201,8 @@
 <h2 id="what-avro-leaves-to-the-engine"><a class="header" href="#what-avro-leaves-to-the-engine">What Avro leaves to the engine</a></h2>
 <p>Avro’s “full compatibility” is a conjunction: both backward and forward compatibility hold. Panproto expresses this as a pair of theory morphisms, one in each direction, which together form an isomorphism at the schema level up to the translation of optional defaults. A migration certified full-compatibility in Avro is the round-trippable lens of <a href="../core/lenses.html">Bidirectional lenses</a> applied to the relevant pair of schemas.</p>
 <p>Avro’s default-value semantics are stated at the field level. Panproto elevates them to the equation level: a field with a default value becomes an operation whose theory carries an equation saying <em>when the field is absent in an instance, the operation returns the default</em>. This equation is evaluated by <a href="https://docs.rs/panproto-expr/latest/panproto_expr/"><code>panproto-expr</code></a> at record-read time and is part of the schema’s validator, not of the lift function alone.</p>
+<h2 id="further-reading"><a class="header" href="#further-reading">Further reading</a></h2>
+<p>Apache Software Foundation (<a href="../bibliography.html#avrospec">2024</a>) is the Apache Avro specification and is the authoritative reference for the rules discussed in this chapter. For the broader context of serialisation-format design trade-offs, Kleppmann (<a href="../bibliography.html#kleppmann2017designing">2017</a>) chapter 4 (“Encoding and Evolution”) compares Avro, Protobuf, and Thrift and gives the working-developer’s view of the same schema-evolution rules. The relational-lens precursor of the migration pattern used here is Bohannon et al. (<a href="../bibliography.html#bohannonpiercevaughan2006relational">2006</a>), though the immediate theoretical backing of panproto’s translation is <a href="../core/morphisms-and-migration.html">Theory morphisms and instance migration</a>.</p>
 <h2 id="closing"><a class="header" href="#closing">Closing</a></h2>
 <p>The next chapter, <a href="./relational.html">A relational case study</a>, works through a different protocol family: relational database schemas, where the category-theoretic content is larger (the relational model is closer to Spivak’s original categorical-database treatment) and the migration primitives are denser.</p>
 

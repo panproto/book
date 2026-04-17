@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5fc15cf4.js";
+            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -203,6 +203,8 @@
 <p>A schema loaded from this lexicon is consumed by the ATProto parser registered in <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/web_document/atproto/"><code>panproto_protocols::web_document::atproto</code></a>. The parser reads the lexicon JSON, constructs a <a href="https://docs.rs/panproto-schema/latest/panproto_schema/schema/struct.Schema.html"><code>Schema</code></a> value populated with the sorts, operations, and equations above, and hands it to the engine. The emitter performs the inverse: given a schema, it generates the JSON form that would round-trip back to the same schema.</p>
 <h2 id="migration-across-lexicon-versions"><a class="header" href="#migration-across-lexicon-versions">Migration across lexicon versions</a></h2>
 <p>ATProto lexicons evolve. A field can be added, a constraint can be tightened or loosened, a union can gain or lose an alternative. Each such change is a theory morphism between the two lexicon versions’ schemas, in the sense of <a href="../core/morphisms-and-migration.html">Theory morphisms and instance migration</a>. Panproto’s migration engine handles Lexicon-to-Lexicon migrations through the same pipeline it uses for any protocol, with no ATProto-specific logic: the engine reads the difference between the two lexicon JSON documents, constructs the theory morphism, applies it through <a href="../core/restrict-lift.html">the restrict/lift pipeline</a>, and produces a migration whose lift function moves records from the old lexicon to the new one.</p>
+<h2 id="further-reading"><a class="header" href="#further-reading">Further reading</a></h2>
+<p>Bluesky PBC (<a href="../bibliography.html#atproto">n.d.</a>) is the authoritative specification; the Lexicon spec specifically lives at https://atproto.com/specs/lexicon. The <a href="https://bsky.app/">Bluesky</a> application is the largest current deployment of the protocol and a useful source of example lexicons. For the categorical tradition that the panproto representation sits in, the references from <a href="../core/schemas-as-instances.html">Protocols as theories, schemas as instances</a> apply without modification; ATProto is not special at the mathematical level, just elaborate at the syntactic one.</p>
 <h2 id="closing"><a class="header" href="#closing">Closing</a></h2>
 <p>The next chapter, <a href="./avro.html">Apache Avro</a>, works through a serialisation-format protocol whose schema evolution rules are well-specified, and maps those rules onto the migration primitives developed in Part II. The comparison with ATProto is instructive: Avro formalises what Lexicon leaves informal.</p>
 

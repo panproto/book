@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5fc15cf4.js";
+            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -202,6 +202,10 @@
 <h2 id="when-auto-migration-refuses"><a class="header" href="#when-auto-migration-refuses">When auto-migration refuses</a></h2>
 <p>Auto-migration refuses in specific, reported cases. A field added without a default value produces the diagnostic “schema adds field <code>X</code> without a default; auto-migration cannot populate this field.” A sort removed while data of that sort exists produces “schema removes sort <code>S</code>; auto-migration cannot discard the records of sort <code>S</code> in the source instance without explicit user declaration.” An equation added while the source contains violating records produces “schema adds equation <code>E</code>; auto-migration found records that violate it (the first three are listed).”</p>
 <p>In each case, the commit is held until the user responds. The response is either a migration declaration that covers the refused case, an edit to the staged schema that avoids the refusal (for example, adding a default value to the new field), or an edit to the source data that removes the obstruction (deleting the violating records manually). Panproto-vcs does not apply a partial migration; either the whole commit lifts cleanly or the commit does not land.</p>
+<h2 id="further-reading"><a class="header" href="#further-reading">Further reading</a></h2>
+<p>For the auto-migration machinery in the abstract, the references from <a href="../core/morphisms-and-migration.html">Theory morphisms and instance migration</a> apply: Spivak (<a href="../bibliography.html#spivak2012functorial">2012</a>) for the functorial-data-migration framework, Wisnesky (<a href="../bibliography.html#wisnesky2013functional">2013</a>) for the implementation tradition. The diff-based approach panproto-vcs uses is complementary to the CRDT-based approach of Shapiro et al. (<a href="../bibliography.html#shapiro2011crdt">2011</a>); the trade-off is that panproto surfaces conflicts to the user rather than resolving them automatically, at the cost of requiring user attention at merge time.</p>
+<p>For the Cambria perspective specifically, Litt et al. (<a href="../bibliography.html#littvanhardenberghenry2020cambria">2020</a>) is the foundational source; panproto adopts Cambria’s complement-tracking approach in its lens machinery (see <a href="../core/lenses.html">Bidirectional lenses</a>) but applies it differently in the data-versioning setting.</p>
+<h2 id="closing"><a class="header" href="#closing">Closing</a></h2>
 <p>The next chapter, <a href="./git-bridge.html">The git bridge</a>, covers the interop layer between panproto-vcs and git: how a panproto-vcs repository can be pushed to and pulled from an ordinary git remote, what is preserved on the round trip, and when the two representations diverge.</p>
 
                     </main>

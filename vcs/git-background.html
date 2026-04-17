@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5fc15cf4.js";
+            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -204,6 +204,9 @@
 <h2 id="what-panproto-vcs-adds"><a class="header" href="#what-panproto-vcs-adds">What panproto-vcs adds</a></h2>
 <p>Panproto-vcs keeps git’s Merkle DAG structure intact and adds three new object types to the database: <em>schemas</em> (models of a registered GAT, in the sense of <a href="../core/schemas-as-instances.html">Protocols as theories, schemas as instances</a>), <em>migrations</em> (morphisms of models, in the sense of <a href="../core/morphisms-and-migration.html">Theory morphisms and instance migration</a>), and <em>instances</em> (records under a given schema, in the sense of <a href="../core/schemas-as-instances.html#the-instance-functor">the instance functor</a>). The object types are content-addressed by <a href="https://github.com/BLAKE3-team/BLAKE3">blake3</a> hashes rather than SHA-1; they form a DAG alongside the commits; and they carry the schema-lineage information git does not.</p>
 <p>Commits in panproto-vcs point at trees whose leaves can be any of the new object types in addition to the ordinary blobs. The result is a repository whose history captures both the bytes and the interpretations the bytes are values of. Merges in panproto-vcs run at the schema level, as pushouts in the category of schemas (see <a href="./merge-as-pushout.html">Merge as pushout</a>). Diffs and blames apply to schemas as well as to bytes. The next chapter works through the object model in detail.</p>
+<h2 id="further-reading"><a class="header" href="#further-reading">Further reading</a></h2>
+<p>Chacon &amp; Straub (<a href="../bibliography.html#chaconstraub2014pro">2014</a>) is the canonical reference for git’s internals; its chapter 10 (“Git Internals”) walks through the object model this chapter summarises. Merkle (<a href="../bibliography.html#merkle1987digital">1988</a>) is the foundational paper on Merkle trees, the data structure git’s content-addressed storage specialises. For the patch-theoretic alternative to git’s byte-level diff model, Roundy (<a href="../bibliography.html#roundy2005darcs">2005</a>) is the Darcs paper; patch theory is a separate tradition panproto does not follow wholesale but whose ambitions overlap with the schematic-version-control framework of this part. Kleppmann (<a href="../bibliography.html#kleppmann2017designing">2017</a>) chapter 5 (“Replication”) gives the working-developer’s view of distributed-state consistency, which is the broader engineering setting git and panproto-vcs both sit inside.</p>
+<h2 id="closing"><a class="header" href="#closing">Closing</a></h2>
 <p>The next chapter, <a href="./objects-and-dag.html">Objects, refs, and the DAG</a>, specifies panproto-vcs’s object types, its hashing scheme, its storage backends, and the reference structure around them. It is the chapter to read alongside <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/object/"><code>panproto_vcs::object</code></a>, <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/store/"><code>panproto_vcs::store</code></a>, and <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/dag/"><code>panproto_vcs::dag</code></a> for a working understanding of the implementation.</p>
 
                     </main>

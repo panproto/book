@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5fc15cf4.js";
+            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -211,6 +211,9 @@
 <h2 id="what-panproto-expr-keeps-and-loses"><a class="header" href="#what-panproto-expr-keeps-and-loses">What panproto-expr keeps and loses</a></h2>
 <p>The language the engine ended up with is specifically tuned for what remains after the requirements have ruled out the alternatives. Step and depth limits bound it; this replaces Turing-completeness with guaranteed termination. Serialisability across process boundaries demanded a strict eager reduction strategy rather than the laziness that Nickel (for instance) relies on. Giving the language native handling of panproto’s own types meant accepting that it would not double as a general-purpose data-exchange format; <a href="https://docs.rs/panproto-schema/latest/panproto_schema/schema/struct.Schema.html"><code>Schema</code></a> and <a href="https://docs.rs/panproto-inst/latest/panproto_inst/"><code>Instance</code></a> are first-class opaque values.</p>
 <p>The losses are real. A user whose pushforward computation genuinely needs a Turing-complete host language cannot express it in panproto-expr; such a user must instead write a Rust function, compile it through panproto’s Rust SDK (<a href="../sdks/rust.html">The Rust SDK</a>), and register it with the migration engine as a foreign function. A user who wants to configure their migration declaratively without writing evaluated expressions at all can use the <a href="https://docs.rs/panproto-lens-dsl/latest/panproto_lens_dsl/">lens DSL</a> in Nickel or <a href="https://json-schema.org/">JSON</a> form, which compiles through a separate pipeline.</p>
+<h2 id="further-reading"><a class="header" href="#further-reading">Further reading</a></h2>
+<p>For the totality argument in a broader context, Turner (<a href="../bibliography.html#turner2004total">2004</a>) is the foundational source — it argues at length that total languages are the right default for many domains panproto targets. For the lineage of small functional expression languages the <code>panproto-expr</code> surface borrows from, Landin (<a href="../bibliography.html#landin1966next">1966</a>)’s ISWIM paper is the originating reference; Harper (<a href="../bibliography.html#harper2016practical">2016</a>) covers the whole area in a single modern textbook.</p>
+<p>For the alternatives surveyed in this chapter, each has a well-maintained specification at the URL given in prose (Starlark’s is under the Bazel repository; Dhall’s, Nickel’s, and CUE’s at their respective project homepages). The documentation for the <a href="https://docs.rs/panproto-lens-dsl/latest/panproto_lens_dsl/"><code>panproto-lens-dsl</code></a> crate shows where panproto does use Nickel in production (for declarative lens specifications) and where it does not (for the migration-level expression language).</p>
 <h2 id="closing"><a class="header" href="#closing">Closing</a></h2>
 <p>Part IV opens with <a href="../protocols/defining.html">Defining a protocol</a>. It catalogues the specific protocols panproto supports (ATProto, Avro, a relational case, FHIR as a document case) and shows how each is expressed as an instance of the constructions developed in Part II.</p>
 <!--

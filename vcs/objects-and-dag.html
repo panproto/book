@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5fc15cf4.js";
+            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -208,6 +208,9 @@
 <h2 id="the-dag"><a class="header" href="#the-dag">The DAG</a></h2>
 <p>The DAG of commits (connected by parent edges) mirrors git’s structure exactly. Operations on the DAG (topological walks, common-ancestor computation, reachability) live in <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/dag/"><code>panproto_vcs::dag</code></a> and are implemented with the same algorithms git uses. A reader familiar with git’s <code>git-log --graph</code> or <code>git-merge-base</code> has no new graph-level ideas to learn here.</p>
 <p>What differs is the DAG of <em>schemas</em>. Every commit references the schemas its working tree depends on, and every schema object references its protocol (and, for schemas produced by migration, the source schema the migration was applied from). The schema-DAG is therefore a parallel structure to the commit-DAG, with its own topological operations. A three-way merge, the subject of <a href="./merge-as-pushout.html">the next chapter</a>, operates on both DAGs simultaneously, with the commit-level merge choosing the common-ancestor commit and the schema-level merge computing the pushout in the category of schemas.</p>
+<h2 id="further-reading"><a class="header" href="#further-reading">Further reading</a></h2>
+<p>Chacon &amp; Straub (<a href="../bibliography.html#chaconstraub2014pro">2014</a>) chapter 10 covers git’s object database in the detail this chapter’s framing parallels. Merkle (<a href="../bibliography.html#merkle1987digital">1988</a>) is the original paper on the Merkle-tree construction the content-addressing here specialises. For the BLAKE3 hash function specifically, the <a href="https://github.com/BLAKE3-team/BLAKE3">BLAKE3 reference</a> at the BLAKE3 GitHub organisation is authoritative; BLAKE3 replaces SHA-1 and SHA-256 for panproto’s object hashes on performance and cryptographic-property grounds that the reference documents.</p>
+<h2 id="closing"><a class="header" href="#closing">Closing</a></h2>
 <p>The next chapter, <a href="./merge-as-pushout.html">Merge as pushout</a>, takes the three-way-merge algorithm apart and shows that it is a pushout in the category of schemas (<a href="../foundations/colimits.html">Colimits and pushouts</a> is the mathematical reference). The chapter after that, <a href="./data-versioning.html">Data versioning</a>, works through how panproto-vcs automatically infers migrations from schema diffs and lifts instance data across version boundaries.</p>
 
                     </main>

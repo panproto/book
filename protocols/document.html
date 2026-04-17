@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5fc15cf4.js";
+            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -199,6 +199,8 @@
 <p>FHIR extensions are open-ended. Every resource in FHIR may carry extension fields whose shape is not declared in the base resource’s specification. Panproto represents extensions as an opaque JSON-valued sort that preserves them across migrations without decomposition. A migration that needs to transform extension contents must do so through <a href="https://docs.rs/panproto-expr/latest/panproto_expr/"><code>panproto-expr</code></a>’s field-transform mechanism applied to the extension sort directly.</p>
 <p>FHIRPath invariants (expressions attached to resources) form a rich constraint language that panproto’s equations cannot faithfully encode in full generality. Panproto handles the invariants that map cleanly onto <a href="https://docs.rs/panproto-expr/latest/panproto_expr/"><code>panproto-expr</code></a> (presence checks, cardinality constraints, simple relational comparisons) and flags the rest as unchecked. A schema under the FHIR protocol may pass panproto’s validator while failing a complex FHIRPath invariant the specification requires; for production use, a FHIR-specific validator should run alongside panproto’s.</p>
 <p>Resource versioning is per-resource. Some resources (<code>Patient</code>, <code>Observation</code>) have evolved in backward-compatible ways across R4, R4B, R5, and R6; others have had breaking changes. Panproto represents each version’s schema as a distinct schema under the FHIR protocol, and migrations between versions go through the standard pipeline. The engine does not itself determine which version pairs are backward-compatible; the developer marks this explicitly in the migration declaration.</p>
+<h2 id="further-reading"><a class="header" href="#further-reading">Further reading</a></h2>
+<p>HL7 International (<a href="../bibliography.html#fhir">2024</a>) is the authoritative specification of the FHIR standard, maintained by HL7; the published resource definitions, profile libraries, and validation machinery live under hl7.org/fhir. For the columnar-storage techniques that make deeply nested schemas like FHIR’s practical to query at scale, Melnik et al. (<a href="../bibliography.html#melnik2010dremel">2010</a>) is the Dremel paper that underlies Apache Parquet; Apache Software Foundation (<a href="../bibliography.html#parquet">2024</a>) is the Parquet specification that applies those techniques in the open-source setting. For a working-developer’s view of the design trade-offs in document schemas more broadly, Kleppmann (<a href="../bibliography.html#kleppmann2017designing">2017</a>) chapter 2 covers document versus relational models in the context of real systems.</p>
 <h2 id="closing"><a class="header" href="#closing">Closing</a></h2>
 <p>The next chapter, <a href="./tree-sitter.html">Tree-sitter and full-AST parsing</a>, closes Part IV with the auto-derivation mechanism: how panproto produces protocols from <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a> grammars for the 248 programming languages that do not have hand-written protocol definitions.</p>
 

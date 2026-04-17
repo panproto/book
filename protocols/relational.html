@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5fc15cf4.js";
+            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -201,6 +201,9 @@
 <h2 id="a-sql-subset"><a class="header" href="#a-sql-subset">A SQL subset</a></h2>
 <p>Panproto’s SQL support covers a subset suitable for schema migrations: <code>CREATE TABLE</code>, <code>ALTER TABLE ADD/DROP COLUMN</code>, <code>ALTER TABLE RENAME</code>, and <code>ALTER TABLE ADD/DROP CONSTRAINT</code>. It does not cover trigger, stored-procedure, or view definitions. The subset is wide enough to handle the schema-evolution cases real applications generate and narrow enough that the translation into panproto’s framework is unambiguous.</p>
 <p>The SQL parser registers a separate theory from the Cassandra one, since SQL and Cassandra disagree on which types are primitive (SQL has <code>DECIMAL</code>, Cassandra does not; Cassandra has <code>Counter</code>, SQL does not). Two schemas under the SQL theory can be migrated into each other directly; two schemas under different theories require a theory morphism between the protocols themselves, which is the subject of <a href="../core/protocol-colimits.html">Protocol colimits</a>.</p>
+<h2 id="further-reading"><a class="header" href="#further-reading">Further reading</a></h2>
+<p>Codd (<a href="../bibliography.html#codd1970relational">1970</a>) is the founding paper of the relational model, and is still the most readable single source on what makes a schema relational. Spivak (<a href="../bibliography.html#spivak2012functorial">2012</a>) is the categorical reformulation that panproto’s relational protocols follow directly, and Schultz et al. (<a href="../bibliography.html#schultzspivakvasilakopoulouwisnesky2017algebraic">2017</a>) extends the framework to accommodate the richer data types a working database needs. Wisnesky (<a href="../bibliography.html#wisnesky2013functional">2013</a>) is the companion PhD thesis and the most direct precedent for panproto’s engine; the CQL system that grew out of it is the closest existing tool to the relational side of panproto.</p>
+<p>For the specific protocols discussed in this chapter, Lakshman &amp; Malik (<a href="../bibliography.html#lakshmanmalik2010cassandra">2010</a>) is the Cassandra system paper; DeCandia et al. (<a href="../bibliography.html#decandia2007dynamo">2007</a>) is the Dynamo paper whose techniques Cassandra and several other NoSQL systems draw on. For SQL as a practical schema language, Kleppmann (<a href="../bibliography.html#kleppmann2017designing">2017</a>) chapter 2 (“Data Models and Query Languages”) is the most accessible treatment.</p>
 <h2 id="closing"><a class="header" href="#closing">Closing</a></h2>
 <p>The next chapter turns to <a href="./document.html">FHIR as a document case study</a>. FHIR stresses the representation in a different direction from the relational protocols here: its schemas are deeply nested, heavily constrained, and versioned irregularly. Panproto handles it through the same mechanisms Parts II and III developed, but the specific translation choices are worth tracing in detail.</p>
 
