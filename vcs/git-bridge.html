@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-f86865e2.js";
+            window.path_to_searchindex_js = "../searchindex-42d5694f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -202,7 +202,6 @@
 <h2 id="what-the-bridge-does-not-preserve"><a class="header" href="#what-the-bridge-does-not-preserve">What the bridge does not preserve</a></h2>
 <p>Schema-level merges. A three-way merge that succeeds as a pushout in the panproto-vcs setting may not have a byte-level representation that git can merge cleanly. When the export translation runs on a panproto-vcs merge commit, it produces a git commit whose tree reflects the merged schema’s byte form but whose diff against the parents is at the byte level. A git user pulling the exported repository sees a merge commit that touched a schema file and may find that git’s three-way line merge on the schema file’s bytes produces conflict markers; the schema-level resolution panproto-vcs reached is not visible as a git-level merge strategy.</p>
 <p>The common mitigation is to encode the panproto-vcs merge as a pair of sequential commits in the exported git history: the left branch is merged first, producing an intermediate byte-level state; the right branch is merged against that intermediate state. This gives git a clean byte-level history even when the panproto-vcs merge operated at the schema level. The exporter does this automatically through a flag on <a href="https://docs.rs/panproto-git/latest/panproto_git/"><code>panproto_git::export</code></a>.</p>
-<h2 id="closing"><a class="header" href="#closing">Closing</a></h2>
 <p>Part V ends with this chapter. Part VI turns to the operational layer: the <a href="../sdks/wasm-boundary.html">WebAssembly boundary</a> through which every non-Rust client interacts with panproto, the <a href="../sdks/rust.html">Rust SDK</a>, the <a href="../sdks/typescript.html">TypeScript SDK</a>, the <a href="../sdks/python.html">Python SDK</a>, and the <a href="../sdks/cli.html">CLI</a>.</p>
 
                     </main>

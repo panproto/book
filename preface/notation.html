@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-f86865e2.js";
+            window.path_to_searchindex_js = "../searchindex-42d5694f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="a-note-on-notation"><a class="header" href="#a-note-on-notation">A note on notation</a></h1>
-<p>This chapter documents the conventions the book uses for citations, code, mathematics, cross-references, and figures. Readers comfortable with academic technical writing will find few surprises; the chapter exists so that a reader who is uncertain what a particular glyph or link type is meant to do can look it up here rather than in the chapter where the glyph first appears.</p>
+<p>The book uses a small set of conventions for citations, code, mathematics, cross-references, and figures. This chapter collects them in one place for reference.</p>
 <h2 id="citations"><a class="header" href="#citations">Citations</a></h2>
 <p>Every academic source the book names carries an inline citation in Chicago author-date style, rendered automatically by the <a href="https://github.com/francisco-perez-sorrosal/mdbook-bib">mdbook-bib</a> preprocessor. The three citation forms, in Pandoc notation, are:</p>
 <ul>
@@ -191,7 +191,7 @@
 <li><code>[@key]</code> produces a parenthetical citation (“(Mac Lane 1998)”) and is used when the citation follows a claim.</li>
 <li><code>[-@key]</code> produces a year-only citation (“(1998)”) and is used after a name already appears in the sentence.</li>
 </ul>
-<p>Multiple citations combine inside a single bracket: <code>[@key1; @key2]</code>. The complete bibliography appears at the end of the book, with full metadata and links. Every entry has been read before being cited.</p>
+<p>Multiple citations combine inside a single bracket: <code>[@key1; @key2]</code>. The complete bibliography appears at the end of the book, with full metadata and links.</p>
 <h2 id="cross-references"><a class="header" href="#cross-references">Cross-references</a></h2>
 <p>References to other chapters appear as hyperlinks to the chapter’s title: for example, <a href="../foundations/categories.html">Categories</a>. Chapter numbers are not used in prose, since the book’s table of contents is by title rather than by number. References to specific sections within a chapter use anchor links: the reader may follow the link directly to the section named.</p>
 <p>References to specific panproto code appear as hyperlinks to the corresponding <a href="https://docs.rs/">docs.rs</a> page. Every first mention of a panproto module, type, or function in a chapter is linked; subsequent mentions appear as plain monospace.</p>
@@ -207,8 +207,7 @@
 <h2 id="what-the-book-assumes"><a class="header" href="#what-the-book-assumes">What the book assumes</a></h2>
 <p>The book assumes the reader can program. It does not assume a specific language background: examples use Haskell for mathematical brevity and Rust for implementation, with each new language construct glossed on first appearance. The book does not assume any prior category theory, set theory beyond the informal level of everyday programming, or familiarity with panproto itself.</p>
 <p>A reader who wants a warm-up in category theory before the foundations chapters begin may skim the first few posts of Bartosz Milewski’s <a href="https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/">Category Theory for Programmers</a>, from which several of the book’s pedagogical conventions are adapted.</p>
-<h2 id="closing"><a class="header" href="#closing">Closing</a></h2>
-<p><a href="./what-panproto-is.html">What panproto is</a>, the next chapter, frames panproto against the tools a working developer is likely to have used already and is the chapter to read before <a href="../foundations/categories.html">Categories</a>.</p>
+<p>The next chapter, <a href="./what-panproto-is.html">What panproto is</a>, positions panproto against the tools a working developer has likely already used; <a href="../foundations/categories.html">Categories</a> then opens the mathematical development.</p>
 
                     </main>
 

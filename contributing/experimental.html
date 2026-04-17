@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-f86865e2.js";
+            window.path_to_searchindex_js = "../searchindex-42d5694f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -201,7 +201,7 @@
 <p>Acceptance criterion: cross-protocol-registry merge resolution, a stability guarantee on the XRPC wire format across minor versions, and a round-trip test suite comparable to the git bridge’s.</p>
 <h2 id="the-pattern"><a class="header" href="#the-pattern">The pattern</a></h2>
 <p>Each of these subsystems lives in the workspace rather than in a separate repository so that it can evolve alongside the main panproto stack. A change to <a href="https://docs.rs/panproto-gat/latest/panproto_gat/"><code>panproto-gat</code></a>’s theory representation, for example, is propagated to <a href="https://docs.rs/panproto-llvm/latest/panproto_llvm/"><code>panproto-llvm</code></a> at the same time as to the other theory consumers, which avoids the drift that a separate-repository arrangement would produce.</p>
-<p>The cost is that a contributor who wants to work on any of these crates has to opt in through feature flags and be aware that their work is against a moving target. The benefit is that promising ideas can be tried out in tree, measured against the rest of the stack, and either promoted or abandoned without the friction of separate-repository maintenance.</p>
+<p>A contributor who wants to work on any of these crates has to opt in through feature flags and be aware that their work is against a moving target. In exchange, promising ideas can be tried out in tree, measured against the rest of the stack, and either promoted or abandoned without the friction of separate-repository maintenance.</p>
 <p>A crate is promoted to stable when its acceptance criterion is met and a release includes the promotion as a changelog entry. Demotion back to experimental is possible but rare; it has not happened in the crates currently listed as experimental.</p>
 <h2 id="closing"><a class="header" href="#closing">Closing</a></h2>
 <p>Part VII ends with this chapter. The appendices that follow contain a <a href="../appendices/notation-table.html">notation reference</a>, a <a href="../appendices/glossary.html">glossary</a>, and an <a href="../appendices/open-problems.html">open-problems list</a> covering places where panproto’s implementation or the book’s mathematical account is ahead of the other.</p>
