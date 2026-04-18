@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
+            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,8 +183,8 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="ci-semver-checks-and-release"><a class="header" href="#ci-semver-checks-and-release">CI, semver-checks, and release</a></h1>
-<p>Every commit to panproto’s main branch runs through a CI pipeline that verifies formatting, lints, tests, documentation, semver compatibility, and the workspace-hack invariant. This chapter walks through each check, why it exists, and how a contributor reproduces it locally before pushing.</p>
-<p>The pipeline definition lives in <code>.github/workflows/ci.yml</code>; the supporting configuration (deny list, clippy lints, nextest settings) lives in <code>.clippy.toml</code>, <code>deny.toml</code>, and <code>.config/nextest.toml</code> at the repository root.</p>
+<p>Every commit to panproto’s main branch runs through a CI pipeline whose job is to catch regressions before they land — across formatting, lints, tests, documentation, semver compatibility, and the workspace-hack invariant. The present chapter walks through each check, says why it exists, and gives the local command a contributor can run to reproduce it before pushing.</p>
+<p>The pipeline definition lives in <code>.github/workflows/ci.yml</code>.</p>
 <h2 id="the-checks"><a class="header" href="#the-checks">The checks</a></h2>
 <p>Formatting runs first through <a href="https://doc.rust-lang.org/cargo/commands/cargo-fmt.html"><code>cargo fmt --all --check</code></a>. The workspace uses the default <code>rustfmt.toml</code> configuration, with no overrides. A commit that fails <code>fmt --check</code> does not advance to the later stages; the local equivalent is <code>cargo fmt --all</code>.</p>
 <p>Linting comes next, through <a href="https://doc.rust-lang.org/cargo/commands/cargo-clippy.html"><code>cargo clippy --workspace --all-targets -- -D warnings</code></a>. Every warning is a CI failure, and contributors do not silence warnings with <code>#[allow]</code> attributes unless the silencing is justified with a comment. The clippy configuration includes <code>clippy::pedantic</code> and <code>clippy::nursery</code>, which catch patterns that the default clippy level lets through. The local equivalent is <code>cargo clippy --workspace --all-targets</code>.</p>

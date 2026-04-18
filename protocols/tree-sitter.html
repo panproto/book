@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
+            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,7 +183,8 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="tree-sitter-and-full-ast-parsing"><a class="header" href="#tree-sitter-and-full-ast-parsing">Tree-sitter and full-AST parsing</a></h1>
-<p>Panproto ships with protocol definitions for 248 programming languages. Writing all of them by hand in the style of the previous chapter would be infeasible; panproto produces them automatically from <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a> grammars (<a href="../bibliography.html#brunsfeld2018treesitter">Brunsfeld 2018</a>). Tree-sitter’s incremental-parsing algorithm is in the lineage of Wagner &amp; Graham (<a href="../bibliography.html#wagnergraham1998efficient">1998</a>), and its parsing-expression-grammar support is informed by the packrat-parsing tradition of Ford (<a href="../bibliography.html#ford2002packrat">2002</a>). A tree-sitter grammar describes a language’s concrete syntax precisely enough that its node-type metadata is, up to a translation layer, a GAT. This chapter explains the translation, what the resulting theories can and cannot express about the language they describe, and the trade-offs between generic derivation and hand-written protocols.</p>
+<p>Writing a protocol by hand for every programming language one might reasonably want to parse is not a serious proposal. Two hundred and forty-eight languages ship with panproto, and we did not hand-write them. They come from <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a> grammars, through a mechanical translation that turns a grammar’s node-type metadata into a GAT and a parser. The present chapter explains the translation, what the resulting theories can and cannot express about the language they describe, and when a hand-written upgrade is worth the effort.</p>
+<p>Tree-sitter itself is due to Brunsfeld (<a href="../bibliography.html#brunsfeld2018treesitter">2018</a>). Its incremental-parsing algorithm descends from Wagner &amp; Graham (<a href="../bibliography.html#wagnergraham1998efficient">1998</a>), and its parsing-expression-grammar support from the packrat-parsing tradition of Ford (<a href="../bibliography.html#ford2002packrat">2002</a>).</p>
 <p>The code is in <a href="https://docs.rs/panproto-parse/latest/panproto_parse/"><code>panproto-parse</code></a> for the derivation logic and <a href="https://docs.rs/panproto-grammars/latest/panproto_grammars/"><code>panproto-grammars</code></a> for the bundled tree-sitter grammars.</p>
 <h2 id="what-tree-sitter-supplies"><a class="header" href="#what-tree-sitter-supplies">What tree-sitter supplies</a></h2>
 <p>A tree-sitter grammar is a JavaScript-defined grammar that compiles to a C parser, a <code>node-types.json</code> metadata file, and an optional <code>tags.scm</code> query for identifier scoping. The parser, given source code in the language, produces a concrete-syntax tree whose node kinds are declared in <code>node-types.json</code>. Each node type has a name (like <code>function_definition</code> or <code>binary_expression</code>), a set of named fields (like <code>name</code>, <code>parameters</code>, <code>body</code> for a function), and a type constraint on each field that names which node types may appear there.</p>

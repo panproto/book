@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
+            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="the-git-bridge"><a class="header" href="#the-git-bridge">The git bridge</a></h1>
-<p>Panproto-vcs repositories should interoperate with <a href="https://git-scm.com/">git</a>. A repository under active development may be pushed to a GitHub or GitLab remote that runs ordinary git, reviewed through git-aware tooling, and later pulled back into a panproto-vcs working copy without losing the schema-level history. This chapter covers the bridge that makes this possible: <a href="https://docs.rs/panproto-git/latest/panproto_git/"><code>panproto-git</code></a> for the bidirectional translation of repository state, and the <a href="https://docs.rs/panproto-git-remote/latest/panproto_git_remote/"><code>panproto-git-remote</code></a> helper (installed as <code>git-remote-panproto</code>) that lets git itself speak to a panproto-vcs remote through the standard <code>git push</code> and <code>git fetch</code> commands.</p>
+<p>A version-control system adopted by a team has to fit into the tooling that team already uses, and for most teams today that means git. A panproto-vcs repository under active development needs to be pushable to a GitHub or GitLab remote running ordinary git, reviewable through git-aware tooling, and pullable back into a panproto-vcs working copy afterwards without losing the schema-level history the push and the review cannot carry. The bridge that makes this work is the subject of the present chapter: <a href="https://docs.rs/panproto-git/latest/panproto_git/"><code>panproto-git</code></a> supplies the bidirectional translation of repository state, and the <a href="https://docs.rs/panproto-git-remote/latest/panproto_git_remote/"><code>panproto-git-remote</code></a> helper — installed as <code>git-remote-panproto</code> — lets git itself speak to a panproto-vcs remote through <code>git push</code> and <code>git fetch</code>.</p>
 <h2 id="two-translations"><a class="header" href="#two-translations">Two translations</a></h2>
 <p>The bridge performs two translations. The <em>import</em> translation takes a git repository (either local or fetched from a remote) and produces a panproto-vcs repository whose object database includes every git commit as a panproto-vcs commit, every git tree as a panproto-vcs tree, and every git blob as a panproto-vcs blob. Schemas, migrations, and instances the git repository did not encode remain absent; an imported git history is an ordinary byte-tree history, not a panproto-enhanced one.</p>
 <p>The <em>export</em> translation goes the other way: a panproto-vcs repository is projected onto a git repository by dropping the schema, migration, and instance objects and keeping only the byte-level objects. The export is lossy by construction; what survives is the tree of ordinary files, with schemas serialised to their on-disk form (JSON for ATProto lexicons, Avro IDL for Avro schemas, and so on), migrations serialised to their declaration syntax, and instances serialised through each protocol’s emitter.</p>

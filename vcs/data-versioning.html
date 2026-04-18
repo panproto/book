@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
+            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,8 +183,8 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="data-versioning"><a class="header" href="#data-versioning">Data versioning</a></h1>
-<p>When a schema changes in a panproto-vcs commit, the data stored under the old schema must be lifted to the new one. Often the lift is automatic: the migration from the old schema to the new is uniquely determined, or almost uniquely determined, by the diff between them. Panproto-vcs’s auto-migration infrastructure computes this migration without requiring the user to declare it explicitly. This chapter walks through the inference, the cases it handles, and the cases it refuses.</p>
-<p>The Rust code is split between <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/auto_mig/"><code>panproto_vcs::auto_mig</code></a> (the inference) and <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/data_mig/"><code>panproto_vcs::data_mig</code></a> (the application of the inferred migration to stored data). The mathematical background is in <a href="../core/morphisms-and-migration.html">Theory morphisms and instance migration</a> and <a href="../core/restrict-lift.html">The restrict/lift pipeline</a>.</p>
+<p>A schema change in a panproto-vcs commit leaves the data stored under the old schema stranded until something carries it across. The construction that does the carrying is a migration, in the sense Part II developed, and in most cases the migration is uniquely determined or almost uniquely determined by the diff between the two schemas. Panproto-vcs’s auto-migration infrastructure exploits this to produce the migration without asking the user to declare it. The present chapter walks through the inference, the cases it handles, and the cases it refuses.</p>
+<p>The code is split between <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/auto_mig/"><code>panproto_vcs::auto_mig</code></a> for the inference and <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/data_mig/"><code>panproto_vcs::data_mig</code></a> for its application to stored data.</p>
 <h2 id="when-auto-migration-is-invoked"><a class="header" href="#when-auto-migration-is-invoked">When auto-migration is invoked</a></h2>
 <p>A schema change enters panproto-vcs through a commit that stages a new schema object at a path where an old one already exists. The old schema is retrieved from the previous commit’s tree; the new schema is the one being staged. If the commit does not include an explicit migration declaration, <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/auto_mig/fn.infer.html"><code>panproto_vcs::auto_mig::infer</code></a> runs against the pair (old, new) and attempts to produce a migration that carries every record under the old schema to a well-typed record under the new one.</p>
 <p>Auto-migration is optional. A user whose migration is non-trivial (a new field whose value requires computation, a renamed field whose values must be rearranged, a dropped field whose data must be preserved elsewhere) supplies the migration declaration explicitly through the migration DSL; auto-migration is skipped when such a declaration is present.</p>

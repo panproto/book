@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
+            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,7 +183,8 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="apache-avro-schema-evolution-as-migration"><a class="header" href="#apache-avro-schema-evolution-as-migration">Apache Avro: schema evolution as migration</a></h1>
-<p><a href="https://avro.apache.org/">Apache Avro</a> (<a href="../bibliography.html#avrospec">Apache Software Foundation 2024</a>) is a serialisation format with a schema language specified precisely enough to include formal rules for <em>schema evolution</em>: the rules by which a reader using one version of a schema can correctly consume data written under an older or newer version. This chapter walks through those rules and maps them onto the migration primitives developed in <a href="../core/morphisms-and-migration.html">Theory morphisms and instance migration</a>. Where Lexicon (in <a href="./atproto.html">the previous chapter</a>) leaves schema evolution informal, Avro specifies it, which makes the translation into panproto’s framework sharper.</p>
+<p>Avro gets schema evolution right in a way few serialisation formats manage, and the rules it states are precise enough to translate directly into panproto’s migration framework. A reader version of a schema is allowed to consume data written under a writer version of the schema when the two versions agree on a small number of concrete rules: which field additions are backward-compatible, which removals are forward-compatible, which type changes cross the compatibility line in each direction. The whole thing is documented. The present chapter works through the rules and shows what each one becomes on the migration side.</p>
+<p>Avro is the second of the chapter’s two comparisons with the previous one on ATProto. Where ATProto’s Lexicon specification leaves schema evolution largely to convention, Avro fixes it. The translation into panproto’s framework is correspondingly sharper, and it is worth seeing how sharp it can be when a specification cooperates.</p>
 <p>The Rust code is in <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/serialization/avro/"><code>panproto_protocols::serialization::avro</code></a>.</p>
 <h2 id="what-avro-specifies"><a class="header" href="#what-avro-specifies">What Avro specifies</a></h2>
 <p>An Avro schema is a JSON document declaring records, enums, arrays, maps, unions, and primitive types (null, boolean, int, long, float, double, bytes, string). A record is a list of named fields, each typed; field types can be primitives, references to other record types, or compositional types built from the above.</p>

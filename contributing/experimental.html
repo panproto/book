@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
+            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,8 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="experimental-and-feature-gated-subsystems"><a class="header" href="#experimental-and-feature-gated-subsystems">Experimental and feature-gated subsystems</a></h1>
-<p>Three crates in the panproto workspace are feature-gated and marked experimental: <a href="https://docs.rs/panproto-llvm/latest/panproto_llvm/"><code>panproto-llvm</code></a>, <a href="https://docs.rs/panproto-jit/latest/panproto_jit/"><code>panproto-jit</code></a>, and <a href="https://docs.rs/panproto-xrpc/latest/panproto_xrpc/"><code>panproto-xrpc</code></a>. This chapter describes each, says where it is currently reliable, and names the acceptance criteria for promoting any of them to the stable default-on configuration.</p>
-<p>The crates exist to let panproto explore ideas that are promising but not yet load-bearing for the rest of the stack. A contributor working in any of them should treat their API surface as subject to change between minor versions.</p>
+<p>Not every crate in the workspace is production-ready. Three are feature-gated and marked experimental — <a href="https://docs.rs/panproto-llvm/latest/panproto_llvm/"><code>panproto-llvm</code></a>, <a href="https://docs.rs/panproto-jit/latest/panproto_jit/"><code>panproto-jit</code></a>, and <a href="https://docs.rs/panproto-xrpc/latest/panproto_xrpc/"><code>panproto-xrpc</code></a> — for reasons specific to each: an LLVM installation is a substantial dependency, the JIT compiler is promising but still incomplete, and the XRPC remote-repository support is not yet stable across registry differences. The present chapter describes each crate, says where it is currently reliable, and names the acceptance criteria for promoting it to the stable default-on configuration. A contributor working in any of them should treat the API surface as subject to change between minor versions.</p>
 <h2 id="panproto-llvm"><a class="header" href="#panproto-llvm">panproto-llvm</a></h2>
 <p><a href="https://docs.rs/panproto-llvm/latest/panproto_llvm/"><code>panproto-llvm</code></a> registers <a href="https://llvm.org/">LLVM</a> IR as a panproto protocol: a theory whose sorts are LLVM IR’s kinds (modules, functions, basic blocks, instructions, types), whose operations are the structural accessors of those kinds, and whose equations encode LLVM’s well-formedness conditions. A schema under this protocol is an LLVM module’s structure at the theory level, and a migration is a structural transformation of the module (rename an intrinsic, reorganise a function’s control flow, add a pass’s effect to the module’s metadata).</p>
 <p>The crate is feature-gated, since it depends on an LLVM installation at build time: a significant cost for the 99% of panproto users who do not need it. When the feature is enabled, the LLVM bindings go through <a href="https://docs.rs/inkwell/latest/inkwell/"><code>inkwell</code></a> against whichever LLVM version the user has installed, and the schema-level operations dispatch to LLVM’s own module manipulation APIs for the operations panproto cannot express purely in its own term language.</p>

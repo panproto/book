@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
+            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,8 +183,8 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="workspace-layout"><a class="header" href="#workspace-layout">Workspace layout</a></h1>
-<p>Panproto’s Rust code is a single Cargo workspace of 25 crates, organised by layer: foundations, transformation, infrastructure, protocols and auxiliary tooling, SDK bindings, and experimental extensions. This chapter walks through the layers, names each crate’s responsibility, and shows where the dependencies flow.</p>
-<p>The root workspace manifest is <code>Cargo.toml</code> at the repository root; the individual crates are under <code>crates/</code>. The non-Rust packages (the TypeScript SDK and the Python SDK’s Python-side code) live under <code>sdk/typescript/</code> and <code>sdk/python/</code>.</p>
+<p>Twenty-five crates live in panproto’s Cargo workspace, organised across six layers: foundations, transformation, infrastructure, protocols and auxiliary tooling, SDK bindings, and experimental extensions. The layering is strict — no crate depends on anything strictly above it — and a contributor working on panproto will want to know which layer their crate belongs to before writing their first patch.</p>
+<p>The root workspace manifest is <code>Cargo.toml</code> at the repository root; the individual crates are under <code>crates/</code>. The non-Rust packages — the TypeScript SDK and the Python SDK’s Python-side code — live under <code>sdk/typescript/</code> and <code>sdk/python/</code>.</p>
 <h2 id="the-layers"><a class="header" href="#the-layers">The layers</a></h2>
 <p>The foundations layer is where the core mathematical types live. Theories, morphisms, and colimits live in <a href="https://docs.rs/panproto-gat/latest/panproto_gat/"><code>panproto-gat</code></a>; the expression language is in <a href="https://docs.rs/panproto-expr/latest/panproto_expr/"><code>panproto-expr</code></a>; schemas as models and the instances under those schemas are defined in <a href="https://docs.rs/panproto-schema/latest/panproto_schema/"><code>panproto-schema</code></a> and <a href="https://docs.rs/panproto-inst/latest/panproto_inst/"><code>panproto-inst</code></a> respectively. These four have no dependencies on each other beyond <code>gat</code>, <code>expr</code>, <code>schema</code>, <code>inst</code>; in particular, none of them depends on anything below this layer.</p>
 <p>The transformation layer sits on top of the foundations. <a href="https://docs.rs/panproto-mig/latest/panproto_mig/"><code>panproto-mig</code></a> is the migration engine; it depends on <code>panproto-gat</code>, <code>panproto-schema</code>, <code>panproto-inst</code>, and <code>panproto-expr</code>. <a href="https://docs.rs/panproto-lens/latest/panproto_lens/"><code>panproto-lens</code></a> is the bidirectional-lens machinery; it depends on the transformation layer as a whole.</p>

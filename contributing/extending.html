@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-fef1f303.js";
+            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,8 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="extending-panproto"><a class="header" href="#extending-panproto">Extending panproto</a></h1>
-<p>Contributors most often extend panproto in one of three ways: a new protocol (for a data format or schema language panproto does not yet support), a new lens combinator (for a transformation shape panproto does not yet offer), or a new expression-language builtin (for a small computation the expression language cannot express without one). This chapter walks through each case end-to-end.</p>
-<p>The specific skills that accompany this chapter are <code>panproto-build-protocol</code> (for protocols), <code>impl-lens</code> (for lens combinators), and <code>panproto-expression-language</code> (for builtins). Readers should consult whichever skill corresponds to the extension they are making, alongside this chapter.</p>
+<p>A contributor writing new code for panproto is usually doing one of three things: adding support for a data format or schema language the engine does not yet know, adding a transformation shape the lens library does not yet offer, or adding a small computation the expression language needs but cannot express with its existing builtins. The present chapter walks through each case end-to-end.</p>
 <h2 id="a-new-protocol"><a class="header" href="#a-new-protocol">A new protocol</a></h2>
 <p>Adding a protocol is the most common contribution and follows a predictable shape. The contributor starts by identifying the protocol’s category (serialisation, database, document, or domain) and the subdirectory of <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/"><code>panproto-protocols</code></a> that houses it. A new file under that subdirectory collects the four artefacts the protocol supplies (<a href="../protocols/defining.html">the GAT, the parser, the emitter, the registry entry</a>) and a <code>mod.rs</code> update adds the file to the crate’s module tree.</p>
 <p>The theory is written first, usually through <a href="https://docs.rs/panproto-theory-dsl/latest/panproto_theory_dsl/"><code>panproto-theory-dsl</code></a> in <a href="https://nickel-lang.org/">Nickel</a> form for readability, though a direct Rust construction through the <a href="https://docs.rs/panproto-gat/latest/panproto_gat/theory/struct.Theory.html"><code>panproto_gat::theory::Theory</code></a> builder works equally well. A type-checker pass validates the theory before the parser and emitter are written against it.</p>
