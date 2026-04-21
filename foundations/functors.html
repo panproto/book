@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
+            window.path_to_searchindex_js = "../searchindex-e0f6da2a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,6 +183,14 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="functors-and-natural-transformations"><a class="header" href="#functors-and-natural-transformations">Functors and natural transformations</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The previous chapter left us with a collection of categories — <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathbf">Hask</span></span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord"><span class="mord mathbf">Set</span></span></span></span></span>, the category of panproto schemas under a fixed protocol — and no vocabulary for comparing them. The present chapter supplies that vocabulary. A functor is the right shape of map between two categories, one that moves objects to objects and morphisms to morphisms in a way that preserves composition and identity. A natural transformation is the right shape of map between two functors that share a source and a target, one that is compatible with whatever morphisms the source category provides.</p>
 <p>Both concepts are due to Eilenberg &amp; Mac Lane (<a href="../bibliography.html#eilenbergmaclane1945general">1945</a>), who introduced natural transformations first and had to introduce functors and categories along the way to make the definition of naturality go through. For a working developer the payoff in this book is specific. Panproto’s migration engine is built around a functor sending each schema to the set of its instances and each migration to the function that lifts those instances. Bidirectional lenses are natural transformations between two such functors. Every claim the engine makes about data being preserved across a migration is a functoriality claim stated in the language we now introduce.</p>
 <h2 id="functors"><a class="header" href="#functors">Functors</a></h2>

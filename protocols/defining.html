@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
+            window.path_to_searchindex_js = "../searchindex-e0f6da2a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,6 +183,14 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="defining-a-protocol"><a class="header" href="#defining-a-protocol">Defining a protocol</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Part IV is where the framework of Part II meets the protocols panproto ships with. The remaining chapters in the part work through specific cases — ATProto, Avro, a relational case study, FHIR, and the tree-sitter-derived protocols — each one an instance of the constructions developed abstractly earlier. The present chapter is the template those cases instantiate: what a protocol registration looks like in Rust, and what obligations the registration imposes on its parser and emitter.</p>
 <p>A reader who has followed <a href="../core/schemas-as-instances.html">Protocols as theories, schemas as instances</a> has seen the theoretical content. The present chapter concentrates on what the Rust code actually does.</p>
 <h2 id="what-a-protocol-supplies"><a class="header" href="#what-a-protocol-supplies">What a protocol supplies</a></h2>

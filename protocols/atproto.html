@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
+            window.path_to_searchindex_js = "../searchindex-e0f6da2a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,6 +183,14 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="atproto-lexicons"><a class="header" href="#atproto-lexicons">ATProto lexicons</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The protocol underlying <a href="https://bsky.app/">Bluesky</a> and the wider AT network is called <a href="https://atproto.com/">ATProto</a>, and the schemas under it are written in a language called <a href="https://atproto.com/specs/lexicon">Lexicon</a>: JSON documents declaring record types, their fields, and the constraints the fields must satisfy. Reading the Lexicon specification and implementing a protocol for it in panproto was an interesting exercise because Lexicon leaves rather a lot to convention. Where most serialisation formats have formal rules for schema evolution, Lexicon has a specification that is less formal than those rules would like it to be and more formal than a casual reader might expect. The translation panproto performs has to absorb the informality into explicit equations, and the chapter is about where the translation is clean and where it is not.</p>
 <p>The code lives in <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/web_document/atproto/"><code>panproto_protocols::web_document::atproto</code></a>; the mathematical background lives in <a href="../core/schemas-as-instances.html">Protocols as theories, schemas as instances</a> and <a href="../foundations/gats.html">Algebraic and generalised algebraic theories</a>.</p>
 <h2 id="what-a-lexicon-is"><a class="header" href="#what-a-lexicon-is">What a lexicon is</a></h2>

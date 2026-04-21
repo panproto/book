@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
+            window.path_to_searchindex_js = "../searchindex-e0f6da2a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,6 +183,14 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="the-typescript-sdk"><a class="header" href="#the-typescript-sdk">The TypeScript SDK</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The TypeScript SDK, published on npm as <a href="https://www.npmjs.com/package/@panproto/core"><code>@panproto/core</code></a>, wraps the WebAssembly boundary developed in <a href="./wasm-boundary.html">the previous chapter</a> in a typed, ergonomic API for JavaScript and TypeScript callers. What the wrapping adds is threefold: ordinary JavaScript object lifetimes instead of manual handle management; MessagePack serialisation hidden inside method calls rather than exposed at the API level; and a fluent builder API that bundles the many discrete WASM calls of schema and migration construction into a single round-trip.</p>
 <p>The source lives in <code>sdk/typescript/</code> in the panproto repository.</p>
 <h2 id="initialisation"><a class="header" href="#initialisation">Initialisation</a></h2>

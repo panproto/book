@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
+            window.path_to_searchindex_js = "../searchindex-e0f6da2a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,6 +183,14 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="what-panproto-is"><a class="header" href="#what-panproto-is">What panproto is</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A small service stores user records as JSON and keeps the schema for those records in a file called <code>user.schema.json</code>, checked into the same repository as the code. The schema declares a <code>name</code> field and an <code>email</code> field, both required. After a few months, a new requirement arrives: users should have a display name that may differ from the account name. The schema grows a <code>displayName</code> field. Old records in the database do not have a <code>displayName</code>; new records do. A developer writes a small migration script to populate the new field on the old records, and commits the script alongside the schema change.</p>
 <p>This is not unusual. Every non-trivial production system runs some version of the same sequence. The specifics vary between <a href="https://atproto.com/">ATProto</a>, <a href="https://avro.apache.org/">Apache Avro</a>, <a href="https://www.hl7.org/fhir/">FHIR</a>, Postgres DDL, and the two dozen other schema languages in wide use, but the shape is the same: a schema file is edited, a migration runs against existing data, and the system is now operating against a new schema.</p>
 <p>The ordinary tools handle the parts of this sequence they were designed for. <a href="https://git-scm.com/">Git</a> versions the schema file and the migration script as text. <a href="https://protobuf.dev/">Protobuf</a> and <a href="https://json-schema.org/">JSON Schema</a> validate records against their schemas. Database migration frameworks — Flyway, Alembic, Rails ActiveRecord migrations, the <code>schema.rb</code> pattern, the Cassandra <code>ALTER TABLE</code> DDL — sequence the script’s application against the data store.</p>

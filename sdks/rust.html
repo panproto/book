@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
+            window.path_to_searchindex_js = "../searchindex-e0f6da2a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,6 +183,14 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="the-rust-sdk"><a class="header" href="#the-rust-sdk">The Rust SDK</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A working Rust project using panproto depends on one crate, <a href="https://docs.rs/panproto-core/latest/panproto_core/"><code>panproto-core</code></a>, and gets a facade that re-exports every subsystem worth using from one place. The present chapter is a working guide to the facade — what it exposes, what the feature flags gate, and what idioms recur in code written against it. Readers familiar with panproto’s architecture from Parts II and V will find it short.</p>
 <h2 id="the-facade"><a class="header" href="#the-facade">The facade</a></h2>
 <p><a href="https://docs.rs/panproto-core/latest/panproto_core/"><code>panproto-core</code></a> depends on and re-exports the major panproto subsystems: <a href="https://docs.rs/panproto-gat/latest/panproto_gat/"><code>panproto-gat</code></a> for theories, <a href="https://docs.rs/panproto-schema/latest/panproto_schema/"><code>panproto-schema</code></a> for schemas, <a href="https://docs.rs/panproto-inst/latest/panproto_inst/"><code>panproto-inst</code></a> for instances, <a href="https://docs.rs/panproto-mig/latest/panproto_mig/"><code>panproto-mig</code></a> for migrations, <a href="https://docs.rs/panproto-lens/latest/panproto_lens/"><code>panproto-lens</code></a> for bidirectional transformations, <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/"><code>panproto-protocols</code></a> for the registered protocols, and <a href="https://docs.rs/panproto-expr/latest/panproto_expr/"><code>panproto-expr</code></a> for the expression language. A <code>use panproto_core::prelude::*;</code> at the top of a file imports the most commonly used types in a form ready for working code.</p>

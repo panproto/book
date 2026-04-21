@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-97cc0412.js";
+            window.path_to_searchindex_js = "searchindex-e0f6da2a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-899a4596.js"></script>
@@ -183,6 +183,14 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="preface"><a class="header" href="#preface">Preface</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Data outlives its schemas. Any system that stores records for more than a few months eventually faces a situation in which the records on disk were written against one shape and the code that reads them expects another, and the gap between the two has to be closed by somebody working by hand, under time pressure, without a mechanical check that the thing being done is correct. The tools most developers reach for on either side of this problem — source control on one side, serialisation formats on the other — were designed for something narrower. <a href="https://git-scm.com/">Git</a> versions byte sequences. <a href="https://protobuf.dev/">Protobuf</a>, <a href="https://avro.apache.org/">Avro</a>, and <a href="https://json-schema.org/">JSON Schema</a> describe the shape of those sequences. Neither addresses the relationship between the two, which is where things go wrong.</p>
 <p>This book presents a different way of arranging those tools. Its central claim is that the schema, the data under it, and the transformations between schema versions can all be treated as members of the same kind of mathematical object. Once the treatment is carried out, the operations one ordinarily does by hand — merging a schema change across two branches, migrating data across a schema version boundary — follow from constructions worked out carefully in a part of mathematics most working developers have not yet seen. The mathematics is the categorical treatment of generalised algebraic theories and their morphisms, due largely to Eilenberg &amp; Mac Lane (<a href="bibliography.html#eilenbergmaclane1945general">1945</a>), Lawvere (<a href="bibliography.html#lawvere1963functorial">1963</a>), and Cartmell (<a href="bibliography.html#cartmell1986generalised">1986</a>), applied to databases by Spivak (<a href="bibliography.html#spivak2012functorial">2012</a>) and Spivak &amp; Wisnesky (<a href="bibliography.html#spivakwisnesky2015relational">2015</a>). The software discussed in the book, panproto, is an implementation of the arrangement.</p>
 <h2 id="who-this-book-is-for"><a class="header" href="#who-this-book-is-for">Who this book is for</a></h2>

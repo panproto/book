@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
+            window.path_to_searchindex_js = "../searchindex-e0f6da2a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,6 +183,14 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="merge-as-pushout"><a class="header" href="#merge-as-pushout">Merge as pushout</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A three-way merge in a version-control system is, at heart, a reconciliation of two parallel edits against a common ancestor. Git carries out this reconciliation at the level of bytes, which works when the bytes are what the team cares about and falls apart when the bytes are interpreted as something richer. Panproto-vcs performs the same reconciliation at the level of schemas, and the construction it uses is the pushout of <a href="../foundations/colimits.html">Colimits and pushouts</a>, applied now in the category <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">Sch</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> of schemas under a fixed protocol.</p>
 <p>The present chapter explains what the pushout identification means concretely, what it buys over git’s line-based merge, and what happens when the pushout fails to exist. The categorical treatment of merge as pushout has precedents: Mimram &amp; Giusto (<a href="../bibliography.html#mimramdigiusto2013categorical">2013</a>) develop it for textual patches, and Angiuli et al. (<a href="../bibliography.html#angiuli2014homotopical">2014</a>) give a homotopy-type-theoretic variant. What panproto’s version adds is the shift of the pushout from the category of patches or types to the category of schemas, where the engineering payoff is visible. The code lives in <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/merge/"><code>panproto_vcs::merge</code></a>.</p>
 <h2 id="the-three-way-span"><a class="header" href="#the-three-way-span">The three-way span</a></h2>

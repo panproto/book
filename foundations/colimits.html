@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
+            window.path_to_searchindex_js = "../searchindex-e0f6da2a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,6 +183,14 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="colimits-and-pushouts"><a class="header" href="#colimits-and-pushouts">Colimits and pushouts</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The coproduct of the previous chapter combined two objects without asking anything about how they might already be related. In the setting of panproto, and indeed in most settings where structured things have to be combined, that is not what one usually wants. Two schemas that both descend from a shared ancestor should combine in a way that identifies the shared piece; two protocols with a common sub-vocabulary should combine in a way that identifies the common vocabulary. The construction that handles this is the <em>pushout</em>, and the general theory it sits inside is that of <em>colimits</em>.</p>
 <p>The chapter has three tasks. The first is to define a diagram — the mathematical gadget for naming a shape of combination — and the general notion of colimit over a diagram of any shape. The second is to specialise to the three-object diagram called a span, whose colimit is the pushout. The third is to show the pushout at work in panproto, where it governs both protocol composition and the three-way merge operation at the heart of schematic version control.</p>
 <h2 id="diagrams"><a class="header" href="#diagrams">Diagrams</a></h2>

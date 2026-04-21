@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
+            window.path_to_searchindex_js = "../searchindex-e0f6da2a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,6 +183,14 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="the-restrictlift-pipeline"><a class="header" href="#the-restrictlift-pipeline">The restrict/lift pipeline</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The previous chapter handed us a compact mathematical statement: a migration is a theory morphism together with a choice of pushforward at each extension site. That sentence is exactly one step removed from what a developer sees when they use <a href="https://docs.rs/panproto-mig/latest/panproto_mig/"><code>panproto-mig</code></a>. The crate takes the mathematical object apart into five stages, each performing one sharply-defined operation, so that a migration rejected or misbehaving is rejected or misbehaving at a specific stage with a specific diagnostic.</p>
 <p>The decomposition is the whole reason the crate is not one function called <code>migrate</code>. A monolithic migrate operation can report a failure only as the collapsed state of everything at once: the engine knows <em>that</em> the migration is broken and not <em>why</em>. The five-stage pipeline, in exchange for its apparent fuss, gives the engine something to say about where the failure lies — often specific enough that the fix is one line of the migration DSL.</p>
 <p>This chapter walks through the five stages in order. The progression through them, and the kind of diagnostic each one produces when it refuses, is the main argument for why the pipeline is structured the way it is.</p>

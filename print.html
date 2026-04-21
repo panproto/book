@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-97cc0412.js";
+            window.path_to_searchindex_js = "searchindex-e0f6da2a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-899a4596.js"></script>
@@ -181,6 +181,14 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="preface"><a class="header" href="#preface">Preface</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Data outlives its schemas. Any system that stores records for more than a few months eventually faces a situation in which the records on disk were written against one shape and the code that reads them expects another, and the gap between the two has to be closed by somebody working by hand, under time pressure, without a mechanical check that the thing being done is correct. The tools most developers reach for on either side of this problem — source control on one side, serialisation formats on the other — were designed for something narrower. <a href="https://git-scm.com/">Git</a> versions byte sequences. <a href="https://protobuf.dev/">Protobuf</a>, <a href="https://avro.apache.org/">Avro</a>, and <a href="https://json-schema.org/">JSON Schema</a> describe the shape of those sequences. Neither addresses the relationship between the two, which is where things go wrong.</p>
 <p>This book presents a different way of arranging those tools. Its central claim is that the schema, the data under it, and the transformations between schema versions can all be treated as members of the same kind of mathematical object. Once the treatment is carried out, the operations one ordinarily does by hand — merging a schema change across two branches, migrating data across a schema version boundary — follow from constructions worked out carefully in a part of mathematics most working developers have not yet seen. The mathematics is the categorical treatment of generalised algebraic theories and their morphisms, due largely to Eilenberg &amp; Mac Lane (<a href="#eilenbergmaclane1945general">1945</a>), Lawvere (<a href="#lawvere1963functorial">1963</a>), and Cartmell (<a href="#cartmell1986generalised">1986</a>), applied to databases by Spivak (<a href="#spivak2012functorial">2012</a>) and Spivak &amp; Wisnesky (<a href="#spivakwisnesky2015relational">2015</a>). The software discussed in the book, panproto, is an implementation of the arrangement.</p>
 <h2 id="who-this-book-is-for"><a class="header" href="#who-this-book-is-for">Who this book is for</a></h2>
@@ -198,6 +206,14 @@
 <p>Panproto is pre-release software. Several of its subsystems are complete enough to support the worked examples of the book and would not yet stand up to production use in isolation. Feature-gated subsystems still under development are catalogued in the chapter on experimental and feature-gated subsystems. The open-problems appendix lists the places where the software is ahead of the theory we have a citation for, and the places where the theory is ahead of the software.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="a-note-on-notation"><a class="header" href="#a-note-on-notation">A note on notation</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Categories and their inhabitants are written in a standard way across the mathematical literature, and this book follows the standard without deviation.</p>
 <p>A category is written with a script capital letter: <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathcal" style="margin-right:0.05834em;">C</span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathcal" style="margin-right:0.02778em;">D</span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathcal" style="margin-right:0.08944em;">E</span></span></span></span>. Two specific categories come up often enough to earn shorter names. <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord"><span class="mord mathbf">Set</span></span></span></span></span> is the category whose objects are sets and whose morphisms are functions. <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathbf">Hask</span></span></span></span></span> is the category whose objects are Haskell types and whose morphisms are Haskell functions. Specific categories of panproto objects carry subscripts: <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">Sch</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> is the category of schemas under a protocol <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span></span></span></span>.</p>
 <p>Objects of a category are written with capital letters: <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span>. Morphisms are written with lowercase letters and an arrow: <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span> reads “<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span> is a morphism from <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span> to <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span>”. Composition is written right-to-left with a small circle: <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6389em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∘</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span> is “<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span></span></span></span> after <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span>”, and applied to an argument it computes <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">))</span></span></span></span>. The right-to-left order matches ordinary function application but disagrees with the left-to-right convention of Unix pipes and F#’s <code>&gt;&gt;</code> operator, which do not appear in this book.</p>
@@ -220,6 +236,14 @@ id x = x
 <p>Panproto-specific symbols accumulate as the book proceeds. The <a href="#notation-reference">notation reference appendix</a> collects them in one table with page references.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="what-panproto-is"><a class="header" href="#what-panproto-is">What panproto is</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A small service stores user records as JSON and keeps the schema for those records in a file called <code>user.schema.json</code>, checked into the same repository as the code. The schema declares a <code>name</code> field and an <code>email</code> field, both required. After a few months, a new requirement arrives: users should have a display name that may differ from the account name. The schema grows a <code>displayName</code> field. Old records in the database do not have a <code>displayName</code>; new records do. A developer writes a small migration script to populate the new field on the old records, and commits the script alongside the schema change.</p>
 <p>This is not unusual. Every non-trivial production system runs some version of the same sequence. The specifics vary between <a href="https://atproto.com/">ATProto</a>, <a href="https://avro.apache.org/">Apache Avro</a>, <a href="https://www.hl7.org/fhir/">FHIR</a>, Postgres DDL, and the two dozen other schema languages in wide use, but the shape is the same: a schema file is edited, a migration runs against existing data, and the system is now operating against a new schema.</p>
 <p>The ordinary tools handle the parts of this sequence they were designed for. <a href="https://git-scm.com/">Git</a> versions the schema file and the migration script as text. <a href="https://protobuf.dev/">Protobuf</a> and <a href="https://json-schema.org/">JSON Schema</a> validate records against their schemas. Database migration frameworks — Flyway, Alembic, Rails ActiveRecord migrations, the <code>schema.rb</code> pattern, the Cassandra <code>ALTER TABLE</code> DDL — sequence the script’s application against the data store.</p>
@@ -242,6 +266,14 @@ id x = x
 <p>The next chapter collects the notation the book uses; <a href="#categories">Categories</a> then begins the mathematical development.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="categories"><a class="header" href="#categories">Categories</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Most of the rest of this book can be read as commentary on a single definition, and the present chapter gives it. The definition is short enough to write down in half a page. Becoming comfortable enough with it to reason by it takes longer, and the chapter is paced for that second requirement rather than the first: the formal statement arrives after the middle, once three worked settings have built up enough familiarity that the definition lands as the name for something already seen.</p>
 <p>The concept originates with Eilenberg &amp; Mac Lane (<a href="#eilenbergmaclane1945general">1945</a>), who introduced it to organise the comparison of algebraic structures in topology. It has since become the standard vocabulary for any situation where <em>things</em> and <em>directed operations between things</em> are studied together, and has been picked up in turn by logic, algebra, programming language theory, and the theory of databases. In this book the things are schemas and the operations are the migrations that carry data from one schema to another. By the end of the chapter the words <em>thing</em>, <em>directed operation</em>, and <em>structure</em> will have been pinned down precisely enough to be usable in every later chapter.</p>
 <p>A reader who has met categories before can skim the next two sections and pick up at the category of panproto schemas. A reader who has not can expect the chapter to take about half an hour of careful reading; it is the one chapter in the book whose contents everything else depends on, and it repays a slow first pass.</p>
@@ -352,6 +384,14 @@ let m_02 = panproto_mig::compose(&amp;m_12, &amp;m_01)?;
 <p>The next chapter introduces <strong>functors</strong>, the structure-preserving maps between categories and the setting in which most of Part I’s later constructions are stated.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="functors-and-natural-transformations"><a class="header" href="#functors-and-natural-transformations">Functors and natural transformations</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The previous chapter left us with a collection of categories — <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathbf">Hask</span></span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord"><span class="mord mathbf">Set</span></span></span></span></span>, the category of panproto schemas under a fixed protocol — and no vocabulary for comparing them. The present chapter supplies that vocabulary. A functor is the right shape of map between two categories, one that moves objects to objects and morphisms to morphisms in a way that preserves composition and identity. A natural transformation is the right shape of map between two functors that share a source and a target, one that is compatible with whatever morphisms the source category provides.</p>
 <p>Both concepts are due to Eilenberg &amp; Mac Lane (<a href="#eilenbergmaclane1945general">1945</a>), who introduced natural transformations first and had to introduce functors and categories along the way to make the definition of naturality go through. For a working developer the payoff in this book is specific. Panproto’s migration engine is built around a functor sending each schema to the set of its instances and each migration to the function that lifts those instances. Bidirectional lenses are natural transformations between two such functors. Every claim the engine makes about data being preserved across a migration is a functoriality claim stated in the language we now introduce.</p>
 <h2 id="functors"><a class="header" href="#functors">Functors</a></h2>
@@ -433,6 +473,14 @@ safeHead (x:_) = Just x
 <p>The next chapter introduces <strong>universal properties</strong>, the pattern by which a categorical construction is pinned down up to isomorphism by the morphisms into or out of it.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="universal-properties"><a class="header" href="#universal-properties">Universal properties</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Any construction in a category can be specified in two ways: by saying what it <em>is</em> (the Cartesian product of two sets is a set of ordered pairs; the disjoint union is a set of tagged alternatives), or by saying how morphisms <em>into</em> or <em>out of</em> it look. The first way is concrete; the second is abstract. The abstract way turns out to be more useful, because it pins the construction down up to isomorphism without committing to any particular representation, and because a single abstract specification can be instantiated in many different categories at once. The abstract way is what we mean by a <em>universal property</em>.</p>
 <p>The present chapter develops the two smallest examples: products and coproducts. Generalisation to limits and colimits, which the next chapter covers, is immediate once the pattern of argument is clear in the small case; and essentially every construction in Parts II and V of this book will turn out to be universal.</p>
 <h2 id="products"><a class="header" href="#products">Products</a></h2>
@@ -500,6 +548,14 @@ either _ g (Right y) = g y
 <p>The next chapter develops <strong>colimits and pushouts</strong>, generalising the universal-cocone construction of this chapter to arbitrary diagrams.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="colimits-and-pushouts"><a class="header" href="#colimits-and-pushouts">Colimits and pushouts</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The coproduct of the previous chapter combined two objects without asking anything about how they might already be related. In the setting of panproto, and indeed in most settings where structured things have to be combined, that is not what one usually wants. Two schemas that both descend from a shared ancestor should combine in a way that identifies the shared piece; two protocols with a common sub-vocabulary should combine in a way that identifies the common vocabulary. The construction that handles this is the <em>pushout</em>, and the general theory it sits inside is that of <em>colimits</em>.</p>
 <p>The chapter has three tasks. The first is to define a diagram — the mathematical gadget for naming a shape of combination — and the general notion of colimit over a diagram of any shape. The second is to specialise to the three-object diagram called a span, whose colimit is the pushout. The third is to show the pushout at work in panproto, where it governs both protocol composition and the three-way merge operation at the heart of schematic version control.</p>
 <h2 id="diagrams"><a class="header" href="#diagrams">Diagrams</a></h2>
@@ -558,6 +614,14 @@ either _ g (Right y) = g y
 <p>The next chapter introduces <strong>algebraic and generalised algebraic theories</strong>, the mathematical language in which panproto writes down what a protocol is.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="algebraic-and-generalised-algebraic-theories"><a class="header" href="#algebraic-and-generalised-algebraic-theories">Algebraic and generalised algebraic theories</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Three identifications carry the technical content of panproto, and the present chapter is where each of them is made precise. A protocol is a generalised algebraic theory. A schema is a model of one. A migration is a morphism of models. The chapter has the job of making those three sentences land as mathematics rather than slogans, so that every later chapter can invoke them without further justification.</p>
 <p>The concepts we are going to use are older than panproto by decades, and most of them are older than most working programmers. Algebraic theories in the modern sense are due to Lawvere (<a href="#lawvere1963functorial">1963</a>), whose 1963 thesis reformulated the venerable notion of an algebraic structure — group, ring, vector space — as a small category with finite products, thereby making “model of a theory” mean “product-preserving functor into the category of sets”. Generalised algebraic theories, which extend Lawvere’s framework to accommodate dependent sorts, are due to Cartmell (<a href="#cartmell1978generalised">1978</a>), whose thesis gave them their first formal treatment; the more widely cited journal version is Cartmell (<a href="#cartmell1986generalised">1986</a>). What this book adds is the engineering claim that the schema languages working programmers use every day — JSON Schema, Avro, Protobuf, ATProto lexicons, SQL DDL, tree-sitter grammars — all fit in this framework, and that once they do, the migration and lens machinery of Part II applies to them uniformly. The present chapter states the mathematical side of that claim; Parts II and IV vindicate the engineering side case by case.</p>
 <p>We assume the reader has worked through <a href="#categories">Categories</a>, <a href="#functors-and-natural-transformations">Functors and natural transformations</a>, <a href="#universal-properties">Universal properties</a>, and <a href="#colimits-and-pushouts">Colimits and pushouts</a>. The present chapter leans on all four.</p>
@@ -600,6 +664,14 @@ either _ g (Right y) = g y
 <p>Part I closes here. The next chapter opens Part II with <strong>protocols as theories, schemas as instances</strong>, and translates the equation of this chapter into working Rust.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="protocols-as-theories-schemas-as-instances"><a class="header" href="#protocols-as-theories-schemas-as-instances">Protocols as theories, schemas as instances</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Part II opens here, and its job is to take the single equation stated at the end of Part I — protocol = GAT, schema = model, migration = morphism of models — and work each side of it out in enough detail that a reader can find their way from a Rust value in <code>panproto-schema</code> to the mathematical object it represents, and back again.</p>
 <p>The present chapter handles the first two identifications. A reader comfortable with the mathematics of Part I already has most of what is needed; the new material is the mapping between the mathematical vocabulary and the names of Rust types in the crate, together with a worked small protocol concrete enough to touch.</p>
 <h2 id="protocols-as-gats"><a class="header" href="#protocols-as-gats">Protocols as GATs</a></h2>
@@ -664,6 +736,14 @@ let schema = SchemaBuilder::new(&amp;protocol)
 <p>The next chapter introduces <strong>theory morphisms and instance migration</strong>, developing the third of the three identifications: migrations as morphisms of models, and the triple of functors on categories of models that a morphism of theories induces.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="theory-morphisms-and-instance-migration"><a class="header" href="#theory-morphisms-and-instance-migration">Theory morphisms and instance migration</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Every change of schema in a working system is a migration waiting to happen. Add a field and somebody has to decide what to do for the records that did not have it; rename a field and somebody has to decide how to reconcile the old name with the new; merge two schemas and somebody has to decide what the shared structure means. Doing this by hand, as most teams still do, is how production incidents begin.</p>
 <p>The central claim of this chapter, due in its categorical form to Spivak (<a href="#spivak2012functorial">2012</a>), is that every such change of schema is the pullback of a theory morphism — plus, when the change extends rather than restricts, a choice between two universal strategies for filling in what the source did not supply. The chapter unpacks the claim. Panproto’s <a href="https://docs.rs/panproto-mig/latest/panproto_mig/"><code>panproto-mig</code></a> crate is the implementation of what the claim prescribes, and the remainder of Part II shows what the implementation looks like stage by stage.</p>
 <h2 id="theory-morphisms"><a class="header" href="#theory-morphisms">Theory morphisms</a></h2>
@@ -712,6 +792,14 @@ let schema = SchemaBuilder::new(&amp;protocol)
 <p>The next chapter, <a href="#the-restrictlift-pipeline">The restrict/lift pipeline</a>, takes a <code>Migration</code> value apart into its compilation stages: existence checking, restrict, lift, compose, invert. Each stage performs one operation on the data assembled above, and the decomposition is what lets the engine diagnose failures at the earliest point a migration can be seen to go wrong.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="the-restrictlift-pipeline"><a class="header" href="#the-restrictlift-pipeline">The restrict/lift pipeline</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The previous chapter handed us a compact mathematical statement: a migration is a theory morphism together with a choice of pushforward at each extension site. That sentence is exactly one step removed from what a developer sees when they use <a href="https://docs.rs/panproto-mig/latest/panproto_mig/"><code>panproto-mig</code></a>. The crate takes the mathematical object apart into five stages, each performing one sharply-defined operation, so that a migration rejected or misbehaving is rejected or misbehaving at a specific stage with a specific diagnostic.</p>
 <p>The decomposition is the whole reason the crate is not one function called <code>migrate</code>. A monolithic migrate operation can report a failure only as the collapsed state of everything at once: the engine knows <em>that</em> the migration is broken and not <em>why</em>. The five-stage pipeline, in exchange for its apparent fuss, gives the engine something to say about where the failure lies — often specific enough that the fix is one line of the migration DSL.</p>
 <p>This chapter walks through the five stages in order. The progression through them, and the kind of diagnostic each one produces when it refuses, is the main argument for why the pipeline is structured the way it is.</p>
@@ -754,6 +842,14 @@ let schema = SchemaBuilder::new(&amp;protocol)
 <p>The next chapter turns to <a href="#bidirectional-lenses">bidirectional lenses</a>, which promote the migrations of the present chapter into paired forward–reverse transformations subject to round-trip laws.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="bidirectional-lenses"><a class="header" href="#bidirectional-lenses">Bidirectional lenses</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A lens is a disciplined way of running a transformation in both directions at once. One half, called <code>get</code>, projects a view out of a larger source. The other half, called <code>put</code>, takes a modified view together with the original source and returns a new source incorporating the modification. The discipline comes from a pair of equations, the <em>round-trip laws</em>, which force <code>put</code> to be a genuine partial inverse of <code>get</code> on the subset of data where inversion is possible.</p>
 <p>The concept originates in the programming-languages community, where lenses were introduced as the semantic foundation of the Boomerang line of research by Foster et al. (<a href="#foster2007combinators">2007</a>), whose paper “Combinators for Bidirectional Tree Transformations” is the reference most subsequent work returns to. The relational-lens variant of Bohannon et al. (<a href="#bohannonpiercevaughan2006relational">2006</a>) predates the general formulation and supplies a database-flavoured version; the broader bidirectional-transformations landscape is surveyed by Czarnecki et al. (<a href="#czarnecki2009bidirectional">2009</a>).</p>
 <p>In panproto’s setting, a migration is already half of a lens: the lift function from the previous chapter plays the role of <code>get</code>. What a lens adds is the other half, plus the round-trip laws to hold it honest. Most schema migrations do not invert exactly — they drop fields, collapse records, add data the reverse cannot unambiguously recover — and the lens formulation is the discipline that handles this reality rather than pretending it away.</p>
@@ -808,6 +904,14 @@ put x' (_, y) = (x', y)
 <p>The next chapter introduces <a href="#protolenses">protolenses</a>, dependent families of lenses that generalise the fixed-source-and-view lens of the present chapter to a family indexed by a class of schemas.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="protolenses"><a class="header" href="#protolenses">Protolenses</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The lens of the previous chapter mediates between two specific structures, a source and a view. Schema evolution in real systems rarely produces just one pair. A team that uses panproto writes many migrations, each between two versions of the same logical schema, and wants the lens machinery for the whole family rather than one pair at a time.</p>
 <p>Panproto calls a schema-indexed family of lenses a <strong>protolens</strong>. The name is specific to this book and to <a href="https://docs.rs/panproto-lens/latest/panproto_lens/"><code>panproto-lens</code></a>; the idea has partial analogues in the wider lens literature but is not, so far as we are aware, treated as a first-class object with the shape panproto gives it. The closest published work comprises the profunctor-optics formulation of Pickering et al. (<a href="#pickeringgibbonswu2017profunctor">2017</a>) and the categorical treatment of Clarke et al. (<a href="#clarke2020profunctor">2024</a>), together with the delta-lens constructions of Pacheco et al. (<a href="#pachecocunhahu2012delta">2012</a>) and Diskin et al. (<a href="#diskin2011from">2011</a>). Where panproto’s construction coincides with the published work we note the coincidence; where it appears novel we say so.</p>
 <p>Most of the mechanical work of <a href="#bidirectional-lenses">Bidirectional lenses</a> carries over pointwise, so the new material in the present chapter is the indexing, the auto-generation of protolenses from the relational structure of a theory morphism, and the cost-driven selection among implementations of a single specification.</p>
@@ -850,6 +954,14 @@ put x' (_, y) = (x', y)
 <p>The next chapter closes Part II with <a href="#protocol-colimits">protocol colimits</a>, the construction by which two protocols sharing a common sub-protocol combine into a single composite.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="protocol-colimits"><a class="header" href="#protocol-colimits">Protocol colimits</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Two protocols that share a common sub-protocol combine by pushout in the category of GATs. The composite protocol has every sort and operation of both factors, with sorts and operations in the shared sub-protocol identified along the inclusions. The construction is the same pushout from <a href="#colimits-and-pushouts">Colimits and pushouts</a>, applied to a different category.</p>
 <p>The chapter has little new mathematics to add beyond that observation. What it owes the reader is a concrete sense of the construction at work on protocols panproto ships, and an honest account of what the universal property buys a developer combining protocols in practice.</p>
 <h2 id="pushouts-of-protocols"><a class="header" href="#pushouts-of-protocols">Pushouts of protocols</a></h2>
@@ -887,6 +999,14 @@ put x' (_, y) = (x', y)
 <p>Part II ends here. Part III opens with the expression language the engine uses when a migration needs to compute a value that depends on the contents of a record.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="syntax-and-semantics"><a class="header" href="#syntax-and-semantics">Syntax and semantics</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The migrations of Part II are built around a theory morphism and a choice of pushforward at each extension site. The pushforward is where the engine needs a small programming language: an expression that, given the values visible at a site of the source instance, produces the value required at the target — a default, a computed field, a transformation of an existing value. Part III is about the language in which those expressions are written.</p>
 <p>The language, called <a href="https://docs.rs/panproto-expr/latest/panproto_expr/"><code>panproto-expr</code></a>, is a typed lambda calculus extended with records, lists, pattern matching, and around fifty builtin operations on strings, numbers, collections, and panproto schemas. It is pure, total, deterministic, and serialisable — four properties the engine depends on and which the next two chapters argue for at length. The surface syntax is Haskell-flavoured, not because of a preference for Haskell as such but because a migration expression is usually short, and the Haskell surface is the most compact idiom that still reads as code.</p>
 <h2 id="grammar"><a class="header" href="#grammar">Grammar</a></h2>
@@ -948,6 +1068,14 @@ put x' (_, y) = (x', y)
 <p>The next chapter introduces the step and depth limits the evaluator enforces, and explains what they buy and what they cost.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="totality-and-termination"><a class="header" href="#totality-and-termination">Totality and termination</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The language of the previous chapter is a small typed lambda calculus. Nothing in the definition so far prevents a well-typed term from running for a very long time, or from consuming an amount of memory that embarrasses the machine it is running on. For an engine that embeds user-written expressions and runs them against millions of records, that is not acceptable; before a migration touches production data the engine has to know, with some confidence, that every expression in the migration will terminate within a known budget.</p>
 <p>The mechanism that provides this confidence is two resource limits: a <strong>step limit</strong> on the number of reduction steps any one evaluation may take, and a <strong>depth limit</strong> on the nesting of active calls. Together, the two limits make every well-typed evaluation terminate, produce a unique outcome, and fit inside a serialisable record that can be replayed across processes. The present chapter explains the limits, the guarantees they purchase, and the trade-offs they impose; the trade-offs against a Turing-complete alternative are the subject of the next chapter.</p>
 <h2 id="the-two-limits"><a class="header" href="#the-two-limits">The two limits</a></h2>
@@ -977,6 +1105,14 @@ put x' (_, y) = (x', y)
 <p>The next chapter situates the totality guarantees developed here against the main alternatives — Starlark, Dhall, Nickel, CUE — and explains why the engine needs this particular combination rather than one of the nearby options.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="why-bounded-pure-evaluation"><a class="header" href="#why-bounded-pure-evaluation">Why bounded pure evaluation</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Every choice of DSL in a system as opinionated as panproto invites the question of whether an existing language would have served. The question has a specific answer, and this chapter gives it.</p>
 <p>The short version: panproto needs a language that is pure, bounded, deterministic, serialisable, and capable of pattern-matching over panproto’s own schema-indexed types, and no existing candidate satisfies all five. The chapter walks through the requirements, the four closest candidates — Starlark, Dhall, Nickel, CUE — and what each one gives up at the boundary that turned out to matter.</p>
 <h2 id="the-five-requirements"><a class="header" href="#the-five-requirements">The five requirements</a></h2>
@@ -1009,6 +1145,14 @@ put x' (_, y) = (x', y)
 <p>Part IV opens with <a href="#defining-a-protocol">Defining a protocol</a>, which catalogues the specific protocols panproto supports and shows how each fits the framework of Part II.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="defining-a-protocol"><a class="header" href="#defining-a-protocol">Defining a protocol</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Part IV is where the framework of Part II meets the protocols panproto ships with. The remaining chapters in the part work through specific cases — ATProto, Avro, a relational case study, FHIR, and the tree-sitter-derived protocols — each one an instance of the constructions developed abstractly earlier. The present chapter is the template those cases instantiate: what a protocol registration looks like in Rust, and what obligations the registration imposes on its parser and emitter.</p>
 <p>A reader who has followed <a href="#protocols-as-theories-schemas-as-instances">Protocols as theories, schemas as instances</a> has seen the theoretical content. The present chapter concentrates on what the Rust code actually does.</p>
 <h2 id="what-a-protocol-supplies"><a class="header" href="#what-a-protocol-supplies">What a protocol supplies</a></h2>
@@ -1052,6 +1196,14 @@ register(protocol);
 <p>The remaining chapters of Part IV document the shipped protocols: <a href="#atproto-lexicons">ATProto lexicons</a>, <a href="#apache-avro-schema-evolution-as-migration">Apache Avro</a>, <a href="#a-relational-case-study">a relational case study</a>, and <a href="#fhir-as-a-document-case-study">FHIR as a document case study</a>. A separate chapter on <a href="#tree-sitter-and-full-ast-parsing">tree-sitter and full-AST parsing</a> explains how programming-language protocols are derived from grammars rather than written by hand.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="atproto-lexicons"><a class="header" href="#atproto-lexicons">ATProto lexicons</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The protocol underlying <a href="https://bsky.app/">Bluesky</a> and the wider AT network is called <a href="https://atproto.com/">ATProto</a>, and the schemas under it are written in a language called <a href="https://atproto.com/specs/lexicon">Lexicon</a>: JSON documents declaring record types, their fields, and the constraints the fields must satisfy. Reading the Lexicon specification and implementing a protocol for it in panproto was an interesting exercise because Lexicon leaves rather a lot to convention. Where most serialisation formats have formal rules for schema evolution, Lexicon has a specification that is less formal than those rules would like it to be and more formal than a casual reader might expect. The translation panproto performs has to absorb the informality into explicit equations, and the chapter is about where the translation is clean and where it is not.</p>
 <p>The code lives in <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/web_document/atproto/"><code>panproto_protocols::web_document::atproto</code></a>; the mathematical background lives in <a href="#protocols-as-theories-schemas-as-instances">Protocols as theories, schemas as instances</a> and <a href="#algebraic-and-generalised-algebraic-theories">Algebraic and generalised algebraic theories</a>.</p>
 <h2 id="what-a-lexicon-is"><a class="header" href="#what-a-lexicon-is">What a lexicon is</a></h2>
@@ -1083,6 +1235,14 @@ register(protocol);
 <p>The next chapter turns to Apache Avro, whose schema-evolution rules are specified formally enough to map onto panproto’s migration primitives without the informalities Lexicon forces.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="apache-avro-schema-evolution-as-migration"><a class="header" href="#apache-avro-schema-evolution-as-migration">Apache Avro: schema evolution as migration</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Avro gets schema evolution right in a way few serialisation formats manage, and the rules it states are precise enough to translate directly into panproto’s migration framework. A reader version of a schema is allowed to consume data written under a writer version of the schema when the two versions agree on a small number of concrete rules: which field additions are backward-compatible, which removals are forward-compatible, which type changes cross the compatibility line in each direction. The whole thing is documented. The present chapter works through the rules and shows what each one becomes on the migration side.</p>
 <p>Avro is the second of the chapter’s two comparisons with the previous one on ATProto. Where ATProto’s Lexicon specification leaves schema evolution largely to convention, Avro fixes it. The translation into panproto’s framework is correspondingly sharper, and it is worth seeing how sharp it can be when a specification cooperates.</p>
 <p>The Rust code is in <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/serialization/avro/"><code>panproto_protocols::serialization::avro</code></a>.</p>
@@ -1108,6 +1268,14 @@ register(protocol);
 <p>The next chapter, <a href="#a-relational-case-study">A relational case study</a>, works through a different protocol family: relational database schemas, where the category-theoretic content is larger (the relational model is closer to Spivak’s original categorical-database treatment) and the migration primitives are denser.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="a-relational-case-study"><a class="header" href="#a-relational-case-study">A relational case study</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The relational model is the setting closest to the original categorical-database treatment of Spivak, and the reason is historical: Spivak’s framework was developed as a categorical reformulation of Codd (<a href="#codd1970relational">1970</a>)’s work, which means the translation from relational schemas into panproto’s framework is the least lossy of any protocol family in Part IV. A relational schema is already a small category with finite products, and an instance is already a product-preserving functor into <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord"><span class="mord mathbf">Set</span></span></span></span></span>. Panproto’s relational protocols follow this tradition, and the present chapter walks through what the translation actually looks like, using <a href="https://cassandra.apache.org/">Apache Cassandra</a> and a subset of SQL as the concrete cases.</p>
 <p>The code lives in <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/database/"><code>panproto_protocols::database</code></a>.</p>
 <h2 id="what-a-relational-schema-is"><a class="header" href="#what-a-relational-schema-is">What a relational schema is</a></h2>
@@ -1133,6 +1301,14 @@ register(protocol);
 <p>The next chapter turns to <a href="#fhir-as-a-document-case-study">FHIR as a document case study</a>. FHIR stresses the representation in a different direction from the relational protocols here: its schemas are deeply nested, heavily constrained, and versioned irregularly. Panproto handles it through the same mechanisms Parts II and III developed, but the specific translation choices are worth tracing in detail.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="fhir-as-a-document-case-study"><a class="header" href="#fhir-as-a-document-case-study">FHIR as a document case study</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Fast Healthcare Interoperability Resources — <a href="https://www.hl7.org/fhir/">FHIR</a>, in practice — is HL7’s standard for exchanging healthcare records, and it is the schema language that gives panproto’s framework the hardest workout of anything in Part IV. Where relational schemas are flat and constraints are few, FHIR’s schemas are JSON or XML documents with arbitrary-depth nesting, elaborate cardinality constraints, terminology bindings, and conformance profiles that layer on top of base resources to narrow their constraints further. The versioning cadence (R4, R4B, R5, R6) is regular and not always backward-compatible. A schema language stressing a framework like this is a good test of whether the framework can take the weight.</p>
 <p>The code is in <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/domain/fhir/"><code>panproto_protocols::domain::fhir</code></a>.</p>
 <h2 id="what-a-fhir-resource-looks-like"><a class="header" href="#what-a-fhir-resource-looks-like">What a FHIR resource looks like</a></h2>
@@ -1155,6 +1331,14 @@ register(protocol);
 <p>The next chapter, <a href="#tree-sitter-and-full-ast-parsing">Tree-sitter and full-AST parsing</a>, closes Part IV with the auto-derivation mechanism: how panproto produces protocols from <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a> grammars for the 248 programming languages that do not have hand-written protocol definitions.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="tree-sitter-and-full-ast-parsing"><a class="header" href="#tree-sitter-and-full-ast-parsing">Tree-sitter and full-AST parsing</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Writing a protocol by hand for every programming language one might reasonably want to parse is not a serious proposal. Two hundred and forty-eight languages ship with panproto, and we did not hand-write them. They come from <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a> grammars, through a mechanical translation that turns a grammar’s node-type metadata into a GAT and a parser. The present chapter explains the translation, what the resulting theories can and cannot express about the language they describe, and when a hand-written upgrade is worth the effort.</p>
 <p>Tree-sitter itself is due to Brunsfeld (<a href="#brunsfeld2018treesitter">2018</a>). Its incremental-parsing algorithm descends from Wagner &amp; Graham (<a href="#wagnergraham1998efficient">1998</a>), and its parsing-expression-grammar support from the packrat-parsing tradition of Ford (<a href="#ford2002packrat">2002</a>).</p>
 <p>The code is in <a href="https://docs.rs/panproto-parse/latest/panproto_parse/"><code>panproto-parse</code></a> for the derivation logic and <a href="https://docs.rs/panproto-grammars/latest/panproto_grammars/"><code>panproto-grammars</code></a> for the bundled tree-sitter grammars.</p>
@@ -1183,6 +1367,14 @@ register(protocol);
 <p>Part IV ends with this chapter. Part V turns to <a href="#what-git-already-versions-and-what-it-does-not">version control</a> and applies Part II’s constructions to a new category: schemas under a fixed protocol rather than protocols themselves.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="what-git-already-versions-and-what-it-does-not"><a class="header" href="#what-git-already-versions-and-what-it-does-not">What git already versions and what it does not</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Nearly every team that writes software uses <a href="https://git-scm.com/">git</a>, and nearly every such team uses it for the same purpose: versioning the bytes of a source tree, across branches, across time. The internal object model is simple enough that a reader who has never looked inside git is usually surprised at how cleanly it is constructed, and the present chapter lays it out precisely enough to show what git is versioning and what it is not. The gap between those two — what git actually tracks and what a production system often wants tracked — is what the rest of Part V sets out to fill.</p>
 <p>Readers familiar with git’s Merkle DAG can skim the first two sections and pick up where the gap is stated. For the deeper account of git’s internals, Chacon &amp; Straub (<a href="#chaconstraub2014pro">2014</a>) is canonical.</p>
 <h2 id="the-three-kinds-of-object"><a class="header" href="#the-three-kinds-of-object">The three kinds of object</a></h2>
@@ -1210,6 +1402,14 @@ register(protocol);
 <p>The next chapter, <a href="#objects-refs-and-the-dag">Objects, refs, and the DAG</a>, specifies panproto-vcs’s object types, its hashing scheme, its storage backends, and the reference structure around them. It is the chapter to read alongside <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/object/"><code>panproto_vcs::object</code></a>, <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/store/"><code>panproto_vcs::store</code></a>, and <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/dag/"><code>panproto_vcs::dag</code></a> for a working understanding of the implementation.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="objects-refs-and-the-dag"><a class="header" href="#objects-refs-and-the-dag">Objects, refs, and the DAG</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The object database panproto-vcs sits on top of is a Merkle DAG of content-addressed objects, referenced by refs, in the same overall shape as git’s. What differs is the set of object types stored. Where git has three — blob, tree, commit — panproto-vcs has seven, four of which are the new object kinds that carry the schemas, migrations, instances, and protocol definitions the engine uses to track interpretation alongside bytes. The present chapter specifies the seven types, the hashing, the two storage backends, and the ref structure.</p>
 <p>The code lives in <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/"><code>panproto-vcs</code></a>.</p>
 <h2 id="object-types"><a class="header" href="#object-types">Object types</a></h2>
@@ -1241,6 +1441,14 @@ register(protocol);
 <p>The next chapter, <a href="#merge-as-pushout">Merge as pushout</a>, takes the three-way-merge algorithm apart and shows that it is a pushout in the category of schemas (<a href="#colimits-and-pushouts">Colimits and pushouts</a> is the mathematical reference). The chapter after that, <a href="#data-versioning">Data versioning</a>, works through how panproto-vcs automatically infers migrations from schema diffs and lifts instance data across version boundaries.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="merge-as-pushout"><a class="header" href="#merge-as-pushout">Merge as pushout</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A three-way merge in a version-control system is, at heart, a reconciliation of two parallel edits against a common ancestor. Git carries out this reconciliation at the level of bytes, which works when the bytes are what the team cares about and falls apart when the bytes are interpreted as something richer. Panproto-vcs performs the same reconciliation at the level of schemas, and the construction it uses is the pushout of <a href="#colimits-and-pushouts">Colimits and pushouts</a>, applied now in the category <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">Sch</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> of schemas under a fixed protocol.</p>
 <p>The present chapter explains what the pushout identification means concretely, what it buys over git’s line-based merge, and what happens when the pushout fails to exist. The categorical treatment of merge as pushout has precedents: Mimram &amp; Giusto (<a href="#mimramdigiusto2013categorical">2013</a>) develop it for textual patches, and Angiuli et al. (<a href="#angiuli2014homotopical">2014</a>) give a homotopy-type-theoretic variant. What panproto’s version adds is the shift of the pushout from the category of patches or types to the category of schemas, where the engineering payoff is visible. The code lives in <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/merge/"><code>panproto_vcs::merge</code></a>.</p>
 <h2 id="the-three-way-span"><a class="header" href="#the-three-way-span">The three-way span</a></h2>
@@ -1268,6 +1476,14 @@ where <span class="katex"><span class="katex-html" aria-hidden="true"><span clas
 <p>The next chapter, <a href="#data-versioning">Data versioning</a>, works through the counterpart on the data side: how panproto-vcs automatically infers a migration between two schema versions without an explicit migration declaration, and how the inferred migration interacts with the lift operations described above.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="data-versioning"><a class="header" href="#data-versioning">Data versioning</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A schema change in a panproto-vcs commit leaves the data stored under the old schema stranded until something carries it across. The construction that does the carrying is a migration, in the sense Part II developed, and in most cases the migration is uniquely determined or almost uniquely determined by the diff between the two schemas. Panproto-vcs’s auto-migration infrastructure exploits this to produce the migration without asking the user to declare it. The present chapter walks through the inference, the cases it handles, and the cases it refuses.</p>
 <p>The code is split between <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/auto_mig/"><code>panproto_vcs::auto_mig</code></a> for the inference and <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/data_mig/"><code>panproto_vcs::data_mig</code></a> for its application to stored data.</p>
 <h2 id="when-auto-migration-is-invoked"><a class="header" href="#when-auto-migration-is-invoked">When auto-migration is invoked</a></h2>
@@ -1294,6 +1510,14 @@ where <span class="katex"><span class="katex-html" aria-hidden="true"><span clas
 <p>The next chapter, <a href="#the-git-bridge">The git bridge</a>, covers the interop layer between panproto-vcs and git: how a panproto-vcs repository can be pushed to and pulled from an ordinary git remote, what is preserved on the round trip, and when the two representations diverge.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="the-git-bridge"><a class="header" href="#the-git-bridge">The git bridge</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A version-control system adopted by a team has to fit into the tooling that team already uses, and for most teams today that means git. A panproto-vcs repository under active development needs to be pushable to a GitHub or GitLab remote running ordinary git, reviewable through git-aware tooling, and pullable back into a panproto-vcs working copy afterwards without losing the schema-level history the push and the review cannot carry. The bridge that makes this work is the subject of the present chapter: <a href="https://docs.rs/panproto-git/latest/panproto_git/"><code>panproto-git</code></a> supplies the bidirectional translation of repository state, and the <a href="https://docs.rs/panproto-git-remote/latest/panproto_git_remote/"><code>panproto-git-remote</code></a> helper — installed as <code>git-remote-panproto</code> — lets git itself speak to a panproto-vcs remote through <code>git push</code> and <code>git fetch</code>.</p>
 <h2 id="two-translations"><a class="header" href="#two-translations">Two translations</a></h2>
 <p>The bridge performs two translations. The <em>import</em> translation takes a git repository (either local or fetched from a remote) and produces a panproto-vcs repository whose object database includes every git commit as a panproto-vcs commit, every git tree as a panproto-vcs tree, and every git blob as a panproto-vcs blob. Schemas, migrations, and instances the git repository did not encode remain absent; an imported git history is an ordinary byte-tree history, not a panproto-enhanced one.</p>
@@ -1320,6 +1544,14 @@ where <span class="katex"><span class="katex-html" aria-hidden="true"><span clas
 <p>Part V ends with this chapter. Part VI turns to the operational layer: the <a href="#the-webassembly-boundary">WebAssembly boundary</a> through which every non-Rust client interacts with panproto, the <a href="#the-rust-sdk">Rust SDK</a>, the <a href="#the-typescript-sdk">TypeScript SDK</a>, the <a href="#the-python-sdk">Python SDK</a>, and the <a href="#the-cli">CLI</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="the-webassembly-boundary"><a class="header" href="#the-webassembly-boundary">The WebAssembly boundary</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The engine is written in Rust, and the non-Rust clients — the TypeScript SDK for browsers and Node, the browser-side of the Python SDK that has since been deprecated in favour of native wheels — cannot share memory with Rust or respect Rust’s ownership discipline from the outside. What they can do is call into a <a href="https://webassembly.org/">WebAssembly</a> module (<a href="#haas2017bringing">Haas et al. 2017</a>) that holds the Rust values internally and exposes a small API that exchanges opaque handles and serialised data. The module is <a href="https://docs.rs/panproto-wasm/latest/panproto_wasm/"><code>panproto-wasm</code></a>, built with <a href="https://rustwasm.github.io/wasm-bindgen/"><code>wasm-bindgen</code></a>. The present chapter explains the shape of the API and the reasons it takes the shape it does.</p>
 <h2 id="handles-not-pointers"><a class="header" href="#handles-not-pointers">Handles, not pointers</a></h2>
 <p>Rust types like <a href="https://docs.rs/panproto-schema/latest/panproto_schema/schema/struct.Schema.html"><code>Schema</code></a> and <a href="https://docs.rs/panproto-mig/latest/panproto_mig/migration/struct.Migration.html"><code>Migration</code></a> carry internal references, lifetimes, and non-trivial invariants. Exposing them directly to a non-Rust caller would require the caller to respect Rust’s ownership discipline from outside Rust, which is not a contract WebAssembly can enforce.</p>
@@ -1343,6 +1575,14 @@ where <span class="katex"><span class="katex-html" aria-hidden="true"><span clas
 <p>The next chapter, <a href="#the-rust-sdk">the Rust SDK</a>, turns to the cross-language core: <a href="https://docs.rs/panproto-core/latest/panproto_core/"><code>panproto-core</code></a>, the facade crate that re-exports every subsystem’s public API and gates the optional ones behind Cargo features.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="the-rust-sdk"><a class="header" href="#the-rust-sdk">The Rust SDK</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A working Rust project using panproto depends on one crate, <a href="https://docs.rs/panproto-core/latest/panproto_core/"><code>panproto-core</code></a>, and gets a facade that re-exports every subsystem worth using from one place. The present chapter is a working guide to the facade — what it exposes, what the feature flags gate, and what idioms recur in code written against it. Readers familiar with panproto’s architecture from Parts II and V will find it short.</p>
 <h2 id="the-facade"><a class="header" href="#the-facade">The facade</a></h2>
 <p><a href="https://docs.rs/panproto-core/latest/panproto_core/"><code>panproto-core</code></a> depends on and re-exports the major panproto subsystems: <a href="https://docs.rs/panproto-gat/latest/panproto_gat/"><code>panproto-gat</code></a> for theories, <a href="https://docs.rs/panproto-schema/latest/panproto_schema/"><code>panproto-schema</code></a> for schemas, <a href="https://docs.rs/panproto-inst/latest/panproto_inst/"><code>panproto-inst</code></a> for instances, <a href="https://docs.rs/panproto-mig/latest/panproto_mig/"><code>panproto-mig</code></a> for migrations, <a href="https://docs.rs/panproto-lens/latest/panproto_lens/"><code>panproto-lens</code></a> for bidirectional transformations, <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/"><code>panproto-protocols</code></a> for the registered protocols, and <a href="https://docs.rs/panproto-expr/latest/panproto_expr/"><code>panproto-expr</code></a> for the expression language. A <code>use panproto_core::prelude::*;</code> at the top of a file imports the most commonly used types in a form ready for working code.</p>
@@ -1375,6 +1615,14 @@ panproto-core = { version = "0.32", features = ["parse", "git"] }
 <p>The next chapter, <a href="#the-typescript-sdk">the TypeScript SDK</a>, walks through the wrapper layer that runs on top of the WASM boundary for browser and Node callers. The two chapters after that cover the <a href="#the-python-sdk">Python SDK</a> and the <a href="#the-cli">CLI</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="the-typescript-sdk"><a class="header" href="#the-typescript-sdk">The TypeScript SDK</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>The TypeScript SDK, published on npm as <a href="https://www.npmjs.com/package/@panproto/core"><code>@panproto/core</code></a>, wraps the WebAssembly boundary developed in <a href="#the-webassembly-boundary">the previous chapter</a> in a typed, ergonomic API for JavaScript and TypeScript callers. What the wrapping adds is threefold: ordinary JavaScript object lifetimes instead of manual handle management; MessagePack serialisation hidden inside method calls rather than exposed at the API level; and a fluent builder API that bundles the many discrete WASM calls of schema and migration construction into a single round-trip.</p>
 <p>The source lives in <code>sdk/typescript/</code> in the panproto repository.</p>
 <h2 id="initialisation"><a class="header" href="#initialisation">Initialisation</a></h2>
@@ -1419,6 +1667,14 @@ const schema = await Schema.fromLexicon(lexiconJson);
 <p>The next chapter, <a href="#the-python-sdk">the Python SDK</a>, covers the analogous wrapper for Python. Since panproto ships native PyO3 wheels (the pure-Python WASM-backed SDK having been deprecated), the Python story differs from the TypeScript one in several ways worth spelling out.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="the-python-sdk"><a class="header" href="#the-python-sdk">The Python SDK</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A Python caller reaching panproto uses a native <a href="https://pyo3.rs/">PyO3</a> wheel, which binds the Rust implementation directly into the CPython process rather than going through the WebAssembly module the TypeScript SDK uses. The choice is a recent one. An earlier pure-Python SDK wrapped <code>panproto-wasm</code> and went through MessagePack on every call; it is deprecated, and the <code>panproto</code> package on <a href="https://pypi.org/">PyPI</a> is the native build. The present chapter covers the native SDK and says briefly why the earlier approach was abandoned.</p>
 <p>The source lives in <code>crates/panproto-py/</code> on the Rust side and <code>sdk/python/</code> on the Python side.</p>
 <h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
@@ -1465,6 +1721,14 @@ except PanprotoError as e:
 <p>The next chapter, <a href="#the-cli">the CLI</a>, covers the <code>schema</code> command-line tool built on top of <a href="https://docs.rs/panproto-cli/latest/panproto_cli/"><code>panproto-cli</code></a>. The CLI is the highest-level interface panproto ships and is where a first-time user typically begins.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="the-cli"><a class="header" href="#the-cli">The CLI</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Most first-time users of panproto encounter it through the <code>schema</code> command — a single binary built from <a href="https://docs.rs/panproto-cli/latest/panproto_cli/"><code>panproto-cli</code></a> that exposes the engine’s operations as subcommands, covering the same ground the SDKs of the previous chapters cover programmatically. The present chapter is a reference for the subcommand surface, organised by workflow rather than alphabetically.</p>
 <h2 id="installation-1"><a class="header" href="#installation-1">Installation</a></h2>
 <p>The binary is installed through <code>cargo install</code>:</p>
@@ -1509,6 +1773,14 @@ schema convert --from avro-data --to protobuf-data --with schema-map.ncl data.av
 <p>The next chapter opens Part VII, which is for contributors. It starts with the <a href="#workspace-layout">workspace layout</a>, then covers the <a href="#ci-semver-checks-and-release">CI pipeline</a>, <a href="#extending-panproto">how to extend panproto with a new protocol or lens combinator</a>, and the <a href="#experimental-and-feature-gated-subsystems">experimental and feature-gated subsystems</a> the main chapters have gestured at.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="workspace-layout"><a class="header" href="#workspace-layout">Workspace layout</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Twenty-five crates live in panproto’s Cargo workspace, organised across six layers: foundations, transformation, infrastructure, protocols and auxiliary tooling, SDK bindings, and experimental extensions. The layering is strict — no crate depends on anything strictly above it — and a contributor working on panproto will want to know which layer their crate belongs to before writing their first patch.</p>
 <p>The root workspace manifest is <code>Cargo.toml</code> at the repository root; the individual crates are under <code>crates/</code>. The non-Rust packages — the TypeScript SDK and the Python SDK’s Python-side code — live under <code>sdk/typescript/</code> and <code>sdk/python/</code>.</p>
 <h2 id="the-layers"><a class="header" href="#the-layers">The layers</a></h2>
@@ -1530,6 +1802,14 @@ schema convert --from avro-data --to protobuf-data --with schema-map.ncl data.av
 <p>The next chapter, <a href="#ci-semver-checks-and-release">CI, semver-checks, and release</a>, covers the pipeline that runs against every commit and release, and the invariants it enforces.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="ci-semver-checks-and-release"><a class="header" href="#ci-semver-checks-and-release">CI, semver-checks, and release</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Every commit to panproto’s main branch runs through a CI pipeline whose job is to catch regressions before they land — across formatting, lints, tests, documentation, semver compatibility, and the workspace-hack invariant. The present chapter walks through each check, says why it exists, and gives the local command a contributor can run to reproduce it before pushing.</p>
 <p>The pipeline definition lives in <code>.github/workflows/ci.yml</code>.</p>
 <h2 id="the-checks"><a class="header" href="#the-checks">The checks</a></h2>
@@ -1552,6 +1832,14 @@ schema convert --from avro-data --to protobuf-data --with schema-map.ncl data.av
 <p>The next chapter, <a href="#extending-panproto">Extending panproto</a>, walks through the three most common contributions: a new protocol, a new lens combinator, and a new expression-language builtin. Each has a specific shape that the crate structure documented here encourages.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="extending-panproto"><a class="header" href="#extending-panproto">Extending panproto</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A contributor writing new code for panproto is usually doing one of three things: adding support for a data format or schema language the engine does not yet know, adding a transformation shape the lens library does not yet offer, or adding a small computation the expression language needs but cannot express with its existing builtins. The present chapter walks through each case end-to-end.</p>
 <h2 id="a-new-protocol"><a class="header" href="#a-new-protocol">A new protocol</a></h2>
 <p>Adding a protocol is the most common contribution and follows a predictable shape. The contributor starts by identifying the protocol’s category (serialisation, database, document, or domain) and the subdirectory of <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/"><code>panproto-protocols</code></a> that houses it. A new file under that subdirectory collects the four artefacts the protocol supplies (<a href="#defining-a-protocol">the GAT, the parser, the emitter, the registry entry</a>) and a <code>mod.rs</code> update adds the file to the crate’s module tree.</p>
@@ -1582,6 +1870,14 @@ schema convert --from avro-data --to protobuf-data --with schema-map.ncl data.av
 <p>The final chapter of Part VII, <a href="#experimental-and-feature-gated-subsystems">Experimental and feature-gated subsystems</a>, covers the subsystems that are in the workspace but have not yet stabilised. A contributor whose extension falls into one of those subsystems should read that chapter before proceeding.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="experimental-and-feature-gated-subsystems"><a class="header" href="#experimental-and-feature-gated-subsystems">Experimental and feature-gated subsystems</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Not every crate in the workspace is production-ready. Three are feature-gated and marked experimental — <a href="https://docs.rs/panproto-llvm/latest/panproto_llvm/"><code>panproto-llvm</code></a>, <a href="https://docs.rs/panproto-jit/latest/panproto_jit/"><code>panproto-jit</code></a>, and <a href="https://docs.rs/panproto-xrpc/latest/panproto_xrpc/"><code>panproto-xrpc</code></a> — for reasons specific to each: an LLVM installation is a substantial dependency, the JIT compiler is promising but still incomplete, and the XRPC remote-repository support is not yet stable across registry differences. The present chapter describes each crate, says where it is currently reliable, and names the acceptance criteria for promoting it to the stable default-on configuration. A contributor working in any of them should treat the API surface as subject to change between minor versions.</p>
 <h2 id="panproto-llvm"><a class="header" href="#panproto-llvm">panproto-llvm</a></h2>
 <p><a href="https://docs.rs/panproto-llvm/latest/panproto_llvm/"><code>panproto-llvm</code></a> registers <a href="https://llvm.org/">LLVM</a> IR as a panproto protocol: a theory whose sorts are LLVM IR’s kinds (modules, functions, basic blocks, instructions, types), whose operations are the structural accessors of those kinds, and whose equations encode LLVM’s well-formedness conditions. A schema under this protocol is an LLVM module’s structure at the theory level, and a migration is a structural transformation of the module (rename an intrinsic, reorganise a function’s control flow, add a pass’s effect to the module’s metadata).</p>
@@ -1607,6 +1903,14 @@ schema convert --from avro-data --to protobuf-data --with schema-map.ncl data.av
 <p>Part VII ends with this chapter. The appendices that follow contain a <a href="#notation-reference">notation reference</a>, a <a href="#glossary">glossary</a>, and an <a href="#open-problems">open-problems list</a> covering places where panproto’s implementation or the book’s mathematical account is ahead of the other.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="notation-reference"><a class="header" href="#notation-reference">Notation reference</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A lookup for the non-standard symbols and typographic conventions used in the book. The table lists each symbol, its meaning, and the chapter in which it is introduced.</p>
 <h2 id="categorical-notation"><a class="header" href="#categorical-notation">Categorical notation</a></h2>
 <div class="table-wrapper">
@@ -1689,6 +1993,14 @@ schema convert --from avro-data --to protobuf-data --with schema-map.ncl data.av
 <p>Citations follow Pandoc syntax rendered by <a href="https://github.com/francisco-perez-sorrosal/mdbook-bib"><code>mdbook-bib</code></a> in Chicago author-date style. Inline: <code>@key</code> for textual (“Smith 2010”), <code>[@key]</code> for parenthetical (“(Smith 2010)”), <code>[-@key]</code> for year only. Every cited work has a BibTeX entry in <code>book/src/references.bib</code>.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="glossary"><a class="header" href="#glossary">Glossary</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A glossary of defined terms used in more than one chapter, with back-links to the chapter that introduces each.</p>
 <p><strong>arrow.</strong> Synonym for <em>morphism</em>. Used more often when drawing diagrams. <a href="#categories">Categories</a>.</p>
 <p><strong>asymmetric lens.</strong> A lens whose source is larger than its view, with a <code>put</code> function that takes the old source as an argument to preserve data outside the view. <a href="#bidirectional-lenses">Bidirectional lenses</a>.</p>
@@ -1731,6 +2043,14 @@ schema convert --from avro-data --to protobuf-data --with schema-map.ncl data.av
 <p><strong>WASM boundary.</strong> The opaque-handle, MessagePack-serialised boundary between panproto’s Rust core and its non-Rust clients. <a href="#the-webassembly-boundary">The WebAssembly boundary</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="open-problems"><a class="header" href="#open-problems">Open problems</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A list of questions where panproto’s implementation and the book’s mathematical account are not yet in full agreement, or where we do not know of prior work on a topic panproto addresses. Each entry names the question, the current state, and what would count as progress.</p>
 <h2 id="where-we-dont-know-of-prior-work"><a class="header" href="#where-we-dont-know-of-prior-work">Where we don’t know of prior work</a></h2>
 <h3 id="protolenses-as-a-first-class-abstraction"><a class="header" href="#protolenses-as-a-first-class-abstraction">Protolenses as a first-class abstraction</a></h3>

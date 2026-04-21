@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
+            window.path_to_searchindex_js = "../searchindex-e0f6da2a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,6 +183,14 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="tree-sitter-and-full-ast-parsing"><a class="header" href="#tree-sitter-and-full-ast-parsing">Tree-sitter and full-AST parsing</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>Writing a protocol by hand for every programming language one might reasonably want to parse is not a serious proposal. Two hundred and forty-eight languages ship with panproto, and we did not hand-write them. They come from <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a> grammars, through a mechanical translation that turns a grammar’s node-type metadata into a GAT and a parser. The present chapter explains the translation, what the resulting theories can and cannot express about the language they describe, and when a hand-written upgrade is worth the effort.</p>
 <p>Tree-sitter itself is due to Brunsfeld (<a href="../bibliography.html#brunsfeld2018treesitter">2018</a>). Its incremental-parsing algorithm descends from Wagner &amp; Graham (<a href="../bibliography.html#wagnergraham1998efficient">1998</a>), and its parsing-expression-grammar support from the packrat-parsing tradition of Ford (<a href="../bibliography.html#ford2002packrat">2002</a>).</p>
 <p>The code is in <a href="https://docs.rs/panproto-parse/latest/panproto_parse/"><code>panproto-parse</code></a> for the derivation logic and <a href="https://docs.rs/panproto-grammars/latest/panproto_grammars/"><code>panproto-grammars</code></a> for the bundled tree-sitter grammars.</p>

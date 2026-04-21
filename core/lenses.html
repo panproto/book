@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-97cc0412.js";
+            window.path_to_searchindex_js = "../searchindex-e0f6da2a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-899a4596.js"></script>
@@ -183,6 +183,14 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="bidirectional-lenses"><a class="header" href="#bidirectional-lenses">Bidirectional lenses</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
 <p>A lens is a disciplined way of running a transformation in both directions at once. One half, called <code>get</code>, projects a view out of a larger source. The other half, called <code>put</code>, takes a modified view together with the original source and returns a new source incorporating the modification. The discipline comes from a pair of equations, the <em>round-trip laws</em>, which force <code>put</code> to be a genuine partial inverse of <code>get</code> on the subset of data where inversion is possible.</p>
 <p>The concept originates in the programming-languages community, where lenses were introduced as the semantic foundation of the Boomerang line of research by Foster et al. (<a href="../bibliography.html#foster2007combinators">2007</a>), whose paper “Combinators for Bidirectional Tree Transformations” is the reference most subsequent work returns to. The relational-lens variant of Bohannon et al. (<a href="../bibliography.html#bohannonpiercevaughan2006relational">2006</a>) predates the general formulation and supplies a database-flavoured version; the broader bidirectional-transformations landscape is surveyed by Czarnecki et al. (<a href="../bibliography.html#czarnecki2009bidirectional">2009</a>).</p>
 <p>In panproto’s setting, a migration is already half of a lens: the lift function from the previous chapter plays the role of <code>get</code>. What a lens adds is the other half, plus the round-trip laws to hold it honest. Most schema migrations do not invert exactly — they drop fields, collapse records, add data the reverse cannot unambiguously recover — and the lens formulation is the discipline that handles this reality rather than pretending it away.</p>
