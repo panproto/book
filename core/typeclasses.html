@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Experimental and feature-gated subsystems - panproto</title>
+        <title>Typeclasses as theory morphisms - panproto</title>
 
 
         <!-- Custom HTML head -->
@@ -147,7 +147,7 @@
                         <a href="https://github.com/aaronstevenwhite/panproto" title="Git repository" aria-label="Git repository">
                             <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
                         </a>
-                        <a href="https://github.com/aaronstevenwhite/panproto/edit/main/book/src/contributing/experimental.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/aaronstevenwhite/panproto/edit/main/book/src/core/typeclasses.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
                         </a>
 
@@ -182,7 +182,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
-<h1 id="experimental-and-feature-gated-subsystems"><a class="header" href="#experimental-and-feature-gated-subsystems">Experimental and feature-gated subsystems</a></h1>
+<h1 id="typeclasses-as-theory-morphisms"><a class="header" href="#typeclasses-as-theory-morphisms">Typeclasses as theory morphisms</a></h1>
 <!-- lm-disclaimer -->
 <blockquote>
 <p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
@@ -191,39 +191,71 @@ through the book verifying and editing the content by hand. When a chapter
 has been verified or edited by a human, the parts that were verified or
 edited will be noted at the head of the chapter.</p>
 </blockquote>
-<p>Not every crate in the workspace is production-ready. Three are feature-gated and marked experimental — <a href="https://docs.rs/panproto-llvm/latest/panproto_llvm/"><code>panproto-llvm</code></a>, <a href="https://docs.rs/panproto-jit/latest/panproto_jit/"><code>panproto-jit</code></a>, and <a href="https://docs.rs/panproto-xrpc/latest/panproto_xrpc/"><code>panproto-xrpc</code></a> — for reasons specific to each: an LLVM installation is a substantial dependency, the JIT compiler is promising but still incomplete, and the XRPC remote-repository support is not yet stable across registry differences. The present chapter describes each crate, says where it is currently reliable, and names the acceptance criteria for promoting it to the stable default-on configuration. A contributor working in any of them should treat the API surface as subject to change between minor versions.</p>
-<h2 id="panproto-llvm"><a class="header" href="#panproto-llvm">panproto-llvm</a></h2>
-<p><a href="https://docs.rs/panproto-llvm/latest/panproto_llvm/"><code>panproto-llvm</code></a> registers <a href="https://llvm.org/">LLVM</a> IR as a panproto protocol: a theory whose sorts are LLVM IR’s kinds (modules, functions, basic blocks, instructions, types), whose operations are the structural accessors of those kinds, and whose equations encode LLVM’s well-formedness conditions. A schema under this protocol is an LLVM module’s structure at the theory level, and a migration is a structural transformation of the module (rename an intrinsic, reorganise a function’s control flow, add a pass’s effect to the module’s metadata).</p>
-<p>The crate is feature-gated, since it depends on an LLVM installation at build time: a significant cost for the 99% of panproto users who do not need it. When the feature is enabled, the LLVM bindings go through <a href="https://docs.rs/inkwell/latest/inkwell/"><code>inkwell</code></a> against whichever LLVM version the user has installed, and the schema-level operations dispatch to LLVM’s own module manipulation APIs for the operations panproto cannot express purely in its own term language.</p>
-<p>The current state is that theory construction is complete and migration between LLVM versions (an LLVM IR migration from LLVM 16 to LLVM 17, for example) works for the well-typed subset of modules. The parts that do not yet work reliably are complex inter-procedural optimizations expressed as migrations; the existence-checker rejects many plausible such migrations for reasons that appear to be conservative rather than necessary.</p>
-<p>Acceptance criterion: the LLVM 17-to-LLVM 18 migration should apply to the full kernel of the Linux kernel’s IR output without rejection, and the round-trip (parse then emit) through the panproto representation should produce IR that the LLVM assembler accepts without adjustment.</p>
-<h2 id="panproto-jit"><a class="header" href="#panproto-jit">panproto-jit</a></h2>
-<p><a href="https://docs.rs/panproto-jit/latest/panproto_jit/"><code>panproto-jit</code></a> compiles <a href="https://docs.rs/panproto-expr/latest/panproto_expr/"><code>panproto-expr</code></a> evaluations to native code through LLVM. When a migration engine needs to run the same expression against a large number of instance records, the cost of the small-step evaluator becomes noticeable; JIT-compiling the expression into a single native function amortises the cost across the records and improves throughput on large datasets. The compiler architecture follows the standard pipeline treatment of Appel (<a href="../bibliography.html#appel1998modern">1998</a>).</p>
-<p>The crate is feature-gated alongside <code>panproto-llvm</code> and shares the LLVM-installation dependency. When enabled, it replaces the small-step evaluator of <a href="../expr/totality.html">Totality and termination</a> for expressions above a configurable size threshold, falling back to the interpreter for expressions below the threshold (where the compile cost would not pay back).</p>
-<p>The current state covers integer arithmetic, string operations, and simple list operations. Pattern matching and list comprehensions are not yet supported; an expression containing either falls back to the interpreter. Totality guarantees are preserved (the JIT respects the step and depth limits through explicit counter decrements in the compiled code), but the performance of the compiled code on the supported subset is noticeably faster than the interpreter only for expressions that repeat over many records.</p>
-<p>Acceptance criterion: pattern matching support, a benchmark where the JIT outperforms the interpreter by at least 5x on a representative migration workload, and deterministic equivalence between JIT and interpreter outputs on the standard test suite.</p>
-<h2 id="panproto-xrpc"><a class="header" href="#panproto-xrpc">panproto-xrpc</a></h2>
-<p><a href="https://docs.rs/panproto-xrpc/latest/panproto_xrpc/"><code>panproto-xrpc</code></a> implements a client for remote panproto-vcs operations through the <a href="https://atproto.com/specs/xrpc">XRPC</a> protocol used by the AT Protocol ecosystem. The crate allows a panproto-vcs repository to be pushed to and pulled from a remote server that exposes a standard XRPC endpoint, providing an alternative to the git-bridge approach of <a href="../vcs/git-bridge.html">The git bridge</a> for collaborations that are already running their own XRPC-based infrastructure.</p>
-<p>The crate is feature-gated for two reasons: the XRPC dependency is specific to AT Protocol and does not benefit users not working in that ecosystem, and the remote-repository semantics for panproto-vcs are not yet stable. A push to a remote XRPC repository works; a pull works; a merge across a remote branch and a local branch works in the common cases. The cases that do not yet work reliably are the ones where the remote and local sides have different sets of registered protocols, so that a commit on the remote references a protocol the local side does not know about.</p>
-<p>Acceptance criterion: cross-protocol-registry merge resolution, a stability guarantee on the XRPC wire format across minor versions, and a round-trip test suite comparable to the git bridge’s.</p>
-<h2 id="the-pattern"><a class="header" href="#the-pattern">The pattern</a></h2>
-<p>Each of these subsystems lives in the workspace rather than in a separate repository so that it can evolve alongside the main panproto stack. A change to <a href="https://docs.rs/panproto-gat/latest/panproto_gat/"><code>panproto-gat</code></a>’s theory representation, for example, is propagated to <a href="https://docs.rs/panproto-llvm/latest/panproto_llvm/"><code>panproto-llvm</code></a> at the same time as to the other theory consumers, which avoids the drift that a separate-repository arrangement would produce.</p>
-<p>A contributor who wants to work on any of these crates has to opt in through feature flags and be aware that their work is against a moving target. In exchange, promising ideas can be tried out in tree, measured against the rest of the stack, and either promoted or abandoned without the friction of separate-repository maintenance.</p>
-<p>A crate is promoted to stable when its acceptance criterion is met and a release includes the promotion as a changelog entry. Demotion back to experimental is possible but rare; it has not happened in the crates currently listed as experimental.</p>
+<p>A Haskell programmer reads <code>Eq a =&gt; a -&gt; a -&gt; Bool</code> and sees a familiar story: a type <code>a</code> is in the class <code>Eq</code> if it supplies an <code>==</code> operation satisfying the class’s axioms, and a function that demands <code>Eq a</code> is one whose body uses <code>==</code>. Typeclasses are the mechanism by which Haskell attaches a set of operations, and their laws, to a type; an instance is the evidence that a given type supports those operations.</p>
+<p>Typeclasses are not a new mathematical primitive. They are a notational convenience for something we already have: a typeclass is a theory, an instance is a morphism from that theory into a target theory, and the instance’s bindings are the morphism’s action on the class’s operations. This chapter says what that correspondence looks like in panproto, and how <code>panproto-theory-dsl</code> and <code>panproto-gat-macros</code> give it a working surface.</p>
+<h2 id="the-correspondence"><a class="header" href="#the-correspondence">The correspondence</a></h2>
+<p>Take Haskell’s <code>Eq</code> class. It declares one operation, <code>==</code>, of type <code>a -&gt; a -&gt; Bool</code>, together with the reflexivity, symmetry, and transitivity axioms. Written as a theory:</p>
+<pre><code class="language-text">theory ThEq {
+    sorts  { A; Bool }
+    ops    { eq : (A, A) -&gt; Bool }
+    axioms { refl: eq(x, x) = true }
+}
+</code></pre>
+<p>An instance <code>instance Eq Int where x == y = primIntEq x y</code> says: take the class theory <code>ThEq</code>, pick the target theory where the primitive <code>primIntEq</code> lives (a theory of arithmetic), and declare a morphism that sends the class’s sort <code>A</code> to <code>Int</code> and the class’s operation <code>eq</code> to <code>primIntEq</code>. The morphism obligation is the axiom: <code>primIntEq(x, x) = true</code> has to hold in the target theory, which is how panproto’s typechecker verifies the instance.</p>
+<p>The correspondence extends uniformly:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Haskell</th><th>panproto</th></tr>
+</thead>
+<tbody>
+<tr><td><code>class C a where ...</code></td><td><code>Theory</code> declaring the class’s sorts, ops, and axioms</td></tr>
+<tr><td><code>instance C T where op = expr</code></td><td><code>TheoryMorphism</code> from the class theory to a target theory</td></tr>
+<tr><td><code>C a =&gt; ...</code> constraint</td><td>A precondition that the morphism from <code>C</code>’s theory exists</td></tr>
+<tr><td>Class axiom</td><td>Equation in the class theory, required to hold under morphism</td></tr>
+<tr><td>Default method</td><td>Equation in the class theory giving a derived-op definition</td></tr>
+<tr><td>Functional dependency <code>a -&gt; b</code></td><td>Sort parameter <code>b</code> implicitly determined by <code>a</code> in the class</td></tr>
+</tbody>
+</table>
+</div>
+<p>The Haskell-to-panproto translation is always the same shape: the class is a theory with a distinguished sort the instance will replace, the instance is a morphism that picks the replacement and supplies implementations for every op the class declares.</p>
+<h2 id="two-surfaces"><a class="header" href="#two-surfaces">Two surfaces</a></h2>
+<p>Panproto exposes two authoring surfaces for this correspondence, at opposite ends of the config-versus-code spectrum, both compiling to the same <a href="https://docs.rs/panproto-gat/latest/panproto_gat/theory/struct.Theory.html"><code>Theory</code></a> and <a href="https://docs.rs/panproto-gat/latest/panproto_gat/morphism/struct.TheoryMorphism.html"><code>TheoryMorphism</code></a> values.</p>
+<p>The config surface is the <a href="https://docs.rs/panproto-theory-dsl/latest/panproto_theory_dsl/"><code>panproto-theory-dsl</code></a> crate, which parses a <code>TheoryDocument</code> from Nickel, JSON, or YAML and compiles it through the <a href="https://docs.rs/panproto-theory-dsl/latest/panproto_theory_dsl/compile_class/"><code>compile_class</code></a>, <a href="https://docs.rs/panproto-theory-dsl/latest/panproto_theory_dsl/compile_instance/"><code>compile_instance</code></a>, and <a href="https://docs.rs/panproto-theory-dsl/latest/panproto_theory_dsl/compile_inductive/"><code>compile_inductive</code></a> entry points. A class document declares the class’s sorts, ops, and axioms; an instance document declares the source class, the target theory, and the bindings; the compiler resolves the target theory, builds the morphism, and returns a validated <code>TheoryMorphism</code>. This is the surface a user reaches for when theories live as data in a repository and are edited alongside the protocols they describe.</p>
+<p>The code surface is the <a href="https://docs.rs/panproto-gat-macros/latest/panproto_gat_macros/"><code>panproto-gat-macros</code></a> crate, which offers three proc-macros. <code>class!</code> takes a class declaration in a Rust-ish syntax and expands to a <code>theory_&lt;name&gt;()</code> constructor returning the class’s <code>Theory</code>. <code>instance!</code> takes an instance declaration and expands to an <code>instance_&lt;name&gt;(&amp;class, &amp;target)</code> function returning a <code>TheoryMorphism</code>. <code>inductive!</code> takes an inductive-type declaration and expands to the closed-sort <code>Theory</code> it names. The macros are the surface for users who prefer to author theories inline with the Rust code that consumes them.</p>
+<pre><code class="language-rust ignore">use panproto_gat_macros::{class, instance};
+
+class! {
+    ThEq&lt;A&gt; {
+        eq(x: A, y: A) -&gt; Bool;
+        axiom refl: eq(x, x) = true;
+    }
+}
+
+instance! {
+    EqInt: ThEq&lt;Int&gt; in ThArith {
+        eq = int_eq;
+    }
+}</code></pre>
+<p>The choice between the two surfaces is a style question, not a feature question: both compile to the same validated <code>TheoryMorphism</code> and both go through the same typechecker. The fact that the two compile to identical values is what lets a theory author mix them in a single project; a core class in the DSL can have a downstream Rust crate declare an instance via the proc-macro, and the morphism composes with any other morphism in the system by the rules of <a href="./morphisms-and-migration.html">Theory morphisms and instance migration</a>.</p>
+<h2 id="deriving-standard-instances"><a class="header" href="#deriving-standard-instances">Deriving standard instances</a></h2>
+<p>Haskell’s <code>deriving (Eq, Ord)</code> mechanism asks the compiler to synthesize instances of standard classes by structural recursion on the type’s constructors. The panproto counterpart is <code>derive_theory!</code> in <code>panproto-gat-macros</code>, which accepts a theory-declaration block annotated with <code>#[derive(Eq)]</code> or <code>#[derive(Hash)]</code> and emits instance-builder functions for each derivation alongside the base theory. The two derivations cover the two capabilities every panproto sort is expected to carry (decidable equality and hashability), and are the common case that makes the <code>instance!</code> macro worth having. Extending the set of derivable classes is a deliberate, per-class piece of work; the 0.37 release supplies the two that every protocol needs and stops there.</p>
+<h2 id="why-a-morphism-rather-than-a-record-of-functions"><a class="header" href="#why-a-morphism-rather-than-a-record-of-functions">Why a morphism rather than a record of functions</a></h2>
+<p>A working engineer could ask why the machinery is a theory morphism rather than a record of function pointers. The answer is that the morphism carries the theory’s equations along with its operations: the instance’s validity is not only that each declared op has a matching target op, but that the target ops satisfy the class’s axioms under the morphism. A record of function pointers is a data-only mapping; a theory morphism is a mapping that the engine can verify preserves the class’s laws. The verification is what makes the instance trustworthy in the same way Haskell’s axioms (informal as they are in the language proper) make a well-written <code>Eq</code> instance trustworthy. In panproto the axioms are part of the class theory, the instance is required to satisfy them under the morphism, and the typechecker rejects an instance whose bindings violate an axiom, with a diagnostic pointing at the specific axiom and specific binding.</p>
 <h2 id="further-reading"><a class="header" href="#further-reading">Further reading</a></h2>
-<p>For the JIT compiler architecture, Appel (<a href="../bibliography.html#appel1998modern">1998</a>) is the standard pipeline treatment. The LLVM project’s own documentation at https://llvm.org/docs/ covers the IR and the pass infrastructure panproto-llvm integrates with. For the XRPC protocol that panproto-xrpc implements, Bluesky PBC (<a href="../bibliography.html#atproto">n.d.</a>) is the authoritative specification.</p>
+<p>Typeclasses as we know them in Haskell are due to Wadler and Blott, whose 1989 POPL paper introduced the ad-hoc-polymorphism-via-implicit-dictionaries design that the language adopted; see Wadler (<a href="../bibliography.html#wadler1989theorems">1989</a>) for the antecedent work on parametricity that grounds the design. The categorical story of classes as theories and instances as morphisms is standard in the algebraic-specification tradition; Goguen &amp; Burstall (<a href="../bibliography.html#goguenburstall1992institutions">1992</a>) is the institutions framework where the correspondence is stated most cleanly, and the modular-specification apparatus of the same line of research is what underlies the namespaced-imports machinery in <code>panproto-theory-dsl</code>.</p>
 <h2 id="closing"><a class="header" href="#closing">Closing</a></h2>
-<p>Part VII ends with this chapter. The appendices that follow contain a <a href="../appendices/notation-table.html">notation reference</a>, a <a href="../appendices/glossary.html">glossary</a>, and an <a href="../appendices/open-problems.html">open-problems list</a> covering places where panproto’s implementation or the book’s mathematical account is ahead of the other.</p>
+<p>The typeclass surface is where the <code>panproto-gat</code> machinery meets the idiomatic shapes a working developer expects. A class is a theory, an instance is a morphism, and the two surfaces (DSL and proc-macros) are two ways to write the same objects. The next chapter, <a href="./restrict-lift.html">The restrict/lift pipeline</a>, turns back to the core migration construction and shows how a theory morphism drives instance migration end to end.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../contributing/extending.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../core/dependent-sorts.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../appendices/notation-table.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../core/morphisms-and-migration.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -233,11 +265,11 @@ edited will be noted at the head of the chapter.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../contributing/extending.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../core/dependent-sorts.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../appendices/notation-table.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../core/morphisms-and-migration.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
