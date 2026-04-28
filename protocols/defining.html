@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-742489c7.js";
+            window.path_to_searchindex_js = "../searchindex-e18e6b9e.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-c8aae115.js"></script>
@@ -224,7 +224,7 @@ register(protocol);
 <p>The parser and emitter are user-supplied functions bound by a small trait. The parser takes a byte slice in the protocol’s native format and returns a <code>Result&lt;Schema, ParseError&gt;</code>; the emitter takes a schema and returns <code>Result&lt;Vec&lt;u8&gt;, EmitError&gt;</code>.</p>
 <p>Both are expected to respect the theory they are registered against. A parser returning a schema that fails the theory’s equations is an error in the parser, and the validator in <a href="https://docs.rs/panproto-schema/latest/panproto_schema/validate/"><code>panproto_schema::validate</code></a> rejects the schema at build time regardless of what the parser thought it was producing.</p>
 <p>Most parsers aim to satisfy a round-trip law: emit after parse is the identity on the original bytes. The exact form of the law depends on the protocol. For protocols with unambiguous surface syntax the law is literal. For human-edited formats — YAML, SQL DDL, source code — the law is weakened to “parse-then-emit is the identity up to whitespace and comment layout”, and the <code>panproto-io</code> crate supplies a <em>CST complement</em> that captures the remaining bytes outside the theory’s grip. The machinery is developed separately; the parser/emitter trait itself does not require it.</p>
-<p>Parsers for the shipped protocols are implemented by hand against each protocol’s specification. Parsers for programming languages — Python, Rust, TypeScript, and the other 245 tree-sitter-supported languages — are auto-derived from tree-sitter grammars, a process <a href="./tree-sitter.html">the tree-sitter chapter</a> develops in full.</p>
+<p>Parsers for the shipped protocols are implemented by hand against each protocol’s specification. Parsers for programming languages — Python, Rust, TypeScript, and the other 247 tree-sitter-supported languages — are auto-derived from tree-sitter grammars, a process <a href="./tree-sitter.html">the tree-sitter chapter</a> develops in full.</p>
 <h2 id="a-real-protocol"><a class="header" href="#a-real-protocol">A real protocol</a></h2>
 <p><a href="https://atproto.com/">ATProto</a> is worth reading as a reference. Its registration lives in <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/web_document/atproto/"><code>panproto_protocols::web_document::atproto</code></a>. The theory declares sorts for lexicons, records, strings, blobs, and the various scalar types ATProto supports; the parser consumes lexicon JSON and produces schemas; the emitter serialises back to JSON. The construction follows the same four-step pattern as the toy protocol, scaled up to the complexity ATProto requires.</p>
 <p>The next chapter walks through the scaled-up version in detail. A reader who wants to see how a protocol is defined in practice rather than in the abstract should read it as the immediate follow-up to this one.</p>

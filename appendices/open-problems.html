@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-742489c7.js";
+            window.path_to_searchindex_js = "../searchindex-e18e6b9e.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-c8aae115.js"></script>
@@ -214,7 +214,7 @@ that admits auto-generation, symbolic simplification, and an explicit cost model
 <p>Panproto’s three-way merge (<a href="../vcs/merge-as-pushout.html">Merge as pushout</a>) is the pushout of the span of schema morphisms from the most-recent-common-ancestor. The construction is categorically standard, and its application to version control is not original to panproto: the patch-theory tradition of Pijul and Darcs, and the category-theoretic merge work of Mimram, Di Giusto, and others, have treated similar constructions in adjacent settings.</p>
 <p>What we do not know is whether the specific combination panproto assembles (pushout in the category of schemas under a protocol, with the pushout’s instances lifted through a computed migration) appears in the published literature under a different name. A pointer from a reader familiar with the version-control-as-category tradition would save us the alternative, which is to write up the construction ourselves and invite critique.</p>
 <h3 id="tree-sitter-grammars-as-gats"><a class="header" href="#tree-sitter-grammars-as-gats">Tree-sitter grammars as GATs</a></h3>
-<p>The identification of a tree-sitter grammar’s <code>node-types.json</code> metadata with a GAT is, as far as we know, specific to panproto. The mathematical content is modest (the identification is almost mechanical), but the consequence (auto-derivation of protocols for 248 languages) is practically significant. We would welcome a comparison with any prior work on grammar-as-theory that treats the concrete-syntax-tree case rather than the abstract-syntax-tree case.</p>
+<p>The identification of a tree-sitter grammar’s <code>node-types.json</code> metadata with a GAT is, as far as we know, specific to panproto. The mathematical content is modest (the identification is almost mechanical), but the consequence (auto-derivation of protocols for 250 languages) is practically significant. We would welcome a comparison with any prior work on grammar-as-theory that treats the concrete-syntax-tree case rather than the abstract-syntax-tree case.</p>
 <h2 id="operational-open-problems"><a class="header" href="#operational-open-problems">Operational open problems</a></h2>
 <p>These are operational limitations rather than theoretical gaps, and we hope to close them with engineering work.</p>
 <h3 id="stored-config-remote-management"><a class="header" href="#stored-config-remote-management">Stored-config remote management</a></h3>

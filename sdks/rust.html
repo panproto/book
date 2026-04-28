@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-742489c7.js";
+            window.path_to_searchindex_js = "../searchindex-e18e6b9e.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-c8aae115.js"></script>
@@ -206,7 +206,7 @@ edited will be noted at the head of the chapter.</p>
 </ul>
 <p>The default feature set (no features enabled) gives a caller the complete schema/migration/lens/protocol pipeline with no additional dependencies beyond what Rust crates panproto itself publishes. Adding a feature is a single entry in the caller’s <code>Cargo.toml</code>:</p>
 <pre><code class="language-toml">[dependencies]
-panproto-core = { version = "0.32", features = ["parse", "git"] }
+panproto-core = { version = "0.40", features = ["parse", "git"] }
 </code></pre>
 <p><em>Listing 7.1: Opting into the tree-sitter-based parsing and the git bridge through <code>panproto-core</code>’s feature flags.</em></p>
 <h2 id="idioms"><a class="header" href="#idioms">Idioms</a></h2>
