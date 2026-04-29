@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-e18e6b9e.js";
+            window.path_to_searchindex_js = "searchindex-d76e0e26.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-c8aae115.js"></script>
+        <script src="toc-73f0b918.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -1901,6 +1901,70 @@ except PanprotoError as e:
 <h2 id="closing-30"><a class="header" href="#closing-30">Closing</a></h2>
 <p>The next chapter, <a href="#the-cli">the CLI</a>, covers the <code>schema</code> command-line tool built on top of <a href="https://docs.rs/panproto-cli/latest/panproto_cli/"><code>panproto-cli</code></a>. The CLI is the highest-level interface panproto ships and is where a first-time user typically begins.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="the-haskell-binding"><a class="header" href="#the-haskell-binding">The Haskell binding</a></h1>
+<!-- lm-disclaimer -->
+<blockquote>
+<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
+It was written as a stopgap to make the panproto system legible while we work
+through the book verifying and editing the content by hand. When a chapter
+has been verified or edited by a human, the parts that were verified or
+edited will be noted at the head of the chapter.</p>
+</blockquote>
+<p>A Haskell caller reaching panproto uses a thin foreign-function-interface layer over a small C ABI crate, <code>panproto-c</code>. The arrangement is unlike the TypeScript path (which goes through a full WebAssembly module) and unlike the Python path (which embeds Rust through PyO3). It is closer in spirit to a <code>text-icu</code>-style binding: a Haskell library that wraps a precompiled native library, with the native library shipped as a separate artifact. The motivation is GHC-specific: Haskell’s runtime cannot tolerate a Rust panic propagating across the FFI boundary, so the C ABI layer is responsible for catching every panic and converting it to a status code that the Haskell side can observe.</p>
+<p>The source lives in <code>crates/panproto-c/</code> on the Rust side and <code>bindings/haskell/</code> on the Haskell side.</p>
+<h2 id="two-backends-one-interface"><a class="header" href="#two-backends-one-interface">Two backends, one interface</a></h2>
+<p><code>panproto-haskell</code> is a single cabal package that ships two implementations of every operation. The native backend is pure Haskell. It implements the lens algebra, the GAT layer, and the expression-language interpreter with no Rust runtime in the loop. The Rust backend is the FFI implementation. It links against <code>libpanproto_c</code> and routes every operation through the same C entry points the panproto-c crate exposes. Both backends sit behind the same capability typeclasses, parameterised by a backend tag.</p>
+<pre><code class="language-haskell">class ProtocolBackend back where
+    data ProtocolRep back :: Type
+    fromCanonical :: Proxy back -&gt; CanonicalProtocol -&gt; IO (ProtocolRep back)
+    toCanonical   :: ProtocolRep back -&gt; IO CanonicalProtocol
+    releaseProtocol :: ProtocolRep back -&gt; IO ()
+</code></pre>
+<p><em>Listing 9.21: The <code>ProtocolBackend</code> capability typeclass. Each backend declares its own <code>ProtocolRep</code> (a foreign handle for <code>Rust</code>, a wrapped ADT for <code>Native</code>) and provides round-trip conversions through <code>CanonicalProtocol</code>, the canonical exchange type. The interface returns plain <code>IO</code>; the choice not to commit to an effect system is deliberate, and is discussed below.</em></p>
+<p>A caller who does not depend on the Rust core can build with <code>cabal build -f-rust -f+native-only</code> and get a pure-Haskell library. A caller who wants the full panproto surface, with tree-sitter parsing for two hundred and fifty languages and the version-control system, builds with the default flags and links against <code>libpanproto_c</code>. Cross-backend agreement is verified by round-tripping the canonical exchange types through both backends and comparing the results: the test <code>Spec.RustRoundtrip.crossBackend</code> does exactly this for <code>CanonicalProtocol</code>.</p>
+<p>The decision to keep the public typeclass returning <code>IO</code> rather than <code>Eff es</code> is a forward-compatibility decision. The Haskell effect-system landscape has cycled through five major libraries in fifteen years (<code>mtl</code>, <code>extensible-effects</code>, <code>freer-simple</code>, <code>polysemy</code>, and <code>effectful</code>), and committing to any single one in a public type would bind the binding’s API to whatever wins next. <code>amazonka</code>, <code>hasql</code>, <code>servant-client</code>, <code>postgresql-simple</code>, and <code>streamly</code> all return plain <code>IO</code> for the same reason. A separate <code>panproto-haskell-effectful</code> adapter package will follow once the core is stable.</p>
+<h2 id="the-c-abi-layer"><a class="header" href="#the-c-abi-layer">The C ABI layer</a></h2>
+<p>The <code>panproto-c</code> crate is small but does most of the load-bearing work. Every entry point on the Rust side is wrapped in a <code>panic::guard</code> macro that runs the body inside <code>std::panic::catch_unwind</code>, catches any panic, stashes a CBOR-encoded error envelope in a thread-local slot, and returns a <code>PpStatus::Panic</code> code. The release profile uses <code>panic = "unwind"</code> rather than <code>panic = "abort"</code>; an abort would tear down the GHC process and would defeat the panic-safety guarantee.</p>
+<p>Two wire formats coexist at the boundary. The hot path is opaque <code>u32</code> handles into a thread-local slab allocator, modelled on the WASM crate’s slab. A schema or a protocol or a migration handle is just a number; passing it across the boundary is a single integer copy. The cold path is CBOR, encoded with <code>ciborium</code> on the Rust side and decoded with <code>cborg</code> on the Haskell side. Cold-path calls handle protocol ingest, schema introspection, and the error envelope itself. The split avoids the overhead of serialising every call without giving up on schema fidelity for the structural payloads.</p>
+<p>Status codes are part of the C ABI contract; the numeric values are stable and never reorder.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Code</th><th>Variant</th><th>Meaning</th></tr>
+</thead>
+<tbody>
+<tr><td>0</td><td><code>Ok</code></td><td>Success.</td></tr>
+<tr><td>1</td><td><code>Err</code></td><td>Generic failure; details in the last-error envelope.</td></tr>
+<tr><td>2</td><td><code>Panic</code></td><td>A Rust panic was caught at the FFI boundary.</td></tr>
+<tr><td>3</td><td><code>InvalidHandle</code></td><td>Handle does not refer to a live slab slot.</td></tr>
+<tr><td>4</td><td><code>TypeMismatch</code></td><td>Handle resolves but the underlying resource is the wrong kind.</td></tr>
+<tr><td>5</td><td><code>Serialization</code></td><td>CBOR encode or decode failed.</td></tr>
+<tr><td>6</td><td><code>Internal</code></td><td>Other failure from <code>panproto-core</code>.</td></tr>
+</tbody>
+</table>
+</div>
+<p><em>Table 9.5: The status codes returned by every panproto-c entry point. The Haskell side translates non-zero status codes into <code>PanprotoError</code> exceptions, drains the last-error envelope, and attaches it to the exception value.</em></p>
+<h2 id="the-c-glue-layer"><a class="header" href="#the-c-glue-layer">The C glue layer</a></h2>
+<p>The cabal package ships a small C glue layer at <code>bindings/haskell/cbits/panproto_glue.{c,h}</code>. The glue exists for one reason: GHC’s <code>foreign import capi</code> cannot reliably pass C structs by value across all platforms, but <code>safer-ffi</code>’s <code>c_slice::Ref&lt;u8&gt;</code> and <code>repr_c::Vec&lt;u8&gt;</code> types are by-value structs in the C ABI. The glue accepts pointer-and-length pairs and forwards to the by-value Rust API, so the Haskell side never needs to pass a struct by value.</p>
+<pre><code class="language-c">int32_t pp_protocol_define_at(
+    const uint8_t *spec_ptr,
+    size_t spec_len,
+    uint32_t *out_handle
+);
+
+void pp_buf_free_at(Vec_uint8_t *buf);
+</code></pre>
+<p><em>Listing 9.22: The full surface of the C glue layer. <code>pp_protocol_define_at</code> synthesises a <code>slice_ref_uint8_t</code> on the stack and forwards to the Rust-side <code>pp_protocol_define</code>. <code>pp_buf_free_at</code> zeros the storage in place after dropping the underlying <code>Vec</code>, so a stale <code>Vec_uint8_t</code> cannot be passed to the freer twice.</em></p>
+<p>The glue layer is precompiled to a standalone <code>libpanproto_glue.a</code> rather than shipped as <code>c-sources</code> in the cabal file. GHC 9.12 plus macOS arm64 has a known merge-objects bug when a cabal package includes <code>c-sources</code>, and the precompiled-glue arrangement avoids the bug entirely.</p>
+<h2 id="distribution"><a class="header" href="#distribution">Distribution</a></h2>
+<p>Hackage forbids precompiled binaries, so <code>panproto-haskell</code> is source-only on Hackage. The native dependencies (<code>libpanproto_c.{a,so,dylib,lib}</code> and the C header) are distributed as platform-specific tarballs through the panproto GitHub Releases. The package ships two bootstrap scripts: <code>bootstrap/dev-link.sh</code> for local development (it runs <code>cargo build -p panproto-c</code>, builds the glue, and stages the artifacts) and <code>bootstrap/fetch-bindist.sh</code> for downstream consumers (it pulls the prebuilt artifact for the host platform from a release tag). Either script populates <code>.panproto-c/lib/</code> and writes a <code>cabal.project.local</code> with an absolute lib path.</p>
+<p>The reason the path has to be absolute is a quirk of <code>ghc-pkg</code>: relative <code>extra-lib-dirs</code> propagate into the registered package’s metadata, and <code>ghc-pkg</code> rejects relative paths there with a warning that cabal upgrades to an error. An absolute path in a generated, gitignored <code>cabal.project.local</code> is the cleanest workaround.</p>
+<p>A <code>flake.nix</code> arrangement using haskell.nix and crane will follow once the binding has more than the vertical slice; for now, the bootstrap scripts are the supported path.</p>
+<h2 id="status"><a class="header" href="#status">Status</a></h2>
+<p>The <code>0.41.0</code> release exposes two capability classes: <code>ProtocolBackend</code> (with the full structural mirror of <code>Protocol</code>, including the eight feature flags, the <code>EdgeRule</code> shape, and a tolerant CBOR decoder that handles unknown future Rust fields) and <code>SchemaBackend</code> (with <code>CanonicalSchema</code> as opaque CBOR bytes and a separate <code>SchemaValidate</code> refinement that the <code>Rust</code> backend implements via <code>panproto_schema::validate</code>). Both backends are present for both classes; cross-backend agreement is exercised by twenty-eight tests covering round-trip laws, error-envelope decoding, exception-safe handle release, and the <code>TypeMismatch</code> envelope produced when the wrong handle kind reaches a typed entry point.</p>
+<p>Subsequent releases lift <code>MigrationBackend</code>, <code>InstanceBackend</code>, and <code>LensBackend</code> (in that order, matching how panproto’s user-facing pipeline composes them); a structured native <code>SchemaBackend</code> follows, replacing the opaque-bytes representation when there is something useful to inspect on the Haskell side without going through Rust. The VCS and expression-language adapters land later.</p>
+<p>The architecture is designed so that a future GHC WebAssembly component-model backend, once <code>wasm-tools</code> and the relevant GHC backends mature, slots in alongside <code>Native</code> and <code>Rust</code> without changing the typeclass surface. That is the longest-term forward-compatibility hedge in the design.</p>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="the-cli"><a class="header" href="#the-cli">The CLI</a></h1>
 <!-- lm-disclaimer -->
 <blockquote>
@@ -1969,7 +2033,7 @@ edited will be noted at the head of the chapter.</p>
 <p>The transformation layer sits on top of the foundations. <a href="https://docs.rs/panproto-mig/latest/panproto_mig/"><code>panproto-mig</code></a> is the migration engine; it depends on <code>panproto-gat</code>, <code>panproto-schema</code>, <code>panproto-inst</code>, and <code>panproto-expr</code>. <a href="https://docs.rs/panproto-lens/latest/panproto_lens/"><code>panproto-lens</code></a> is the bidirectional-lens machinery; it depends on the transformation layer as a whole.</p>
 <p>The infrastructure layer is the cross-cutting one. The version-control engine lives in <a href="https://docs.rs/panproto-vcs/latest/panproto_vcs/"><code>panproto-vcs</code></a>, instance serialisation and deserialisation in <a href="https://docs.rs/panproto-io/latest/panproto_io/"><code>panproto-io</code></a>, and the breaking-change classifier in <a href="https://docs.rs/panproto-check/latest/panproto_check/"><code>panproto-check</code></a>. The facade crate is <a href="https://docs.rs/panproto-core/latest/panproto_core/"><code>panproto-core</code></a>, and the command-line binary is <a href="https://docs.rs/panproto-cli/latest/panproto_cli/"><code>panproto-cli</code></a>.</p>
 <p>The protocols-and-auxiliary layer is the widest. <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/"><code>panproto-protocols</code></a> holds the 51+ protocol definitions, organised into the category subdirectories documented in <a href="#defining-a-protocol">Defining a protocol</a>. <a href="https://docs.rs/panproto-parse/latest/panproto_parse/"><code>panproto-parse</code></a> and <a href="https://docs.rs/panproto-grammars/latest/panproto_grammars/"><code>panproto-grammars</code></a> together implement the tree-sitter auto-derivation of programming-language protocols. <a href="https://docs.rs/panproto-theory-dsl/latest/panproto_theory_dsl/"><code>panproto-theory-dsl</code></a> and <a href="https://docs.rs/panproto-lens-dsl/latest/panproto_lens_dsl/"><code>panproto-lens-dsl</code></a> are the declarative DSLs for theory and lens specifications in <a href="https://nickel-lang.org/">Nickel</a>, JSON, or YAML form. <a href="https://docs.rs/panproto-expr-parser/latest/panproto_expr_parser/"><code>panproto-expr-parser</code></a> is the Haskell-style surface parser for the expression language. <a href="https://docs.rs/panproto-project/latest/panproto_project/"><code>panproto-project</code></a> is the multi-file project-assembly layer.</p>
-<p>The SDK bindings layer is what non-Rust callers touch. The WASM boundary is in <a href="https://docs.rs/panproto-wasm/latest/panproto_wasm/"><code>panproto-wasm</code></a>, and the Python PyO3 native binding is in <a href="https://docs.rs/panproto-py/latest/panproto_py/"><code>panproto-py</code></a>.</p>
+<p>The SDK bindings layer is what non-Rust callers touch. The WASM boundary is in <a href="https://docs.rs/panproto-wasm/latest/panproto_wasm/"><code>panproto-wasm</code></a>, the Python PyO3 native binding is in <a href="https://docs.rs/panproto-py/latest/panproto_py/"><code>panproto-py</code></a>, and the panic-safe C ABI used by the Haskell binding lives in <a href="https://docs.rs/panproto-c/latest/panproto_c/"><code>panproto-c</code></a> (with the cabal package itself under <code>bindings/haskell/</code>).</p>
 <p>The experimental layer is feature-gated and subject to change. It contains the git bridge in <a href="https://docs.rs/panproto-git/latest/panproto_git/"><code>panproto-git</code></a> (covered in <a href="#the-git-bridge">The git bridge</a>), the LLVM IR protocol and lowering in <a href="https://docs.rs/panproto-llvm/latest/panproto_llvm/"><code>panproto-llvm</code></a>, the expression JIT compiler in <a href="https://docs.rs/panproto-jit/latest/panproto_jit/"><code>panproto-jit</code></a>, and the XRPC-based remote-repository client in <a href="https://docs.rs/panproto-xrpc/latest/panproto_xrpc/"><code>panproto-xrpc</code></a>. The stand-alone <a href="https://docs.rs/panproto-git-remote/latest/panproto_git_remote/"><code>panproto-git-remote</code></a> binary (installed as <code>git-remote-panproto</code>) is also in this layer.</p>
 <h2 id="the-dependency-graph"><a class="header" href="#the-dependency-graph">The dependency graph</a></h2>
 <p>Dependencies run top-down across layers. The foundations layer never depends on any layer above it. The transformation layer depends on foundations. Infrastructure depends on foundations and transformation, with <code>panproto-vcs</code> being the largest infrastructure crate and depending on most of the transformation machinery to implement its merge algorithm (<a href="#merge-as-pushout">Merge as pushout</a>).</p>
