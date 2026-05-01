@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-0695aac3.js";
+            window.path_to_searchindex_js = "../searchindex-6f7c1680.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-73f0b918.js"></script>
@@ -192,7 +192,7 @@ has been verified or edited by a human, the parts that were verified or
 edited will be noted at the head of the chapter.</p>
 </blockquote>
 <p>A Python caller reaching panproto uses a native <a href="https://pyo3.rs/">PyO3</a> wheel, which binds the Rust implementation directly into the CPython process rather than going through the WebAssembly module the TypeScript SDK uses. The choice is a recent one. An earlier pure-Python SDK wrapped <code>panproto-wasm</code> and went through MessagePack on every call; it is deprecated, and the <code>panproto</code> package on <a href="https://pypi.org/">PyPI</a> is the native build. The present chapter covers the native SDK and says briefly why the earlier approach was abandoned.</p>
-<p>The source lives in <code>crates/panproto-py/</code> on the Rust side and <code>sdk/python/</code> on the Python side.</p>
+<p>The source lives in <code>crates/panproto-py/</code> on the Rust side and <code>bindings/python/</code> on the Python side.</p>
 <h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
 <p>The package is installed from PyPI in the ordinary way.</p>
 <pre><code>pip install panproto

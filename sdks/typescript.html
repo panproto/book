@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-0695aac3.js";
+            window.path_to_searchindex_js = "../searchindex-6f7c1680.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-73f0b918.js"></script>
@@ -192,7 +192,7 @@ has been verified or edited by a human, the parts that were verified or
 edited will be noted at the head of the chapter.</p>
 </blockquote>
 <p>The TypeScript SDK, published on npm as <a href="https://www.npmjs.com/package/@panproto/core"><code>@panproto/core</code></a>, wraps the WebAssembly boundary developed in <a href="./wasm-boundary.html">the previous chapter</a> in a typed, ergonomic API for JavaScript and TypeScript callers. What the wrapping adds is threefold: ordinary JavaScript object lifetimes instead of manual handle management; MessagePack serialisation hidden inside method calls rather than exposed at the API level; and a fluent builder API that bundles the many discrete WASM calls of schema and migration construction into a single round-trip.</p>
-<p>The source lives in <code>sdk/typescript/</code> in the panproto repository.</p>
+<p>The source lives in <code>bindings/typescript/</code> in the panproto repository.</p>
 <h2 id="initialisation"><a class="header" href="#initialisation">Initialisation</a></h2>
 <p>The WASM module needs to be loaded and initialised before any panproto call. The SDK handles this through a top-level <code>init</code> function that takes either a <code>URL</code>, a <code>Response</code>, or a <code>BufferSource</code> (depending on the environment) and returns a promise that resolves when the module is ready.</p>
 <pre><code class="language-typescript">import { init, Schema } from "@panproto/core";
