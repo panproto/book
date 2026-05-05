@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-6f7c1680.js";
+            window.path_to_searchindex_js = "../searchindex-04a1e30a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-73f0b918.js"></script>
@@ -198,7 +198,9 @@ edited will be noted at the head of the chapter.</p>
 <pre><code>pip install panproto
 </code></pre>
 <p><em>Listing 9.1: Installing the panproto Python SDK. The wheel is pre-built for the most common platform-architecture combinations (Linux x86_64 and aarch64, macOS x86_64 and arm64, Windows x86_64); other platforms receive a source distribution that requires a Rust toolchain at install time.</em></p>
-<p>The package bundles every subsystem the Rust SDK exposes. There is no feature-flag equivalent on the Python side; the tree-sitter-based parsers and the git bridge are both included by default. A Python caller who does not use a subsystem does not pay for it at call time; the only cost is the size of the wheel, which is dominated by the bundled tree-sitter grammars.</p>
+<p>The package bundles every panproto subsystem except the tree-sitter grammars beyond <code>group-core</code>. Schema, migration, lens, expression, and VCS code paths are all included by default; the git bridge is too. A Python caller who does not use a subsystem does not pay for it at call time; the only cost is the size of the wheel.</p>
+<p>Tree-sitter grammars are split across the core wheel and a family of separately-installable companion wheels. The <code>panproto</code> wheel itself ships only the eleven <code>group-core</code> grammars (Python, JavaScript, TypeScript, Java, C#, C++, PHP, Bash, C, Go, Rust); installing more grammars is a <code>pip install panproto-grammars-&lt;group&gt;</code> away. The Python factory <code>panproto.AstParserRegistry()</code> discovers any installed companion through the <code>panproto.grammars</code> setuptools entry point and threads its grammar metadata into the native registry on construction, with no further configuration. The split is what lets the core wheel stay within PyPI’s per-file size ceiling — without it, an everything-bundled wheel runs to 300 MB unstripped.</p>
+<p>The full list of companion packs is in <a href="https://github.com/panproto/panproto/tree/main/bindings/python#companion-grammar-packs">bindings/python/README.md</a>; they range from the cluster-aligned (<code>web</code>, <code>systems</code>, <code>jvm</code>, <code>data</code>, <code>devops</code>, <code>mobile</code>, <code>scripting</code>, <code>functional</code>) to the domain-specific (<code>music</code>, covering live-coding hosts and notation languages) to a <code>panproto-grammars-all</code> umbrella that pulls in every grammar <code>panproto-grammars</code> knows about.</p>
 <h2 id="why-native-and-not-wasm"><a class="header" href="#why-native-and-not-wasm">Why native and not WASM</a></h2>
 <p>The pure-Python SDK wrapping panproto-wasm had two persistent problems. Performance: every call crossed a MessagePack serialisation boundary, and the WASM runtime on CPython was significantly slower than native Rust code running directly in the Python interpreter. Memory: the WASM module maintained its own heap, and large instance payloads were duplicated across the WASM heap and the Python heap for every call.</p>
 <p>The PyO3-based native build runs the Rust code directly inside the CPython process, with no MessagePack crossing and no WASM runtime. The cost is that panproto ships a separate wheel per platform-architecture combination, which is the industry-standard solution for Python native extensions and is what <a href="https://numpy.org/">numpy</a>, <a href="https://cryptography.io/">cryptography</a>, and similar projects do.</p>
