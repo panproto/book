@@ -1,0 +1,1552 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>CLI - panproto</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Documentation: tutorials, how-to guides, reference, and explanation">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href=".././theme/cite.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "navy";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-5ddc7d94.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-bbbd0f37.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">panproto</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/aaronstevenwhite/panproto" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/aaronstevenwhite/panproto/edit/main/book/src/reference/cli.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="cli-reference"><a class="header" href="#cli-reference">CLI reference</a></h1>
+<p>Every <code>schema</code> subcommand, with its full <code>--help</code> text. This page is regenerated
+from the live binary by <code>xtask/src/bin/gen-cli-docs.rs</code>; edit the CLI, not the
+page.</p>
+<p>To regenerate locally:</p>
+<pre><code class="language-sh">cargo run -p xtask --bin gen-cli-docs
+</code></pre>
+<p>CI runs the same command and fails if the result differs from what is checked in.</p>
+<p>For the model that the commands operate on, see
+<a href="../explanation/schemas-as-theories.html">Schemas as theories</a>,
+<a href="../explanation/migrations-as-morphisms.html">Migrations as morphisms</a>, and
+<a href="../explanation/vcs-semantics.html">Schema version control semantics</a>.</p>
+<h2 id="schema"><a class="header" href="#schema"><code>schema</code></a></h2>
+<pre><code class="language-text">Schematic version control — schema migration toolkit based on generalized algebraic theories
+
+Usage: schema [OPTIONS] &lt;COMMAND&gt;
+
+Commands:
+  validate      Validate a schema against a protocol
+  check         Check existence conditions for a migration between two schemas
+  scaffold      Generate minimal test data from a protocol theory using free model construction
+  normalize     Simplify a schema by merging equivalent elements
+  typecheck     Type-check a migration between two schemas at the GAT level
+  verify        Verify that a schema satisfies its protocol theory's equations
+  init          Initialize a new panproto repository
+  add           Stage a schema for the next commit
+  commit        Create a new commit from staged changes
+  status        Show repository status
+  log           Show commit history
+  diff          Diff two schemas or show staged changes
+  show          Inspect a commit, schema, or migration object
+  branch        Create, list, or delete branches
+  tag           Create, list, or delete tags
+  checkout      Switch to a branch or commit
+  merge         Merge a branch into the current branch
+  rebase        Replay current branch onto another
+  cherry-pick   Apply a single commit's migration to the current branch
+  reset         Move HEAD / unstage / restore
+  stash         Save or restore working state
+  reflog        Show ref mutation history
+  bisect        Binary search for the commit that introduced a breaking change
+  blame         Show which commit introduced a schema element
+  lift          Apply a migration to a record, transforming it from source to target schema
+  integrate     Integrate two schemas by computing their pushout
+  auto-migrate  Automatically discover a migration between two schemas
+  gc            Garbage collect unreachable objects
+  expr          Evaluate, type-check, or interactively explore GAT expressions
+  enrich        Add, list, or remove schema enrichments (defaults, coercions, mergers, policies)
+  remote        Add, list, or remove remote repositories
+  push          Push schemas to a remote repository
+  pull          Pull schemas from a remote repository
+  fetch         Fetch schemas from a remote repository
+  clone         Clone a remote repository
+  data          Data operations: migrate, convert, sync, and status
+  theory        Theory DSL operations: define theories, morphisms, and protocols from data files
+  lens          Bidirectional lens operations
+  parse         Parse source files into full-AST schemas via tree-sitter
+  git           Import/export between git repositories and panproto-vcs
+  help          Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+  -V, --version  Print version
+</code></pre>
+<h3 id="schema-validate"><a class="header" href="#schema-validate"><code>schema validate</code></a></h3>
+<pre><code class="language-text">Validate a schema against a protocol
+
+Usage: schema validate [OPTIONS] --protocol &lt;PROTOCOL&gt; &lt;SCHEMA&gt;
+
+Arguments:
+  &lt;SCHEMA&gt;  Path to the schema JSON file
+
+Options:
+      --protocol &lt;PROTOCOL&gt;  The protocol name (e.g., "atproto")
+  -v, --verbose              Enable verbose output
+  -h, --help                 Print help
+</code></pre>
+<h3 id="schema-check"><a class="header" href="#schema-check"><code>schema check</code></a></h3>
+<pre><code class="language-text">Check existence conditions for a migration between two schemas
+
+Usage: schema check [OPTIONS] --src &lt;SRC&gt; --tgt &lt;TGT&gt; --mapping &lt;MAPPING&gt;
+
+Options:
+      --src &lt;SRC&gt;          Path to the source schema JSON file
+  -v, --verbose            Enable verbose output
+      --tgt &lt;TGT&gt;          Path to the target schema JSON file
+      --mapping &lt;MAPPING&gt;  Path to the migration mapping JSON file
+      --typecheck          Also type-check the migration morphism at the GAT level
+  -h, --help               Print help
+</code></pre>
+<h3 id="schema-scaffold"><a class="header" href="#schema-scaffold"><code>schema scaffold</code></a></h3>
+<pre><code class="language-text">Generate minimal test data from a protocol theory using free model construction
+
+Usage: schema scaffold [OPTIONS] --protocol &lt;PROTOCOL&gt; &lt;SCHEMA&gt;
+
+Arguments:
+  &lt;SCHEMA&gt;  Path to the schema JSON file
+
+Options:
+      --protocol &lt;PROTOCOL&gt;    The protocol name (e.g., "atproto")
+  -v, --verbose                Enable verbose output
+      --depth &lt;DEPTH&gt;          Maximum term generation depth (default: 3) [default: 3]
+      --max-terms &lt;MAX_TERMS&gt;  Maximum terms per sort (default: 1000) [default: 1000]
+      --json                   Output as JSON
+  -h, --help                   Print help
+</code></pre>
+<h3 id="schema-normalize"><a class="header" href="#schema-normalize"><code>schema normalize</code></a></h3>
+<pre><code class="language-text">Simplify a schema by merging equivalent elements
+
+Usage: schema normalize [OPTIONS] --protocol &lt;PROTOCOL&gt; &lt;SCHEMA&gt;
+
+Arguments:
+  &lt;SCHEMA&gt;  Path to the schema JSON file
+
+Options:
+      --protocol &lt;PROTOCOL&gt;         The protocol name (e.g., "atproto")
+  -v, --verbose                     Enable verbose output
+      --identify &lt;IDENTIFICATIONS&gt;  Pairs of elements to identify, as "A=B"
+      --json                        Output as JSON
+  -h, --help                        Print help
+</code></pre>
+<h3 id="schema-typecheck"><a class="header" href="#schema-typecheck"><code>schema typecheck</code></a></h3>
+<pre><code class="language-text">Type-check a migration between two schemas at the GAT level
+
+Usage: schema typecheck [OPTIONS] --src &lt;SRC&gt; --tgt &lt;TGT&gt; --migration &lt;MIGRATION&gt;
+
+Options:
+      --src &lt;SRC&gt;              Path to the source schema JSON file
+  -v, --verbose                Enable verbose output
+      --tgt &lt;TGT&gt;              Path to the target schema JSON file
+      --migration &lt;MIGRATION&gt;  Path to the migration mapping JSON file
+  -h, --help                   Print help
+</code></pre>
+<h3 id="schema-verify"><a class="header" href="#schema-verify"><code>schema verify</code></a></h3>
+<pre><code class="language-text">Verify that a schema satisfies its protocol theory's equations
+
+Usage: schema verify [OPTIONS] --protocol &lt;PROTOCOL&gt; &lt;SCHEMA&gt;
+
+Arguments:
+  &lt;SCHEMA&gt;  Path to the schema JSON file
+
+Options:
+      --protocol &lt;PROTOCOL&gt;
+          The protocol name (e.g., "atproto")
+  -v, --verbose
+          Enable verbose output
+      --max-assignments &lt;MAX_ASSIGNMENTS&gt;
+          Maximum assignments to check per equation (default: 10000) [default: 10000]
+  -h, --help
+          Print help
+</code></pre>
+<h3 id="schema-init"><a class="header" href="#schema-init"><code>schema init</code></a></h3>
+<pre><code class="language-text">Initialize a new panproto repository
+
+Usage: schema init [OPTIONS] [PATH]
+
+Arguments:
+  [PATH]  Directory to initialize (defaults to current dir) [default: .]
+
+Options:
+  -b, --initial-branch &lt;INITIAL_BRANCH&gt;  Use the given name for the initial branch
+  -v, --verbose                          Enable verbose output
+  -h, --help                             Print help
+</code></pre>
+<h3 id="schema-add"><a class="header" href="#schema-add"><code>schema add</code></a></h3>
+<pre><code class="language-text">Stage a schema for the next commit
+
+Usage: schema add [OPTIONS] &lt;SCHEMA&gt;
+
+Arguments:
+  &lt;SCHEMA&gt;  Path to the schema JSON file
+
+Options:
+  -n, --dry-run      Show what would be staged without actually staging
+  -v, --verbose      Enable verbose output
+  -f, --force        Force staging even if validation fails
+      --data &lt;DATA&gt;  Stage data files alongside the schema
+  -h, --help         Print help
+</code></pre>
+<h3 id="schema-commit"><a class="header" href="#schema-commit"><code>schema commit</code></a></h3>
+<pre><code class="language-text">Create a new commit from staged changes
+
+Usage: schema commit [OPTIONS] --message &lt;MESSAGE&gt;
+
+Options:
+  -m, --message &lt;MESSAGE&gt;  Commit message
+  -v, --verbose            Enable verbose output
+      --author &lt;AUTHOR&gt;    Author name [default: anonymous]
+      --amend              Amend the previous commit instead of creating a new one
+      --allow-empty        Allow creating a commit with no changes
+      --skip-verify        Skip GAT equation verification
+  -h, --help               Print help
+</code></pre>
+<h3 id="schema-status"><a class="header" href="#schema-status"><code>schema status</code></a></h3>
+<pre><code class="language-text">Show repository status
+
+Usage: schema status [OPTIONS]
+
+Options:
+  -s, --short        Show output in short format
+  -v, --verbose      Enable verbose output
+      --porcelain    Show output in machine-readable format
+  -b, --branch       Show branch information
+      --data &lt;DATA&gt;  Show data staleness for files in this directory
+  -h, --help         Print help
+</code></pre>
+<h3 id="schema-log"><a class="header" href="#schema-log"><code>schema log</code></a></h3>
+<pre><code class="language-text">Show commit history
+
+Usage: schema log [OPTIONS]
+
+Options:
+  -n, --limit &lt;LIMIT&gt;    Maximum number of commits to show
+  -v, --verbose          Enable verbose output
+      --oneline          Show each commit on a single line
+      --graph            Show an ASCII graph of the branch structure
+      --all              Show all branches, not just the current one
+      --format &lt;FORMAT&gt;  Pretty-print commits using a format string
+      --author &lt;AUTHOR&gt;  Filter commits by author
+      --grep &lt;GREP&gt;      Filter commits whose message matches a pattern
+      --data             Show data and complement IDs in commit history
+  -h, --help             Print help
+</code></pre>
+<h3 id="schema-diff"><a class="header" href="#schema-diff"><code>schema diff</code></a></h3>
+<pre><code class="language-text">Diff two schemas or show staged changes
+
+Usage: schema diff [OPTIONS] [OLD] [NEW]
+
+Arguments:
+  [OLD]  Path to the old schema (or first ref)
+  [NEW]  Path to the new schema (or second ref)
+
+Options:
+      --stat            Show a diffstat summary
+  -v, --verbose         Enable verbose output
+      --name-only       Show only names of changed elements
+      --name-status     Show names and status (A/D/M) of changed elements
+      --staged          Diff the staged schema against HEAD
+      --detect-renames  Detect likely renames between schemas
+      --theory          Show theory-level diff (sorts, operations, equations)
+      --lens            Also generate a protolens chain between the schemas
+      --save &lt;SAVE&gt;     Save the protolens chain to a file (requires --lens)
+      --optic-kind      Show the optic classification of the diff
+  -h, --help            Print help
+</code></pre>
+<h3 id="schema-show"><a class="header" href="#schema-show"><code>schema show</code></a></h3>
+<pre><code class="language-text">Inspect a commit, schema, or migration object
+
+Usage: schema show [OPTIONS] &lt;TARGET&gt;
+
+Arguments:
+  &lt;TARGET&gt;  Ref name or object ID
+
+Options:
+      --format &lt;FORMAT&gt;  Pretty-print using a format string
+  -v, --verbose          Enable verbose output
+      --stat             Show a diffstat summary for commits
+  -h, --help             Print help
+</code></pre>
+<h3 id="schema-branch"><a class="header" href="#schema-branch"><code>schema branch</code></a></h3>
+<pre><code class="language-text">Create, list, or delete branches
+
+Usage: schema branch [OPTIONS] [NAME]
+
+Arguments:
+  [NAME]  Branch name to create. Lists branches if omitted
+
+Options:
+  -d, --delete         Delete the branch
+  -D                   Force-delete the branch even if not fully merged
+  -f, --force          Force overwrite if branch already exists
+  -m, --move &lt;RENAME&gt;  Rename a branch (value is the new name)
+  -v, --verbose        Show commit info for each branch
+  -a, --all            List both local and remote-tracking branches
+  -h, --help           Print help
+</code></pre>
+<h3 id="schema-tag"><a class="header" href="#schema-tag"><code>schema tag</code></a></h3>
+<pre><code class="language-text">Create, list, or delete tags
+
+Usage: schema tag [OPTIONS] [NAME]
+
+Arguments:
+  [NAME]  Tag name to create. Lists tags if omitted
+
+Options:
+  -d, --delete             Delete the tag
+  -v, --verbose            Enable verbose output
+  -a, --annotate           Create an annotated tag
+  -m, --message &lt;MESSAGE&gt;  Tag message (implies --annotate)
+  -l, --list               List tags matching a pattern
+  -f, --force              Force-replace an existing tag
+  -h, --help               Print help
+</code></pre>
+<h3 id="schema-checkout"><a class="header" href="#schema-checkout"><code>schema checkout</code></a></h3>
+<pre><code class="language-text">Switch to a branch or commit
+
+Usage: schema checkout [OPTIONS] &lt;TARGET&gt;
+
+Arguments:
+  &lt;TARGET&gt;  Branch name or commit ID
+
+Options:
+  -b                       Create a new branch with the given name at HEAD and switch to it
+  -v, --verbose            Enable verbose output
+      --detach             Detach HEAD at the target commit
+      --migrate &lt;MIGRATE&gt;  Migrate data in this directory to match the target branch's schema
+  -h, --help               Print help
+</code></pre>
+<h3 id="schema-merge"><a class="header" href="#schema-merge"><code>schema merge</code></a></h3>
+<pre><code class="language-text">Merge a branch into the current branch
+
+Usage: schema merge [OPTIONS] [BRANCH]
+
+Arguments:
+  [BRANCH]  Branch to merge
+
+Options:
+      --author &lt;AUTHOR&gt;    Author name [default: anonymous]
+      --no-commit          Perform the merge but do not commit
+      --ff-only            Refuse to merge unless fast-forward is possible
+      --no-ff              Create a merge commit even for fast-forward merges
+      --squash             Squash the branch into a single change set
+      --abort              Abort an in-progress merge
+  -m, --message &lt;MESSAGE&gt;  Custom merge commit message
+  -v, --verbose            Show pullback-based overlap detection details
+      --migrate &lt;MIGRATE&gt;  Migrate data in this directory through the merge
+  -h, --help               Print help
+</code></pre>
+<h3 id="schema-rebase"><a class="header" href="#schema-rebase"><code>schema rebase</code></a></h3>
+<pre><code class="language-text">Replay current branch onto another
+
+Usage: schema rebase [OPTIONS] [ONTO]
+
+Arguments:
+  [ONTO]  Branch or commit to rebase onto
+
+Options:
+      --author &lt;AUTHOR&gt;  Author name [default: anonymous]
+  -v, --verbose          Enable verbose output
+      --abort            Abort the current rebase operation
+      --cont             Continue a paused rebase after resolving conflicts
+  -h, --help             Print help
+</code></pre>
+<h3 id="schema-cherry-pick"><a class="header" href="#schema-cherry-pick"><code>schema cherry-pick</code></a></h3>
+<pre><code class="language-text">Apply a single commit's migration to the current branch
+
+Usage: schema cherry-pick [OPTIONS] [COMMIT]
+
+Arguments:
+  [COMMIT]  Commit ID to cherry-pick
+
+Options:
+      --author &lt;AUTHOR&gt;  Author name [default: anonymous]
+  -v, --verbose          Enable verbose output
+  -n, --no-commit        Apply the change without committing
+  -x                     Append "(cherry picked from commit ...)" to the message
+      --abort            Abort the current cherry-pick operation
+  -h, --help             Print help
+</code></pre>
+<h3 id="schema-reset"><a class="header" href="#schema-reset"><code>schema reset</code></a></h3>
+<pre><code class="language-text">Move HEAD / unstage / restore
+
+Usage: schema reset [OPTIONS] &lt;TARGET&gt;
+
+Arguments:
+  &lt;TARGET&gt;  Target ref or commit ID
+
+Options:
+      --soft             Soft reset: move HEAD only, keep staged and working changes
+  -v, --verbose          Enable verbose output
+      --hard             Hard reset: move HEAD, discard all changes
+      --author &lt;AUTHOR&gt;  Author name [default: anonymous]
+  -h, --help             Print help
+</code></pre>
+<h3 id="schema-stash"><a class="header" href="#schema-stash"><code>schema stash</code></a></h3>
+<pre><code class="language-text">Save or restore working state
+
+Usage: schema stash [OPTIONS] &lt;COMMAND&gt;
+
+Commands:
+  push   Save the current staged schema
+  pop    Restore the most recent stash
+  list   List all stash entries
+  drop   Drop the most recent stash
+  apply  Apply a stash entry without removing it
+  show   Show the contents of a stash entry
+  clear  Remove all stash entries
+  help   Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-stash-push"><a class="header" href="#schema-stash-push"><code>schema stash push</code></a></h4>
+<pre><code class="language-text">Save the current staged schema
+
+Usage: schema stash push [OPTIONS]
+
+Options:
+  -m, --message &lt;MESSAGE&gt;  Optional stash message
+  -v, --verbose            Enable verbose output
+      --author &lt;AUTHOR&gt;    Author name [default: anonymous]
+  -h, --help               Print help
+</code></pre>
+<h4 id="schema-stash-pop"><a class="header" href="#schema-stash-pop"><code>schema stash pop</code></a></h4>
+<pre><code class="language-text">Restore the most recent stash
+
+Usage: schema stash pop [OPTIONS]
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-stash-list"><a class="header" href="#schema-stash-list"><code>schema stash list</code></a></h4>
+<pre><code class="language-text">List all stash entries
+
+Usage: schema stash list [OPTIONS]
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-stash-drop"><a class="header" href="#schema-stash-drop"><code>schema stash drop</code></a></h4>
+<pre><code class="language-text">Drop the most recent stash
+
+Usage: schema stash drop [OPTIONS]
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-stash-apply"><a class="header" href="#schema-stash-apply"><code>schema stash apply</code></a></h4>
+<pre><code class="language-text">Apply a stash entry without removing it
+
+Usage: schema stash apply [OPTIONS] [INDEX]
+
+Arguments:
+  [INDEX]  Stash index to apply [default: 0]
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-stash-show"><a class="header" href="#schema-stash-show"><code>schema stash show</code></a></h4>
+<pre><code class="language-text">Show the contents of a stash entry
+
+Usage: schema stash show [OPTIONS] [INDEX]
+
+Arguments:
+  [INDEX]  Stash index to inspect [default: 0]
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-stash-clear"><a class="header" href="#schema-stash-clear"><code>schema stash clear</code></a></h4>
+<pre><code class="language-text">Remove all stash entries
+
+Usage: schema stash clear [OPTIONS]
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h3 id="schema-reflog"><a class="header" href="#schema-reflog"><code>schema reflog</code></a></h3>
+<pre><code class="language-text">Show ref mutation history
+
+Usage: schema reflog [OPTIONS] [REF_NAME]
+
+Arguments:
+  [REF_NAME]  Ref name (defaults to HEAD) [default: HEAD]
+
+Options:
+  -n, --limit &lt;LIMIT&gt;  Maximum entries to show
+  -v, --verbose        Enable verbose output
+      --all            Show reflogs for all refs
+  -h, --help           Print help
+</code></pre>
+<h3 id="schema-bisect"><a class="header" href="#schema-bisect"><code>schema bisect</code></a></h3>
+<pre><code class="language-text">Binary search for the commit that introduced a breaking change
+
+Usage: schema bisect [OPTIONS] &lt;GOOD&gt; &lt;BAD&gt;
+
+Arguments:
+  &lt;GOOD&gt;  Known good commit
+  &lt;BAD&gt;   Known bad commit
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h3 id="schema-blame"><a class="header" href="#schema-blame"><code>schema blame</code></a></h3>
+<pre><code class="language-text">Show which commit introduced a schema element
+
+Usage: schema blame [OPTIONS] --element-type &lt;ELEMENT_TYPE&gt; &lt;ELEMENT_ID&gt;
+
+Arguments:
+  &lt;ELEMENT_ID&gt;  Element identifier (vertex ID, edge `"src-&gt;tgt"`, or `"vertex_id:sort"`)
+
+Options:
+      --element-type &lt;ELEMENT_TYPE&gt;  Element type: vertex, edge, or constraint
+  -v, --verbose                      Enable verbose output
+      --reverse                      Walk history from the first commit forward
+  -h, --help                         Print help
+</code></pre>
+<h3 id="schema-lift"><a class="header" href="#schema-lift"><code>schema lift</code></a></h3>
+<pre><code class="language-text">Apply a migration to a record, transforming it from source to target schema
+
+Usage: schema lift [OPTIONS] --migration &lt;MIGRATION&gt; --src-schema &lt;SRC_SCHEMA&gt; --tgt-schema &lt;TGT_SCHEMA&gt; &lt;RECORD&gt;
+
+Arguments:
+  &lt;RECORD&gt;  Path to the record JSON file
+
+Options:
+      --migration &lt;MIGRATION&gt;          Path to the migration mapping JSON file
+  -v, --verbose                        Enable verbose output
+      --src-schema &lt;SRC_SCHEMA&gt;        Path to the source schema JSON file
+      --tgt-schema &lt;TGT_SCHEMA&gt;        Path to the target schema JSON file
+      --direction &lt;DIRECTION&gt;          Migration direction: restrict (default, `Delta_F`), sigma (`Sigma_F`), or pi (`Pi_F`) [default: restrict]
+      --instance-type &lt;INSTANCE_TYPE&gt;  Instance type: wtype (default) or functor [default: wtype]
+  -h, --help                           Print help
+</code></pre>
+<h3 id="schema-integrate"><a class="header" href="#schema-integrate"><code>schema integrate</code></a></h3>
+<pre><code class="language-text">Integrate two schemas by computing their pushout
+
+Usage: schema integrate [OPTIONS] &lt;LEFT&gt; &lt;RIGHT&gt;
+
+Arguments:
+  &lt;LEFT&gt;   Path to the left schema JSON file
+  &lt;RIGHT&gt;  Path to the right schema JSON file
+
+Options:
+      --auto-overlap  Automatically discover the overlap between schemas
+  -v, --verbose       Enable verbose output
+      --json          Output the integrated schema as JSON
+  -h, --help          Print help
+</code></pre>
+<h3 id="schema-auto-migrate"><a class="header" href="#schema-auto-migrate"><code>schema auto-migrate</code></a></h3>
+<pre><code class="language-text">Automatically discover a migration between two schemas
+
+Usage: schema auto-migrate [OPTIONS] &lt;OLD&gt; &lt;NEW&gt;
+
+Arguments:
+  &lt;OLD&gt;  Path to the old/source schema JSON file
+  &lt;NEW&gt;  Path to the new/target schema JSON file
+
+Options:
+      --monic    Require injective (one-to-one) vertex mapping
+  -v, --verbose  Enable verbose output
+      --json     Output the migration as JSON
+  -h, --help     Print help
+</code></pre>
+<h3 id="schema-gc"><a class="header" href="#schema-gc"><code>schema gc</code></a></h3>
+<pre><code class="language-text">Garbage collect unreachable objects
+
+Usage: schema gc [OPTIONS]
+
+Options:
+      --dry-run  Show what would be deleted without actually deleting
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h3 id="schema-expr"><a class="header" href="#schema-expr"><code>schema expr</code></a></h3>
+<pre><code class="language-text">Evaluate, type-check, or interactively explore GAT expressions
+
+Usage: schema expr [OPTIONS] &lt;COMMAND&gt;
+
+Commands:
+  gat-eval   Evaluate a JSON-encoded GAT term from a file
+  gat-check  Type-check a JSON-encoded GAT term from a file
+  repl       Interactive expression REPL
+  parse      Parse a Haskell-style expression and print its AST
+  eval       Parse and evaluate a Haskell-style expression, printing the result
+  fmt        Parse an expression and pretty-print it back in canonical form
+  check      Parse an expression and report any syntax errors
+  help       Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-expr-gat-eval"><a class="header" href="#schema-expr-gat-eval"><code>schema expr gat-eval</code></a></h4>
+<pre><code class="language-text">Evaluate a JSON-encoded GAT term from a file
+
+Usage: schema expr gat-eval [OPTIONS] &lt;FILE&gt;
+
+Arguments:
+  &lt;FILE&gt;  Path to the JSON file containing a GAT term
+
+Options:
+      --env &lt;ENV&gt;  Path to a JSON file with variable bindings
+  -v, --verbose    Enable verbose output
+  -h, --help       Print help
+</code></pre>
+<h4 id="schema-expr-gat-check"><a class="header" href="#schema-expr-gat-check"><code>schema expr gat-check</code></a></h4>
+<pre><code class="language-text">Type-check a JSON-encoded GAT term from a file
+
+Usage: schema expr gat-check [OPTIONS] &lt;FILE&gt;
+
+Arguments:
+  &lt;FILE&gt;  Path to the JSON file containing term, theory, and context
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-expr-repl"><a class="header" href="#schema-expr-repl"><code>schema expr repl</code></a></h4>
+<pre><code class="language-text">Interactive expression REPL
+
+Usage: schema expr repl [OPTIONS]
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-expr-parse"><a class="header" href="#schema-expr-parse"><code>schema expr parse</code></a></h4>
+<pre><code class="language-text">Parse a Haskell-style expression and print its AST
+
+Usage: schema expr parse [OPTIONS] &lt;SOURCE&gt;
+
+Arguments:
+  &lt;SOURCE&gt;  Expression source text
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-expr-eval"><a class="header" href="#schema-expr-eval"><code>schema expr eval</code></a></h4>
+<pre><code class="language-text">Parse and evaluate a Haskell-style expression, printing the result
+
+Usage: schema expr eval [OPTIONS] &lt;SOURCE&gt;
+
+Arguments:
+  &lt;SOURCE&gt;  Expression source text
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-expr-fmt"><a class="header" href="#schema-expr-fmt"><code>schema expr fmt</code></a></h4>
+<pre><code class="language-text">Parse an expression and pretty-print it back in canonical form
+
+Usage: schema expr fmt [OPTIONS] &lt;SOURCE&gt;
+
+Arguments:
+  &lt;SOURCE&gt;  Expression source text
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-expr-check"><a class="header" href="#schema-expr-check"><code>schema expr check</code></a></h4>
+<pre><code class="language-text">Parse an expression and report any syntax errors
+
+Usage: schema expr check [OPTIONS] &lt;SOURCE&gt;
+
+Arguments:
+  &lt;SOURCE&gt;  Expression source text
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h3 id="schema-enrich"><a class="header" href="#schema-enrich"><code>schema enrich</code></a></h3>
+<pre><code class="language-text">Add, list, or remove schema enrichments (defaults, coercions, mergers, policies)
+
+Usage: schema enrich [OPTIONS] &lt;COMMAND&gt;
+
+Commands:
+  add-default   Add a default value expression to a vertex
+  add-coercion  Add a coercion expression between two vertex kinds
+  add-merger    Add a merger expression to a vertex
+  add-policy    Add a conflict policy to a vertex
+  list          List all enrichments on the HEAD schema
+  remove        Remove an enrichment by name
+  help          Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-enrich-add-default"><a class="header" href="#schema-enrich-add-default"><code>schema enrich add-default</code></a></h4>
+<pre><code class="language-text">Add a default value expression to a vertex
+
+Usage: schema enrich add-default [OPTIONS] --expr &lt;EXPR&gt; &lt;VERTEX&gt;
+
+Arguments:
+  &lt;VERTEX&gt;  Vertex name
+
+Options:
+      --expr &lt;EXPR&gt;  Default value as JSON
+  -v, --verbose      Enable verbose output
+  -h, --help         Print help
+</code></pre>
+<h4 id="schema-enrich-add-coercion"><a class="header" href="#schema-enrich-add-coercion"><code>schema enrich add-coercion</code></a></h4>
+<pre><code class="language-text">Add a coercion expression between two vertex kinds
+
+Usage: schema enrich add-coercion [OPTIONS] --expr &lt;EXPR&gt; &lt;FROM&gt; &lt;TO&gt;
+
+Arguments:
+  &lt;FROM&gt;  Source vertex kind
+  &lt;TO&gt;    Target vertex kind
+
+Options:
+      --expr &lt;EXPR&gt;  Coercion expression as JSON
+  -v, --verbose      Enable verbose output
+  -h, --help         Print help
+</code></pre>
+<h4 id="schema-enrich-add-merger"><a class="header" href="#schema-enrich-add-merger"><code>schema enrich add-merger</code></a></h4>
+<pre><code class="language-text">Add a merger expression to a vertex
+
+Usage: schema enrich add-merger [OPTIONS] --expr &lt;EXPR&gt; &lt;VERTEX&gt;
+
+Arguments:
+  &lt;VERTEX&gt;  Vertex name
+
+Options:
+      --expr &lt;EXPR&gt;  Merger specification as JSON
+  -v, --verbose      Enable verbose output
+  -h, --help         Print help
+</code></pre>
+<h4 id="schema-enrich-add-policy"><a class="header" href="#schema-enrich-add-policy"><code>schema enrich add-policy</code></a></h4>
+<pre><code class="language-text">Add a conflict policy to a vertex
+
+Usage: schema enrich add-policy [OPTIONS] --strategy &lt;STRATEGY&gt; &lt;VERTEX&gt;
+
+Arguments:
+  &lt;VERTEX&gt;  Vertex name
+
+Options:
+      --strategy &lt;STRATEGY&gt;  Conflict resolution strategy name
+  -v, --verbose              Enable verbose output
+  -h, --help                 Print help
+</code></pre>
+<h4 id="schema-enrich-list"><a class="header" href="#schema-enrich-list"><code>schema enrich list</code></a></h4>
+<pre><code class="language-text">List all enrichments on the HEAD schema
+
+Usage: schema enrich list [OPTIONS]
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-enrich-remove"><a class="header" href="#schema-enrich-remove"><code>schema enrich remove</code></a></h4>
+<pre><code class="language-text">Remove an enrichment by name
+
+Usage: schema enrich remove [OPTIONS] &lt;NAME&gt;
+
+Arguments:
+  &lt;NAME&gt;  Enrichment name or vertex name to remove enrichments from
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h3 id="schema-remote"><a class="header" href="#schema-remote"><code>schema remote</code></a></h3>
+<pre><code class="language-text">Add, list, or remove remote repositories
+
+Usage: schema remote [OPTIONS] &lt;COMMAND&gt;
+
+Commands:
+  add     Register a new remote
+  remove  Remove a remote
+  list    List configured remotes
+  help    Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-remote-add"><a class="header" href="#schema-remote-add"><code>schema remote add</code></a></h4>
+<pre><code class="language-text">Register a new remote
+
+Usage: schema remote add [OPTIONS] &lt;NAME&gt; &lt;URL&gt;
+
+Arguments:
+  &lt;NAME&gt;  Remote name
+  &lt;URL&gt;   Remote URL
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-remote-remove"><a class="header" href="#schema-remote-remove"><code>schema remote remove</code></a></h4>
+<pre><code class="language-text">Remove a remote
+
+Usage: schema remote remove [OPTIONS] &lt;NAME&gt;
+
+Arguments:
+  &lt;NAME&gt;  Remote name to remove
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-remote-list"><a class="header" href="#schema-remote-list"><code>schema remote list</code></a></h4>
+<pre><code class="language-text">List configured remotes
+
+Usage: schema remote list [OPTIONS]
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h3 id="schema-push"><a class="header" href="#schema-push"><code>schema push</code></a></h3>
+<pre><code class="language-text">Push schemas to a remote repository
+
+Usage: schema push [OPTIONS] [REMOTE] [BRANCH]
+
+Arguments:
+  [REMOTE]  Remote name
+  [BRANCH]  Branch to push
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h3 id="schema-pull"><a class="header" href="#schema-pull"><code>schema pull</code></a></h3>
+<pre><code class="language-text">Pull schemas from a remote repository
+
+Usage: schema pull [OPTIONS] [REMOTE] [BRANCH]
+
+Arguments:
+  [REMOTE]  Remote name
+  [BRANCH]  Branch to pull
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h3 id="schema-fetch"><a class="header" href="#schema-fetch"><code>schema fetch</code></a></h3>
+<pre><code class="language-text">Fetch schemas from a remote repository
+
+Usage: schema fetch [OPTIONS] [REMOTE]
+
+Arguments:
+  [REMOTE]  Remote name
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h3 id="schema-clone"><a class="header" href="#schema-clone"><code>schema clone</code></a></h3>
+<pre><code class="language-text">Clone a remote repository
+
+Usage: schema clone [OPTIONS] &lt;URL&gt; [PATH]
+
+Arguments:
+  &lt;URL&gt;   Repository URL
+  [PATH]  Local path
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h3 id="schema-data"><a class="header" href="#schema-data"><code>schema data</code></a></h3>
+<pre><code class="language-text">Data operations: migrate, convert, sync, and status
+
+Usage: schema data [OPTIONS] &lt;COMMAND&gt;
+
+Commands:
+  migrate  Migrate data to match the current schema version
+  convert  Convert data between schemas
+  sync     Sync data to match a target schema version via VCS
+  status   Report data staleness relative to the current schema version
+  help     Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-data-migrate"><a class="header" href="#schema-data-migrate"><code>schema data migrate</code></a></h4>
+<pre><code class="language-text">Migrate data to match the current schema version
+
+Usage: schema data migrate [OPTIONS] &lt;DATA&gt;
+
+Arguments:
+  &lt;DATA&gt;  Data directory containing JSON files
+
+Options:
+      --protocol &lt;PROTOCOL&gt;  Protocol name (inferred from HEAD commit if omitted)
+  -v, --verbose              Enable verbose output
+      --range &lt;RANGE&gt;        Migrate between specific commits (default: parent..HEAD)
+      --dry-run              Preview without modifying files
+  -o, --output &lt;OUTPUT&gt;      Output directory (default: overwrite in place)
+      --backward             Migrate backward (requires stored complement)
+      --coverage             Apply migration and print coverage statistics
+  -h, --help                 Print help
+</code></pre>
+<h4 id="schema-data-convert"><a class="header" href="#schema-data-convert"><code>schema data convert</code></a></h4>
+<pre><code class="language-text">Convert data between schemas
+
+Usage: schema data convert [OPTIONS] --protocol &lt;PROTOCOL&gt; &lt;DATA&gt;
+
+Arguments:
+  &lt;DATA&gt;  Data file or directory of JSON files
+
+Options:
+      --from &lt;FROM&gt;            Source schema
+  -v, --verbose                Enable verbose output
+      --to &lt;TO&gt;                Target schema
+      --protocol &lt;PROTOCOL&gt;    Protocol name
+      --chain &lt;CHAIN&gt;          Pre-built protolens chain JSON (alternative to --from/--to)
+  -o, --output &lt;OUTPUT&gt;        Output file or directory
+      --direction &lt;DIRECTION&gt;  Direction: "forward" or "backward" [default: forward]
+      --defaults &lt;DEFAULTS&gt;    Default values as key=value pairs
+  -h, --help                   Print help
+</code></pre>
+<h4 id="schema-data-sync"><a class="header" href="#schema-data-sync"><code>schema data sync</code></a></h4>
+<pre><code class="language-text">Sync data to match a target schema version via VCS
+
+Usage: schema data sync [OPTIONS] &lt;DATA_DIR&gt;
+
+Arguments:
+  &lt;DATA_DIR&gt;  Data directory
+
+Options:
+      --edits            Store an edit log object in the VCS
+  -v, --verbose          Enable verbose output
+      --target &lt;TARGET&gt;  Target ref (default: HEAD)
+  -h, --help             Print help
+</code></pre>
+<h4 id="schema-data-status"><a class="header" href="#schema-data-status"><code>schema data status</code></a></h4>
+<pre><code class="language-text">Report data staleness relative to the current schema version
+
+Usage: schema data status [OPTIONS] &lt;DATA_DIR&gt;
+
+Arguments:
+  &lt;DATA_DIR&gt;  Data directory
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h3 id="schema-theory"><a class="header" href="#schema-theory"><code>schema theory</code></a></h3>
+<pre><code class="language-text">Theory DSL operations: define theories, morphisms, and protocols from data files
+
+Usage: schema theory [OPTIONS] &lt;COMMAND&gt;
+
+Commands:
+  validate             Validate a theory document (load + typecheck)
+  compile              Compile a theory document and print results
+  compile-dir          Compile all theory documents in a directory
+  check-morphism       Validate a morphism document
+  recompose            Replay a composition and print the resulting theory
+  check-coercion-laws  Run sample-based coercion law checks over every directed equation in a theory document. Exits non-zero when any declared coercion class is falsified by a sample
+  repl                 Interactive theory REPL with syntax highlighting and history
+  help                 Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-theory-validate"><a class="header" href="#schema-theory-validate"><code>schema theory validate</code></a></h4>
+<pre><code class="language-text">Validate a theory document (load + typecheck)
+
+Usage: schema theory validate [OPTIONS] &lt;FILE&gt;
+
+Arguments:
+  &lt;FILE&gt;  Path to the theory document file (.ncl, .json, .yaml)
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-theory-compile"><a class="header" href="#schema-theory-compile"><code>schema theory compile</code></a></h4>
+<pre><code class="language-text">Compile a theory document and print results
+
+Usage: schema theory compile [OPTIONS] &lt;FILE&gt;
+
+Arguments:
+  &lt;FILE&gt;  Path to the theory document file
+
+Options:
+      --json     Output as JSON
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-theory-compile-dir"><a class="header" href="#schema-theory-compile-dir"><code>schema theory compile-dir</code></a></h4>
+<pre><code class="language-text">Compile all theory documents in a directory
+
+Usage: schema theory compile-dir [OPTIONS] &lt;DIR&gt;
+
+Arguments:
+  &lt;DIR&gt;  Path to the directory
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-theory-check-morphism"><a class="header" href="#schema-theory-check-morphism"><code>schema theory check-morphism</code></a></h4>
+<pre><code class="language-text">Validate a morphism document
+
+Usage: schema theory check-morphism [OPTIONS] &lt;FILE&gt;
+
+Arguments:
+  &lt;FILE&gt;  Path to the morphism document file
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-theory-recompose"><a class="header" href="#schema-theory-recompose"><code>schema theory recompose</code></a></h4>
+<pre><code class="language-text">Replay a composition and print the resulting theory
+
+Usage: schema theory recompose [OPTIONS] &lt;FILE&gt;
+
+Arguments:
+  &lt;FILE&gt;  Path to the composition document file
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-theory-check-coercion-laws"><a class="header" href="#schema-theory-check-coercion-laws"><code>schema theory check-coercion-laws</code></a></h4>
+<pre><code class="language-text">Run sample-based coercion law checks over every directed equation in a theory document. Exits non-zero when any declared coercion class is falsified by a sample
+
+Usage: schema theory check-coercion-laws [OPTIONS] &lt;FILE&gt;
+
+Arguments:
+  &lt;FILE&gt;  Path to the theory document file
+
+Options:
+      --json                 Output the full report as JSON
+  -v, --verbose              Enable verbose output
+      --var-name &lt;VAR_NAME&gt;  Name under which each sample is bound in the evaluation environment. Defaults to `"x"`; override when a theory's equations bind a different free variable so the checker does not surface "unbound variable" errors on every sample [default: x]
+  -h, --help                 Print help
+</code></pre>
+<h4 id="schema-theory-repl"><a class="header" href="#schema-theory-repl"><code>schema theory repl</code></a></h4>
+<pre><code class="language-text">Interactive theory REPL with syntax highlighting and history
+
+Usage: schema theory repl [OPTIONS]
+
+Options:
+      --load &lt;PATH&gt;  Theory documents to load on startup. Same shape accepted by `:load` inside the REPL
+  -v, --verbose      Enable verbose output
+  -h, --help         Print help
+</code></pre>
+<h3 id="schema-lens"><a class="header" href="#schema-lens"><code>schema lens</code></a></h3>
+<pre><code class="language-text">Bidirectional lens operations
+
+Usage: schema lens [OPTIONS] &lt;COMMAND&gt;
+
+Commands:
+  generate  Generate a lens between two schemas
+  apply     Apply a saved lens chain to data
+  compose   Compose two protolens chains or schemas
+  verify    Verify lens laws on test data
+  inspect   Inspect a saved protolens chain
+  check     Check applicability of a chain against schemas in a directory
+  lift      Lift a chain along a theory morphism
+  help      Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-lens-generate"><a class="header" href="#schema-lens-generate"><code>schema lens generate</code></a></h4>
+<pre><code class="language-text">Generate a lens between two schemas
+
+Usage: schema lens generate [OPTIONS] --protocol &lt;PROTOCOL&gt; &lt;OLD&gt; &lt;NEW&gt;
+
+Arguments:
+  &lt;OLD&gt;
+          Path to the old/source schema
+
+  &lt;NEW&gt;
+          Path to the new/target schema
+
+Options:
+      --protocol &lt;PROTOCOL&gt;
+          Protocol name
+
+  -v, --verbose
+          Enable verbose output
+
+      --json
+          Output as JSON
+
+      --chain
+          Output a reusable protolens chain (JSON to stdout)
+
+      --try-overlap
+          Try overlap-based alignment when direct morphism fails
+
+      --save &lt;SAVE&gt;
+          Save the generated protolens chain to a file
+
+      --defaults &lt;DEFAULTS&gt;
+          Default values as key=value pairs
+
+      --fuse
+          Fuse multi-step chain into single protolens
+
+      --requirements
+          Show complement requirements (defaults/data needed)
+
+      --hints &lt;HINTS&gt;
+          Path to a JSON hints file for guided auto-lens generation
+
+      --stringency &lt;TIER&gt;
+          Stringency tier governing which alignment strategies run.
+          
+          Accepted case-insensitively for parity with the Python and WASM bindings, both of which trim and lowercase their input.
+          
+          `strict` — only kind-exact name equality. `balanced` — alias dictionary + tight token similarity (default). `lenient` — span-search and structural priors. `exploratory` — lossy retraction witnesses and LM priors.
+
+          Possible values:
+          - strict:      Kind-exact, edge-name-pruned CSP search; total morphism only
+          - balanced:    Adds alias dictionary and tight token-similarity priors (default)
+          - lenient:     Adds span-search and structural priors
+          - exploratory: Adds lossy retraction witnesses and LM-proposed alignments
+
+      --top-n &lt;N&gt;
+          Emit up to N ranked candidate lenses instead of the single best one. Output format switches to a JSON array when combined with `--json` or `--chain`
+          
+          [default: 1]
+
+      --explain
+          Print per-step explanations (and confidences) for each emitted candidate
+
+  -h, --help
+          Print help (see a summary with '-h')
+</code></pre>
+<h4 id="schema-lens-apply"><a class="header" href="#schema-lens-apply"><code>schema lens apply</code></a></h4>
+<pre><code class="language-text">Apply a saved lens chain to data
+
+Usage: schema lens apply [OPTIONS] --protocol &lt;PROTOCOL&gt; &lt;CHAIN&gt; &lt;DATA&gt;
+
+Arguments:
+  &lt;CHAIN&gt;  Path to the protolens chain JSON
+  &lt;DATA&gt;   Path to the data file
+
+Options:
+      --protocol &lt;PROTOCOL&gt;      Protocol name
+  -v, --verbose                  Enable verbose output
+      --direction &lt;DIRECTION&gt;    Direction: "forward" or "backward" [default: forward]
+      --complement &lt;COMPLEMENT&gt;  Complement data for backward apply
+      --schema &lt;SCHEMA&gt;          Schema for chain instantiation
+  -h, --help                     Print help
+</code></pre>
+<h4 id="schema-lens-compose"><a class="header" href="#schema-lens-compose"><code>schema lens compose</code></a></h4>
+<pre><code class="language-text">Compose two protolens chains or schemas
+
+Usage: schema lens compose [OPTIONS] --protocol &lt;PROTOCOL&gt; &lt;CHAIN1&gt; &lt;CHAIN2&gt;
+
+Arguments:
+  &lt;CHAIN1&gt;  First chain or schema file
+  &lt;CHAIN2&gt;  Second chain or schema file
+
+Options:
+      --protocol &lt;PROTOCOL&gt;  Protocol name
+  -v, --verbose              Enable verbose output
+      --json                 Output as JSON
+      --chain                Output in chain format
+  -h, --help                 Print help
+</code></pre>
+<h4 id="schema-lens-verify"><a class="header" href="#schema-lens-verify"><code>schema lens verify</code></a></h4>
+<pre><code class="language-text">Verify lens laws on test data
+
+Usage: schema lens verify [OPTIONS] --protocol &lt;PROTOCOL&gt; &lt;DATA&gt; [SCHEMA]
+
+Arguments:
+  &lt;DATA&gt;    Path to test data file
+  [SCHEMA]  Schema file (second schema is optional)
+
+Options:
+      --protocol &lt;PROTOCOL&gt;  Protocol name
+  -v, --verbose              Enable verbose output
+  -h, --help                 Print help
+</code></pre>
+<h4 id="schema-lens-inspect"><a class="header" href="#schema-lens-inspect"><code>schema lens inspect</code></a></h4>
+<pre><code class="language-text">Inspect a saved protolens chain
+
+Usage: schema lens inspect [OPTIONS] --protocol &lt;PROTOCOL&gt; &lt;CHAIN&gt;
+
+Arguments:
+  &lt;CHAIN&gt;  Path to the protolens chain JSON
+
+Options:
+      --protocol &lt;PROTOCOL&gt;  Protocol name
+  -v, --verbose              Enable verbose output
+  -h, --help                 Print help
+</code></pre>
+<h4 id="schema-lens-check"><a class="header" href="#schema-lens-check"><code>schema lens check</code></a></h4>
+<pre><code class="language-text">Check applicability of a chain against schemas in a directory
+
+Usage: schema lens check [OPTIONS] --protocol &lt;PROTOCOL&gt; &lt;CHAIN&gt; &lt;SCHEMAS_DIR&gt;
+
+Arguments:
+  &lt;CHAIN&gt;        Path to the protolens chain JSON
+  &lt;SCHEMAS_DIR&gt;  Directory containing schema JSON files
+
+Options:
+      --protocol &lt;PROTOCOL&gt;  Protocol name
+  -v, --verbose              Enable verbose output
+      --dry-run              Report only, do not instantiate
+  -h, --help                 Print help
+</code></pre>
+<h4 id="schema-lens-lift"><a class="header" href="#schema-lens-lift"><code>schema lens lift</code></a></h4>
+<pre><code class="language-text">Lift a chain along a theory morphism
+
+Usage: schema lens lift [OPTIONS] &lt;CHAIN&gt; &lt;MORPHISM&gt;
+
+Arguments:
+  &lt;CHAIN&gt;     Path to the protolens chain JSON
+  &lt;MORPHISM&gt;  Path to the theory morphism JSON
+
+Options:
+      --json     Output as JSON
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h3 id="schema-parse"><a class="header" href="#schema-parse"><code>schema parse</code></a></h3>
+<pre><code class="language-text">Parse source files into full-AST schemas via tree-sitter
+
+Usage: schema parse [OPTIONS] &lt;COMMAND&gt;
+
+Commands:
+  file     Parse a single source file into a full-AST schema
+  project  Parse all files in a directory into a unified project schema
+  emit     Parse a file and emit it back to source (round-trip test)
+  help     Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-parse-file"><a class="header" href="#schema-parse-file"><code>schema parse file</code></a></h4>
+<pre><code class="language-text">Parse a single source file into a full-AST schema
+
+Usage: schema parse file [OPTIONS] &lt;PATH&gt;
+
+Arguments:
+  &lt;PATH&gt;  Path to the source file
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-parse-project"><a class="header" href="#schema-parse-project"><code>schema parse project</code></a></h4>
+<pre><code class="language-text">Parse all files in a directory into a unified project schema
+
+Usage: schema parse project [OPTIONS] [PATH]
+
+Arguments:
+  [PATH]  Path to the project directory [default: .]
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-parse-emit"><a class="header" href="#schema-parse-emit"><code>schema parse emit</code></a></h4>
+<pre><code class="language-text">Parse a file and emit it back to source (round-trip test)
+
+Usage: schema parse emit [OPTIONS] &lt;PATH&gt;
+
+Arguments:
+  &lt;PATH&gt;  Path to the source file
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h3 id="schema-git"><a class="header" href="#schema-git"><code>schema git</code></a></h3>
+<pre><code class="language-text">Import/export between git repositories and panproto-vcs
+
+Usage: schema git [OPTIONS] &lt;COMMAND&gt;
+
+Commands:
+  import  Import a git repository's history into panproto-vcs
+  export  Export panproto-vcs history to a git repository
+  help    Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-git-import"><a class="header" href="#schema-git-import"><code>schema git import</code></a></h4>
+<pre><code class="language-text">Import a git repository's history into panproto-vcs
+
+Usage: schema git import [OPTIONS] &lt;REPO&gt; [REVSPEC]
+
+Arguments:
+  &lt;REPO&gt;     Path to the git repository
+  [REVSPEC]  Git revspec (e.g. "HEAD", "main", "HEAD~10..HEAD") [default: HEAD]
+
+Options:
+  -v, --verbose  Enable verbose output
+  -h, --help     Print help
+</code></pre>
+<h4 id="schema-git-export"><a class="header" href="#schema-git-export"><code>schema git export</code></a></h4>
+<pre><code class="language-text">Export panproto-vcs history to a git repository
+
+Usage: schema git export [OPTIONS] &lt;DEST&gt;
+
+Arguments:
+  &lt;DEST&gt;  Destination path for the git repository
+
+Options:
+      --repo &lt;REPO&gt;  Path to the panproto repository (default: current directory) [default: .]
+  -v, --verbose      Enable verbose output
+  -h, --help         Print help
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../reference/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../reference/sdk-rust.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../reference/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../reference/sdk-rust.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src=".././theme/cite-group.js"></script>
+        <script src=".././theme/mermaid.min.js"></script>
+        <script src=".././theme/mermaid-init.js"></script>
+        <script src=".././theme/bib-links.js"></script>
+        <script src=".././theme/bib-linkify.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

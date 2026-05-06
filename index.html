@@ -3,12 +3,12 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Preface - panproto</title>
+        <title>panproto - panproto</title>
 
 
         <!-- Custom HTML head -->
 
-        <meta name="description" content="Schematic version control, protocols as theories, and migrations as lenses">
+        <meta name="description" content="Documentation: tutorials, how-to guides, reference, and explanation">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-04a1e30a.js";
+            window.path_to_searchindex_js = "searchindex-5ddc7d94.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-73f0b918.js"></script>
+        <script src="toc-bbbd0f37.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -182,37 +182,40 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
-<h1 id="preface"><a class="header" href="#preface">Preface</a></h1>
-<!-- lm-disclaimer -->
-<blockquote>
-<p><strong>Disclaimer.</strong> The content of this page is largely LM-generated.
-It was written as a stopgap to make the panproto system legible while we work
-through the book verifying and editing the content by hand. When a chapter
-has been verified or edited by a human, the parts that were verified or
-edited will be noted at the head of the chapter.</p>
-</blockquote>
-<p>Data outlives its schemas. Any system that stores records for more than a few months eventually faces a situation in which the records on disk were written against one shape and the code that reads them expects another, and the gap between the two has to be closed by somebody working by hand, under time pressure, without a mechanical check that the thing being done is correct. The tools most developers reach for on either side of this problem — source control on one side, serialisation formats on the other — were designed for something narrower. <a href="https://git-scm.com/">Git</a> versions byte sequences. <a href="https://protobuf.dev/">Protobuf</a>, <a href="https://avro.apache.org/">Avro</a>, and <a href="https://json-schema.org/">JSON Schema</a> describe the shape of those sequences. Neither addresses the relationship between the two, which is where things go wrong.</p>
-<p>This book presents a different way of arranging those tools. Its central claim is that the schema, the data under it, and the transformations between schema versions can all be treated as members of the same kind of mathematical object. Once the treatment is carried out, the operations one ordinarily does by hand — merging a schema change across two branches, migrating data across a schema version boundary — follow from constructions worked out carefully in a part of mathematics most working developers have not yet seen. The mathematics is the categorical treatment of generalised algebraic theories and their morphisms, due largely to Eilenberg &amp; Mac Lane (<a href="bibliography.html#eilenbergmaclane1945general">1945</a>), Lawvere (<a href="bibliography.html#lawvere1963functorial">1963</a>), and Cartmell (<a href="bibliography.html#cartmell1986generalised">1986</a>), applied to databases by Spivak (<a href="bibliography.html#spivak2012functorial">2012</a>) and Spivak &amp; Wisnesky (<a href="bibliography.html#spivakwisnesky2015relational">2015</a>). The software discussed in the book, panproto, is an implementation of the arrangement.</p>
-<h2 id="who-this-book-is-for"><a class="header" href="#who-this-book-is-for">Who this book is for</a></h2>
-<p>The book is written for developers comfortable reading code in at least one statically typed language, who have not previously picked up a category theory textbook. Every concept is introduced from first principles rather than by reference to a prerequisite course. A reader who follows the foundations chapters closely will be in a position to read papers on functorial data migration, bidirectional lenses, and generalised algebraic theories without further help.</p>
-<p>Researchers in formal methods, database theory, type theory, and programming languages will recognise the underlying literature: functorial semantics, bidirectional transformations, generalised algebraic theories. Citations point to the papers whose constructions panproto adopts, and departures from those designs are flagged at the point they occur.</p>
-<h2 id="how-this-book-is-organised"><a class="header" href="#how-this-book-is-organised">How this book is organised</a></h2>
-<p>The book has seven parts plus appendices. Two opening chapters orient the reader and position panproto against the tools a working developer has already used. Part I develops the mathematical foundations — categories, functors and natural transformations, universal properties, colimits, and generalised algebraic theories, in that order. Each concept is introduced through running examples from code before being stated abstractly.</p>
-<p>Part II develops panproto’s core constructions. It opens with the identification of a protocol with a generalised algebraic theory and a schema with a model of one, and closes with the corresponding identification of migrations with bidirectional lenses. The intermediate chapters cover the restrict-and-lift pipeline panproto uses to carry data along a migration, the round-trip laws that make a migration safe to run in either direction, and the dependent families panproto calls protolenses.</p>
-<p>Part III documents the small pure expression language the engine uses when a migration needs to compute a value that depends on a record. Part IV covers the protocols panproto already knows about, through four case studies — ATProto, Avro, a relational case, and FHIR as a document case — plus the tree-sitter-based auto-derivation that produces protocols for 250 programming languages.</p>
-<p>Part V turns to version control. It opens with a careful account of what git actually versions (byte sequences in a Merkle DAG) and what it does not (everything that gives those byte sequences meaning), and uses the gap to motivate the object model panproto-vcs puts in its place. From there the part develops the merge algorithm as a pushout in the category of schemas, the automatic data migration that follows from the inferred schema diff, and the bidirectional bridge between a panproto repository and an ordinary git remote.</p>
-<p>Part VI is operational: the <a href="https://webassembly.org/">WebAssembly</a> boundary, the <a href="https://www.rust-lang.org/">Rust</a>, <a href="https://www.typescriptlang.org/">TypeScript</a>, and <a href="https://www.python.org/">Python</a> SDKs built on top of it, and the command line. Part VII is for contributors: the workspace layout, the CI pipeline, how to extend panproto with a new protocol or lens combinator, and the experimental subsystems. Three appendices close the book: a notation reference, a glossary, and an open-problems list.</p>
-<h2 id="how-to-read-this-book"><a class="header" href="#how-to-read-this-book">How to read this book</a></h2>
-<p>A reader with prior category-theory experience can start at Part II and treat Part I as reference. Without that background, the first two parts repay reading in order; the protocol, VCS, and SDK parts that follow can be read in whatever order matches the practical problem at hand. Contributors to panproto’s code should also read Part VII before the others. The book assumes no previous encounter with panproto.</p>
-<h2 id="what-the-software-can-do-today"><a class="header" href="#what-the-software-can-do-today">What the software can do today</a></h2>
-<p>Panproto is pre-release software. Several of its subsystems are complete enough to support the worked examples of the book and would not yet stand up to production use in isolation. Feature-gated subsystems still under development are catalogued in the chapter on experimental and feature-gated subsystems. The open-problems appendix lists the places where the software is ahead of the theory we have a citation for, and the places where the theory is ahead of the software.</p>
+<h1 id="panproto"><a class="header" href="#panproto">panproto</a></h1>
+<p>panproto is a toolchain for evolving schemas: defining them, migrating data across versions, translating between protocols (JSON Schema, Protobuf, GraphQL, Avro, ATProto, SQL DDL, and many more), versioning the whole thing the way git versions source, and round-tripping data through bidirectional transforms whose laws are mechanically checked.</p>
+<p>This documentation is organised in four quadrants, following the <a href="https://diataxis.fr/">Diataxis</a> framework. Pick the one that matches what you are trying to do.</p>
+<h2 id="tutorials"><a class="header" href="#tutorials"><a href="./tutorials/index.html">Tutorials</a></a></h2>
+<p>Learning by doing. Pick this if you are new and want a guided sit-down with a working example at the end. No prior knowledge of category theory or schema theory is assumed.</p>
+<h2 id="how-to-guides"><a class="header" href="#how-to-guides"><a href="./how-to/index.html">How-to guides</a></a></h2>
+<p>Recipes for specific tasks: defining a schema in your language of choice, building a migration, wiring breaking-change detection into CI, querying instances, parsing full ASTs, bridging panproto’s version control to git. Pick this when you know what you want to do and need the steps.</p>
+<h2 id="reference"><a class="header" href="#reference"><a href="./reference/index.html">Reference</a></a></h2>
+<p>Authoritative listings: every CLI subcommand, the SDK surfaces for Rust, TypeScript, and Python, the protocol catalogue, the expression-language builtins, the lens combinator algebra, the <code>panproto.toml</code> schema. Tables and signatures, no exposition.</p>
+<h2 id="explanation"><a class="header" href="#explanation"><a href="./explanation/index.html">Explanation</a></a></h2>
+<p>Why the system is shaped the way it is. What schemas, migrations, lenses, and merges <em>mean</em> under the hood. The denotational semantics of panproto’s three DSLs, and a precise account of which categorical properties the implementation mechanically verifies. Most pages here are accessible to working developers; the <code>semantics/</code> cluster is the place where the math is load-bearing.</p>
+<h2 id="where-to-start"><a class="header" href="#where-to-start">Where to start</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>You are…</th><th>Start at</th></tr>
+</thead>
+<tbody>
+<tr><td>New to panproto</td><td><a href="./tutorials/your-first-schema.html">Your first schema</a></td></tr>
+<tr><td>Adding panproto to an existing project</td><td><a href="./how-to/install/index.html">Install</a></td></tr>
+<tr><td>Looking up a CLI flag</td><td><a href="./reference/cli.html">CLI reference</a></td></tr>
+<tr><td>Wondering what schemas-as-theories means</td><td><a href="./explanation/schemas-as-theories.html">Schemas as theories</a></td></tr>
+<tr><td>Building a custom protocol</td><td><a href="./how-to/build-protocol.html">Build a custom protocol</a></td></tr>
+<tr><td>Setting up CI gates</td><td><a href="./how-to/ci/breaking-change-gate.html">Breaking-change gate</a></td></tr>
+</tbody>
+</table>
+</div>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
 
-                            <a rel="next prefetch" href="preface/notation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="tutorials/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -223,7 +226,7 @@ edited will be noted at the head of the chapter.</p>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
 
-                    <a rel="next prefetch" href="preface/notation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="tutorials/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
