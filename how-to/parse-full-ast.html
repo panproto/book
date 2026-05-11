@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-098e510e.js";
+            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-bbbd0f37.js"></script>
@@ -202,16 +202,49 @@
 <h3 id="from-rust"><a class="header" href="#from-rust">From Rust</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>use panproto_core::parse::Parser;
+</span>use panproto_core::parse::ParserRegistry;
 
-let parser = Parser::for_language("rust")?;
-let instance = parser.parse_file("src/main.rs")?;
+let registry = ParserRegistry::new();
+let schema = registry.parse_with_protocol(
+    "rust",
+    std::fs::read("src/main.rs")?.as_slice(),
+    "src/main.rs",
+)?;
 <span class="boring">}</span></code></pre>
+<p><code>panproto_core::parse</code> is the re-export of <code>panproto-parse</code>. <code>ParserRegistry::new()</code> populates with every grammar enabled at build time; for a specific file path, <code>registry.parse_file(path, content)</code> auto-detects the language by extension.</p>
 <h3 id="from-python"><a class="header" href="#from-python">From Python</a></h3>
-<pre><code class="language-python">from panproto import Parser
-parser = Parser.for_language("python")
-instance = parser.parse_file("src/app.py")
+<pre><code class="language-python">import panproto
+
+reg = panproto.AstParserRegistry()
+schema = reg.parse_with_protocol("python", source_bytes, "src/app.py")
 </code></pre>
+<p>Companion grammar packs install additional languages: <code>pip install panproto-grammars-functional</code>, <code>-web</code>, <code>-systems</code>, etc.</p>
+<h3 id="read-anonymous-token-field-values"><a class="header" href="#read-anonymous-token-field-values">Read anonymous-token field values</a></h3>
+<p>A tree-sitter rule of the form <code>field('&lt;name&gt;', choice('+', '-', '*', '/'))</code> attaches a field name to an <em>unnamed</em> token alternative. The walker captures the matched token’s text as a <code>field:&lt;name&gt;</code> constraint on the parent vertex; <code>Schema::field_text</code> is the supported accessor:</p>
+<pre><code class="language-python">schema = reg.parse_with_protocol("qvr", b"let y = log(x)", "demo.qvr")
+let_call = next(v.id for v in schema.vertices if v.kind == "let_call")
+schema.field_text(let_call, "func")   # -&gt; "log"
+</code></pre>
+<p>The Rust equivalent is <code>Schema::field_text(vertex_id, name) -&gt; Option&lt;&amp;str&gt;</code>. Named-node field children continue to surface as edges; this accessor is specifically for the anonymous-token field case.</p>
+<h3 id="override-a-registered-grammar-at-runtime"><a class="header" href="#override-a-registered-grammar-at-runtime">Override a registered grammar at runtime</a></h3>
+<p>Grammar authors iterating on a grammar’s <code>parser.c</code> / <code>grammar.json</code> / <code>node-types.json</code> outside the panproto release cadence can swap in a freshly-compiled grammar mid-process. Compile the grammar via <code>tree-sitter build</code>, load the resulting shared library with <code>ctypes</code>, and pass the integer address of the <code>tree_sitter_&lt;name&gt;</code> symbol to <code>override_grammar</code>:</p>
+<pre><code class="language-python">import ctypes
+import panproto
+
+lib = ctypes.CDLL("./build/qvr.dylib")
+language_ptr = ctypes.cast(lib.tree_sitter_qvr, ctypes.c_void_p).value
+
+reg = panproto.AstParserRegistry()
+reg.override_grammar(
+    name="qvr",
+    extensions=["qvr"],
+    language_ptr=language_ptr,
+    node_types=open("./grammars/qvr/src/node-types.json", "rb").read(),
+    grammar_json=open("./grammars/qvr/src/grammar.json", "rb").read(),
+)
+schema = reg.parse_with_protocol("qvr", source_bytes, "demo.qvr")  # uses the new grammar
+</code></pre>
+<p>If a parser is already registered under <code>name</code>, it is dropped first (along with any extension mappings). Cannot run while a <code>ParseEmitLens</code> produced by <code>reg.lens(...)</code> is alive: drop outstanding lens handles, or construct a fresh registry, first. The byte payloads are leaked into <code>'static</code> storage on the Rust side — intended for dev-time work, not production.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <p>Tree-sitter parsing is total: every byte sequence parses into <em>some</em> AST. <code>instance.diagnostic_count()</code> reports the number of error nodes; a clean parse has zero. The interstitial preservation property guarantees <code>emit(parse(bytes)) == bytes</code>.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>

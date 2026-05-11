@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-098e510e.js";
+            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-bbbd0f37.js"></script>
@@ -211,8 +211,12 @@
 <h2 id="top-level-surface"><a class="header" href="#top-level-surface">Top-level surface</a></h2>
 <pre><code class="language-python">import panproto
 
-proto  = panproto.get_builtin_protocol("atproto")
-schema = proto.schema().vertex(...).edge(...).build()
+proto = panproto.get_builtin_protocol("atproto")
+b = proto.schema()
+b.vertex("post", "record", "app.bsky.feed.post")
+b.vertex("post:body", "object")
+b.edge("post", "post:body", "record-schema")
+schema = b.build()
 </code></pre>
 <p>There is no <code>Panproto</code> umbrella class; the entry points are free functions on the <code>panproto</code> module. The full re-export list (errors, schema types, protocol registry, migration, check, instance, I/O, lens, GAT, expression-language, VCS, parse, project, git bridge) is in <a href="https://github.com/panproto/panproto/blob/main/bindings/python/src/panproto/__init__.py"><code>bindings/python/src/panproto/__init__.py</code></a>. Selected entry points:</p>
 <div class="table-wrapper">
@@ -222,14 +226,15 @@ schema = proto.schema().vertex(...).edge(...).build()
 </thead>
 <tbody>
 <tr><td>Protocol registry</td><td><code>get_builtin_protocol(name)</code>, <code>list_builtin_protocols()</code>, <code>define_protocol(...)</code></td></tr>
-<tr><td>Schema construction</td><td><code>Protocol.schema()</code> returns a <code>SchemaBuilder</code>; chain <code>.vertex()</code>, <code>.edge()</code>, <code>.build()</code>.</td></tr>
+<tr><td>Schema construction</td><td><code>Protocol.schema()</code> returns a <code>SchemaBuilder</code>. Each <code>.vertex(id, kind)</code> / <code>.edge(src, tgt, kind, name=None)</code> / <code>.constraint(vid, sort, value)</code> mutates the builder in place and returns <code>None</code>; call <code>.build()</code> on the final builder. Chain syntax is a TypeScript-only convenience; Python is statement-by-statement.</td></tr>
 <tr><td>Migration</td><td><code>MigrationBuilder</code>, <code>compile_migration</code>, <code>compose_migrations</code>, <code>invert_migration</code>, <code>pipeline</code></td></tr>
 <tr><td>Check</td><td><code>diff_and_classify</code>, <code>diff_schemas</code>, <code>check_existence</code>, <code>check_coverage</code></td></tr>
-<tr><td>Lens</td><td><code>Lens</code>, <code>ProtolensChain</code>, <code>auto_generate_lens</code>, <code>auto_generate_lens_candidates</code></td></tr>
-<tr><td>GAT</td><td><code>Theory</code>, <code>TheoryBuilder</code>, <code>Model</code>, <code>colimit_theories</code>, <code>free_model</code>, <code>migrate_model</code>, <code>check_model</code>, <code>check_morphism</code></td></tr>
+<tr><td>Lens</td><td><code>Lens</code>, <code>ProtolensChain</code> (with <code>from_dsl_json</code> / <code>from_dsl_yaml</code> / <code>from_dsl_nickel</code> / <code>from_dsl_path</code> loaders), <code>auto_generate_lens</code>, <code>auto_generate_lens_candidates</code></td></tr>
+<tr><td>GAT</td><td><code>Theory</code> (with <code>from_json</code> / <code>from_yaml</code> / <code>from_nickel</code> / <code>from_path</code> DSL loaders and <code>to_yaml</code> / <code>from_dict_yaml</code> for the flat-shape round-trip), <code>TheoryBuilder</code>, <code>Model</code>, <code>colimit_theories</code>, <code>free_model</code>, <code>migrate_model</code>, <code>check_model</code>, <code>check_morphism</code></td></tr>
+<tr><td>Schema</td><td><code>Schema.constraints_for(vertex_id)</code> lists every constraint; <code>Schema.field_text(vertex_id, field_name)</code> reads the text of a tree-sitter <code>field('&lt;name&gt;', anonymous-token)</code> child</td></tr>
 <tr><td>Expression language</td><td><code>Expr</code>, <code>parse_expr</code>, <code>pretty_print_expr</code></td></tr>
 <tr><td>VCS</td><td><code>Repository</code>, <code>VcsRepository</code>, <code>BisectState</code></td></tr>
-<tr><td>Parse</td><td><code>parse_source_file</code>, <code>available_grammars</code>, <code>ParseEmitLens</code>, <code>AstParserRegistry()</code></td></tr>
+<tr><td>Parse</td><td><code>parse_source_file</code>, <code>available_grammars</code>, <code>ParseEmitLens</code>, <code>AstParserRegistry()</code> (with <code>.override_grammar(name, extensions, language_ptr, node_types, ...)</code> for dev-time grammar swapping)</td></tr>
 <tr><td>Project</td><td><code>ProjectBuilder</code>, <code>parse_project</code>, <code>build_project</code></td></tr>
 </tbody>
 </table>

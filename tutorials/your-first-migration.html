@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-098e510e.js";
+            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-bbbd0f37.js"></script>
@@ -199,9 +199,14 @@ export const v2 = proto.schema()
   .vertex('user.name',  'string')
   .vertex('user.years', 'integer')
   .vertex('user.email', 'string')
-  .edge('user', 'user.name',  'prop', { name: 'name',  required: true })
-  .edge('user', 'user.years', 'prop', { name: 'years', required: true })
-  .edge('user', 'user.email', 'prop', { name: 'email', required: true })
+  .edge('user', 'user.name',  'prop', { name: 'name' })
+  .edge('user', 'user.years', 'prop', { name: 'years' })
+  .edge('user', 'user.email', 'prop', { name: 'email' })
+  .required('user', [
+    { src: 'user', tgt: 'user.name',  kind: 'prop', name: 'name' },
+    { src: 'user', tgt: 'user.years', kind: 'prop', name: 'years' },
+    { src: 'user', tgt: 'user.email', kind: 'prop', name: 'email' },
+  ])
   .build();
 </code></pre>
 <p>Two changes from v1: <code>age</code> is renamed to <code>years</code> (a structural rename), and <code>email</code> is added as required (a field that did not exist before).</p>

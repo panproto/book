@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-098e510e.js";
+            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-bbbd0f37.js"></script>
@@ -220,6 +220,21 @@
 <pre><code class="language-sh">schema lens inspect --protocol json-schema lenses/user-v1-to-v2.json
 </code></pre>
 <p>Prints the combinator chain. <code>--protocol</code> is required.</p>
+<h3 id="compile-from-python"><a class="header" href="#compile-from-python">Compile from Python</a></h3>
+<p><code>ProtolensChain</code> exposes loaders that consume a lens-DSL document and compile it directly to a chain anchored at the named body vertex of the source schema:</p>
+<pre><code class="language-python">import panproto
+
+chain = panproto.ProtolensChain.from_dsl_path(
+    "lenses/user-v1-to-v2.ncl",
+    body_vertex="record:body",
+)
+
+# Or from a string:
+chain = panproto.ProtolensChain.from_dsl_json(json_source, "record:body")
+chain = panproto.ProtolensChain.from_dsl_yaml(yaml_source, "record:body")
+chain = panproto.ProtolensChain.from_dsl_nickel(nickel_source, "record:body")
+</code></pre>
+<p><code>from_dsl_path</code> dispatches on file extension (<code>.ncl</code> / <code>.json</code> / <code>.yaml</code> / <code>.yml</code>). For Nickel, an optional <code>import_paths</code> argument extends the import-resolution lookup so user-defined modules can be referenced.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <pre><code class="language-sh"># Check the chain is applicable to every schema in a directory.
 schema lens check --protocol json-schema lenses/user-v1-to-v2.json schemas/
