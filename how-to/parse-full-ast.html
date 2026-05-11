@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5ddc7d94.js";
+            window.path_to_searchindex_js = "../searchindex-098e510e.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-bbbd0f37.js"></script>
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="parse-full-asts"><a class="header" href="#parse-full-asts">Parse full ASTs</a></h1>
-<p>panproto can parse source code in 248 languages via tree-sitter and treat the full AST as a schema instance. The resulting instance can be queried, diffed, migrated, and version-controlled like any other schema.</p>
+<p>panproto can parse source code in 259 languages via tree-sitter and treat the full AST as a schema instance. The resulting instance can be queried, diffed, migrated, and version-controlled like any other schema.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>The <code>schema</code> CLI, or the Rust SDK with the <code>full-parse</code> feature enabled. For the Python SDK, the relevant grammar pack (the wheel ships eleven core languages; install <code>panproto-grammars-functional</code>, <code>-web</code>, <code>-systems</code>, etc. for more).</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
@@ -217,7 +217,7 @@ instance = parser.parse_file("src/app.py")
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Treating the AST as the source of truth for non-syntactic information. Type information, name resolution, control flow are not modelled by the auto-derived theories.</li>
-<li>Assuming language coverage. The 248-language list is in <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-grammars"><code>crates/panproto-grammars/</code></a>. Languages not in the list have no parser.</li>
+<li>Assuming language coverage. The 259-language list is in <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-grammars"><code>crates/panproto-grammars/</code></a>. Languages not in the list have no parser.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

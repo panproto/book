@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-5ddc7d94.js";
+            window.path_to_searchindex_js = "searchindex-098e510e.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-bbbd0f37.js"></script>
@@ -1331,7 +1331,7 @@ assert_eq!(out, bytes);
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="parse-full-asts"><a class="header" href="#parse-full-asts">Parse full ASTs</a></h1>
-<p>panproto can parse source code in 248 languages via tree-sitter and treat the full AST as a schema instance. The resulting instance can be queried, diffed, migrated, and version-controlled like any other schema.</p>
+<p>panproto can parse source code in 259 languages via tree-sitter and treat the full AST as a schema instance. The resulting instance can be queried, diffed, migrated, and version-controlled like any other schema.</p>
 <h2 id="prerequisites-20"><a class="header" href="#prerequisites-20">Prerequisites</a></h2>
 <p>The <code>schema</code> CLI, or the Rust SDK with the <code>full-parse</code> feature enabled. For the Python SDK, the relevant grammar pack (the wheel ships eleven core languages; install <code>panproto-grammars-functional</code>, <code>-web</code>, <code>-systems</code>, etc. for more).</p>
 <h2 id="the-task-13"><a class="header" href="#the-task-13">The task</a></h2>
@@ -1365,7 +1365,7 @@ instance = parser.parse_file("src/app.py")
 <h2 id="common-mistakes-17"><a class="header" href="#common-mistakes-17">Common mistakes</a></h2>
 <ul>
 <li>Treating the AST as the source of truth for non-syntactic information. Type information, name resolution, control flow are not modelled by the auto-derived theories.</li>
-<li>Assuming language coverage. The 248-language list is in <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-grammars"><code>crates/panproto-grammars/</code></a>. Languages not in the list have no parser.</li>
+<li>Assuming language coverage. The 259-language list is in <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-grammars"><code>crates/panproto-grammars/</code></a>. Languages not in the list have no parser.</li>
 </ul>
 <h2 id="see-also-20"><a class="header" href="#see-also-20">See also</a></h2>
 <ul>
@@ -3239,7 +3239,7 @@ panproto-core = "0.46"
 <tr><td>Write lenses in the lens DSL</td><td><code>panproto-lens-dsl</code></td></tr>
 <tr><td>Use the expression language</td><td><code>panproto-expr</code>, <code>panproto-expr-parser</code></td></tr>
 <tr><td>Version-control schemas and data</td><td><code>panproto-vcs</code>, <code>panproto-git</code></td></tr>
-<tr><td>Parse full ASTs across 248 languages</td><td><code>panproto-parse</code></td></tr>
+<tr><td>Parse full ASTs across 259 languages</td><td><code>panproto-parse</code></td></tr>
 </tbody>
 </table>
 </div>
@@ -3406,7 +3406,7 @@ schema = proto.schema().vertex(...).edge(...).build()
 <tbody>
 <tr><td>Built-in protocol list</td><td><a href="https://github.com/panproto/panproto/blob/main/crates/panproto-protocols/src/lib.rs"><code>crates/panproto-protocols/src/lib.rs</code></a></td></tr>
 <tr><td>Building-block theories</td><td><a href="https://github.com/panproto/panproto/blob/main/crates/panproto-protocols/src/theories.rs"><code>crates/panproto-protocols/src/theories.rs</code></a></td></tr>
-<tr><td>Tree-sitter grammar list (248 languages)</td><td><a href="https://github.com/panproto/panproto/tree/main/crates/panproto-grammars"><code>crates/panproto-grammars/</code></a></td></tr>
+<tr><td>Tree-sitter grammar list (259 languages)</td><td><a href="https://github.com/panproto/panproto/tree/main/crates/panproto-grammars"><code>crates/panproto-grammars/</code></a></td></tr>
 </tbody>
 </table>
 </div>
@@ -3655,7 +3655,7 @@ protocol = "avro"
 </thead>
 <tbody>
 <tr><td><code>panproto-io</code></td><td>Parse/emit codecs that bridge native formats (JSON, Avro, Protobuf, …) to <code>panproto-inst</code>.</td></tr>
-<tr><td><code>panproto-parse</code></td><td>Tree-sitter full-AST parsing across 248 languages, with interstitial preservation.</td></tr>
+<tr><td><code>panproto-parse</code></td><td>Tree-sitter full-AST parsing across 259 languages, with interstitial preservation.</td></tr>
 <tr><td><code>panproto-grammars</code></td><td>Pre-compiled tree-sitter grammars used by <code>panproto-parse</code>.</td></tr>
 <tr><td><code>panproto-grammars-all</code></td><td>Umbrella grammar companion pack for the Python wheel.</td></tr>
 <tr><td><code>panproto-grammars-functional</code></td><td>Functional-language grammar pack.</td></tr>
