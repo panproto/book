@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-bbbd0f37.js"></script>
+        <script src="../../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -196,9 +196,7 @@ args     ::= /* command-specific, see table below */
 </code></pre>
 <p>A line that does not begin with <code>:</code> is treated as a term and routed through the typecheck path under the active theory. Comments and blank lines are ignored. The grammar lives in <code>crates/panproto-repl/src/lib.rs</code>.</p>
 <h2 id="abstract-syntax"><a class="header" href="#abstract-syntax">Abstract syntax</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub enum ReplCommand {
+<pre><code class="language-rust ignore">pub enum ReplCommand {
     Load(PathBuf),
     Theories,
     Use(String),
@@ -214,8 +212,7 @@ args     ::= /* command-specific, see table below */
 pub enum ReplLine {
     Command(ReplCommand),
     Term(String),
-}
-<span class="boring">}</span></code></pre>
+}</code></pre>
 <p>(The actual implementation does not export this enum; commands are dispatched directly from string parsing in <code>Repl::handle_command</code>. The shape above is the denotational model.)</p>
 <h2 id="semantic-domain"><a class="header" href="#semantic-domain">Semantic domain</a></h2>
 <p>The REPL state is</p>

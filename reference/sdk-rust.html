@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -202,7 +202,8 @@ panproto-core = "0.47"
 <tr><td><code>project</code></td><td>Pulls in <code>panproto-project</code> for multi-file project assembly.</td></tr>
 <tr><td><code>git</code></td><td>Pulls in <code>panproto-git</code> for the git bridge.</td></tr>
 <tr><td><code>llvm</code></td><td>Enables LLVM-backed lowering via <code>panproto-llvm</code>.</td></tr>
-<tr><td><code>jit</code></td><td>Enables JIT-compiled migration via <code>panproto-jit</code>. Requires <code>llvm</code>.</td></tr>
+<tr><td><code>jit</code></td><td>Enables JIT-compiled migration via <code>panproto-jit</code>.</td></tr>
+<tr><td><code>tree-sitter</code></td><td>Enables tree-sitter-based format-preserving parsing for built-in protocols (forwards to <code>panproto-io/tree-sitter</code>).</td></tr>
 </tbody>
 </table>
 </div>
@@ -224,6 +225,8 @@ panproto-core = "0.47"
 <tr><td>Use the expression language</td><td><code>panproto-expr</code>, <code>panproto-expr-parser</code></td></tr>
 <tr><td>Version-control schemas and data</td><td><code>panproto-vcs</code>, <code>panproto-git</code></td></tr>
 <tr><td>Parse full ASTs across 259 languages</td><td><code>panproto-parse</code></td></tr>
+<tr><td>Decorate an abstract schema with a layout fibre</td><td><code>panproto-parse</code> (<code>ParserRegistry::decorate</code>, <code>ParserRegistry::pretty_with_protocol</code>)</td></tr>
+<tr><td>Distinguish abstract and decorated schemas at the type level</td><td><code>panproto-schema</code> (<code>AbstractSchema</code>, <code>DecoratedSchema</code>, <code>LayoutWitness</code>)</td></tr>
 </tbody>
 </table>
 </div>

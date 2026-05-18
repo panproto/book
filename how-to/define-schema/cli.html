@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-bbbd0f37.js"></script>
+        <script src="../../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -187,7 +187,7 @@
 <p>The <code>schema</code> binary installed (<a href="../install/cli.html">Install the CLI</a>). A schema file in a supported protocol, or a protocol name to scaffold an empty one.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
 <h3 id="validate-an-existing-schema"><a class="header" href="#validate-an-existing-schema">Validate an existing schema</a></h3>
-<pre><code class="language-sh">schema validate --protocol json-schema path/to/schema.json
+<pre><code class="language-sh">schema validate --protocol atproto path/to/schema.json
 </code></pre>
 <p>Exits zero on success. On failure, prints the failing equation or constraint with the offending vertex and edge.</p>
 <h3 id="scaffold-from-an-existing-schema"><a class="header" href="#scaffold-from-an-existing-schema">Scaffold from an existing schema</a></h3>
@@ -195,13 +195,12 @@
 </code></pre>
 <p><code>scaffold</code> runs free-model construction over the given schema and prints sample term assignments to stdout. Use <code>--json</code> for machine-readable output, <code>--depth</code> and <code>--max-terms</code> to bound the search. (To start from nothing, write a one-vertex schema by hand and scaffold against that.)</p>
 <h3 id="inspect"><a class="header" href="#inspect">Inspect</a></h3>
-<pre><code class="language-sh">schema show schemas/post.json
-schema diff schemas/post-v1.json schemas/post-v2.json
+<pre><code class="language-sh">schema diff schemas/post-v1.json schemas/post-v2.json
 </code></pre>
-<p><code>show</code> prints a structured rendering. <code>diff</code> reports vertex and edge changes between two schemas.</p>
+<p><code>diff</code> reports vertex and edge changes between two schemas. Inside a panproto repository, <code>schema show &lt;ref&gt;</code> resolves a commit, schema, or migration object and prints its contents.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <p>After validation, run:</p>
-<pre><code class="language-sh">schema verify --protocol json-schema path/to/schema.json
+<pre><code class="language-sh">schema verify --protocol atproto path/to/schema.json
 </code></pre>
 <p><code>verify</code> checks that the schema satisfies <em>every</em> equation in the protocol’s theory, not just the constraints you wrote. A pass guarantees the schema is well-formed in the categorical sense.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>

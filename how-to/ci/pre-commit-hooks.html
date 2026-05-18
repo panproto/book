@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-bbbd0f37.js"></script>
+        <script src="../../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -196,7 +196,7 @@ changed=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^schemas/.*
 [ -z "$changed" ] &amp;&amp; exit 0
 
 for f in $changed; do
-  schema validate --protocol json-schema "$f"
+  schema validate --protocol atproto "$f"
 done
 
 # Optional breaking-change warning: try to auto-generate a chain
@@ -205,7 +205,7 @@ done
 for f in $changed; do
   base_blob=$(git show :@{u}:"$f" 2&gt;/dev/null) || continue
   echo "$base_blob" &gt; /tmp/base.json
-  if ! schema lens generate --protocol json-schema /tmp/base.json "$f" --save /tmp/chain.json 2&gt;/dev/null; then
+  if ! schema lens generate --protocol atproto /tmp/base.json "$f" --save /tmp/chain.json 2&gt;/dev/null; then
     echo "warning: $f introduces a breaking change (commit anyway? Ctrl-C to abort)"
   fi
 done
@@ -218,7 +218,7 @@ repos:
     hooks:
       - id: schema-validate
         name: panproto schema validate
-        entry: schema validate --protocol json-schema
+        entry: schema validate --protocol atproto
         language: system
         files: '^schemas/.*\.json$'
 </code></pre>

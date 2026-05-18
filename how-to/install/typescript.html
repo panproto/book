@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-bbbd0f37.js"></script>
+        <script src="../../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -196,9 +196,9 @@ yarn add @panproto/core
 <pre><code class="language-ts">import { Panproto } from '@panproto/core';
 
 const p = await Panproto.init();
-console.log(p.version());
+console.log(p.listProtocols());
 </code></pre>
-<p><code>Panproto.init()</code> loads the WASM module and returns the top-level handle. Calling <code>p.version()</code> confirms the binding is wired up.</p>
+<p><code>Panproto.init()</code> loads the WASM module and returns the top-level handle. Calling <code>p.listProtocols()</code> enumerates the built-in protocols and confirms the binding is wired up.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Forgetting to <code>await Panproto.init()</code>. The WASM load is asynchronous; using the handle before <code>init</code> resolves throws.</li>

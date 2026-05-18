@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -185,38 +185,31 @@
 <h1 id="use-dependent-optics"><a class="header" href="#use-dependent-optics">Use dependent optics</a></h1>
 <p>A <em>dependent optic</em> is an optic-kind chosen by the schema edge it is applied at: a <code>prop</code> edge yields a Lens, an <code>item</code> edge yields a Traversal, a <code>variant</code> edge yields a Prism. Dependent optics let you write transforms that work uniformly across all three edge kinds, with the optic kind unified at instantiation.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>The Rust SDK; the <a href="https://docs.rs/panproto-lens/latest/panproto_lens/optic/"><code>panproto-lens::optic</code></a> module.</p>
+<p>The Rust SDK. The <code>panproto-lens</code> crate (re-exported from <code>panproto-core::lens</code>).</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
 <h3 id="apply-a-scoped-transform"><a class="header" href="#apply-a-scoped-transform">Apply a scoped transform</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>use panproto_lens::optic::{ScopedTransform, OpticKind};
+</span>use panproto_lens::protolens::elementary;
+use panproto_lens::optic::OpticKind;
 
-let transform = ScopedTransform::new(
-    "users",                         // path into the schema
-    rename_field("nickname", "handle"),
-);
+// An elementary step is itself a Protolens whose optic kind is derived
+// from the edge kind at the focus.
+let inner = elementary::rename_edge_name("post", "tags", "tags", "labels");
+let scoped = elementary::scoped("post:tags", inner);
 
-let optic = transform.into_optic(&amp;schema)?;
-match optic.kind() {
-    OpticKind::Lens      =&gt; /* prop edge */ {},
-    OpticKind::Traversal =&gt; /* item edge */ {},
-    OpticKind::Prism     =&gt; /* variant edge */ {},
+match scoped.optic_kind() {
+    OpticKind::Lens      =&gt; { /* prop edge */ }
+    OpticKind::Traversal =&gt; { /* item edge */ }
+    OpticKind::Prism     =&gt; { /* variant edge */ }
+    other =&gt; panic!("unexpected optic kind: {other:?}"),
 }
 <span class="boring">}</span></code></pre>
-<p><code>into_optic</code> inspects the schema at the given path and selects the optic kind. The transform is then lifted into the chosen optic via the lens fibration.</p>
+<p><code>elementary::scoped</code> wraps an inner protolens at the given focus vertex. At the instance level the optic kind follows from the edge kind connecting the parent to the focus vertex: <code>prop</code> -&gt; Lens, <code>item</code> -&gt; Traversal, <code>variant</code> -&gt; Prism.</p>
 <h3 id="field-level-combinators"><a class="header" href="#field-level-combinators">Field-level combinators</a></h3>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use panproto_lens::optic::map_items;
-
-let lens = map_items(&amp;schema, "tags", |item_lens| {
-    item_lens.then(rename_field("title", "name"))
-});
-<span class="boring">}</span></code></pre>
-<p><code>map_items</code> produces a Traversal that applies the inner transform to each element of an <code>item</code> edge.</p>
+<p>The <code>panproto_lens::protolens::combinators</code> module exposes higher-level chains assembled from elementary steps; for instance <code>combinators::rename_field(parent, field, old_name, new_name)</code> returns a <code>ProtolensChain</code> that renames a JSON property key. To traverse an <code>item</code> edge and apply an inner transform per element, use <code>elementary::scoped</code> (or the <code>combinators::map_items</code> helper) targeting the array element’s vertex; the result is a Traversal under the optic-kind classifier.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<p>The lens laws apply uniformly across all three optic kinds. Run <code>check_lens(&amp;optic.into_lens(), ...)</code> after instantiation.</p>
+<p>The lens laws apply uniformly across all three optic kinds. Build a <code>ProtolensChain</code> from the constructed step and use <code>ProtolensChain::verify_round_trip</code> (or the higher-level <code>Lens::verify_*</code> helpers) to exercise GetPut and PutGet on representative data.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Hand-coding the optic kind. The point of dependent optics is that the kind follows from the edge; if you find yourself branching on it manually, prefer <code>into_optic</code> and let the schema decide.</li>

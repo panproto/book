@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -222,7 +222,7 @@
 <h3 id="utility"><a class="header" href="#utility">Utility</a></h3>
 <p><code>DefaultVal</code>, <code>Clamp</code>, <code>TruncateStr</code>.</p>
 <h3 id="type-coercion"><a class="header" href="#type-coercion">Type coercion</a></h3>
-<p><code>IntToFloat</code>, <code>FloatToInt</code>, <code>IntToStr</code>, <code>FloatToStr</code>, <code>StrToInt</code>, <code>StrToFloat</code>. The <code>*ToInt</code> and <code>*ToFloat</code> parses raise <code>ParseFailure</code> on invalid input.</p>
+<p><code>IntToFloat</code>, <code>FloatToInt</code>, <code>IntToStr</code>, <code>FloatToStr</code>, <code>StrToInt</code>, <code>StrToFloat</code>. The <code>*ToInt</code> and <code>*ToFloat</code> parses raise <code>ParseError</code> on invalid input.</p>
 <h3 id="type-inspection"><a class="header" href="#type-inspection">Type inspection</a></h3>
 <p><code>TypeOf</code>, <code>IsNull</code>, <code>IsList</code>.</p>
 <h3 id="graph-traversal-instance-aware"><a class="header" href="#graph-traversal-instance-aware">Graph traversal (instance-aware)</a></h3>
@@ -245,7 +245,7 @@
 <tr><td><code>NonExhaustiveMatch</code></td><td>No pattern arm matched the scrutinee.</td></tr>
 <tr><td><code>DivisionByZero</code></td><td><code>Div</code> or <code>Mod</code> with a zero divisor.</td></tr>
 <tr><td><code>ListLengthExceeded(usize)</code></td><td>List operation exceeded the configured maximum length.</td></tr>
-<tr><td><code>ParseError { value, target_type }</code></td><td>A <code>*To*</code> coercion failed to parse its input.</td></tr>
+<tr><td><code>ParseError { value, target_type }</code></td><td>A <code>*ToInt</code> / <code>*ToFloat</code> coercion failed to parse its input.</td></tr>
 <tr><td><code>NotAFunction</code></td><td>Application of a non-function value.</td></tr>
 <tr><td><code>Overflow</code></td><td>Checked integer arithmetic overflowed.</td></tr>
 <tr><td><code>FloatNotRepresentable(String)</code></td><td>Float value (NaN, infinity, out-of-range) cannot be represented as an integer.</td></tr>

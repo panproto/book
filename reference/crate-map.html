@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -193,10 +193,10 @@
 <tbody>
 <tr><td><code>panproto-gat</code></td><td>Generalized algebraic theories: sorts, operations, equations, and the colimit machinery that composes them.</td></tr>
 <tr><td><code>panproto-gat-macros</code></td><td><code>class!</code> and <code>inductive!</code> macros for declaring GATs in Rust source.</td></tr>
-<tr><td><code>panproto-schema</code></td><td>Schema representation: vertices, edges, the schema graph, validation.</td></tr>
+<tr><td><code>panproto-schema</code></td><td>Schema representation: vertices, edges, the schema graph, validation. Hosts the <code>AbstractSchema</code> / <code>DecoratedSchema</code> typed-newtype distinction and the layout-fibre forgetful U (<code>Schema::forget_layout</code>).</td></tr>
 <tr><td><code>panproto-inst</code></td><td>Instances: data records over a schema, including <code>Value::List</code> and the typed value lattice.</td></tr>
 <tr><td><code>panproto-mig</code></td><td>Migration engine: morphisms between schema theories, restrict and lift.</td></tr>
-<tr><td><code>panproto-lens</code></td><td>Bidirectional lenses: get/put/complement, the three round-trip laws, fibration over schemas, optic kinds, protolenses.</td></tr>
+<tr><td><code>panproto-lens</code></td><td>Bidirectional lenses: get/put/complement, the three round-trip laws, fibration over schemas, optic kinds, protolenses, the cross-crate <code>enrichment_registry</code> for layout and other schema-level fibres.</td></tr>
 <tr><td><code>panproto-lens-dsl</code></td><td>Declarative lens DSL with Nickel, JSON, and YAML surfaces.</td></tr>
 <tr><td><code>panproto-theory-dsl</code></td><td>Declarative theory DSL for defining custom protocols.</td></tr>
 <tr><td><code>panproto-check</code></td><td>Breaking-change detection: classifies schema diffs as fully compatible, backward compatible, or breaking.</td></tr>
@@ -214,7 +214,7 @@
 </thead>
 <tbody>
 <tr><td><code>panproto-io</code></td><td>Parse/emit codecs that bridge native formats (JSON, Avro, Protobuf, …) to <code>panproto-inst</code>.</td></tr>
-<tr><td><code>panproto-parse</code></td><td>Tree-sitter full-AST parsing across 259 languages, with interstitial preservation.</td></tr>
+<tr><td><code>panproto-parse</code></td><td>Tree-sitter full-AST parsing across 259 languages, with interstitial preservation. Hosts the put-direction (<code>decorate</code>) of the parse / emit lens and the <code>LayoutEnricher</code> adapter installed in <code>panproto-lens</code>’s enrichment registry.</td></tr>
 <tr><td><code>panproto-grammars</code></td><td>Pre-compiled tree-sitter grammars used by <code>panproto-parse</code>.</td></tr>
 <tr><td><code>panproto-grammars-all</code></td><td>Umbrella grammar companion pack for the Python wheel.</td></tr>
 <tr><td><code>panproto-grammars-functional</code></td><td>Functional-language grammar pack.</td></tr>
@@ -225,7 +225,7 @@
 <tr><td><code>panproto-grammars-data</code></td><td>Data-language grammar pack.</td></tr>
 <tr><td><code>panproto-grammars-devops</code></td><td>DevOps-language grammar pack.</td></tr>
 <tr><td><code>panproto-grammars-mobile</code></td><td>Mobile-language grammar pack.</td></tr>
-<tr><td><code>panproto-grammars-music</code></td><td>Music-language grammar pack (Tidal, Strudel, QVR).</td></tr>
+<tr><td><code>panproto-grammars-music</code></td><td>Music-language grammar pack (SuperCollider, LilyPond, ABC, Csound, ChucK, Glicol, Tidal, Strudel).</td></tr>
 <tr><td><code>panproto-project</code></td><td>Multi-file project assembly via schema coproduct, manifest loading.</td></tr>
 </tbody>
 </table>

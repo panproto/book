@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -192,7 +192,7 @@
 <pre><code class="language-ts">import { Panproto } from '@panproto/core';
 
 const p = await Panproto.init();
-const proto = p.protocol('json-schema');
+const proto = p.protocol('atproto');
 
 export const v2 = proto.schema()
   .vertex('user', 'object')
@@ -245,19 +245,19 @@ p.checkExistence(v1, v2, builder);
 
 const lines = readFileSync('data/v1.jsonl', 'utf8').split('\n').filter(Boolean);
 const newLines = lines.map((line) =&gt; {
-  const { data } = mig.lift(JSON.parse(line));
+  const data = mig.liftJson(JSON.parse(line), 'user');
   return JSON.stringify(data);
 });
 writeFileSync('data/v2.jsonl', newLines.join('\n'));
 </code></pre>
-<p><code>mig.lift(record)</code> returns a <code>LiftResult { data, _rawBytes? }</code>; <code>data</code> is the migrated record. The complement (the data discarded by the forward direction) is captured separately on the <code>get</code>/<code>put</code> path; see Step 6.</p>
+<p><code>mig.liftJson(record, rootVertex)</code> round-trips a JSON-shaped record through the migration: the wrapper parses it as an instance of the source schema rooted at <code>rootVertex</code>, lifts it, and emits the target shape as a JS object. (The lower-level <code>mig.lift()</code> exists too, but it expects opaque pre-encoded <code>Instance</code> bytes rather than JSON-native records.) The complement (the data discarded by the forward direction) is captured separately on the <code>get</code>/<code>put</code> path; see Step 6.</p>
 <h2 id="step-6-confirm-round-trip"><a class="header" href="#step-6-confirm-round-trip">Step 6: confirm round-trip</a></h2>
 <pre><code class="language-ts">const original = JSON.parse(lines[0]);
-const { view, complement } = mig.get(original);
-const { data: back } = mig.put(view, complement);
+const { view, complement } = mig.getJson(original, 'user');
+const back = mig.putJson(view, complement, 'user');
 console.log('round-trip ok?', JSON.stringify(back) === JSON.stringify(original));
 </code></pre>
-<p><code>mig.get(record)</code> returns a <code>GetResult { view, complement }</code>; <code>mig.put(view, complement)</code> returns a <code>LiftResult { data, ... }</code>. The complement carries the data the v2 shape does not see; together, get and put satisfy the round-trip laws.</p>
+<p><code>mig.getJson(record, rootVertex)</code> returns <code>{ view, complement }</code>; <code>mig.putJson(view, complement, rootVertex)</code> returns the restored record. The complement carries the data the v2 shape does not see; together, get and put satisfy the round-trip laws. (The lower-level <code>mig.get()</code> / <code>mig.put()</code> exist for already-encoded <code>Instance</code> bytes; the <code>*Json</code> wrappers handle the JSON-native path.)</p>
 <h2 id="what-you-built"><a class="header" href="#what-you-built">What you built</a></h2>
 <p>A migration that is type-checked, classified, existence-checked, lens-law-respecting, and reversible. None of those properties was hand-asserted; each was checked by the panproto tooling.</p>
 <h2 id="next"><a class="header" href="#next">Next</a></h2>

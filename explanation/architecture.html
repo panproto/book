@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -251,6 +251,7 @@
     LENSDSL --&gt; LENS
     IO --&gt; INST
     PARSE --&gt; INST
+    PARSE --&gt; LENS
 
     LENS --&gt; EXPR
     MIG --&gt; EXPR
@@ -265,6 +266,7 @@
 </pre>
 
 <p>The diagram shows the <em>direction</em> of dependency, not every individual edge. The full set is in the workspace <a href="https://github.com/panproto/panproto/blob/main/Cargo.toml"><code>Cargo.toml</code></a>.</p>
+<p>One arrow worth pointing out: <code>panproto-parse</code> depends on <code>panproto-lens</code>, not the other way around. The two crates meet through the <code>enrichment_registry</code> module in <code>panproto-lens</code>, a thin trait-and-registry pair the lens crate exposes for downstream crates to populate. <code>panproto-parse</code> installs an adapter for every parser it accepts so that protolens machinery in <code>panproto-lens</code> can dispatch grammar-driven enrichment synthesis without depending on tree-sitter. The mechanism is documented in <a href="./layout-enrichment.html">Layout enrichment</a>; the registry pattern keeps the lens crate grammar-agnostic and the dependency direction acyclic.</p>
 <h2 id="the-boundaries"><a class="header" href="#the-boundaries">The boundaries</a></h2>
 <p>Three places in the system are <em>boundary layers</em> in the sense that they convert between panproto’s internal representation and an external one. They are deliberately thin and concentrated in single crates so they can be audited independently.</p>
 <h3 id="wasm-boundary"><a class="header" href="#wasm-boundary">WASM boundary</a></h3>

@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-bbbd0f37.js"></script>
+        <script src="../../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -199,9 +199,7 @@
 </code></pre>
 <p>Each step is a single-key object whose key selects the variant. The full step grammar is in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-lens-dsl/src/document.rs"><code>crates/panproto-lens-dsl/src/document.rs</code></a>.</p>
 <h2 id="abstract-syntax"><a class="header" href="#abstract-syntax">Abstract syntax</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub struct LensDocument {
+<pre><code class="language-rust ignore">pub struct LensDocument {
     pub id: String,
     pub description: String,
     pub steps: Vec&lt;Step&gt;,
@@ -239,9 +237,8 @@ pub enum Step {
     RenameOp     { rename_op: RenameSpec },
     AddEquation  { add_equation: EquationSpec },
     DropEquation { drop_equation: String },
-}
-<span class="boring">}</span></code></pre>
-<p>The top-level type is <code>LensDocument</code>, not <code>LensSpec</code>. There is no <code>source</code>/<code>target</code> pair on the document: the source schema is supplied at compile time (via the resolver), and the target schema is computed by applying the steps. See <code>panproto_lens_dsl::compile</code>.</p>
+}</code></pre>
+<p>The top-level type is <code>LensDocument</code>, not <code>LensSpec</code>. The document carries <code>source</code> and <code>target</code> NSID fields naming the two schemas; the resolver loads the source schema and the compiler applies the steps to it, then checks that the result matches the named <code>target</code>. See <code>panproto_lens_dsl::compile</code>.</p>
 <h2 id="semantic-domain"><a class="header" href="#semantic-domain">Semantic domain</a></h2>
 <p>For schemas <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span> and complement type <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span>, the set of <em>lenses</em> on <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mclose">)</span></span></span></span> is</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Lens</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mclose">)</span></span></span></span></span></p>
@@ -277,7 +274,7 @@ pub enum Step {
 </li>
 </ul>
 <p>Pre-flight predicate: <code>Complement::is_compatible(c1, c2)</code>.</p>
-<p>The fingerprint is a blake3 hash of the source schema’s normal form, so complements computed against syntactically distinct but structurally equal schemas are still compatible.</p>
+<p>The fingerprint is a 64-bit hash of the source schema (computed with the standard library’s <code>DefaultHasher</code> in <code>panproto_lens::asymmetric::schema_fingerprint</code>), so complements computed against syntactically distinct but structurally equal schemas are still compatible.</p>
 <h2 id="soundness"><a class="header" href="#soundness">Soundness</a></h2>
 <p>The compilation function preserves lawfulness: if every step compiles to a lawful lens (which the combinator algebra guarantees), the composed result is lawful. Property tests in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-lens/src/laws.rs"><code>crates/panproto-lens/src/laws.rs</code></a> verify each combinator against random inputs sampled from the schema’s value space.</p>
 <h2 id="what-is-intentionally-not-modelled"><a class="header" href="#what-is-intentionally-not-modelled">What is intentionally not modelled</a></h2>

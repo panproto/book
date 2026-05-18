@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -207,17 +207,17 @@
 <h3 id="compile-a-chain"><a class="header" href="#compile-a-chain">Compile a chain</a></h3>
 <p><code>schema lens</code> does not consume <code>.ncl</code>/<code>.json</code>/<code>.yaml</code> lens documents directly through the CLI. The DSL is compiled by the <code>panproto-lens-dsl</code> library; the CLI works on the compiled <code>ProtolensChain</code> it produces. To go from a pair of schemas to a chain via the CLI, use:</p>
 <pre><code class="language-sh">schema lens generate \
-  --protocol json-schema \
+  --protocol atproto \
   schemas/user-v1.json \
   schemas/user-v2.json \
   --save lenses/user-v1-to-v2.json
 </code></pre>
 <p>This auto-derives a chain. To author a chain by hand, write the lens DSL and call <code>panproto_lens_dsl::load</code> and <code>panproto_lens_dsl::compile</code> from Rust (or the equivalent SDK calls).</p>
 <h3 id="apply"><a class="header" href="#apply">Apply</a></h3>
-<pre><code class="language-sh">schema lens apply --protocol json-schema lenses/user-v1-to-v2.json data/users.json
+<pre><code class="language-sh">schema lens apply --protocol atproto lenses/user-v1-to-v2.json data/users.json
 </code></pre>
 <h3 id="inspect"><a class="header" href="#inspect">Inspect</a></h3>
-<pre><code class="language-sh">schema lens inspect --protocol json-schema lenses/user-v1-to-v2.json
+<pre><code class="language-sh">schema lens inspect --protocol atproto lenses/user-v1-to-v2.json
 </code></pre>
 <p>Prints the combinator chain. <code>--protocol</code> is required.</p>
 <h3 id="compile-from-python"><a class="header" href="#compile-from-python">Compile from Python</a></h3>
@@ -237,10 +237,10 @@ chain = panproto.ProtolensChain.from_dsl_nickel(nickel_source, "record:body")
 <p><code>from_dsl_path</code> dispatches on file extension (<code>.ncl</code> / <code>.json</code> / <code>.yaml</code> / <code>.yml</code>). For Nickel, an optional <code>import_paths</code> argument extends the import-resolution lookup so user-defined modules can be referenced.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <pre><code class="language-sh"># Check the chain is applicable to every schema in a directory.
-schema lens check --protocol json-schema lenses/user-v1-to-v2.json schemas/
+schema lens check --protocol atproto lenses/user-v1-to-v2.json schemas/
 
 # Verify the lens laws on test data.
-schema lens verify --protocol json-schema data/users.json schemas/user-v2.json
+schema lens verify --protocol atproto data/users.json schemas/user-v2.json
 </code></pre>
 <p><code>lens check</code> reports applicability without instantiating; <code>lens verify</code> checks the round-trip laws on actual data.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>

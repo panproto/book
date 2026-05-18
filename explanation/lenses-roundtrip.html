@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -218,10 +218,15 @@ complement : S -&gt; C
 <li><strong>The lens DSL</strong> (<a href="https://github.com/panproto/panproto/tree/main/crates/panproto-lens-dsl">panproto-lens-dsl</a>). A declarative spec in Nickel, JSON, or YAML compiles to the lens combinator algebra.</li>
 <li><strong>Protolenses</strong> (<a href="https://docs.rs/panproto-lens/latest/panproto_lens/protolens/">panproto-lens::protolens</a>). Schema-parameterized lens families whose instantiations cover whole fleets of related schemas at once.</li>
 </ul>
+<h2 id="schema-level-lenses-layout-as-an-enrichment"><a class="header" href="#schema-level-lenses-layout-as-an-enrichment">Schema-level lenses: layout as an enrichment</a></h2>
+<p>There is a second flavour of lens that lives one level up. parse / emit is not a WInstance lens; it is a relation between bytes and schemas, with <code>parse</code> recording the source layout into a fibre of constraints over each vertex and <code>emit_pretty</code> consuming that fibre to render bytes back. The relation has the shape of a lens at the schema level: stripping the layout fibre is the <code>get</code>, attaching it via a grammar walk is the <code>put</code>.</p>
+<p>panproto names this construction explicitly. The <code>EnrichmentKind::Layout</code> tag in <code>panproto-gat</code> classifies the constraint sorts that make up the fibre. <code>TheoryTransform::StripEnrichment</code> and <code>TheoryTransform::AddEnrichment</code> are the two directions at the protolens level; their schema-level interpretation runs in <code>apply_theory_transform_to_schema</code> (strip drops the fibre constraints; add dispatches to a registered synthesis driver). The <code>ComplementConstructor::Enrichment</code> variant names the fibre and the driver in the complement vocabulary.</p>
+<p>The schema-level lens does not plug into the WInstance-level <code>get</code> / <code>put</code> pair the way an elementary protolens does. The byte-level operational entry points live in <code>panproto-parse</code>: <code>ParserRegistry::decorate</code> for the put direction, <code>ParserRegistry::parse_with_protocol</code> for the get. The protolens captures the schema-level relationship those byte-level operations sit over; it composes with elementary protolenses for chain-law reasoning but is not the implementation of <code>decorate</code> or <code>parse</code>. See <a href="./layout-enrichment.html">Layout enrichment</a> for the full treatment.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="./semantics/lens-dsl.html">Lens DSL: denotational semantics</a> for the formal lens model and the law statements.</li>
 <li><a href="./semantics/protolens-composition.html">Protolens composition</a> for vertical and sequential composition.</li>
+<li><a href="./layout-enrichment.html">Layout enrichment</a> for the schema-level lens between abstract and decorated schemas.</li>
 <li><a href="../reference/lens-combinators.html">Lens combinator reference</a> for the algebra.</li>
 <li>Foster et al. (<a href="../bibliography.html#foster2007combinators">2007</a>) for the original asymmetric-lens treatment, and Litt et al. (<a href="../bibliography.html#littvanhardenberghenry2020cambria">2020</a>) for the complement-tracking approach this builds on.</li>
 </ul>
@@ -234,7 +239,7 @@ complement : S -&gt; C
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../explanation/protocol-colimits.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../explanation/layout-enrichment.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -248,7 +253,7 @@ complement : S -&gt; C
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../explanation/protocol-colimits.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../explanation/layout-enrichment.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

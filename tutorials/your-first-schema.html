@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,8 +183,9 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="your-first-schema"><a class="header" href="#your-first-schema">Your first schema</a></h1>
-<p>You will define a schema for a small data model (users with names and ages), validate it against JSON Schema, and load some data through it. About ten minutes.</p>
-<p>By the end you will have: a working <code>panproto</code> setup, a JSON Schema you wrote, an instance of that schema parsed from a JSON file, and a sense of how the four pieces (protocol, schema, instance, validation) fit together.</p>
+<p>You will define a schema for a small data model (users with names and ages), validate it against the <code>atproto</code> protocol, and load some data through it. About ten minutes.</p>
+<p>By the end you will have: a working <code>panproto</code> setup, a schema you wrote, an instance of that schema parsed from a JSON file, and a sense of how the four pieces (protocol, schema, instance, validation) fit together.</p>
+<p>We use <code>atproto</code> because it is the most fully-built-out protocol in the current registry; the same code shape applies to any of the <a href="../reference/protocols.html">protocols</a> listed by <code>Panproto.builtinProtocols()</code>.</p>
 <p>No prior knowledge of category theory or schema theory is assumed. We use ordinary words for everything; if you want the formal treatment of any concept, the explanation chapters are linked at the end.</p>
 <h2 id="setup"><a class="header" href="#setup">Setup</a></h2>
 <p>Pick a language. The walkthrough uses TypeScript; the <a href="#python-version">Python</a> and <a href="#rust-version">Rust</a> versions are at the bottom.</p>
@@ -197,11 +198,11 @@ npm install @panproto/core
 <pre><code class="language-ts">import { Panproto } from '@panproto/core';
 
 const p = await Panproto.init();
-const proto = p.protocol('json-schema');
+const proto = p.protocol('atproto');
 
 console.log('protocol:', proto.name);
 </code></pre>
-<p>Run it: <code>npx tsx src/main.ts</code>. You see <code>protocol: json-schema</code> (using <code>Protocol.name</code>). The protocol object knows how to validate, parse, and emit JSON Schema; it is the starting point for building schemas in this language.</p>
+<p>Run it: <code>npx tsx src/main.ts</code>. You see <code>protocol: atproto</code> (using <code>Protocol.name</code>). The protocol object knows how to validate, parse, and emit schemas in its native form; it is the starting point for building schemas in this language.</p>
 <h2 id="step-2-build-a-schema"><a class="header" href="#step-2-build-a-schema">Step 2: build a schema</a></h2>
 <p>Add to <code>src/main.ts</code>:</p>
 <pre><code class="language-ts">const schema = proto.schema()
@@ -218,7 +219,7 @@ console.log(
   'edges:', schema.edges.length,
 );
 </code></pre>
-<p><code>.vertex()</code> declares a <em>vertex</em> (a record kind, in JSON Schema parlance: an object). <code>.edge()</code> declares an <em>edge</em> (a field, item, or variant). This schema says: a user is an object with a required string <code>name</code> and an optional integer <code>age</code>.</p>
+<p><code>.vertex()</code> declares a <em>vertex</em> (a kind, e.g. an <code>object</code> or a leaf <code>string</code>). <code>.edge()</code> declares an <em>edge</em> (a field, item, or variant). This schema says: a user is an object with a required string <code>name</code> and an optional integer <code>age</code>.</p>
 <p><code>.build()</code> validates the construction: required edges are present, every reference targets an existing vertex, the protocol’s equations are satisfied. If anything is wrong, you get an error here, before any data is touched. The returned <code>BuiltSchema</code> carries <code>.vertices</code> (an <code>id -&gt; Vertex</code> record), <code>.edges</code> (an array), and <code>.protocol</code>.</p>
 <h2 id="step-3-parse-and-validate-data"><a class="header" href="#step-3-parse-and-validate-data">Step 3: parse and validate data</a></h2>
 <p>Create <code>data/sample.json</code>:</p>
@@ -240,11 +241,11 @@ console.log('parsed:', new TextDecoder().decode(p.toJson(schema, instance)));
 <h2 id="what-you-built"><a class="header" href="#what-you-built">What you built</a></h2>
 <p>Three things:</p>
 <ol>
-<li>A reference to a <em>protocol</em> (<code>json-schema</code>).</li>
+<li>A reference to a <em>protocol</em> (<code>atproto</code>).</li>
 <li>A <em>schema</em> (a graph of vertices and edges) within that protocol.</li>
 <li><em>Instances</em> (data) parsed and validated against the schema.</li>
 </ol>
-<p>This same pattern works for every protocol panproto supports. Replace <code>'json-schema'</code> with <code>'atproto'</code>, <code>'protobuf'</code>, or any of the <a href="../reference/protocols.html">50 built-ins</a>, and the rest of the code is identical.</p>
+<p>This same pattern works for every protocol panproto supports. Swap <code>'atproto'</code> for any other name in the built-in registry (<code>Panproto.builtinProtocols()</code> lists them), and the rest of the code is identical.</p>
 <h2 id="next"><a class="header" href="#next">Next</a></h2>
 <ul>
 <li><a href="./your-first-migration.html">Your first migration</a> takes the same <code>user</code> schema, evolves it to v2, and lifts the existing data forward.</li>
@@ -254,7 +255,7 @@ console.log('parsed:', new TextDecoder().decode(p.toJson(schema, instance)));
 <h2 id="python-version"><a class="header" href="#python-version">Python version</a></h2>
 <pre><code class="language-python">import panproto
 
-proto = panproto.get_builtin_protocol("json-schema")
+proto = panproto.get_builtin_protocol("atproto")
 
 b = proto.schema()
 b.vertex("user", "object")
@@ -266,31 +267,33 @@ schema = b.build()
 
 io = panproto.IoRegistry()
 with open("data/sample.json", "rb") as f:
-    instance = io.parse("json-schema", schema, f.read())
+    instance = io.parse("atproto", schema, f.read())
 print(instance.to_dict())
 </code></pre>
-<p>The Python builder uses statement-by-statement mutation (each <code>.vertex()</code> and <code>.edge()</code> mutates in place and returns <code>None</code>); chain syntax does not work. Parsing data through a protocol’s codec goes through <code>IoRegistry().parse(protocol, schema, bytes)</code>.</p>
+<p>The Python builder uses statement-by-statement mutation (each <code>.vertex()</code> and <code>.edge()</code> mutates in place and returns <code>None</code>); chain syntax does not work. Parsing data through a protocol’s codec goes through <code>IoRegistry().parse(protocol, schema, bytes)</code>. The full list of built-in protocols is <code>panproto.list_builtin_protocols()</code>.</p>
 <h2 id="rust-version"><a class="header" href="#rust-version">Rust version</a></h2>
-<p>The Rust facade exposes the same conceptual surface; consult <a href="https://docs.rs/panproto-core">docs.rs/panproto-core</a> for current method names. The shape:</p>
-<pre class="playground"><code class="language-rust">use panproto_core::Panproto;
+<p><code>panproto-core</code> is a re-export facade over the sub-crates; there is no single <code>Panproto</code> entry-point struct. You compose the same flow directly from the sub-crates: build a <code>Schema</code> via <code>panproto_schema::SchemaBuilder</code>, validate it against a protocol from <code>panproto_protocols</code>, parse instances via <code>panproto_inst::parse_json</code>. The shape:</p>
+<pre class="playground"><code class="language-rust no_run">use panproto_core::{protocols, schema::SchemaBuilder, inst};
 
-fn main() -&gt; anyhow::Result&lt;()&gt; {
-    let p = Panproto::new();
-    let proto = p.protocol("json-schema")?;
+fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+    let proto = protocols::atproto::protocol();
 
-    let schema = proto.schema()
-        .vertex("user", "object")
-        .vertex("user.name", "string")
-        .vertex("user.age", "integer")
-        .edge("user", "user.name", "prop").named("name").required()
-        .edge("user", "user.age", "prop").named("age").optional()
+    let schema = SchemaBuilder::new(&amp;proto)
+        .vertex("user", "object", Some("app.example.user"))?
+        .vertex("user:name", "string", None)?
+        .vertex("user:age",  "integer", None)?
+        .edge("user", "user:name", "prop", Some("name"))?
+        .edge("user", "user:age",  "prop", Some("age"))?
+        .entry("user")
         .build()?;
 
     let bytes = std::fs::read("data/sample.json")?;
-    let instance = p.parse_json(&amp;schema, &amp;bytes)?;
-    println!("{:?}", instance);
+    let json: serde_json::Value = serde_json::from_slice(&amp;bytes)?;
+    let instance = inst::parse_json(&amp;schema, "user", &amp;json)?;
+    println!("{instance:?}");
     Ok(())
 }</code></pre>
+<p>Method signatures track the underlying crates rather than a fluent facade; consult <a href="https://docs.rs/panproto-schema">docs.rs/panproto-schema</a> and <a href="https://docs.rs/panproto-inst">docs.rs/panproto-inst</a> for current arguments.</p>
 
                     </main>
 

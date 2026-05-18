@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -188,41 +188,52 @@
 <p>The Rust SDK (<a href="https://docs.rs/panproto-lens/latest/panproto_lens/protolens/"><code>panproto-lens::protolens</code></a>) or the lens DSL with <code>parametric</code> declarations enabled.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
 <h3 id="declare"><a class="header" href="#declare">Declare</a></h3>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use panproto_lens::protolens::{Protolens, Precondition, Transform};
+<p>A <code>Protolens</code> packages a precondition (a <code>TheoryConstraint</code> on the source theory) with a <code>TheoryTransform</code>. Build elementary protolenses via the <code>elementary</code> helpers, or compose them into a <code>ProtolensChain</code>:</p>
+<pre class="playground"><code class="language-rust no_run">use panproto_lens::protolens::{ProtolensChain, combinators};
 
-let rename_legacy_id = Protolens::new(
-    Precondition::has_edge_named("legacy_id"),
-    Transform::rename_edge("legacy_id", "id"),
+<span class="boring">fn main() {
+</span>let rename_legacy_id: ProtolensChain = combinators::rename_field(
+    "user", "user:legacy_id", "legacy_id", "id",
 );
-<span class="boring">}</span></code></pre>
-<p>The protolens captures: when does it apply (<code>Precondition</code>), and what does it do (<code>Transform</code>). It does not yet know which schemas it will run against.</p>
+<span class="boring">let _ = rename_legacy_id;
+</span><span class="boring">}</span></code></pre>
+<p>The chain captures a precondition on the source theory and a sequence of transforms. It does not yet know which concrete schema it will run against.</p>
 <h3 id="apply-fused"><a class="header" href="#apply-fused">Apply (fused)</a></h3>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let lens_for_users    = rename_legacy_id.instantiate(&amp;user_schema)?;
-let lens_for_posts    = rename_legacy_id.instantiate(&amp;post_schema)?;
-<span class="boring">}</span></code></pre>
-<p>Each call produces a concrete lens against a specific schema, with the migration metadata preserved as a single fused morphism.</p>
+<pre class="playground"><code class="language-rust no_run"><span class="boring">use panproto_lens::protolens::{ProtolensChain, combinators};
+</span><span class="boring">use panproto_core::schema::{Protocol, Schema, SchemaBuilder};
+</span><span class="boring">fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+</span><span class="boring">let rename_legacy_id: ProtolensChain = combinators::rename_field("user", "user:legacy_id", "legacy_id", "id");
+</span><span class="boring">let protocol: Protocol = panproto_core::protocols::atproto::protocol();
+</span><span class="boring">let user_schema: Schema = SchemaBuilder::new(&amp;protocol).vertex("user", "object", None)?.entry("user").build()?;
+</span><span class="boring">let post_schema: Schema = user_schema.clone();
+</span>let lens_for_users = rename_legacy_id.instantiate(&amp;user_schema, &amp;protocol)?;
+let lens_for_posts = rename_legacy_id.instantiate(&amp;post_schema, &amp;protocol)?;
+<span class="boring">let _ = (lens_for_users, lens_for_posts);
+</span><span class="boring">Ok(()) }</span></code></pre>
+<p>Each call produces a concrete <code>Lens</code> against a specific schema, with the migration metadata preserved as a single fused morphism.</p>
 <h3 id="apply-sequential"><a class="header" href="#apply-sequential">Apply (sequential)</a></h3>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let lens_chain = chain.instantiate_sequential(&amp;base_schema)?;
-<span class="boring">}</span></code></pre>
-<p>Sequential instantiation is used by property tests when each intermediate step needs to be inspected.</p>
+<pre class="playground"><code class="language-rust no_run"><span class="boring">use panproto_lens::protolens::{ProtolensChain, combinators};
+</span><span class="boring">use panproto_core::schema::{Protocol, Schema, SchemaBuilder};
+</span><span class="boring">fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+</span><span class="boring">let rename_legacy_id: ProtolensChain = combinators::rename_field("user", "user:legacy_id", "legacy_id", "id");
+</span><span class="boring">let protocol: Protocol = panproto_core::protocols::atproto::protocol();
+</span><span class="boring">let base_schema: Schema = SchemaBuilder::new(&amp;protocol).vertex("user", "object", None)?.entry("user").build()?;
+</span>let stepwise = rename_legacy_id.instantiate_sequential(&amp;base_schema, &amp;protocol)?;
+<span class="boring">let _ = stepwise;
+</span><span class="boring">Ok(()) }</span></code></pre>
+<p>Sequential instantiation yields one lens per step; useful in property tests when each intermediate state needs to be inspected.</p>
 <h3 id="compose"><a class="header" href="#compose">Compose</a></h3>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let composed = first.vertical_compose(&amp;second)?;
-<span class="boring">}</span></code></pre>
-<p><code>vertical_compose</code> requires the intermediate endofunctor of <code>first</code> to structurally match the source endofunctor of <code>second</code>. Mismatch raises <code>LensError::CompositionMismatch</code>.</p>
+<pre class="playground"><code class="language-rust no_run">use panproto_lens::protolens::{Protolens, vertical_compose, elementary};
+
+<span class="boring">fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+</span>let first:  Protolens = elementary::drop_sort("old_field");
+let second: Protolens = elementary::drop_sort("legacy_id");
+let composed = vertical_compose(&amp;first, &amp;second)?;
+<span class="boring">let _ = composed;
+</span><span class="boring">Ok(()) }</span></code></pre>
+<p><code>vertical_compose</code> requires the target endofunctor of <code>first</code> to structurally match the source endofunctor of <code>second</code>. A mismatch returns <code>LensError</code>.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>panproto_lens::laws::check_lens(&amp;lens, &amp;samples, /*laws=*/Laws::ALL)?;
-<span class="boring">}</span></code></pre>
-<p>Property tests verify that each instantiation satisfies the three lens laws.</p>
+<p>After <code>instantiate</code> returns a <code>Lens</code>, exercise the round-trip laws on representative data via <code>Lens::get</code> / <code>Lens::put</code> (or use the higher-level lens-law harness in <code>panproto_lens::laws</code>). Property tests in <code>crates/panproto-lens/tests/</code> are the canonical examples.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Composing protolenses whose intermediate schemas only happen to look the same. <code>protolens_composable</code> enforces structural equality, not name equality; build one against the other to be safe.</li>

@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-bbbd0f37.js"></script>
+        <script src="../../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -188,17 +188,23 @@
 <h2 id="install"><a class="header" href="#install">Install</a></h2>
 <pre><code class="language-toml"># Cargo.toml
 [dependencies]
-panproto-core = "0.46"
+panproto-core = "0.47"
 </code></pre>
-<p>For specific feature flags (<code>full-parse</code>, <code>project</code>, <code>git</code>, <code>llvm</code>, <code>jit</code>), see <a href="../../reference/sdk-rust.html">Reference: Rust SDK</a>.</p>
+<p>For specific feature flags (<code>full-parse</code>, <code>project</code>, <code>git</code>, <code>llvm</code>, <code>jit</code>, <code>tree-sitter</code>), see <a href="../../reference/sdk-rust.html">Reference: Rust SDK</a>.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<pre class="playground"><code class="language-rust">use panproto_core::Panproto;
+<pre class="playground"><code class="language-rust no_run">use panproto_core::protocols::atproto;
+use panproto_core::schema::SchemaBuilder;
 
-fn main() {
-    let p = Panproto::new();
-    println!("{}", p.version());
+fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+    let proto = atproto::protocol();
+    let schema = SchemaBuilder::new(&amp;proto)
+        .vertex("root", "record", Some("app.example.root"))?
+        .entry("root")
+        .build()?;
+    println!("built {} vertex(es)", schema.vertices.len());
+    Ok(())
 }</code></pre>
-<p><code>cargo run</code> prints the linked panproto version.</p>
+<p><code>cargo run</code> builds and links against the panproto facade.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Pinning a stale toolchain. <code>panproto-core</code> requires edition 2024.</li>

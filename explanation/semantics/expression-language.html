@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-bbbd0f37.js"></script>
+        <script src="../../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -204,9 +204,7 @@ literal ::= int | float | str | bool | "null"
 </code></pre>
 <p>The parser desugars <code>if c then a else b</code> to a <code>Match</code> over a boolean scrutinee with two arms, and <code>case e of ...</code> to a <code>Match</code> directly. There is no separate <code>If</code> or <code>Case</code> node in the abstract syntax.</p>
 <h2 id="abstract-syntax"><a class="header" href="#abstract-syntax">Abstract syntax</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub enum Expr {
+<pre><code class="language-rust ignore">pub enum Expr {
     Lit(Literal),
     Var(Arc&lt;str&gt;),
     App(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
@@ -217,8 +215,7 @@ literal ::= int | float | str | bool | "null"
     List(Vec&lt;Expr&gt;),
     Field(Box&lt;Expr&gt;, Arc&lt;str&gt;),
     Index(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
-}
-<span class="boring">}</span></code></pre>
+}</code></pre>
 <p><code>Match</code> covers both <code>if/then/else</code> and <code>case/of</code>; pattern matching is the only branching primitive. The full enum lives at <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/expr.rs"><code>crates/panproto-expr/src/expr.rs</code></a>.</p>
 <h2 id="type-system"><a class="header" href="#type-system">Type system</a></h2>
 <p>The type-formation grammar:</p>

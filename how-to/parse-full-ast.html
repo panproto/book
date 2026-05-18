@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -200,17 +200,17 @@
 </code></pre>
 <p>Parses then emits, useful for confirming a clean round-trip through the format-preserving codec.</p>
 <h3 id="from-rust"><a class="header" href="#from-rust">From Rust</a></h3>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use panproto_core::parse::ParserRegistry;
+<pre class="playground"><code class="language-rust no_run">use panproto_core::parse::ParserRegistry;
 
-let registry = ParserRegistry::new();
+<span class="boring">fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+</span>let registry = ParserRegistry::new();
 let schema = registry.parse_with_protocol(
     "rust",
     std::fs::read("src/main.rs")?.as_slice(),
     "src/main.rs",
 )?;
-<span class="boring">}</span></code></pre>
+<span class="boring">let _ = schema;
+</span><span class="boring">Ok(()) }</span></code></pre>
 <p><code>panproto_core::parse</code> is the re-export of <code>panproto-parse</code>. <code>ParserRegistry::new()</code> populates with every grammar enabled at build time; for a specific file path, <code>registry.parse_file(path, content)</code> auto-detects the language by extension.</p>
 <h3 id="from-python"><a class="header" href="#from-python">From Python</a></h3>
 <pre><code class="language-python">import panproto
@@ -245,8 +245,11 @@ reg.override_grammar(
 schema = reg.parse_with_protocol("qvr", source_bytes, "demo.qvr")  # uses the new grammar
 </code></pre>
 <p>If a parser is already registered under <code>name</code>, it is dropped first (along with any extension mappings). Cannot run while a <code>ParseEmitLens</code> produced by <code>reg.lens(...)</code> is alive: drop outstanding lens handles, or construct a fresh registry, first. The byte payloads are leaked into <code>'static</code> storage on the Rust side — intended for dev-time work, not production.</p>
+<h2 id="going-the-other-way"><a class="header" href="#going-the-other-way">Going the other way</a></h2>
+<p>The schema you get back from <code>parse_with_protocol</code> carries a complete <em>layout fibre</em>: byte spans, the whitespace between every pair of adjacent tokens, and discriminators recording which CHOICE alternative the parser took at each branch point. The emitter consumes those constraints to render bytes back. A schema you build by hand from <code>SchemaBuilder</code> carries none of them; <code>emit_pretty_with_protocol</code> falls back to a grammar walk that may pick the wrong alternative or render an incomplete result.</p>
+<p>For generators that build a schema from scratch and want to render it to source bytes, see <a href="./decorate-schemas.html">Decorate an abstract schema</a>. The <code>decorate</code> operation takes an <code>AbstractSchema</code> (the hand-built half), attaches the layout fibre via a grammar walk, and returns a <code>DecoratedSchema</code> the emitter can render byte-for-byte.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<p>Tree-sitter parsing is total: every byte sequence parses into <em>some</em> AST. <code>instance.diagnostic_count()</code> reports the number of error nodes; a clean parse has zero. The interstitial preservation property guarantees <code>emit(parse(bytes)) == bytes</code>.</p>
+<p>Tree-sitter parsing is total: every byte sequence parses into <em>some</em> AST, with error nodes inserted around unparseable spans. The interstitial preservation property guarantees <code>emit(parse(bytes)) == bytes</code> for accepted inputs; <code>schema parse emit &lt;file&gt;</code> is the smoke test.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Treating the AST as the source of truth for non-syntactic information. Type information, name resolution, control flow are not modelled by the auto-derived theories.</li>
@@ -254,8 +257,10 @@ schema = reg.parse_with_protocol("qvr", source_bytes, "demo.qvr")  # uses the ne
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
+<li><a href="./decorate-schemas.html">Decorate an abstract schema</a> for the put-direction of the parse / emit lens.</li>
 <li><a href="../reference/protocols.html">Reference: protocol catalogue</a>.</li>
 <li><a href="./format-preserving.html">Round-trip with format preservation</a>.</li>
+<li><a href="../explanation/layout-enrichment.html">Layout enrichment</a> for the categorical framing of the parse / decorate / emit pair.</li>
 </ul>
 
                     </main>
@@ -266,7 +271,7 @@ schema = reg.parse_with_protocol("qvr", source_bytes, "demo.qvr")  # uses the ne
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../how-to/build-protocol.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../how-to/decorate-schemas.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -280,7 +285,7 @@ schema = reg.parse_with_protocol("qvr", source_bytes, "demo.qvr")  # uses the ne
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../how-to/build-protocol.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../how-to/decorate-schemas.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

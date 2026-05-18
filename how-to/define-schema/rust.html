@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-bbbd0f37.js"></script>
+        <script src="../../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -186,30 +186,37 @@
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p><code>panproto-core</code> in your <code>Cargo.toml</code> (<a href="../install/rust.html">Install the Rust SDK</a>).</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
-<pre class="playground"><code class="language-rust">use panproto_core::{Panproto, ProtocolName};
+<pre class="playground"><code class="language-rust no_run">use panproto_core::protocols::atproto;
+use panproto_core::schema::SchemaBuilder;
 
-fn main() -&gt; anyhow::Result&lt;()&gt; {
-    let p = Panproto::new();
-    let proto = p.protocol(ProtocolName::JsonSchema)?;
+fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+    let proto = atproto::protocol();
 
-    let schema = proto.schema()
-        .vertex("user", "object")
-        .vertex("user.name", "string")
-        .vertex("user.age", "integer")
-        .edge("user", "user.name", "prop").named("name").required()
-        .edge("user", "user.age", "prop").named("age").optional()
+    let schema = SchemaBuilder::new(&amp;proto)
+        .vertex("user", "object", Some("app.example.user"))?
+        .vertex("user:name", "string", None)?
+        .vertex("user:age", "integer", None)?
+        .edge("user", "user:name", "prop", Some("name"))?
+        .edge("user", "user:age", "prop", Some("age"))?
+        .entry("user")
         .build()?;
 
-    println!("{schema:?}");
+    println!("{} vertices, {} edges", schema.vertices.len(), schema.edges.len());
     Ok(())
 }</code></pre>
-<p><code>Panproto::new()</code> constructs the top-level handle. <code>protocol</code> returns a typed handle for the named protocol. The fluent builder produces a <code>Schema</code> on <code>.build()</code>.</p>
+<p><code>SchemaBuilder::new(&amp;protocol)</code> constructs the builder; each <code>vertex</code> and <code>edge</code> call validates against the protocol’s edge rules and obj-kind list. <code>entry</code> declares basepoint vertices for instance rooting. <code>build</code> returns a <code>Schema</code> (or a <code>SchemaError</code>).</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>schema.validate()?;
-<span class="boring">}</span></code></pre>
-<p>Returns <code>Result&lt;(), ValidationError&gt;</code>. The error carries the failing equation and the offending vertex or edge as structured fields.</p>
+<pre class="playground"><code class="language-rust no_run">use panproto_core::schema::{SchemaBuilder, validate};
+<span class="boring">fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+</span><span class="boring">let proto = panproto_core::protocols::atproto::protocol();
+</span><span class="boring">let schema = SchemaBuilder::new(&amp;proto)
+</span><span class="boring">    .vertex("user", "object", Some("app.example.user"))?
+</span><span class="boring">    .entry("user")
+</span><span class="boring">    .build()?;
+</span>let errors = validate(&amp;schema, &amp;proto);
+assert!(errors.is_empty(), "validation errors: {errors:?}");
+<span class="boring">Ok(()) }</span></code></pre>
+<p><code>validate</code> returns a <code>Vec&lt;ValidationError&gt;</code>. The error carries the failing equation and the offending vertex or edge as structured fields.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Reaching past <code>panproto-core</code> to lower-level crates without a reason. The facade re-exports the canonical surface; do not depend on <code>panproto-schema</code> directly unless you need an internal API.</li>

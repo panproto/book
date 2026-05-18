@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-bbbd0f37.js"></script>
+        <script src="../../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -201,7 +201,7 @@ schema check \
 
 # Generate a chain; non-zero exit means the change is breaking
 # (no auto-generated lens covers it).
-schema lens generate --protocol json-schema /tmp/user-base.json schemas/user.json --save /tmp/chain.json
+schema lens generate --protocol atproto /tmp/user-base.json schemas/user.json --save /tmp/chain.json
 </code></pre>
 <p>Either step’s non-zero exit fails the build. To allow an explicit override, gate on a commit-message marker or a PR label:</p>
 <pre><code class="language-sh">if git log -1 --format=%B | grep -q '\[breaking-change-acknowledged\]'; then
@@ -212,7 +212,7 @@ else
   schema lens generate ...
 fi
 </code></pre>
-<p>For richer classification, use the SDK: <code>panproto-check</code>’s <code>diff_and_classify</code> returns a <code>CompatReport</code> with <code>fully_compatible | backward_compatible | breaking</code> and the offending elements.</p>
+<p>For richer classification, use the SDK: in Python, <code>panproto.diff_and_classify(old, new, protocol)</code> returns a <code>CompatReport</code>; in Rust, call <code>panproto_check::diff(...)</code> followed by <code>panproto_check::classify(&amp;diff, &amp;protocol)</code>; in TypeScript, <code>panproto.diffFull(old, new).classify(protocol)</code> returns the same report. Each carries a classification (<code>fully_compatible</code>, <code>backward_compatible</code>, or <code>breaking</code>) along with the offending elements.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <p>Open a PR that adds a backward-compatible field; the gate passes. Open a PR that drops a required field; the gate fails. Add <code>[breaking-change-acknowledged]</code> to the commit message; the gate passes with a warning.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>

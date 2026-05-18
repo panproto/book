@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -188,15 +188,24 @@
 <p>A language model accessible via API or local inference. A target schema for the structured output.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
 <h3 id="use-the-lm-to-fill-an-instance"><a class="header" href="#use-the-lm-to-fill-an-instance">Use the LM to fill an instance</a></h3>
-<p>Prompt the model with the target schema (the <code>schema show</code> output is a good rendering) and the freeform input. The model returns a candidate instance.</p>
-<pre><code class="language-sh">schema show schemas/user.json &gt; schema.txt
-# pipe schema.txt and the freeform input to your model
+<p>Prompt the model with the target schema (read it from disk and serialize as JSON) and the freeform input. The model returns a candidate instance.</p>
+<pre><code class="language-sh">cat schemas/user.json
+# pipe the schema and the freeform input to your model
 # capture the model's structured output as candidate.json
 </code></pre>
-<h3 id="validate-the-candidate"><a class="header" href="#validate-the-candidate">Validate the candidate</a></h3>
-<pre><code class="language-sh">schema validate --protocol json-schema candidate.json
+<h3 id="validate-the-schema-and-parse-the-candidate"><a class="header" href="#validate-the-schema-and-parse-the-candidate">Validate the schema and parse the candidate</a></h3>
+<p><code>schema validate</code> checks a <em>schema</em> against a protocol’s GAT, not an instance:</p>
+<pre><code class="language-sh">schema validate --protocol atproto schemas/user.json
 </code></pre>
-<p>If validation fails, the model produced an instance that does not conform. Retry with the validation error in the prompt.</p>
+<p>To check that the model’s candidate <strong>instance</strong> conforms to the schema, parse it through the language SDK and let the parse fail loudly. For example, with the Python binding:</p>
+<pre><code class="language-python">import panproto
+
+proto = panproto.get_builtin_protocol("atproto")
+schema = ... # load the target schema
+reg = panproto.IoRegistry()
+inst = reg.parse("atproto", schema, candidate_bytes)
+</code></pre>
+<p>A <code>panproto.IoError</code> (or <code>panproto.ParseError</code>) means the model produced an instance that does not conform. Retry with the error message in the prompt.</p>
 <h3 id="apply-only-verified-transformations"><a class="header" href="#apply-only-verified-transformations">Apply only verified transformations</a></h3>
 <p>Once you have a valid instance, every subsequent transformation is a panproto migration: deterministic, type-checked, lens-law-verified. The LM does not get to invent new fields after validation.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>

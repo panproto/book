@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -185,7 +185,7 @@
 <h1 id="round-trip-with-format-preservation"><a class="header" href="#round-trip-with-format-preservation">Round-trip with format preservation</a></h1>
 <p>When you parse a JSON, YAML, TOML, XML, or CSV file and emit it back without changes, panproto can guarantee <code>emit(parse(bytes)) == bytes</code> byte-for-byte. This requires the format-preserving codec, which uses tree-sitter grammars and a CST complement to capture whitespace, comments, and ordering.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>A panproto build with the <code>format-preserving</code> feature flag (default on for the CLI; opt-in for <code>panproto-core</code> in Rust).</p>
+<p>A panproto build with the <code>tree-sitter</code> feature flag enabled on <code>panproto-core</code> (or directly on <code>panproto-io</code>). The CLI ships with tree-sitter enabled by default.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
 <p>The format-preserving round-trip is exposed via <code>schema parse emit</code>, which parses a file and emits it back in one step:</p>
 <pre><code class="language-sh">schema parse emit config.yaml &gt; config.roundtripped.yaml
@@ -193,16 +193,18 @@ diff config.yaml config.roundtripped.yaml
 </code></pre>
 <p>The diff is empty when the codec preserves the input. (For programmatic use, parse and emit are exposed separately by the SDK; see below.)</p>
 <p>In Rust:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use panproto_core::format_preserving::UnifiedCodec;
-
-let codec = UnifiedCodec::for_format("yaml")?;
-let (instance, complement) = codec.parse(bytes)?;
-let out = codec.emit(&amp;instance, &amp;complement)?;
+<pre class="playground"><code class="language-rust no_run">use panproto_core::io::unified_codec::UnifiedCodec;
+<span class="boring">use panproto_core::schema::{Schema, SchemaBuilder};
+</span><span class="boring">fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+</span><span class="boring">let proto = panproto_core::protocols::atproto::protocol();
+</span><span class="boring">let schema: Schema = SchemaBuilder::new(&amp;proto).vertex("root", "object", None)?.entry("root").build()?;
+</span><span class="boring">let bytes: &amp;[u8] = b"";
+</span>let codec = UnifiedCodec::yaml("atproto")?;
+let (instance, complement) = codec.parse_wtype_preserving(&amp;schema, bytes)?;
+let out = codec.emit_wtype_preserving(&amp;schema, &amp;instance, &amp;complement)?;
 assert_eq!(out, bytes);
-<span class="boring">}</span></code></pre>
-<p>The complement carries the CST data that the schema does not see. <code>emit</code> reconstructs the byte-for-byte original from <code>(instance, complement)</code>.</p>
+<span class="boring">Ok(()) }</span></code></pre>
+<p>The complement carries the CST data that the schema does not see. <code>emit_wtype_preserving</code> reconstructs the byte-for-byte original from <code>(instance, complement)</code>. Constructors exist for each supported format: <code>UnifiedCodec::json</code>, <code>xml</code>, <code>yaml</code>, <code>toml</code>, <code>csv</code>, and <code>tsv</code>.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <p>The byte equality is the verification. Property tests in CI check <code>emit(parse(b)) == b</code> against a corpus of real-world JSON, YAML, TOML, XML, and CSV files.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>

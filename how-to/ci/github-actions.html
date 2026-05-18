@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-bbbd0f37.js"></script>
+        <script src="../../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -213,7 +213,7 @@ jobs:
       - name: Validate
         run: |
           for f in schemas/*.json; do
-            schema validate --protocol json-schema "$f"
+            schema validate --protocol atproto "$f"
           done
 
       - name: Breaking-change gate
@@ -222,7 +222,7 @@ jobs:
           git show $base:schemas/user.json &gt; /tmp/base.json
           schema check --src /tmp/base.json --tgt schemas/user.json \
             --mapping migrations/user.json --typecheck
-          schema lens generate --protocol json-schema /tmp/base.json schemas/user.json \
+          schema lens generate --protocol atproto /tmp/base.json schemas/user.json \
             --save /tmp/chain.json
 </code></pre>
 <p>The <code>--protocol</code> flag is required for every per-file <code>schema validate</code>. There is no <code>--project</code> flag; per-file iteration is the supported pattern.</p>

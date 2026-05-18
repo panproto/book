@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -187,7 +187,7 @@
 <p>panproto-vcs is git, but for schemas. It tracks a history of schemas the way git tracks a history of source files: commits, branches, tags, merges, diffs, blame. The CLI verbs are the same (<code>init</code>, <code>add</code>, <code>commit</code>, <code>branch</code>, <code>merge</code>, <code>log</code>, <code>diff</code>).</p>
 <p>Two things make it different from git applied to the schema files themselves:</p>
 <ol>
-<li><strong>The diff and merge operate on the schema, not the text.</strong> <code>prot diff</code> does not show you a unified diff of the JSON; it shows you what changed structurally: which vertices were added, which edges renamed, which constraints tightened. Merge does not three-way-merge the bytes; it merges the schema graph at the structural level, so you cannot end up with a syntactically valid but semantically broken schema after a merge.</li>
+<li><strong>The diff and merge operate on the schema, not the text.</strong> <code>schema diff</code> does not show you a unified diff of the JSON; it shows you what changed structurally: which vertices were added, which edges renamed, which constraints tightened. Merge does not three-way-merge the bytes; it merges the schema graph at the structural level, so you cannot end up with a syntactically valid but semantically broken schema after a merge.</li>
 <li><strong>Data and lenses are versioned alongside the schemas.</strong> Every commit records a schema snapshot, the lenses generated against that schema, and (optionally) the data instances that conformed to it. Branches diverge with their data; merges reconcile both.</li>
 </ol>
 <p>The merge operation is the place where this gets interesting. Three-way text merge fails when both sides edit the same line. The schema-level analogue is two branches that both add a field with the same name but different types. panproto-vcs has a precise, well-defined operation for resolving this: the schemas are <em>pushed out</em> along their common ancestor. The result is the smallest schema containing both branches’ additions, with the conflict surfaced as an explicit refinement constraint that the user resolves.</p>
@@ -225,7 +225,7 @@
 <h2 id="conflicts"><a class="header" href="#conflicts">Conflicts</a></h2>
 <p>A merge conflict arises when the pushout would introduce an inconsistency: two branches add a field with the same name but incompatible types, or one branch removes a vertex the other branch still references. Conflicts are reported as explicit objects (rather than text markers) and resolved by editing the conflict descriptor.</p>
 <h2 id="data-versioning"><a class="header" href="#data-versioning">Data versioning</a></h2>
-<p>Commits can carry data instances. When a branch’s schema migrates, the data carried by its commits is automatically lifted forward by the migration’s lens. Branches can therefore diverge in both schema and data; merging both kinds of divergence in one operation is what <code>prot merge</code> does.</p>
+<p>Commits can carry data instances. When a branch’s schema migrates, the data carried by its commits is automatically lifted forward by the migration’s lens. Branches can therefore diverge in both schema and data; merging both kinds of divergence in one operation is what <code>schema merge</code> does.</p>
 <p>A consequence: history rewriting (rebase, amend) on a branch carrying data must lift the data through the rewritten history. panproto-vcs does this; the data is <em>not</em> a passive blob.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

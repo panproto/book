@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -196,8 +196,8 @@
 <pre><code class="language-sh">schema check --src schemas/v1.json --tgt schemas/v2.json --mapping migrations/v1-to-v2.json --typecheck
 </code></pre>
 <p>For schema-level diff classification, generate a lens between the two schemas:</p>
-<pre><code class="language-sh">schema lens generate --protocol json-schema schemas/v1.json schemas/v2.json --save lens.json
-schema diff schemas/v1.json schemas/v2.json --lens
+<pre><code class="language-sh">schema lens generate --protocol atproto schemas/v1.json schemas/v2.json --save lens.json
+schema diff schemas/v1.json schemas/v2.json --lens --save lens.json
 </code></pre>
 <p>To migrate data, use the VCS-driven path: commit <code>v1</code> and <code>v2</code> to a panproto repository, then run <code>schema data migrate &lt;data-dir&gt;</code> against the working tree (see <a href="./schema-vcs/data-versioning.html">Schema VCS data versioning</a>).</p>
 <h3 id="from-the-sdks"><a class="header" href="#from-the-sdks">From the SDKs</a></h3>
@@ -206,9 +206,9 @@ schema diff schemas/v1.json schemas/v2.json --lens
   .map('user', 'user')
   .compile();
 
-mig.lift(oldRecord);          // forward (CompiledMigration is itself a lens)
-const { view, complement } = mig.get(oldRecord);
-mig.put(view, complement);    // backward
+const { data: forward } = mig.lift(oldRecord);   // forward
+const { view, complement } = mig.get(oldRecord); // forward, retaining complement
+mig.put(view, complement);                       // backward
 </code></pre>
 <p><code>p.checkExistence(src, tgt, builder)</code> runs the same existence check as the CLI. Python and Rust SDKs use the same shape with language-idiomatic naming.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>

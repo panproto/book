@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-c9c73561.js";
+            window.path_to_searchindex_js = "../searchindex-33232677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-bbbd0f37.js"></script>
+        <script src="../toc-66503331.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -188,7 +188,7 @@
 <p>The <code>schema</code> CLI installed, or the SDK in your language. The source and target protocol names.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
 <h3 id="single-file-or-directory-within-one-protocol"><a class="header" href="#single-file-or-directory-within-one-protocol">Single file or directory (within one protocol)</a></h3>
-<pre><code class="language-sh">schema data convert --protocol json-schema \
+<pre><code class="language-sh">schema data convert --protocol atproto \
   --from schemas/user-v1.json --to schemas/user-v2.json \
   data/users.json -o data/users-v2.json
 </code></pre>
@@ -205,14 +205,14 @@
 <p><code>Panproto.convert(data, opts)</code> auto-generates a lens between the two <code>BuiltSchema</code> arguments, applies it forward, and returns the converted record. Pass <code>defaults</code> in <code>opts</code> to supply complement defaults for fields the source does not determine.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <p>To verify round-trip fidelity, generate a chain explicitly and run <code>schema lens verify</code>:</p>
-<pre><code class="language-sh">schema lens generate --protocol json-schema schemas/user-v1.json schemas/user-v2.json --save chain.json
-schema lens verify --protocol json-schema data/users.json schemas/user-v2.json
+<pre><code class="language-sh">schema lens generate --protocol atproto schemas/user-v1.json schemas/user-v2.json --save chain.json
+schema lens verify --protocol atproto data/users.json schemas/user-v2.json
 </code></pre>
 <p>Lens verification on test data exercises the three round-trip laws (GetPut, PutGet, PutPut); a pass means the chain is loss-free for the sampled records.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
-<li>Assuming all protocol pairs are loss-free. They are not. The diff classification (fully compatible, backward compatible, lossy) is reported in <code>--verify</code> output; treat anything other than fully compatible with care.</li>
-<li>Omitting <code>--verify</code> in CI. Without it, silent loss is possible.</li>
+<li>Assuming all schema pairs are loss-free. They are not. Run <code>schema lens verify</code> after conversion to exercise the round-trip laws on representative data, and run <code>schema check --src --tgt --mapping ... --typecheck</code> to classify the diff as fully compatible, backward compatible, or breaking.</li>
+<li>Skipping lens verification in CI. Without it, silent loss is possible.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
