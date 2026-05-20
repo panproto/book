@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-33232677.js";
+            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-66503331.js"></script>
+        <script src="../toc-eba9ea01.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -227,6 +227,8 @@
 </div>
 <p>The library also exposes higher-level pieces built by composing these (<code>ThSimpleGraph</code>, <code>ThHypergraph</code>, <code>ThInterface</code>, <code>ThFunctor</code>, <code>ThFlat</code>, <code>ThGraphInstance</code>) for protocols that want to start from a richer base.</p>
 <p>A protocol’s registration function is a recipe for combining these. To define a new protocol, see <a href="../how-to/build-protocol.html">Build a custom protocol</a>.</p>
+<h2 id="related-work"><a class="header" href="#related-work">Related work</a></h2>
+<p>Cross-protocol translation has two mature precedents. The data-exchange line (Fagin, Kolaitis, Miller, and Popa on universal solutions and the chase (<a href="../bibliography.html#faginkolaitispopa2005data">Fagin et al. 2005</a>); Fagin, Kolaitis, Popa, and Tan on second-order tgds as a closed-under-composition class (<a href="../bibliography.html#faginkolaitispopatan2005composing">Fagin et al. 2005</a>)) sets the logical machinery: a universal solution is a colimit; composition needs a Skolemised second-order extension; cores pick out the canonical materialisation. The categorical version is the CQL line of Schultz &amp; Wisnesky (<a href="../bibliography.html#schultzwisnesky2017algebraic">2017</a>) and Schultz et al. (<a href="../bibliography.html#schultzspivakvasilakopoulouwisnesky2017algebraic">2017</a>), where a schema mapping is a functor, universal solutions are colimits in the category of instances, and data integration is a pushout. The engineering-IR line (<a href="https://calcite.apache.org/">Apache Calcite</a> (<a href="../bibliography.html#begolicamachorodriguezhydemiorlemire2018calcite">Begoli et al. 2018</a>), <a href="https://substrait.io/">Substrait</a>, <a href="https://arrow.apache.org/">Apache Arrow</a>, <a href="https://mlir.llvm.org/">MLIR</a>) supplies the hub-and-spoke adapter pattern. panproto’s <code>colimit</code> and <code>pushout_by_name</code> run the same construction over GAT-presented wire-format schemas. See <a href="./related-work.html#5-cross-protocol-translation-and-data-exchange">Related work</a> for the full discussion.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="./schemas-as-theories.html">Schemas as theories</a> for what a single theory is.</li>

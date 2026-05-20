@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-33232677.js";
+            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-66503331.js"></script>
+        <script src="../toc-eba9ea01.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -222,13 +222,14 @@ complement : S -&gt; C
 <p>There is a second flavour of lens that lives one level up. parse / emit is not a WInstance lens; it is a relation between bytes and schemas, with <code>parse</code> recording the source layout into a fibre of constraints over each vertex and <code>emit_pretty</code> consuming that fibre to render bytes back. The relation has the shape of a lens at the schema level: stripping the layout fibre is the <code>get</code>, attaching it via a grammar walk is the <code>put</code>.</p>
 <p>panproto names this construction explicitly. The <code>EnrichmentKind::Layout</code> tag in <code>panproto-gat</code> classifies the constraint sorts that make up the fibre. <code>TheoryTransform::StripEnrichment</code> and <code>TheoryTransform::AddEnrichment</code> are the two directions at the protolens level; their schema-level interpretation runs in <code>apply_theory_transform_to_schema</code> (strip drops the fibre constraints; add dispatches to a registered synthesis driver). The <code>ComplementConstructor::Enrichment</code> variant names the fibre and the driver in the complement vocabulary.</p>
 <p>The schema-level lens does not plug into the WInstance-level <code>get</code> / <code>put</code> pair the way an elementary protolens does. The byte-level operational entry points live in <code>panproto-parse</code>: <code>ParserRegistry::decorate</code> for the put direction, <code>ParserRegistry::parse_with_protocol</code> for the get. The protolens captures the schema-level relationship those byte-level operations sit over; it composes with elementary protolenses for chain-law reasoning but is not the implementation of <code>decorate</code> or <code>parse</code>. See <a href="./layout-enrichment.html">Layout enrichment</a> for the full treatment.</p>
+<h2 id="related-work"><a class="header" href="#related-work">Related work</a></h2>
+<p>The asymmetric get/put/create triple is from Foster et al. (<a href="../bibliography.html#foster2007combinators">2007</a>), with totality and well-behavedness laws stated there. The first-class complement comes from the symmetric and edit-lens line of Hofmann et al. (<a href="../bibliography.html#hofmann2011symmetric">2011</a>) and Hofmann et al. (<a href="../bibliography.html#hofmann2012edit">2012</a>), with the edit-lens module structure giving the partial-monoid merge that this chapter relies on. The dispatch from edge kind to optic kind (Lens, Prism, Affine, Traversal) is licensed by the profunctor-optics theorem of Pickering et al. (<a href="../bibliography.html#pickeringgibbonswu2017profunctor">2017</a>), restated categorically by Clarke et al. (<a href="../bibliography.html#clarke2020profunctor">2024</a>). The migration-as-lens-graph idiom is from Litt et al. (<a href="../bibliography.html#littvanhardenberghenry2020cambria">2020</a>). See <a href="./related-work.html">Related work</a> for the full discussion.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="./semantics/lens-dsl.html">Lens DSL: denotational semantics</a> for the formal lens model and the law statements.</li>
 <li><a href="./semantics/protolens-composition.html">Protolens composition</a> for vertical and sequential composition.</li>
 <li><a href="./layout-enrichment.html">Layout enrichment</a> for the schema-level lens between abstract and decorated schemas.</li>
 <li><a href="../reference/lens-combinators.html">Lens combinator reference</a> for the algebra.</li>
-<li>Foster et al. (<a href="../bibliography.html#foster2007combinators">2007</a>) for the original asymmetric-lens treatment, and Litt et al. (<a href="../bibliography.html#littvanhardenberghenry2020cambria">2020</a>) for the complement-tracking approach this builds on.</li>
 </ul>
 
                     </main>

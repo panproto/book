@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-33232677.js";
+            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-66503331.js"></script>
+        <script src="../toc-eba9ea01.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -218,12 +218,13 @@
 <p><code>parse_emit_protolens(grammar, policy)</code> returns a <code>Protolens</code> whose source endofunctor strips the layout fibre, whose target endofunctor adds it back via the registered driver, and whose complement constructor names the fibre. It composes with every other protolens in <code>panproto-lens</code> (vertical and horizontal composition both work) and contributes to chain-law reasoning.</p>
 <p>What it does <em>not</em> do is plug into the WInstance-level get / put pair the way an elementary protolens does. The lens framework’s <code>Complement</code> struct holds WInstance-level discarded data (dropped nodes, dropped arcs, contraction choices). It has no field for a per-vertex constraint fibre, and <code>Protolens::instantiate</code> produces a <code>Lens</code> whose source and target schemas differ in vertex IDs because the synthesis driver invents fresh ones. The schema-level shuffling happens in <code>apply_theory_transform_to_schema</code>; the operational byte-level entry points are on <code>ParserRegistry</code>.</p>
 <p>That asymmetry is intentional. Parse and emit are conversions between bytes and schema-typed data structures; they are not WInstance lenses. The protolens captures the schema-level relationship that those byte-level operations sit over, and the operational API is where the byte-level work happens.</p>
+<h2 id="related-work"><a class="header" href="#related-work">Related work</a></h2>
+<p>Two threads bear directly on the parse-emit fibration. The lens-based ancestry runs from Foster et al. (<a href="../bibliography.html#foster2007combinators">2007</a>) through Bohannon et al. (<a href="../bibliography.html#bohannonfosterpiercepilkiewiczschmitt2008boomerang">2008</a>)’s resourceful lenses (dictionary skeletons, quasi-obliviousness) and Foster et al. (<a href="../bibliography.html#fosterpilkiewiczpierce2008quotient">2008</a>)’s quotient lenses (lenses modulo equivalences, canonizers via <code>lquot</code> and <code>rquot</code>), with Lutterkort (<a href="../bibliography.html#lutterkort2008augeas">2008</a>) as the closest framework-level analogue. The grammar-based ancestry is Zhu et al. (<a href="../bibliography.html#zhukozhanghu2015biyacc">2015</a>)’s BiYacc, whose reflective printer takes both the AST and the original concrete string. de &amp; Visser (<a href="../bibliography.html#jongevisser2012algorithm">2012</a>)’s token-stream-and-origin-tracking algorithm is the closest match to the byte-level reconstruction strategy panproto uses inside the layout enrichment driver. See <a href="./related-work.html">Related work</a> for the full discussion.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="../how-to/decorate-schemas.html">Decorate an abstract schema</a> for the operational recipe.</li>
 <li><a href="./lenses-roundtrip.html">Lenses and round-trip laws</a> for the lens machinery the enrichment rides on.</li>
 <li><a href="./architecture.html">Architecture</a> for the crate-level dependency direction that makes the cross-crate registry necessary.</li>
-<li>Litt et al. (<a href="../bibliography.html#littvanhardenberghenry2020cambria">2020</a>) for the complement-tracking approach the layout fibre extends.</li>
 </ul>
 <hr>
 <ol class="footnote-definition">

@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-33232677.js";
+            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-66503331.js"></script>
+        <script src="../toc-eba9ea01.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -227,6 +227,8 @@
 <h2 id="data-versioning"><a class="header" href="#data-versioning">Data versioning</a></h2>
 <p>Commits can carry data instances. When a branch’s schema migrates, the data carried by its commits is automatically lifted forward by the migration’s lens. Branches can therefore diverge in both schema and data; merging both kinds of divergence in one operation is what <code>schema merge</code> does.</p>
 <p>A consequence: history rewriting (rebase, amend) on a branch carrying data must lift the data through the rewritten history. panproto-vcs does this; the data is <em>not</em> a passive blob.</p>
+<h2 id="related-work"><a class="header" href="#related-work">Related work</a></h2>
+<p>Two threads sit directly behind panproto-vcs. The categorical-VCS lineage (Mimram and Di Giusto on patches as morphisms with merge as pushout (<a href="../bibliography.html#mimramdigiusto2013categorical">Mimram and Giusto 2013</a>), Angiuli and colleagues’ homotopical patch theory (<a href="../bibliography.html#angiuli2014homotopical">Angiuli et al. 2014</a>), Roundy’s Darcs (<a href="../bibliography.html#roundy2005darcs">Roundy 2005</a>)) supplies the “merge is the pushout of the divergent patches against the common ancestor” semantics and the diagnosis of conflicts as failures of the pushout to exist. The schema-evolution lineage (Curino, Moon, and Zaniolo’s PRISM workbench (<a href="../bibliography.html#curinomoonzaniolo2008graceful">Curino et al. 2008</a>) and Litt, van Hardenberg, and Henry’s Cambria [Litt et al. (<a href="../bibliography.html#littvanhardenberghenry2020cambria">2020</a>); Litt et al. (<a href="../bibliography.html#littvanhardenberghenry2021cambria">2021</a>)]) supplies the engineering vocabulary: schema-modification operators with forward and backward mappings, quasi-inverses for the operators that lose information, and a directed graph of schema versions connected by lenses. panproto-vcs is the four-artifact unification of these lines, with the protocol theory, schema, data, and lens complement committed together into a single content-addressed DAG. See <a href="./related-work.html#4-schema-versioning-as-structured-merge">Related work</a> for the full discussion.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="../how-to/schema-vcs/init-and-commit.html">Init and commit</a> for the practical workflow.</li>
