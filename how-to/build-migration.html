@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
+            window.path_to_searchindex_js = "../searchindex-20b62666.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-eba9ea01.js"></script>
@@ -212,7 +212,7 @@ mig.put(view, complement);                       // backward
 </code></pre>
 <p><code>p.checkExistence(src, tgt, builder)</code> runs the same existence check as the CLI. Python and Rust SDKs use the same shape with language-idiomatic naming.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<p><code>schema check</code> exits zero if the migration is well-defined (existence conditions hold). For diff classification, use <code>panproto-check</code>’s <code>diff_and_classify</code> (Python and Rust). In TypeScript the equivalent is <code>Panproto.diffFull(old, new).classify(protocol)</code>, which returns a <code>CompatReport</code> with one of:</p>
+<p><code>schema check</code> exits zero if the migration is well-defined (existence conditions hold). For diff classification, use <code>panproto.diff_and_classify(old, new, protocol)</code> in Python, or <code>panproto_check::diff(old, new)</code> followed by <code>panproto_check::classify(&amp;diff, &amp;protocol)</code> in Rust. In TypeScript the equivalent is <code>Panproto.diffFull(old, new).classify(protocol)</code>, which returns a <code>CompatReport</code> with one of:</p>
 <div class="table-wrapper">
 <table>
 <thead>

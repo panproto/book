@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
+            window.path_to_searchindex_js = "../searchindex-20b62666.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-eba9ea01.js"></script>
@@ -209,11 +209,11 @@ match scoped.optic_kind() {
 <h3 id="field-level-combinators"><a class="header" href="#field-level-combinators">Field-level combinators</a></h3>
 <p>The <code>panproto_lens::protolens::combinators</code> module exposes higher-level chains assembled from elementary steps; for instance <code>combinators::rename_field(parent, field, old_name, new_name)</code> returns a <code>ProtolensChain</code> that renames a JSON property key. To traverse an <code>item</code> edge and apply an inner transform per element, use <code>elementary::scoped</code> (or the <code>combinators::map_items</code> helper) targeting the array element’s vertex; the result is a Traversal under the optic-kind classifier.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<p>The lens laws apply uniformly across all three optic kinds. Build a <code>ProtolensChain</code> from the constructed step and use <code>ProtolensChain::verify_round_trip</code> (or the higher-level <code>Lens::verify_*</code> helpers) to exercise GetPut and PutGet on representative data.</p>
+<p>The lens laws apply uniformly across all three optic kinds. Instantiate the protolens into a <code>Lens</code> against a concrete schema, then call <code>panproto_lens::laws::check_laws(&amp;lens, &amp;instance)</code> (or <code>check_get_put</code> / <code>check_put_get</code> individually) on representative data; each returns <code>Result&lt;(), LawViolation&gt;</code>.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
-<li>Hand-coding the optic kind. The point of dependent optics is that the kind follows from the edge; if you find yourself branching on it manually, prefer <code>into_optic</code> and let the schema decide.</li>
-<li>Applying a Lens combinator at an <code>item</code> edge. The kind mismatch raises <code>OpticKindMismatch</code> at instantiation.</li>
+<li>Hand-coding the optic kind. The point of dependent optics is that the kind follows from the edge; if you find yourself branching on it manually, read it off <code>Protolens::optic_kind()</code> (or <code>ProtolensChain::composed_optic_kind()</code> for chains) and let the schema decide.</li>
+<li>Applying a <code>prop</code>-style combinator at an <code>item</code> edge. The carrier optic at an <code>item</code> edge is a Traversal, so <code>refine_scoped_optic</code> composes the inner Lens with Traversal to yield Traversal: the round-trip laws still hold, but the result is a multi-focus traversal rather than a single-focus lens, which is rarely what the call site meant.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

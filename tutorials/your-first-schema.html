@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
+            window.path_to_searchindex_js = "../searchindex-20b62666.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-eba9ea01.js"></script>
@@ -185,7 +185,7 @@
 <h1 id="your-first-schema"><a class="header" href="#your-first-schema">Your first schema</a></h1>
 <p>You will define a schema for a small data model (users with names and ages), validate it against the <code>atproto</code> protocol, and load some data through it. About ten minutes.</p>
 <p>By the end you will have: a working <code>panproto</code> setup, a schema you wrote, an instance of that schema parsed from a JSON file, and a sense of how the four pieces (protocol, schema, instance, validation) fit together.</p>
-<p>We use <code>atproto</code> because it is the most fully-built-out protocol in the current registry; the same code shape applies to any of the <a href="../reference/protocols.html">protocols</a> listed by <code>Panproto.builtinProtocols()</code>.</p>
+<p>We use <code>atproto</code> because it is the most fully-built-out protocol in the current registry; the same code shape applies to any of the <a href="../reference/protocols.html">protocols</a> listed by <code>Panproto.listProtocols()</code>.</p>
 <p>No prior knowledge of category theory or schema theory is assumed. We use ordinary words for everything; if you want the formal treatment of any concept, the explanation chapters are linked at the end.</p>
 <h2 id="setup"><a class="header" href="#setup">Setup</a></h2>
 <p>Pick a language. The walkthrough uses TypeScript; the <a href="#python-version">Python</a> and <a href="#rust-version">Rust</a> versions are at the bottom.</p>
@@ -231,13 +231,16 @@ console.log(
 const bytes = readFileSync('data/sample.json');
 const instance = p.parseJson(schema, bytes);
 console.log('parsed:', new TextDecoder().decode(p.toJson(schema, instance)));
+
+const validation = instance.validate();
+console.log('valid?', validation.isValid, validation.errors);
 </code></pre>
-<p>Run it. You see the parsed record echoed back. The schema validated the JSON during parsing; if <code>data/sample.json</code> violated the schema (a missing <code>name</code>, a non-integer <code>age</code>), you would get a structured error with the offending field. <code>Panproto.parseJson(schema, bytes)</code> returns an <code>Instance</code>; <code>Panproto.toJson(schema, instance)</code> serialises it back out.</p>
+<p>Run it. You see the parsed record echoed back and <code>valid? true []</code>. <code>Panproto.parseJson(schema, bytes)</code> returns an <code>Instance</code> by walking the JSON against the schema graph (a non-integer <code>age</code>, or JSON not matching the schema’s shape, raises during this call). <code>Panproto.toJson(schema, instance)</code> serialises it back out. <code>instance.validate()</code> runs the separate required-fields/constraints pass.</p>
 <h2 id="step-4-catch-a-violation"><a class="header" href="#step-4-catch-a-violation">Step 4: catch a violation</a></h2>
 <p>Edit <code>data/sample.json</code> to remove <code>name</code>:</p>
 <pre><code class="language-json">{ "age": 30 }
 </code></pre>
-<p>Run again. The output now includes a validation error pointing to the missing required field. The schema is doing real work: every parse is a check.</p>
+<p>Run again. The parse still succeeds (parsing only walks the structure that is present), but <code>validation.isValid</code> is now <code>false</code> and <code>validation.errors</code> carries <code>MissingRequiredEdge { ..., edge: "name (prop)" }</code>. Required-field enforcement is performed by <code>instance.validate()</code>, not by <code>parseJson</code> itself; run both whenever you want a hard check.</p>
 <h2 id="what-you-built"><a class="header" href="#what-you-built">What you built</a></h2>
 <p>Three things:</p>
 <ol>
@@ -245,7 +248,7 @@ console.log('parsed:', new TextDecoder().decode(p.toJson(schema, instance)));
 <li>A <em>schema</em> (a graph of vertices and edges) within that protocol.</li>
 <li><em>Instances</em> (data) parsed and validated against the schema.</li>
 </ol>
-<p>This same pattern works for every protocol panproto supports. Swap <code>'atproto'</code> for any other name in the built-in registry (<code>Panproto.builtinProtocols()</code> lists them), and the rest of the code is identical.</p>
+<p>This same pattern works for every protocol panproto supports. Swap <code>'atproto'</code> for any other name in the built-in registry (<code>Panproto.listProtocols()</code> lists them), and the rest of the code is identical.</p>
 <h2 id="next"><a class="header" href="#next">Next</a></h2>
 <ul>
 <li><a href="./your-first-migration.html">Your first migration</a> takes the same <code>user</code> schema, evolves it to v2, and lifts the existing data forward.</li>

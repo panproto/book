@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
+            window.path_to_searchindex_js = "../searchindex-20b62666.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-eba9ea01.js"></script>
@@ -191,20 +191,22 @@ complement : S -&gt; C
 <p>Every constructor in <code>panproto-lens</code> produces a lens whose round-trip laws (<code>GetPut</code>, <code>PutGet</code>, <code>PutPut</code>) are verified by the property tests in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-lens/src/laws.rs"><code>panproto-lens/src/laws.rs</code></a>. The complement carries the data discarded by <code>get</code> so that <code>put</code> can restore it.</p>
 <p>For the model behind these combinators, see <a href="../explanation/lenses-roundtrip.html">Lenses and round-trip laws</a> and <a href="../explanation/semantics/lens-dsl.html">Lens DSL: denotational semantics</a>.</p>
 <h2 id="optic-kinds"><a class="header" href="#optic-kinds">Optic kinds</a></h2>
-<p>The optic-kind classification follows from the structure of the schema edge a combinator is applied at:</p>
+<p>Each protolens or protolens chain is classified into an <a href="https://docs.rs/panproto-lens/latest/panproto_lens/optic/enum.OpticKind.html"><code>OpticKind</code></a>. The classification is structural: it follows from the shape of the underlying <a href="https://docs.rs/panproto-gat/latest/panproto_gat/enum.TheoryTransform.html"><code>TheoryTransform</code></a>, which in turn reflects the schema edge a combinator is applied at.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Optic</th><th>Schema edge</th><th>Constructor family</th></tr>
+<tr><th><code>OpticKind</code></th><th>Typical schema edge</th><th>Complement</th></tr>
 </thead>
 <tbody>
-<tr><td>Lens</td><td><code>prop</code> (single value)</td><td><code>Lens::*</code></td></tr>
-<tr><td>Traversal</td><td><code>item</code> (collection)</td><td><code>Traversal::*</code>, <code>Lens::map_items</code></td></tr>
-<tr><td>Prism</td><td><code>variant</code> (sum)</td><td><code>Prism::*</code></td></tr>
+<tr><td><code>Iso</code></td><td>bijective relabeling (e.g. edge rename)</td><td><code>Unit</code></td></tr>
+<tr><td><code>Lens</code></td><td><code>prop</code> (single-value projection)</td><td>dropped data</td></tr>
+<tr><td><code>Prism</code></td><td>sum / variant injection</td><td>variant tag</td></tr>
+<tr><td><code>Affine</code></td><td><code>Lens</code> composed with <code>Prism</code></td><td><code>(variant tag, dropped data)</code></td></tr>
+<tr><td><code>Traversal</code></td><td><code>item</code> (collection, multi-focus)</td><td>per-position complements</td></tr>
 </tbody>
 </table>
 </div>
-<p><code>panproto-lens</code> exposes the algebra under <a href="https://docs.rs/panproto-lens"><code>panproto_lens</code></a>. Browse the module index there for full signatures.</p>
+<p>Composition follows the standard optics lattice: <code>Iso</code> is the identity, <code>Traversal</code> is absorbing, <code>Lens + Prism</code> collapses to <code>Affine</code>. The constructor functions for these kinds live in <a href="https://docs.rs/panproto-lens/latest/panproto_lens/protolens/elementary/"><code>protolens::elementary</code></a> (atomic steps: <code>add_edge</code>, <code>drop_edge</code>, <code>rename_edge_name</code>, …) and <a href="https://docs.rs/panproto-lens/latest/panproto_lens/protolens/combinators/"><code>protolens::combinators</code></a> (composite builders: <code>pipeline</code>, <code>map_items</code>, …). Browse the <a href="https://docs.rs/panproto-lens"><code>panproto_lens</code></a> module index for full signatures.</p>
 <h2 id="combinator-families"><a class="header" href="#combinator-families">Combinator families</a></h2>
 <div class="table-wrapper">
 <table>
@@ -215,7 +217,7 @@ complement : S -&gt; C
 <tr><td>Asymmetric lenses</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/asymmetric/"><code>asymmetric</code></a></td><td>Classical S → V transforms with put.</td></tr>
 <tr><td>Symmetric lenses</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/symmetric/"><code>symmetric</code></a></td><td>A ↔ B transforms with shared complement.</td></tr>
 <tr><td>Composition</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/compose/"><code>compose</code></a></td><td>Sequential and parallel composition of lenses.</td></tr>
-<tr><td>Optics</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/optic/"><code>optic</code></a></td><td>Optic-kind unification (Lens, Traversal, Prism).</td></tr>
+<tr><td>Optics</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/optic/"><code>optic</code></a></td><td><code>OpticKind</code> enum (Iso, Lens, Prism, Affine, Traversal) and the composition lattice.</td></tr>
 <tr><td>Fibration</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/fibration/"><code>fibration</code></a></td><td>The Grothendieck fibration of lenses over schemas.</td></tr>
 <tr><td>Protolens</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/protolens/"><code>protolens</code></a></td><td>Schema-parameterized lens families with vertical and sequential composition.</td></tr>
 <tr><td>Enrichment registry</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/enrichment_registry/"><code>enrichment_registry</code></a></td><td>Cross-crate <code>LayoutEnricher</code> trait and registry for schema-level enrichment fibres (e.g. the parse / decorate / emit lens; see <a href="../explanation/layout-enrichment.html">Layout enrichment</a>).</td></tr>

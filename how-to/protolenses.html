@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
+            window.path_to_searchindex_js = "../searchindex-20b62666.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-eba9ea01.js"></script>
@@ -238,7 +238,7 @@ let composed = vertical_compose(&amp;first, &amp;second)?;
 <ul>
 <li>Composing protolenses whose intermediate schemas only happen to look the same. <code>protolens_composable</code> enforces structural equality, not name equality; build one against the other to be safe.</li>
 <li>Reaching for sequential instantiation in production. Use fused (<code>instantiate</code>) by default; sequential exists for inspection and tests.</li>
-<li>Treating preconditions as pure documentation. The precondition is checked at instantiation time; a schema that does not satisfy it raises <code>PreconditionFailed</code>.</li>
+<li>Treating preconditions as pure documentation. The precondition is checked at instantiation time; a schema that does not satisfy it raises <code>LensError::ProtolensError</code> with a message listing the unmet constraints (use <code>Protolens::check_applicability</code> first if you want to surface the reasons separately).</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

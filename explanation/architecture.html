@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
+            window.path_to_searchindex_js = "../searchindex-20b62666.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-eba9ea01.js"></script>
@@ -201,8 +201,15 @@
     subgraph "Higher operations"
         VCS[panproto-vcs]
         GIT[panproto-git]
+        XRPC[panproto-xrpc]
+        GITREMOTE[panproto-git-remote]
         PROJ[panproto-project]
         CHECK[panproto-check]
+    end
+
+    subgraph "Codegen"
+        LLVM[panproto-llvm]
+        JIT[panproto-jit]
     end
 
     subgraph "Pipeline"
@@ -211,6 +218,7 @@
         LENSDSL[panproto-lens-dsl]
         IO[panproto-io]
         PARSE[panproto-parse]
+        GRAMMARS[panproto-grammars&lt;br/&gt;+ grammars-{all,web,data,jvm,&lt;br/&gt;scripting,systems,functional,&lt;br/&gt;devops,mobile,music}]
     end
 
     subgraph "Protocols and theories"
@@ -222,6 +230,7 @@
 
     subgraph "Foundation"
         GAT[panproto-gat]
+        GATMACROS[panproto-gat-macros]
         SCHEMA[panproto-schema]
         INST[panproto-inst]
     end
@@ -240,9 +249,16 @@
     CORE --&gt; LENS
     CORE --&gt; IO
     CORE --&gt; PARSE
+    CORE --&gt; LLVM
+    CORE --&gt; JIT
 
     VCS --&gt; MIG
     GIT --&gt; VCS
+    XRPC --&gt; VCS
+    XRPC --&gt; SCHEMA
+    GITREMOTE --&gt; VCS
+    GITREMOTE --&gt; GIT
+    GITREMOTE --&gt; XRPC
     PROJ --&gt; SCHEMA
     CHECK --&gt; MIG
     MIG --&gt; LENS
@@ -252,6 +268,11 @@
     IO --&gt; INST
     PARSE --&gt; INST
     PARSE --&gt; LENS
+    PARSE --&gt; GRAMMARS
+
+    LLVM --&gt; PROTOS
+    LLVM --&gt; SCHEMA
+    JIT --&gt; EXPR
 
     LENS --&gt; EXPR
     MIG --&gt; EXPR
@@ -259,13 +280,14 @@
     PROTOS --&gt; SCHEMA
     PROTOS --&gt; INST
     THEORYDSL --&gt; GAT
+    GATMACROS --&gt; GAT
 
     SCHEMA --&gt; GAT
     INST --&gt; GAT
     EXPR --&gt; GAT
 </pre>
 
-<p>The diagram shows the <em>direction</em> of dependency, not every individual edge. The full set is in the workspace <a href="https://github.com/panproto/panproto/blob/main/Cargo.toml"><code>Cargo.toml</code></a>.</p>
+<p>The diagram shows the <em>direction</em> of dependency, not every individual edge. The full set is in the workspace <a href="https://github.com/panproto/panproto/blob/main/Cargo.toml"><code>Cargo.toml</code></a>. The ten <code>panproto-grammars-*</code> pack crates are grouped together in the diagram: each is a leaf re-exporting a subset of the tree-sitter grammars under feature flags, consumed transitively by <code>panproto-parse</code>.</p>
 <p>One arrow worth pointing out: <code>panproto-parse</code> depends on <code>panproto-lens</code>, not the other way around. The two crates meet through the <code>enrichment_registry</code> module in <code>panproto-lens</code>, a thin trait-and-registry pair the lens crate exposes for downstream crates to populate. <code>panproto-parse</code> installs an adapter for every parser it accepts so that protolens machinery in <code>panproto-lens</code> can dispatch grammar-driven enrichment synthesis without depending on tree-sitter. The mechanism is documented in <a href="./layout-enrichment.html">Layout enrichment</a>; the registry pattern keeps the lens crate grammar-agnostic and the dependency direction acyclic.</p>
 <h2 id="the-boundaries"><a class="header" href="#the-boundaries">The boundaries</a></h2>
 <p>Three places in the system are <em>boundary layers</em> in the sense that they convert between panproto’s internal representation and an external one. They are deliberately thin and concentrated in single crates so they can be audited independently.</p>

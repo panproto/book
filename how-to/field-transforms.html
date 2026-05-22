@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
+            window.path_to_searchindex_js = "../searchindex-20b62666.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-eba9ea01.js"></script>
@@ -223,9 +223,9 @@ print(chain.to_json())
 <p><code>check --typecheck</code> ensures the transforms type-check against the source and target schemas. Property tests in CI then verify the lens laws on sampled data.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
-<li>Omitting <code>backward</code>. Without it, the migration is one-way and cannot satisfy the round-trip laws. CI tests will reject it.</li>
+<li>Expecting <code>expr_resolvers</code> to supply both directions. The mapping carries forward-only expressions; the backward leg comes from the lens/protolens layer (pair an <code>ApplyExpr</code> field transform with its inverse on the corresponding protolens step, or annotate a coercion on the schema and let the migration compiler emit both directions).</li>
 <li>Using IO or random functions in the expression. The language is bounded-pure; non-deterministic builtins are not exposed.</li>
-<li>Letting the budget exceed. Long string operations on large records can hit the step budget. Expressions that hit the budget raise <code>BudgetExceeded</code> at runtime.</li>
+<li>Letting the budget exceed. Long string operations on large records can hit the step budget. Expressions that hit the budget raise <code>ExprError::StepLimitExceeded</code> at runtime.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

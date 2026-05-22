@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
+            window.path_to_searchindex_js = "../searchindex-20b62666.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-eba9ea01.js"></script>
@@ -185,7 +185,7 @@
 <h1 id="rust-sdk-reference"><a class="header" href="#rust-sdk-reference">Rust SDK reference</a></h1>
 <p>The Rust surface of panproto is the <code>panproto-core</code> facade. Add it to your <code>Cargo.toml</code>:</p>
 <pre><code class="language-toml">[dependencies]
-panproto-core = "0.47"
+panproto-core = "0.49"
 </code></pre>
 <p>Full type signatures, constructors, and method documentation live on docs.rs:</p>
 <ul>
@@ -207,7 +207,7 @@ panproto-core = "0.47"
 </tbody>
 </table>
 </div>
-<p>The default feature set is the minimal core: schema, instance, migration, lens, expression-language, and version control without extras.</p>
+<p>The default feature set re-exports the always-on crates: <code>panproto-gat</code>, <code>panproto-schema</code>, <code>panproto-inst</code>, <code>panproto-mig</code>, <code>panproto-lens</code>, <code>panproto-check</code>, <code>panproto-protocols</code>, <code>panproto-io</code>, and <code>panproto-vcs</code>. The feature flags above pull in the optional crates on top.</p>
 <h2 id="sub-crate-lookup"><a class="header" href="#sub-crate-lookup">Sub-crate lookup</a></h2>
 <p>For lower-level work, depend on individual crates rather than the facade. The <a href="./crate-map.html">crate map</a> lists every workspace member with a one-line description and a link to its docs.rs page.</p>
 <div class="table-wrapper">

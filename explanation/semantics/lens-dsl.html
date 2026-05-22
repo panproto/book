@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-5e19bc48.js";
+            window.path_to_searchindex_js = "../../searchindex-20b62666.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-eba9ea01.js"></script>
@@ -190,10 +190,12 @@
 <pre><code class="language-nickel">{
   id = "user.v3-to-v4",
   description = "Rename `name` and replace `age` with `years`",
+  source = "dev.example.user.v3",
+  target = "dev.example.user.v4",
   steps = [
-    { rename_field = { from = "name", to = "display_name" } },
+    { rename_field = { old = "name", new = "display_name" } },
     { remove_field = "age" },
-    { add_field = { name = "years", default = 0, expr = "old.age" } },
+    { add_field = { name = "years", kind = "integer", default = 0, expr = "old.age" } },
   ],
 }
 </code></pre>
@@ -202,10 +204,21 @@
 <pre><code class="language-rust ignore">pub struct LensDocument {
     pub id: String,
     pub description: String,
-    pub steps: Vec&lt;Step&gt;,
-    pub constraints: Vec&lt;Constraint&gt;,
-    pub hints: Vec&lt;HintSpec&gt;,
-    pub preferences: Vec&lt;PreferencePredicate&gt;,
+    pub source: String,
+    pub target: String,
+
+    // Body: exactly one of the four variants is present.
+    pub steps:   Option&lt;Vec&lt;Step&gt;&gt;,
+    pub rules:   Option&lt;Vec&lt;Rule&gt;&gt;,
+    pub compose: Option&lt;ComposeSpec&gt;,
+    pub auto:    Option&lt;AutoSpec&gt;,
+
+    // Rule-variant metadata.
+    pub passthrough: Option&lt;Passthrough&gt;,
+    pub invertible:  Option&lt;bool&gt;,
+
+    // Protocol-specific extension metadata.
+    pub extensions: HashMap&lt;String, serde_json::Value&gt;,
 }
 
 pub enum Step {
@@ -238,11 +251,11 @@ pub enum Step {
     AddEquation  { add_equation: EquationSpec },
     DropEquation { drop_equation: String },
 }</code></pre>
-<p>The top-level type is <code>LensDocument</code>, not <code>LensSpec</code>. The document carries <code>source</code> and <code>target</code> NSID fields naming the two schemas; the resolver loads the source schema and the compiler applies the steps to it, then checks that the result matches the named <code>target</code>. See <code>panproto_lens_dsl::compile</code>.</p>
+<p>The top-level type is <code>LensDocument</code>, not <code>LensSpec</code>. The document carries <code>source</code> and <code>target</code> NSID fields naming the two schemas, and exactly one body variant (<code>steps</code>, <code>rules</code>, <code>compose</code>, or <code>auto</code>). The resolver loads the source schema and the compiler applies the body to it, then checks that the result matches the named <code>target</code>. See <code>panproto_lens_dsl::compile</code>.</p>
 <h2 id="semantic-domain"><a class="header" href="#semantic-domain">Semantic domain</a></h2>
 <p>For schemas <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span> and complement type <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span>, the set of <em>lenses</em> on <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mclose">)</span></span></span></span> is</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Lens</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mclose">)</span></span></span></span></span></p>
-<p>with elements written as triples <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathsf">get</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathsf">put</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathsf">complement</span></span><span class="mclose">)</span></span></span></span>. The implementation in <code>panproto-lens</code> represents this triple by the <code>LensHandle</code> type; the categorical model is the standard asymmetric-lens construction of Foster et al. (<a href="../../bibliography.html#foster2007combinators">2007</a>) with complements after Litt et al. (<a href="../../bibliography.html#littvanhardenberghenry2020cambria">2020</a>). The semantic function</p>
+<p>with elements written as triples <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathsf">get</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathsf">put</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathsf">complement</span></span><span class="mclose">)</span></span></span></span>. The implementation in <code>panproto-lens</code> represents this triple by the <code>Lens</code> struct; the categorical model is the standard asymmetric-lens construction of Foster et al. (<a href="../../bibliography.html#foster2007combinators">2007</a>) with complements after Litt et al. (<a href="../../bibliography.html#littvanhardenberghenry2020cambria">2020</a>). The semantic function</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen"><span class="mopen">[</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mopen">[</span></span><span class="mord">⋅</span><span class="mclose"><span class="mclose">]</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mclose">]</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathsf">LensDocument</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathsf">Sch</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathsf">Lens</span></span></span></span></span></span></p>
 <p>takes a document and a source schema and returns a concrete lens. (The target schema and the complement type are determined by the document and the source.)</p>
 <h2 id="the-three-laws"><a class="header" href="#the-three-laws">The three laws</a></h2>

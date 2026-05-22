@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
+            window.path_to_searchindex_js = "../searchindex-20b62666.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-eba9ea01.js"></script>
@@ -183,32 +183,32 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="protocol-catalogue"><a class="header" href="#protocol-catalogue">Protocol catalogue</a></h1>
-<p>A <em>protocol</em> in panproto is a schema language: JSON Schema, Protobuf, GraphQL, ATProto Lexicons, an SQL DDL dialect. Each one is defined by a pair of GATs (a schema theory and an instance theory) composed by colimit from reusable building-block theories. Every protocol provides both a parser (native format → <code>Schema</code>) and an emitter (<code>Schema</code> → native format), so panproto can round-trip data through any pair.</p>
+<p>A <em>protocol</em> in panproto is a schema language: Avro, CDDL, OpenAPI, ATProto Lexicons, Parquet, FHIR, a Kubernetes CRD. Each one is defined by a pair of GATs (a schema theory and an instance theory) composed by colimit from reusable building-block theories. Every protocol provides both a parser (native format → <code>Schema</code>) and an emitter (<code>Schema</code> → native format), so panproto can round-trip data through any pair.</p>
 <p>For the model behind these registrations, see <a href="../explanation/schemas-as-theories.html">Schemas as theories</a> and <a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a>.</p>
 <h2 id="categories"><a class="header" href="#categories">Categories</a></h2>
 <p>The built-in protocols are organised by category in <code>panproto-protocols</code>. Each category is a Rust submodule.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Category</th><th>Module</th><th>Examples</th></tr>
+<tr><th>Category</th><th>Module</th><th>Protocols</th></tr>
 </thead>
 <tbody>
-<tr><td>Serialization and IDLs</td><td><code>serialization</code></td><td>Avro, Protobuf, FlatBuffers, ASN.1, Bond, MessagePack</td></tr>
-<tr><td>Data schema</td><td><code>data_schema</code></td><td>JSON Schema, CDDL, BSON</td></tr>
-<tr><td>API specifications</td><td><code>api</code></td><td>OpenAPI, AsyncAPI, RAML, JSON:API, GraphQL SDL</td></tr>
-<tr><td>Database</td><td><code>database</code></td><td>SQL DDL (multi-dialect), MongoDB, Cassandra, DynamoDB, Neo4j, Redis</td></tr>
+<tr><td>Serialization and IDLs</td><td><code>serialization</code></td><td>Avro, FlatBuffers, ASN.1, Bond, MessagePack Schema</td></tr>
+<tr><td>Data schema</td><td><code>data_schema</code></td><td>CDDL, BSON</td></tr>
+<tr><td>API specifications</td><td><code>api</code></td><td>OpenAPI, AsyncAPI, RAML, JSON:API</td></tr>
+<tr><td>Database</td><td><code>database</code></td><td>MongoDB, Cassandra, DynamoDB, Neo4j, Redis</td></tr>
 <tr><td>Web and document</td><td><code>web_document</code></td><td>ATProto Lexicons, DOCX, ODF</td></tr>
 <tr><td>Data science</td><td><code>data_science</code></td><td>Parquet, Arrow, DataFrame schemas</td></tr>
 <tr><td>Domain</td><td><code>domain</code></td><td>GeoJSON, FHIR, RSS/Atom, vCard/iCal, EDI X12, SWIFT MT</td></tr>
-<tr><td>Configuration</td><td><code>config</code></td><td>Kubernetes CRDs, Docker Compose, CloudFormation, Ansible</td></tr>
-<tr><td>Linguistic annotation</td><td><code>annotation</code></td><td>CoNLL-U, UD, BRAT</td></tr>
+<tr><td>Configuration</td><td><code>config</code></td><td>Kubernetes CRDs, CloudFormation, Ansible</td></tr>
+<tr><td>Linguistic annotation</td><td><code>annotation</code></td><td>AMR, bead, BRAT, Concrete, CoNLL-U, Decomp/UDS, ELAN, FoLiA, FOVEA, ISO-Space, LAF/GrAF, NAF, NIF, PAULA/Salt, TEI XML, TimeML, UCCA, UIMA/CAS, W3C Web Annotation</td></tr>
 <tr><td>Raw file</td><td><code>raw_file</code></td><td>Non-code files (README, LICENSE, images)</td></tr>
 </tbody>
 </table>
 </div>
 <p>The authoritative list is in the <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-protocols/src"><code>panproto-protocols</code></a> source tree. Each submodule’s <code>register_*</code> function documents the building-block theories it composes.</p>
 <h2 id="registration-shape"><a class="header" href="#registration-shape">Registration shape</a></h2>
-<p>A protocol registration is a sequence of theory colimits applied in a determined order. For example, the typed-multigraph-with-W-types theory used by JSON Schema is built by composing <code>ThGraph + ThConstraint + ThMulti + ...</code>. If any colimit step fails, registration panics with a message naming the failing intermediate step. This is intentional: a registration failure is a build-time bug in the theory composition, not user input that can fail at runtime.</p>
+<p>A protocol registration is a sequence of theory colimits applied in a determined order. For example, the constrained-multigraph-with-W-types theory used by MessagePack Schema (and several other protocols) is built as <code>colimit(colimit(ThGraph, ThConstraint; Vertex), ThMulti; Vertex, Edge)</code>, with <code>ThWType</code> as the instance theory. If any colimit step fails, registration panics with a message naming the failing intermediate step. This is intentional: a registration failure is a build-time bug in the theory composition, not user input that can fail at runtime.</p>
 <h2 id="source-of-truth"><a class="header" href="#source-of-truth">Source-of-truth</a></h2>
 <div class="table-wrapper">
 <table>

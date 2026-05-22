@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
+            window.path_to_searchindex_js = "../searchindex-20b62666.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-eba9ea01.js"></script>
@@ -183,61 +183,100 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="cross-protocol-translation"><a class="header" href="#cross-protocol-translation">Cross-protocol translation</a></h1>
-<p>You will translate the <code>user</code> schema from JSON Schema to Protobuf, round-trip a record through both protocols, and verify the translation is loss-free. About twenty minutes.</p>
-<p>By the end you will have: a Protobuf <code>.proto</code> file derived from your JSON Schema, a record converted from JSON to Protobuf binary and back, and a verification step proving the round-trip is exact.</p>
+<p>You will translate the <code>user</code> schema from one shape to another using an explicit field-by-field mapping, then verify the translation reverses cleanly. About twenty minutes.</p>
+<p>By the end you will have: two <code>user</code> schemas with different vertex and edge names expressing the same model, a <code>CompiledMigration</code> connecting them, a record converted from one shape to the other, and the reverse-direction restoration verified.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>Completed <a href="./schema-vcs-basics.html">Schema version control basics</a>. Your <code>my-first-schema/</code> project with a v2 user schema in <code>schemas/user.json</code>.</p>
-<h2 id="step-1-pick-a-shared-theory"><a class="header" href="#step-1-pick-a-shared-theory">Step 1: pick a shared theory</a></h2>
-<p>Cross-protocol translation requires both schemas to be expressible against a single theory that the lens generator can align them in. The two ways to get there:</p>
+<p>Completed <a href="./schema-vcs-basics.html">Schema version control basics</a>. The <code>my-first-schema/</code> project with <code>@panproto/core</code> installed.</p>
+<h2 id="state-of-the-art"><a class="header" href="#state-of-the-art">State of the art</a></h2>
+<p>True cross-protocol translation (a JSON Schema document automatically converted into a Protobuf <code>.proto</code>) requires both schemas to be expressible against a single composed theory that the migration generator can align them in. Today that means either:</p>
 <ul>
-<li>Use a <em>built-in</em> protocol that already covers the structure you need. The protocols in <code>panproto-protocols</code> are themselves composed from the building-block theories listed by <code>builtin_resolver()</code> (<code>ThGraph</code>, <code>ThConstraint</code>, <code>ThMulti</code>, <code>ThWType</code>, <code>ThMeta</code>, …). For schema pairs that use only the shared structure, this is enough.</li>
-<li>Author a <em>custom composition</em> via the theory DSL when you need to combine theories the built-ins do not already give you.</li>
+<li>both schemas in the <strong>same protocol</strong> with an explicit edge mapping (demonstrated here), or</li>
+<li>both schemas in a <strong>custom composed theory</strong> authored via the theory DSL (see <a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a>), or</li>
+<li>a <strong>hand-authored lens</strong> in the lens DSL bridging the two (see <a href="../how-to/lens-dsl.html">Write a lens (DSL)</a>).</li>
 </ul>
-<p>For this tutorial we author a small composition over the building blocks. Save as <code>theories/constrained-multigraph.ncl</code>:</p>
-<pre><code class="language-nickel">{
-  id = "dev.example.constrained-multigraph",
-  description = "Compose ThGraph, ThConstraint, and ThMulti by identifying their Vertex and Edge sorts",
-  compose = {
-    result = "ConstrainedMultigraph",
-    bases = ["ThGraph", "ThConstraint", "ThMulti"],
-    steps = [
-      { left = "ThGraph", right = "ThConstraint", shared_sorts = ["Vertex", "Edge"] },
-      # Reference the prior step's intermediate result by its generated
-      # name (`step_&lt;i&gt;`); the final intermediate is renamed to `result`.
-      { left = "step_0", right = "ThMulti", shared_sorts = ["Vertex", "Edge"] },
-    ],
-  },
-}
-</code></pre>
-<p>Compile it:</p>
-<pre><code class="language-sh">schema theory compile theories/constrained-multigraph.ncl
-</code></pre>
-<p>The compiler runs the colimit construction step by step. Failure here is a build-time bug in the composition (incompatible equations on a shared sort); success produces a registered theory that subsequent commands can target.</p>
-<h2 id="step-2-express-schemas-against-the-composed-theory"><a class="header" href="#step-2-express-schemas-against-the-composed-theory">Step 2: express schemas against the composed theory</a></h2>
-<p>Author two schemas of the same <code>user</code> model, one in each “flavour” your protocols would emit, both targeting the <code>ConstrainedMultigraph</code> theory. (For real cross-protocol work between JSON Schema and Protobuf, both protocols would already be built-in; the equivalent composed theory is set up in Rust in <code>panproto-protocols</code>.)</p>
-<h2 id="step-3-generate-the-chain"><a class="header" href="#step-3-generate-the-chain">Step 3: generate the chain</a></h2>
-<pre><code class="language-sh">schema lens generate --protocol ConstrainedMultigraph \
-  schemas/user-a.json \
-  schemas/user-b.json \
-  --save lenses/a-to-b.json
-</code></pre>
-<p>The chain is the bidirectional bridge between the two schemas; <code>--direction backward</code> on <code>apply</code> runs it the other way.</p>
-<h2 id="step-4-convert-data"><a class="header" href="#step-4-convert-data">Step 4: convert data</a></h2>
-<pre><code class="language-sh">echo '{"name": "Alice", "years": 30, "email": "alice@example.com"}' &gt; data/alice.json
+<p>The CLI’s <code>schema lens</code> subcommands currently resolve <code>--protocol</code> against the built-in <code>atproto</code> only; everything multi-protocol lives in the SDK. The auto-aligning <code>Panproto.lens(from, to)</code> works at the WASM lens level but returns raw <code>WInstance</code> graphs rather than JS-native records, so it is not the right tool for a tutorial. We drive the translation from <code>Panproto.migration(from, to)</code> instead — its <code>liftJson</code>/<code>getJson</code>/<code>putJson</code> wrappers handle JSON encoding/decoding for you.</p>
+<h2 id="step-1-build-the-source-schema"><a class="header" href="#step-1-build-the-source-schema">Step 1: build the source schema</a></h2>
+<p>Create <code>src/cross.ts</code>:</p>
+<pre><code class="language-ts">import { Panproto } from '@panproto/core';
 
-schema lens apply --protocol ConstrainedMultigraph \
-  lenses/a-to-b.json data/alice.json
+const p = await Panproto.init();
+const atproto = p.protocol('atproto');
+
+const source = atproto.schema()
+  .vertex('user',       'object')
+  .vertex('user.name',  'string')
+  .vertex('user.email', 'string')
+  .vertex('user.years', 'integer')
+  .edge('user', 'user.name',  'prop', { name: 'name' })
+  .edge('user', 'user.email', 'prop', { name: 'email' })
+  .edge('user', 'user.years', 'prop', { name: 'years' })
+  .build();
 </code></pre>
-<h2 id="step-5-verify"><a class="header" href="#step-5-verify">Step 5: verify</a></h2>
-<pre><code class="language-sh">schema lens verify --protocol ConstrainedMultigraph \
-  data/alice.json schemas/user-b.json
+<h2 id="step-2-build-the-target-schema"><a class="header" href="#step-2-build-the-target-schema">Step 2: build the target schema</a></h2>
+<p>A second <code>atproto</code> schema for the same <code>user</code> model with different field names — <code>display_name</code> instead of <code>name</code>, <code>email_address</code> instead of <code>email</code>:</p>
+<pre><code class="language-ts">const target = atproto.schema()
+  .vertex('user',              'object')
+  .vertex('user.display_name', 'string')
+  .vertex('user.email_address','string')
+  .vertex('user.years',        'integer')
+  .edge('user', 'user.display_name',  'prop', { name: 'display_name' })
+  .edge('user', 'user.email_address', 'prop', { name: 'email_address' })
+  .edge('user', 'user.years',         'prop', { name: 'years' })
+  .build();
 </code></pre>
-<p>Verification runs the round-trip laws on the data; a clean run means the chain is loss-free for the input. Lossy spots (a constraint expressible in one schema but not the other) are reported.</p>
+<p>The shapes differ structurally — different vertex ids, different edge names — but represent the same information.</p>
+<h2 id="step-3-declare-the-migration"><a class="header" href="#step-3-declare-the-migration">Step 3: declare the migration</a></h2>
+<pre><code class="language-ts">const mig = p.migration(source, target)
+  .map('user',       'user')
+  .map('user.name',  'user.display_name')
+  .map('user.email', 'user.email_address')
+  .map('user.years', 'user.years')
+  .mapEdge(
+    { src: 'user', tgt: 'user.name',  kind: 'prop', name: 'name' },
+    { src: 'user', tgt: 'user.display_name', kind: 'prop', name: 'display_name' },
+  )
+  .mapEdge(
+    { src: 'user', tgt: 'user.email', kind: 'prop', name: 'email' },
+    { src: 'user', tgt: 'user.email_address', kind: 'prop', name: 'email_address' },
+  )
+  .mapEdge(
+    { src: 'user', tgt: 'user.years', kind: 'prop', name: 'years' },
+    { src: 'user', tgt: 'user.years', kind: 'prop', name: 'years' },
+  )
+  .compile();
+</code></pre>
+<p><code>.map(srcVertex, tgtVertex)</code> aligns vertices; <code>.mapEdge(srcEdge, tgtEdge)</code> aligns edges. You need both — vertex-only mappings produce a migration that drops every field on lift. For larger schemas, <code>Panproto.lens(from, to)</code> and <code>LensHandle.autoGenerate</code> will infer many of these alignments via name similarity and structural priors, but the resulting <code>LensHandle</code> operates on opaque <code>WInstance</code> bytes rather than JS-native records.</p>
+<h2 id="step-4-convert-a-record"><a class="header" href="#step-4-convert-a-record">Step 4: convert a record</a></h2>
+<pre><code class="language-ts">const alice = { name: 'Alice', email: 'alice@example.com', years: 30 };
+const converted = mig.liftJson(alice, 'user');
+console.log('converted:', converted);
+</code></pre>
+<p><code>mig.liftJson(record, rootVertex)</code> round-trips JSON through the migration: it parses the input against <code>source</code>, lifts it through the edge mapping, and emits the result in <code>target</code>’s shape as a plain JS object. You see:</p>
+<pre><code class="language-js">{ display_name: 'Alice', email_address: 'alice@example.com', years: 30 }
+</code></pre>
+<h2 id="step-5-round-trip-via-getput"><a class="header" href="#step-5-round-trip-via-getput">Step 5: round-trip via get/put</a></h2>
+<pre><code class="language-ts">const { view, complement } = mig.getJson(alice, 'user');
+console.log('view:', view);
+const back = mig.putJson(view, complement, 'user');
+console.log('back:', back);
+</code></pre>
+<p><code>mig.getJson(record, rootVertex)</code> returns <code>{ view, complement }</code>. <code>view</code> is the target-shape projection (same as <code>liftJson</code>’s output); <code>complement</code> carries the encoding state the forward projection sets aside. <code>mig.putJson(view, complement, rootVertex)</code> reverses the translation, restoring the source-shape record:</p>
+<pre><code class="language-js">view: { display_name: 'Alice', email_address: 'alice@example.com', years: 30 }
+back: { email: 'alice@example.com', name: 'Alice', years: 30 }
+</code></pre>
+<p>The restored record’s field ordering is not preserved (object keys come out alphabetised), so structural equality, not JSON-string equality, is the right round-trip predicate.</p>
+<h2 id="step-6-dispose"><a class="header" href="#step-6-dispose">Step 6: dispose</a></h2>
+<pre><code class="language-ts">mig[Symbol.dispose]();
+</code></pre>
+<p><code>CompiledMigration</code> holds a WASM-side resource. Call <code>[Symbol.dispose]()</code> explicitly or use a <code>using</code> declaration so it is released at scope exit:</p>
+<pre><code class="language-ts">using mig = p.migration(source, target). /* ... */ .compile();
+</code></pre>
 <h2 id="what-you-built"><a class="header" href="#what-you-built">What you built</a></h2>
-<p>A small composed theory over panproto’s building blocks, two schemas against it, and a verified chain between them. The same pattern, executed in Rust inside <code>panproto-protocols</code>, is how the 50 built-in protocols compose. Cross-protocol translation between built-in protocols then reduces to lens generation between schemas in their shared composed theory.</p>
+<p>Two schemas expressing the same model with different field names, an explicit field-by-field migration between them, a forward conversion of a record, and a verified reverse-direction restoration. The same pattern works for any pair of schemas in a single protocol; for genuinely cross-protocol pairs (e.g. JSON Schema ↔ Protobuf), express both against a composed theory authored via the theory DSL, or author the bridge in the lens DSL.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="../how-to/cross-protocol.html">Translate across protocols</a> for the operational how-to.</li>
+<li><a href="../how-to/lens-dsl.html">Write a lens (DSL)</a> for hand-authored translations.</li>
 <li><a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a> for the model.</li>
 <li><a href="../explanation/semantics/theory-dsl.html">Theory DSL: denotational semantics</a>.</li>
 </ul>

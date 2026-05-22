@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-5e19bc48.js";
+            window.path_to_searchindex_js = "../../searchindex-20b62666.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-eba9ea01.js"></script>
@@ -205,18 +205,19 @@ literal ::= int | float | str | bool | "null"
 <p>The parser desugars <code>if c then a else b</code> to a <code>Match</code> over a boolean scrutinee with two arms, and <code>case e of ...</code> to a <code>Match</code> directly. There is no separate <code>If</code> or <code>Case</code> node in the abstract syntax.</p>
 <h2 id="abstract-syntax"><a class="header" href="#abstract-syntax">Abstract syntax</a></h2>
 <pre><code class="language-rust ignore">pub enum Expr {
-    Lit(Literal),
     Var(Arc&lt;str&gt;),
-    App(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
-    Lam(Arc&lt;str&gt;, Box&lt;Expr&gt;),
-    Let(Arc&lt;str&gt;, Box&lt;Expr&gt;, Box&lt;Expr&gt;),
-    Match(Box&lt;Expr&gt;, Vec&lt;MatchArm&gt;),
-    Builtin(BuiltinOp, Vec&lt;Expr&gt;),
-    List(Vec&lt;Expr&gt;),
-    Field(Box&lt;Expr&gt;, Arc&lt;str&gt;),
-    Index(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Lam(Arc&lt;str&gt;, Box&lt;Self&gt;),
+    App(Box&lt;Self&gt;, Box&lt;Self&gt;),
+    Lit(Literal),
+    Record(Vec&lt;(Arc&lt;str&gt;, Self)&gt;),
+    List(Vec&lt;Self&gt;),
+    Field(Box&lt;Self&gt;, Arc&lt;str&gt;),
+    Index(Box&lt;Self&gt;, Box&lt;Self&gt;),
+    Match { scrutinee: Box&lt;Self&gt;, arms: Vec&lt;(Pattern, Self)&gt; },
+    Let { name: Arc&lt;str&gt;, value: Box&lt;Self&gt;, body: Box&lt;Self&gt; },
+    Builtin(BuiltinOp, Vec&lt;Self&gt;),
 }</code></pre>
-<p><code>Match</code> covers both <code>if/then/else</code> and <code>case/of</code>; pattern matching is the only branching primitive. The full enum lives at <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/expr.rs"><code>crates/panproto-expr/src/expr.rs</code></a>.</p>
+<p><code>Match</code> covers both <code>if/then/else</code> and <code>case/of</code>; pattern matching is the only branching primitive. Each arm pairs a <code>Pattern</code> (whose variants include <code>Wildcard</code>, <code>Var</code>, <code>Lit</code>, <code>Record</code>, <code>List</code>, and <code>Constructor</code>) with a body expression. The full enum lives at <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/expr.rs"><code>crates/panproto-expr/src/expr.rs</code></a>.</p>
 <h2 id="type-system"><a class="header" href="#type-system">Type system</a></h2>
 <p>The type-formation grammar:</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">::=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Int</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Float</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf" style="margin-right:0.01389em;">Str</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Bool</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Null</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf" style="margin-right:0.01389em;">Any</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">List</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf">Record</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span></span></span></span></span></p>

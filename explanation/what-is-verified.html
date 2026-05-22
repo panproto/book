@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-5e19bc48.js";
+            window.path_to_searchindex_js = "../searchindex-20b62666.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-eba9ea01.js"></script>
@@ -203,8 +203,8 @@
 <tr><td>Protolens composition: structural equality of the intermediate endofunctor</td><td>Runtime, on <code>vertical_compose</code></td><td><code>LensError::CompositionMismatch</code></td><td><code>panproto-lens/src/protolens.rs</code></td></tr>
 <tr><td>Pushout cocone commutativity</td><td>Runtime, on every colimit construction</td><td>Returned as part of <code>ColimitResult</code></td><td><code>panproto-gat/src/colimit.rs</code></td></tr>
 <tr><td>Pushout universal property: every alternative cocone factors uniquely through the pushout</td><td>Runtime, on demand via <code>verify_universal</code></td><td><code>EquationNotPreserved</code></td><td><code>panproto-gat/src/colimit.rs</code></td></tr>
-<tr><td>Schema merge universal property</td><td>Runtime, on <code>vcs::merge::verify_pushout_universal</code></td><td><code>MergeError::UniversalFactorizationFailure</code></td><td><code>panproto-vcs/src/merge.rs</code></td></tr>
-<tr><td>Expression evaluation totality (within step budget)</td><td>Runtime, on every evaluation</td><td><code>ExprError::BudgetExceeded</code></td><td><code>panproto-expr/src/eval.rs</code></td></tr>
+<tr><td>Schema merge universal property</td><td>Runtime, on <code>vcs::merge::verify_pushout_universal</code></td><td><code>PushoutError::UniversalFactorizationFailure</code></td><td><code>panproto-vcs/src/merge.rs</code></td></tr>
+<tr><td>Expression evaluation totality (within step budget)</td><td>Runtime, on every evaluation</td><td><code>ExprError::StepLimitExceeded</code></td><td><code>panproto-expr/src/eval.rs</code></td></tr>
 <tr><td>Expression arithmetic overflow check</td><td>Runtime, on every arithmetic op</td><td><code>ExprError::Overflow</code></td><td><code>panproto-expr/src/builtin.rs</code></td></tr>
 <tr><td>Expression division by zero check</td><td>Runtime, on <code>Div</code>/<code>Mod</code></td><td><code>ExprError::DivisionByZero</code></td><td><code>panproto-expr/src/builtin.rs</code></td></tr>
 </tbody>
