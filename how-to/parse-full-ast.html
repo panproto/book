@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-20b62666.js";
+            window.path_to_searchindex_js = "../searchindex-52498229.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-eba9ea01.js"></script>
+        <script src="../toc-7f10f53f.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -246,8 +246,21 @@ schema = reg.parse_with_protocol("qvr", source_bytes, "demo.qvr")  # uses the ne
 </code></pre>
 <p>If a parser is already registered under <code>name</code>, it is dropped first (along with any extension mappings). Cannot run while a <code>ParseEmitLens</code> produced by <code>reg.lens(...)</code> is alive: drop outstanding lens handles, or construct a fresh registry, first. The byte payloads are leaked into <code>'static</code> storage on the Rust side — intended for dev-time work, not production.</p>
 <h2 id="going-the-other-way"><a class="header" href="#going-the-other-way">Going the other way</a></h2>
-<p>The schema you get back from <code>parse_with_protocol</code> carries a complete <em>layout fibre</em>: byte spans, the whitespace between every pair of adjacent tokens, and discriminators recording which CHOICE alternative the parser took at each branch point. The emitter consumes those constraints to render bytes back. A schema you build by hand from <code>SchemaBuilder</code> carries none of them; <code>emit_pretty_with_protocol</code> falls back to a grammar walk that may pick the wrong alternative or render an incomplete result.</p>
+<p>The schema you get back from <code>parse_with_protocol</code> carries a complete <em>layout fibre</em>: byte spans, the whitespace between every pair of adjacent tokens, and discriminators recording which CHOICE alternative the parser took at each branch point. The emitter consumes those constraints to render bytes back. A schema you build by hand from <code>SchemaBuilder</code> carries none of them; <code>emit_pretty_with_protocol</code> falls back to a grammar walk driven by the structural acceptance predicate, a layered cassette system, and per-position interstitial scoring (see <a href="../explanation/emit-pretty.html">Source-code emission</a> for the mechanics). The grammar walk produces structurally valid output for the verified set and best-effort output for the rest.</p>
 <p>For generators that build a schema from scratch and want to render it to source bytes, see <a href="./decorate-schemas.html">Decorate an abstract schema</a>. The <code>decorate</code> operation takes an <code>AbstractSchema</code> (the hand-built half), attaches the layout fibre via a grammar walk, and returns a <code>DecoratedSchema</code> the emitter can render byte-for-byte.</p>
+<h3 id="verifying-the-emitter-for-a-protocol"><a class="header" href="#verifying-the-emitter-for-a-protocol">Verifying the emitter for a protocol</a></h3>
+<p>Before relying on <code>emit_pretty_with_protocol</code> in a downstream pipeline, ask the registry which tier the protocol falls into:</p>
+<pre class="playground"><code class="language-rust no_run">use panproto_parse::{EmitVerificationStatus, ParserRegistry};
+
+<span class="boring">fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+</span>let reg = ParserRegistry::new();
+match reg.emit_verification_status("python") {
+    EmitVerificationStatus::Verified =&gt; { /* has a fixed-point test */ }
+    EmitVerificationStatus::Generic  =&gt; { /* registered, but unverified */ }
+    EmitVerificationStatus::Unsupported =&gt; { /* not registered */ }
+}
+<span class="boring">Ok(()) }</span></code></pre>
+<p>The 16 protocols currently in the <code>Verified</code> set are listed in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-parse/src/registry.rs"><code>crates/panproto-parse/src/registry.rs</code></a> under <code>VERIFIED_EMIT_PROTOCOLS</code>. Adding a protocol requires landing a <code>&lt;lang&gt;_emit_is_fixed_point</code> test that asserts <code>emit(parse(emit(s))) == emit(s)</code> on representative source.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <p>Tree-sitter parsing is total: every byte sequence parses into <em>some</em> AST, with error nodes inserted around unparseable spans. The interstitial preservation property guarantees <code>emit(parse(bytes)) == bytes</code> for accepted inputs; <code>schema parse emit &lt;file&gt;</code> is the smoke test.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
@@ -258,6 +271,7 @@ schema = reg.parse_with_protocol("qvr", source_bytes, "demo.qvr")  # uses the ne
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="./decorate-schemas.html">Decorate an abstract schema</a> for the put-direction of the parse / emit lens.</li>
+<li><a href="../explanation/emit-pretty.html">Source-code emission</a> for the emitter’s structural pipeline.</li>
 <li><a href="../reference/protocols.html">Reference: protocol catalogue</a>.</li>
 <li><a href="./format-preserving.html">Round-trip with format preservation</a>.</li>
 <li><a href="../explanation/layout-enrichment.html">Layout enrichment</a> for the categorical framing of the parse / decorate / emit pair.</li>

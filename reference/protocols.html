@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-20b62666.js";
+            window.path_to_searchindex_js = "../searchindex-52498229.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-eba9ea01.js"></script>
+        <script src="../toc-7f10f53f.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -224,8 +224,25 @@
 </div>
 <h2 id="defining-a-new-protocol"><a class="header" href="#defining-a-new-protocol">Defining a new protocol</a></h2>
 <p>To add a custom protocol, see <a href="../how-to/build-protocol.html">Build a custom protocol</a>. The minimal recipe is: declare schema and instance GATs (Rust or via the <a href="../how-to/build-protocol.html">theory DSL</a>), register a parser and emitter, and add a registration call to the relevant submodule.</p>
+<h2 id="source-code-grammars-and-emit-verification"><a class="header" href="#source-code-grammars-and-emit-verification">Source-code grammars and emit verification</a></h2>
+<p>In addition to the schema-language protocols catalogued above, panproto ships 261 tree-sitter grammars under <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-grammars"><code>crates/panproto-grammars/</code></a>. Each grammar registers a tree-sitter <code>Language</code> plus its <code>node-types.json</code> AST signature; the resulting parser walks source code into a full-AST schema, and <code>emit_pretty</code> renders the schema back to bytes via the structural pipeline described in <a href="../explanation/emit-pretty.html">Source-code emission</a>.</p>
+<p>The emitter’s correctness varies by grammar; <a href="https://docs.rs/panproto-parse/latest/panproto_parse/struct.ParserRegistry.html#method.emit_verification_status"><code>ParserRegistry::emit_verification_status</code></a> reports which tier each protocol falls into:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Meaning</th><th>Currently</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Verified</code></td><td>Has an explicit <code>&lt;lang&gt;_emit_is_fixed_point</code> test in panproto’s suite asserting <code>emit(parse(emit(s))) == emit(s)</code></td><td>bash, bugs, c, cpp, csharp, go, jags, java, javascript, julia, php, python, rust, scheme, stan, typescript</td></tr>
+<tr><td><code>Generic</code></td><td>Registered grammar; emit uses the generic dispatch + universal cassette path; no per-language test asserts correctness</td><td>the remaining ~230 grammars with vendored <code>grammar.json</code></td></tr>
+<tr><td><code>Unsupported</code></td><td>No <code>grammar.json</code> vendored, or protocol not registered</td><td>grammars whose upstream did not ship <code>grammar.json</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>Downstream tooling — <a href="https://github.com/aaronstevenwhite/quivers">quivers</a>’s transpile backends most prominently — should call this API upfront and refuse emit on protocols that return <code>Generic</code> or <code>Unsupported</code>. The full list of verified protocols is maintained as <code>VERIFIED_EMIT_PROTOCOLS</code> in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-parse/src/registry.rs"><code>crates/panproto-parse/src/registry.rs</code></a>.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
+<li><a href="../explanation/emit-pretty.html">Source-code emission</a></li>
 <li><a href="../explanation/schemas-as-theories.html">Schemas as theories</a></li>
 <li><a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a></li>
 <li><a href="../explanation/semantics/theory-dsl.html">Theory DSL: denotational semantics</a></li>

@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-20b62666.js";
+            window.path_to_searchindex_js = "../searchindex-52498229.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-eba9ea01.js"></script>
+        <script src="../toc-7f10f53f.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -187,6 +187,7 @@
 <p>When panproto parses source code, it does two things at once. It records the <em>structure</em> of the program (which nodes are children of which, what kinds they are) and it records the <em>layout</em> of the source (where each token started in the byte stream, what whitespace sat between adjacent tokens, which alternative the parser took at each branch point). The structure is what most downstream operations care about. The layout is what the emitter needs to render bytes back.</p>
 <p>The two parts live together in one schema, but they are separable: you can strip the layout and have a perfectly good abstract description of the program, or you can keep it and round-trip back to source bytes. <code>decorate</code> is the operation that takes the abstract description and rebuilds the layout on top.</p>
 <p>The reason this matters: any tool that wants to <em>generate</em> source code from a panproto schema (a code refactorer, a reverse bridge from a domain model to a target language, a migration that materialises a new file) needs to produce a schema with the layout fibre attached. Before <code>decorate</code>, generators had to manually populate the layout constraints — disguised string concatenation, brittle to grammar revisions. With <code>decorate</code>, the operation is mechanical: write the abstract content, hand it to a grammar, get a schema the emitter can render byte-for-byte.</p>
+<p>This page is the categorical framing: the parse / emit pair as a Grothendieck-style fibration, the section law that ties <code>decorate</code> and <code>forget_layout</code> together, and the cross-crate registry that makes the parse-side machinery available to the lens layer. For the operational mechanics of the emitter itself — how it derives spacing, dispatches CHOICE alternatives, and resolves external tokens through the cassette system — see <a href="./emit-pretty.html">Source-code emission</a>.</p>
 <h2 id="the-forgetful-u-and-its-section"><a class="header" href="#the-forgetful-u-and-its-section">The forgetful U and its section</a></h2>
 <p>Take a schema <code>S</code> produced by parsing some source bytes. Every vertex carries some constraints. Split them into two groups: the <em>layout</em> constraints (<code>start-byte</code>, <code>end-byte</code>, <code>interstitial-N</code>, <code>chose-alt-fingerprint</code>, <code>chose-alt-child-kinds</code>) and everything else (vertex kind, edges, <code>literal-value</code>, anonymous-token <code>field:*</code>, plus any protocol-defined sorts). The first group is parser-only metadata; the second is the abstract content of the program.</p>
 <p>Stripping the first group is a function:</p>
@@ -222,6 +223,7 @@
 <p>Two threads bear directly on the parse-emit fibration. The lens-based ancestry runs from Foster et al. (<a href="../bibliography.html#foster2007combinators">2007</a>) through Bohannon et al. (<a href="../bibliography.html#bohannonfosterpiercepilkiewiczschmitt2008boomerang">2008</a>)’s resourceful lenses (dictionary skeletons, quasi-obliviousness) and Foster et al. (<a href="../bibliography.html#fosterpilkiewiczpierce2008quotient">2008</a>)’s quotient lenses (lenses modulo equivalences, canonizers via <code>lquot</code> and <code>rquot</code>), with Lutterkort (<a href="../bibliography.html#lutterkort2008augeas">2008</a>) as the closest framework-level analogue. The grammar-based ancestry is Zhu et al. (<a href="../bibliography.html#zhukozhanghu2015biyacc">2015</a>)’s BiYacc, whose reflective printer takes both the AST and the original concrete string. de &amp; Visser (<a href="../bibliography.html#jongevisser2012algorithm">2012</a>)’s token-stream-and-origin-tracking algorithm is the closest match to the byte-level reconstruction strategy panproto uses inside the layout enrichment driver. See <a href="./related-work.html">Related work</a> for the full discussion.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
+<li><a href="./emit-pretty.html">Source-code emission</a> for the operational mechanics of <code>emit_pretty</code>: token-role classification, CHOICE dispatch tiers, cassettes, and the verification tier API.</li>
 <li><a href="../how-to/decorate-schemas.html">Decorate an abstract schema</a> for the operational recipe.</li>
 <li><a href="./lenses-roundtrip.html">Lenses and round-trip laws</a> for the lens machinery the enrichment rides on.</li>
 <li><a href="./architecture.html">Architecture</a> for the crate-level dependency direction that makes the cross-crate registry necessary.</li>
@@ -241,7 +243,7 @@
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../explanation/protocol-colimits.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../explanation/emit-pretty.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -255,7 +257,7 @@
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../explanation/protocol-colimits.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../explanation/emit-pretty.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

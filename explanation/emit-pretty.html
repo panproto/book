@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Overview - panproto</title>
+        <title>Source-code emission - panproto</title>
 
 
         <!-- Custom HTML head -->
@@ -147,7 +147,7 @@
                         <a href="https://github.com/aaronstevenwhite/panproto" title="Git repository" aria-label="Git repository">
                             <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
                         </a>
-                        <a href="https://github.com/aaronstevenwhite/panproto/edit/main/book/src/how-to/index.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/aaronstevenwhite/panproto/edit/main/book/src/explanation/emit-pretty.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
                         </a>
 
@@ -182,60 +182,138 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
-<h1 id="how-to-guides"><a class="header" href="#how-to-guides">How-to guides</a></h1>
-<p>How-to pages are recipes. Each one assumes you know what you are trying to do and need the steps to do it. Every page follows the same skeleton:</p>
+<h1 id="source-code-emission"><a class="header" href="#source-code-emission">Source-code emission</a></h1>
+<h2 id="in-plain-terms"><a class="header" href="#in-plain-terms">In plain terms</a></h2>
+<p>panproto reads source code in 261 languages by sitting on top of <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a>, which has a community-maintained grammar for each one. The reverse direction — writing source code back out from a schema — is harder. tree-sitter grammars are written for parsing; they record the production rules the parser uses but not the spacing, indentation, or alternative-disambiguation choices an emitter needs. panproto’s source-code emitter, <code>emit_pretty</code>, closes that gap by deriving emission behaviour structurally from the same <code>grammar.json</code> the parser already ships.</p>
+<p>The output of every emit is a function of three things: the schema, the production grammar, and a small per-language <em>cassette</em> that supplies defaults for the cases <code>grammar.json</code> cannot describe. Everything else — token roles, bracket pairs, spacing rules, indent triggers, CHOICE dispatch — is derived at construction time from the grammar’s own structure. There is no per-language emitter code.</p>
+<p>A separate <a href="../how-to/format-preserving.html">format-preserving codec</a> covers structured-data formats (JSON, YAML, TOML, XML, CSV) and guarantees byte-for-byte round-trip. The two systems are independent; this page is about the tree-sitter source-code path.</p>
+<h2 id="the-two-halves-of-the-gap"><a class="header" href="#the-two-halves-of-the-gap">The two halves of the gap</a></h2>
+<p><code>grammar.json</code> lists every rule (<code>SEQ</code>, <code>CHOICE</code>, <code>REPEAT</code>, <code>OPTIONAL</code>, <code>FIELD</code>, <code>ALIAS</code>, <code>SYMBOL</code>, <code>STRING</code>, <code>PATTERN</code>, <code>IMMEDIATE_TOKEN</code>, <code>PREC</code>, <code>TOKEN</code>, <code>RESERVED</code>) the parser walks. It does not record:</p>
 <ol>
-<li><strong>Prerequisites.</strong> What must be installed and what state your project must be in.</li>
-<li><strong>The task.</strong> The minimum sequence of commands or code to accomplish the goal.</li>
-<li><strong>Verification.</strong> How to confirm the task succeeded.</li>
-<li><strong>Common mistakes.</strong> Failure modes and how to recognise them.</li>
-<li><strong>See also.</strong> Adjacent how-tos, the relevant reference page, and the explanation page that covers the underlying model.</li>
+<li><strong>Whitespace and layout.</strong> Whether <code>a + b</code> or <code>a+b</code>; whether <code>if (x) { ... }</code> indents its body; whether <code>def f(): x = 1</code> is one line or two. Tree-sitter strips whitespace during parse; nothing in <code>grammar.json</code> says how to put it back.</li>
+<li><strong>CHOICE disambiguation for synthesised schemas.</strong> When two CHOICE alternatives both admit the same children — <code>binary_expression CHOICE[+, -, *, /, ...]</code> over the same operand kinds — the parser picks via its parse-table state. A schema built from scratch (no parse history) has no record of which alt was taken.</li>
 </ol>
-<p>If you want to understand <em>why</em> a step works, follow the link to the explanation quadrant. If you want a complete walk-through with no prior context, start with a <a href="../tutorials/index.html">tutorial</a>.</p>
-<h2 id="index"><a class="header" href="#index">Index</a></h2>
-<h3 id="setup"><a class="header" href="#setup">Setup</a></h3>
+<p><code>emit_pretty</code> handles the first half structurally and the second half via a layered fallback hierarchy.</p>
+<h2 id="grammar-derived-token-roles"><a class="header" href="#grammar-derived-token-roles">Grammar-derived token roles</a></h2>
+<p>Every <code>STRING</code> literal in a rule body is classified by its <em>structural role</em> at <code>Grammar::from_bytes</code> time. There are six roles, classified per <code>(rule, position)</code> pair, not per token text:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Role</th><th>Identification rule</th></tr>
+</thead>
+<tbody>
+<tr><td><code>BracketOpen</code></td><td>First STRING in a SEQ whose first / last STRINGs satisfy the matched-pair predicate</td></tr>
+<tr><td><code>BracketClose</code></td><td>Last STRING of the same SEQ</td></tr>
+<tr><td><code>Separator</code></td><td>First STRING in a REPEAT body’s inner SEQ</td></tr>
+<tr><td><code>Keyword</code></td><td>STRING matching <code>[a-zA-Z_][a-zA-Z0-9_]*</code></td></tr>
+<tr><td><code>Operator</code></td><td>Non-alphanumeric STRING between two SYMBOL / FIELD members</td></tr>
+<tr><td><code>Terminal</code></td><td>Text from a leaf vertex’s <code>literal-value</code> constraint</td></tr>
+</tbody>
+</table>
+</div>
+<p>The matched-pair predicate identifies <code>()</code>, <code>[]</code>, <code>{}</code>, <code>&lt;&gt;</code>, <code>begin/end</code>, <code>do/done</code>, <code>|...|</code>, <code>&lt;&lt;&gt;&gt;</code>, <code>${}</code>, <code>⟨⟩</code>, and every other bracket-like construct from grammar structure alone. There is no fixed character set: a per-SEQ check that the first and last STRINGs are different (or same-text with at least one wrapped in <code>IMMEDIATE_TOKEN</code>, e.g. regex <code>/.../</code>), with non-STRING content between them, identifies the pair.</p>
+<p>The role-pair lookup table (<code>needs_space_by_role</code>) takes two adjacent token roles and returns whether to emit a space. No token text is inspected by the layout pass; spacing decisions are entirely role-driven. The table is small (one fixed function) and the same for every grammar.</p>
+<h2 id="indent-triggers"><a class="header" href="#indent-triggers">Indent triggers</a></h2>
+<p>A bracket-open token triggers indentation when the content between open and close contains <code>REPEAT</code> or <code>REPEAT1</code> (recursively through CHOICE / SEQ wrappers). This is the structural witness of “block-level content the source author would have indented”. Function bodies, statement lists, struct fields, namespace contents all match; inline constructs like type parameter lists, function arguments, and string interpolation do not, even though they may use the same bracket pair characters in other rules.</p>
+<p>Word-like bracket pairs (<code>function/end</code>, <code>if/end</code>, <code>module/end</code>, etc., the matched-pair shape with alphanumeric delimiters) always trigger indentation — they only appear in block constructs across the 261 vendored grammars.</p>
+<h2 id="choice-dispatch"><a class="header" href="#choice-dispatch">CHOICE dispatch</a></h2>
+<p>At emit time, <code>pick_choice_with_cursor</code> selects which CHOICE alternative to walk for a given vertex. The pipeline composes several structural filters; each rejects alternatives that cannot be the right pick given the cursor’s unconsumed edges and the schema’s constraint witnesses.</p>
+<p>The categorical core is the <strong>acceptance predicate</strong>, <code>accepts_first_edge(prod, edge_field, target_kind)</code>, an inductive function over the production tree:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Production</th><th>Acceptance rule</th></tr>
+</thead>
+<tbody>
+<tr><td><code>STRING</code> / <code>PATTERN</code> / <code>BLANK</code></td><td>reject (consumes no edges)</td></tr>
+<tr><td><code>SYMBOL X</code> (concrete)</td><td><code>edge_field == "child_of"</code> AND <code>target_kind ⊑ X</code></td></tr>
+<tr><td><code>SYMBOL X</code> (hidden / supertype)</td><td><code>accepts(X.rule, edge)</code></td></tr>
+<tr><td><code>ALIAS{c, named:true, value:V}</code></td><td><code>edge_field == "child_of"</code> AND <code>target_kind == V</code></td></tr>
+<tr><td><code>FIELD{name, content}</code></td><td><code>edge_field == name</code> AND <code>content.yield</code> admits <code>target_kind</code></td></tr>
+<tr><td><code>SEQ[m1, m2, ...]</code></td><td><code>accepts(m1, edge)</code> OR (<code>m1</code> ε-able AND <code>accepts(SEQ[m2..], edge)</code>)</td></tr>
+<tr><td><code>CHOICE[a1, a2, ...]</code></td><td>any of <code>accepts(ai, edge)</code></td></tr>
+<tr><td><code>OPTIONAL</code> / <code>REPEAT</code> / <code>REPEAT1</code> / wrappers</td><td><code>accepts(inner, edge)</code></td></tr>
+</tbody>
+</table>
+</div>
+<p><code>accepts_first_edge</code> fuses four previously-separate ad-hoc checks (FIELD-name matching, SYMBOL subtype dispatch, ALIAS rewrite, yield-set admission) into one rule.</p>
+<p>Three discriminators layer on top when more than one alternative passes <code>accepts_first_edge</code>:</p>
+<ol>
+<li><strong>Token-set restriction.</strong> An alt’s FIELD body of shape <code>ALIAS{CHOICE[STRING_1, STRING_2, ...], value: V}</code> constrains the field child’s literal to that set. If the cursor’s field-named edge target carries a literal outside the set, the alt is rejected. This is what disambiguates Go <code>call_expression</code> (alt 0 has <code>function: ALIAS{CHOICE["new","make"], value:"identifier"}</code> — only valid when the function name is literally <code>new</code> or <code>make</code>).</li>
+<li><strong>Alias-source filter.</strong> An alt’s FIELD body of shape <code>ALIAS{SYMBOL X, named: true, value: _}</code> requires the cursor’s field-named edge target to carry a <code>pre-alias-symbol</code> constraint equal to <code>X</code>. The walker records <code>pre-alias-symbol</code> from <code>tree_sitter::Node::grammar_name()</code> whenever it differs from <code>kind()</code>; this is the only ALIAS-disambiguation signal tree-sitter 0.25 / 0.26 actually exposes.</li>
+<li><strong>Positional interstitial scoring.</strong> When the above filters leave more than one candidate, alts are scored against the slice of recorded interstitials from the current cursor position forward. The cursor’s consumed count gives the slice offset, so a trailing CHOICE-with-BLANK at position N sees only the interstitial at gap N, not the comma separators from earlier REPEAT iterations.</li>
+</ol>
+<p>On yield-set ties after every filter, tree-sitter precedence (<code>PREC</code> annotations on alternatives) breaks the tie. This honours the grammar author’s explicit disambiguation rule.</p>
+<h2 id="the-subtype-closure"><a class="header" href="#the-subtype-closure">The subtype closure</a></h2>
+<p><code>accepts_first_edge</code> consults a precomputed <em>subtype closure</em> <code>K ⊑ Y</code> (“a vertex of kind K can appear where the grammar says SYMBOL Y”). The closure is computed once at <code>Grammar::from_bytes</code> time:</p>
+<ol>
+<li>Walk every hidden rule (<code>_</code>-prefixed) and supertype rule’s body to identify which concrete kinds satisfy each dispatch point.</li>
+<li>Walk every named ALIAS (<code>ALIAS{c, named:true, value:V}</code>) and record that the value <code>V</code> is satisfied by every kind reachable from <code>c</code>.</li>
+<li>Close the relation under composition: a Tarjan SCC over the dispatchable-only subgraph (hidden / supertype names form the nodes; satisfying edges are the transitions), producing an exact <code>O(V + E)</code> transitive closure without any iteration cap. The closure is keyed by concrete kind name, so <code>accepts_first_edge</code>’s lookup is <code>O(1)</code>.</li>
+</ol>
+<h2 id="cassettes"><a class="header" href="#cassettes">Cassettes</a></h2>
+<p>The output of every external scanner token must come from somewhere. tree-sitter’s external scanners are C code that produces tokens whose text varies at runtime; <code>grammar.json</code> declares the token name but not the text. Four resolution tiers cascade:</p>
+<ol>
+<li><strong>Anonymous ALIAS.</strong> <code>ALIAS{SYMBOL ext, named:false, value: V}</code> declares that the external token emits exactly <code>V</code>. Read directly from grammar structure.</li>
+<li><strong>CHOICE equivalence.</strong> <code>CHOICE[SYMBOL ext, STRING s]</code> declares that the external token is equivalent to the literal <code>s</code>. Read directly from grammar structure.</li>
+<li><strong>CstComplement.</strong> For tokens whose text was captured at parse time, the schema’s <code>literal-value</code> constraint on the vertex carries the actual text. Used for heredoc bodies, raw-string content, regex patterns, escape sequences.</li>
+<li><strong>Cassette default.</strong> When none of the above applies, a per-grammar <a href="https://docs.rs/panproto-parse/latest/panproto_parse/languages/cassettes/trait.GrammarCassette.html"><code>GrammarCassette</code></a> supplies a default.</li>
+</ol>
+<p>The cassette layer itself composes two parts:</p>
 <ul>
-<li><a href="./install/cli.html">Install the CLI</a>, <a href="./install/rust.html">Rust</a>, <a href="./install/typescript.html">TypeScript</a>, <a href="./install/python.html">Python</a></li>
+<li><strong>Universal layer</strong> (<code>common_external_default</code>). A closed table of name-pattern → default-text mappings derived from a structural audit of every vendored grammar. Recognises layout markers (<code>_concat</code>, <code>_no_space</code>, <code>_brace_start</code>), immediate-position markers (<code>_immediate_*</code>), error sentinels (<code>_error_*</code>, <code>error_sentinel</code>), automatic-semicolon family (<code>_automatic_semicolon</code>, <code>_optional_semi</code>), generic string delimiters (<code>string_start</code>, <code>string_end</code>), heredoc / raw-string content (returns <code>""</code> — actual text comes from <code>literal-value</code>), and the descendant-operator family from CSS-like grammars.</li>
+<li><strong>Per-grammar override</strong> (<code>GrammarCassette::external_token_default</code>). A small per-grammar implementation that overrides specific tokens. The lookup composes per-grammar first, universal fallback second, via <code>resolve_external_token</code>.</li>
 </ul>
-<h3 id="schemas-and-migrations"><a class="header" href="#schemas-and-migrations">Schemas and migrations</a></h3>
+<p>The per-grammar overrides exist only where the language needs an override on top of the universal layer. The default empty cassette (used for ~230 of the 261 grammars) delegates entirely to the universal layer.</p>
+<h2 id="immediate_token-as-a-layout-marker"><a class="header" href="#immediate_token-as-a-layout-marker">IMMEDIATE_TOKEN as a layout marker</a></h2>
+<p>tree-sitter’s <code>IMMEDIATE_TOKEN</code> is the grammar’s explicit signal that the wrapped token must have no preceding whitespace. <code>emit_pretty</code> lifts this to a single <code>NoSpace</code> marker emitted at the unique structural site where <code>IMMEDIATE_TOKEN</code> is declared:</p>
 <ul>
-<li><a href="./define-schema/index.html">Define a schema</a> (CLI, TypeScript, Python, Rust)</li>
-<li><a href="./build-migration.html">Build a migration</a></li>
-<li><a href="./field-transforms.html">Apply field transforms</a></li>
-<li><a href="./use-lenses.html">Use lenses</a>, <a href="./protolenses.html">protolenses</a>, <a href="./dependent-optics.html">dependent optics</a></li>
-<li><a href="./lens-dsl.html">Write lenses in the lens DSL</a></li>
-<li><a href="./build-protocol.html">Build a custom protocol</a></li>
+<li>When the production walker enters <code>Production::ImmediateToken</code>, emit <code>NoSpace</code>.</li>
+<li>When <code>emit_vertex</code> enters a vertex whose rule body is <code>IMMEDIATE_TOKEN(...)</code> at the head, emit <code>NoSpace</code> before any content the leaf shortcut or rule-body walk produces.</li>
 </ul>
-<h3 id="working-with-data"><a class="header" href="#working-with-data">Working with data</a></h3>
+<p>The layout pass reads the marker; downstream code does not need to inspect production shapes to recover the property. This is what makes regex literals like <code>/abc/g</code> round-trip tight on both delimiters: <code>regex_pattern</code>’s rule body starts with <code>IMMEDIATE_TOKEN</code>, and the trailing <code>/</code> is wrapped in <code>IMMEDIATE_TOKEN</code> in the <code>regex</code> SEQ.</p>
+<h2 id="the-verification-tier-api"><a class="header" href="#the-verification-tier-api">The verification tier API</a></h2>
+<p><code>emit_pretty</code> is structurally sound for any grammar with a vendored <code>grammar.json</code>, but “structurally sound” is not the same as “the output round-trips”. The fixed-point law <code>emit(parse(emit(s))) == emit(s)</code> is the actual correctness witness, and it has to be exercised per-grammar. <a href="https://docs.rs/panproto-parse/latest/panproto_parse/struct.ParserRegistry.html#method.emit_verification_status"><code>ParserRegistry::emit_verification_status</code></a> reports which tier a protocol falls into:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Status</th><th>Meaning</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Verified</code></td><td>The protocol has a <code>&lt;lang&gt;_emit_is_fixed_point</code> or <code>&lt;lang&gt;_roundtrip</code> test in panproto’s suite asserting the fixed-point law on representative source</td></tr>
+<tr><td><code>Generic</code></td><td>The protocol is registered and the generic dispatch path applies, but no per-language test asserts emit correctness</td></tr>
+<tr><td><code>Unsupported</code></td><td>The protocol is not registered, or its grammar lacks vendored <code>grammar.json</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>Downstream tooling — <a href="https://github.com/aaronstevenwhite/quivers">quivers</a> and other transpile pipelines most prominently — calls this API upfront and refuses emit on any backend returning <code>Generic</code> or <code>Unsupported</code>. No runtime warnings; the silence-vs-noise tradeoff falls on the caller.</p>
+<p>The current <code>Verified</code> set covers 16 protocols: bash, bugs, c, cpp, csharp, go, jags, java, javascript, julia, php, python, rust, scheme, stan, typescript. Adding a protocol to the set requires landing a fixed-point test and appending the name to <code>VERIFIED_EMIT_PROTOCOLS</code> in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-parse/src/registry.rs"><code>crates/panproto-parse/src/registry.rs</code></a>.</p>
+<h2 id="limitations"><a class="header" href="#limitations">Limitations</a></h2>
+<p>Three classes of input fall outside what the structural pipeline can recover:</p>
 <ul>
-<li><a href="./query-instances.html">Query instances</a></li>
-<li><a href="./convert-data.html">Convert data between formats</a></li>
-<li><a href="./format-preserving.html">Round-trip with format preservation</a></li>
-<li><a href="./parse-full-ast.html">Parse full ASTs</a></li>
-<li><a href="./decorate-schemas.html">Decorate an abstract schema</a></li>
+<li><strong>By-construction CHOICEs with no constraint signal.</strong> When a schema is built from scratch (no parse history) and a CHOICE is over multiple alternatives that all admit the same children — <code>CHOICE[STRING "model", STRING "data"]</code> for a BUGS block keyword — nothing in the abstract content picks. The universal cassette + per-grammar cassette provide deterministic defaults, but the choice is opinionated and may not match the source author’s intent. <a href="../how-to/decorate-schemas.html">Decorate an abstract schema</a> is the canonical workflow.</li>
+<li><strong>Heredoc / raw-string synthesis.</strong> The universal cassette returns <code>""</code> for heredoc / raw-string content because the actual text is parse-time-dependent. Synthesised vertices with such kinds but no captured <code>literal-value</code> will emit empty. Quivers and similar synthesis pipelines should populate <code>literal-value</code> explicitly.</li>
+<li><strong>Operator precedence in synthesised expressions.</strong> No precedence-driven parenthesisation pass exists. Parsed schemas preserve original parens via interstitial constraints, but synthesised <code>binary_expression</code> schemas may emit ambiguously and re-parse to a different tree. A precedence pass on the schema before emit would close this gap; deferred.</li>
 </ul>
-<h3 id="version-control"><a class="header" href="#version-control">Version control</a></h3>
+<p>The deeper limitation, structurally: tree-sitter’s parse-table state — the actual record of which CHOICE alternative the parser took at each step — is not exposed through the C API. The only ALIAS-disambiguation signal tree-sitter 0.25 / 0.26 surfaces is <code>grammar_name()</code> (the pre-alias SYMBOL name), which is consumed via <code>pre-alias-symbol</code>. A future upstream tree-sitter change exposing production / reduce IDs would let the emitter trace the parse exactly, eliminating the heuristic tiers entirely.</p>
+<h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="./schema-vcs/init-and-commit.html">Init and commit</a>, <a href="./schema-vcs/branch-and-merge.html">branch and merge</a>, <a href="./schema-vcs/data-versioning.html">data versioning</a>, <a href="./schema-vcs/git-bridge.html">git bridge</a></li>
-</ul>
-<h3 id="translation-and-integration"><a class="header" href="#translation-and-integration">Translation and integration</a></h3>
-<ul>
-<li><a href="./cross-protocol.html">Translate across protocols</a></li>
-</ul>
-<h3 id="ci"><a class="header" href="#ci">CI</a></h3>
-<ul>
-<li><a href="./ci/breaking-change-gate.html">Breaking-change gate</a>, <a href="./ci/github-actions.html">GitHub Actions</a>, <a href="./ci/pre-commit-hooks.html">pre-commit hooks</a></li>
+<li><a href="../how-to/decorate-schemas.html">Decorate an abstract schema</a> for the synthesise-then-render workflow.</li>
+<li><a href="./layout-enrichment.html">Layout enrichment</a> for the categorical framing of the parse / emit relationship.</li>
+<li><a href="../how-to/format-preserving.html">Round-trip with format preservation</a> for the structured-data codec (JSON / YAML / TOML / XML / CSV), which is byte-exact and orthogonal to this system.</li>
+<li><a href="../how-to/parse-full-ast.html">Parse full ASTs</a> for the parser side.</li>
+<li><a href="../reference/protocols.html">Reference: protocol catalogue</a> for the list of supported languages.</li>
 </ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../tutorials/cross-protocol-translation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../explanation/layout-enrichment.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../how-to/install/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../explanation/protocol-colimits.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -245,11 +323,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../tutorials/cross-protocol-translation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../explanation/layout-enrichment.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../how-to/install/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../explanation/protocol-colimits.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

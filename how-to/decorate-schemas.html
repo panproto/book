@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-20b62666.js";
+            window.path_to_searchindex_js = "../searchindex-52498229.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-eba9ea01.js"></script>
+        <script src="../toc-7f10f53f.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -271,9 +271,11 @@ let bytes = reg.pretty_with_protocol("lilypond", &amp;abstract_schema, &amp;poli
 <li>Wrapping a parsed schema as an <code>AbstractSchema</code> and expecting <code>decorate</code> to keep its vertex IDs. The parse walker invents fresh IDs; the section law holds up to multiset equivalence, not pointwise. If you need the parse-side IDs preserved, work with the <code>DecoratedSchema</code> directly.</li>
 <li>Passing an <code>AbstractSchema</code> built against one protocol into <code>decorate</code> for a different protocol. The protocol-match guard rejects the call with <code>ParseError::SchemaConstruction</code>; build the schema against the right protocol or look up the parser by the schema’s own <code>protocol()</code>.</li>
 <li>Reaching for <code>DecoratedSchema::wrap_unchecked</code> on a hand-built schema and expecting <code>emit_pretty_with_protocol</code> to round-trip through byte-position arithmetic. The wrapping is a type-level assertion the constructor cannot verify; an empty layout fibre means the emitter falls back to a grammar walk, which is well-defined but uses the default <code>FormatPolicy</code>, not whatever policy you’d have passed to <code>decorate</code>.</li>
+<li>Calling <code>decorate</code> on a protocol that returns <code>EmitVerificationStatus::Generic</code>. <code>decorate</code> runs <code>emit_pretty</code> internally, so its output inherits whatever fidelity the emitter has on that grammar. Check <code>ParserRegistry::emit_verification_status(protocol)</code> first; if the result is <code>Generic</code>, the round-trip kind multiset still satisfies the section law, but byte-for-byte stability across re-emits is not guaranteed.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
+<li><a href="../explanation/emit-pretty.html">Source-code emission</a> for what <code>emit_pretty</code> does internally during the decorate call.</li>
 <li><a href="./parse-full-ast.html">Parse full ASTs</a> for the get direction of the same lens.</li>
 <li><a href="./format-preserving.html">Round-trip with format preservation</a> for the parallel codec story at the byte-position level.</li>
 <li><a href="../reference/protocols.html">Reference: protocol catalogue</a> for the registered grammars.</li>

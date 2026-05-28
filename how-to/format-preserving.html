@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-20b62666.js";
+            window.path_to_searchindex_js = "../searchindex-52498229.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-eba9ea01.js"></script>
+        <script src="../toc-7f10f53f.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -184,6 +184,7 @@
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="round-trip-with-format-preservation"><a class="header" href="#round-trip-with-format-preservation">Round-trip with format preservation</a></h1>
 <p>When you parse a JSON, YAML, TOML, XML, or CSV file and emit it back without changes, panproto can guarantee <code>emit(parse(bytes)) == bytes</code> byte-for-byte. This requires the format-preserving codec, which uses tree-sitter grammars and a CST complement to capture whitespace, comments, and ordering.</p>
+<p>This page covers the structured-data path (JSON / YAML / TOML / XML / CSV). For source-code grammars (Rust, Python, Stan, BUGS, and 257 more), the emit path is <code>emit_pretty</code>, which derives spacing and dispatch from <code>grammar.json</code> structurally and exercises a per-protocol verification tier. See <a href="./parse-full-ast.html">Parse full ASTs</a> and <a href="../explanation/emit-pretty.html">Source-code emission</a>. The two systems are independent and serve different formats; choose one based on what you are parsing.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>A panproto build with the <code>tree-sitter</code> feature flag enabled on <code>panproto-core</code> (or directly on <code>panproto-io</code>). The CLI ships with tree-sitter enabled by default.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>

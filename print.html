@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-20b62666.js";
+            window.path_to_searchindex_js = "searchindex-52498229.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-eba9ea01.js"></script>
+        <script src="toc-7f10f53f.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -1449,6 +1449,7 @@ schema lens verify --protocol atproto data/users.json schemas/user-v2.json
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="round-trip-with-format-preservation"><a class="header" href="#round-trip-with-format-preservation">Round-trip with format preservation</a></h1>
 <p>When you parse a JSON, YAML, TOML, XML, or CSV file and emit it back without changes, panproto can guarantee <code>emit(parse(bytes)) == bytes</code> byte-for-byte. This requires the format-preserving codec, which uses tree-sitter grammars and a CST complement to capture whitespace, comments, and ordering.</p>
+<p>This page covers the structured-data path (JSON / YAML / TOML / XML / CSV). For source-code grammars (Rust, Python, Stan, BUGS, and 257 more), the emit path is <code>emit_pretty</code>, which derives spacing and dispatch from <code>grammar.json</code> structurally and exercises a per-protocol verification tier. See <a href="#parse-full-asts">Parse full ASTs</a> and <a href="#source-code-emission">Source-code emission</a>. The two systems are independent and serve different formats; choose one based on what you are parsing.</p>
 <h2 id="prerequisites-19"><a class="header" href="#prerequisites-19">Prerequisites</a></h2>
 <p>A panproto build with the <code>tree-sitter</code> feature flag enabled on <code>panproto-core</code> (or directly on <code>panproto-io</code>). The CLI ships with tree-sitter enabled by default.</p>
 <h2 id="the-task-12"><a class="header" href="#the-task-12">The task</a></h2>
@@ -1548,8 +1549,21 @@ schema = reg.parse_with_protocol("qvr", source_bytes, "demo.qvr")  # uses the ne
 </code></pre>
 <p>If a parser is already registered under <code>name</code>, it is dropped first (along with any extension mappings). Cannot run while a <code>ParseEmitLens</code> produced by <code>reg.lens(...)</code> is alive: drop outstanding lens handles, or construct a fresh registry, first. The byte payloads are leaked into <code>'static</code> storage on the Rust side — intended for dev-time work, not production.</p>
 <h2 id="going-the-other-way"><a class="header" href="#going-the-other-way">Going the other way</a></h2>
-<p>The schema you get back from <code>parse_with_protocol</code> carries a complete <em>layout fibre</em>: byte spans, the whitespace between every pair of adjacent tokens, and discriminators recording which CHOICE alternative the parser took at each branch point. The emitter consumes those constraints to render bytes back. A schema you build by hand from <code>SchemaBuilder</code> carries none of them; <code>emit_pretty_with_protocol</code> falls back to a grammar walk that may pick the wrong alternative or render an incomplete result.</p>
+<p>The schema you get back from <code>parse_with_protocol</code> carries a complete <em>layout fibre</em>: byte spans, the whitespace between every pair of adjacent tokens, and discriminators recording which CHOICE alternative the parser took at each branch point. The emitter consumes those constraints to render bytes back. A schema you build by hand from <code>SchemaBuilder</code> carries none of them; <code>emit_pretty_with_protocol</code> falls back to a grammar walk driven by the structural acceptance predicate, a layered cassette system, and per-position interstitial scoring (see <a href="#source-code-emission">Source-code emission</a> for the mechanics). The grammar walk produces structurally valid output for the verified set and best-effort output for the rest.</p>
 <p>For generators that build a schema from scratch and want to render it to source bytes, see <a href="#decorate-an-abstract-schema">Decorate an abstract schema</a>. The <code>decorate</code> operation takes an <code>AbstractSchema</code> (the hand-built half), attaches the layout fibre via a grammar walk, and returns a <code>DecoratedSchema</code> the emitter can render byte-for-byte.</p>
+<h3 id="verifying-the-emitter-for-a-protocol"><a class="header" href="#verifying-the-emitter-for-a-protocol">Verifying the emitter for a protocol</a></h3>
+<p>Before relying on <code>emit_pretty_with_protocol</code> in a downstream pipeline, ask the registry which tier the protocol falls into:</p>
+<pre class="playground"><code class="language-rust no_run">use panproto_parse::{EmitVerificationStatus, ParserRegistry};
+
+<span class="boring">fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+</span>let reg = ParserRegistry::new();
+match reg.emit_verification_status("python") {
+    EmitVerificationStatus::Verified =&gt; { /* has a fixed-point test */ }
+    EmitVerificationStatus::Generic  =&gt; { /* registered, but unverified */ }
+    EmitVerificationStatus::Unsupported =&gt; { /* not registered */ }
+}
+<span class="boring">Ok(()) }</span></code></pre>
+<p>The 16 protocols currently in the <code>Verified</code> set are listed in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-parse/src/registry.rs"><code>crates/panproto-parse/src/registry.rs</code></a> under <code>VERIFIED_EMIT_PROTOCOLS</code>. Adding a protocol requires landing a <code>&lt;lang&gt;_emit_is_fixed_point</code> test that asserts <code>emit(parse(emit(s))) == emit(s)</code> on representative source.</p>
 <h2 id="verification-17"><a class="header" href="#verification-17">Verification</a></h2>
 <p>Tree-sitter parsing is total: every byte sequence parses into <em>some</em> AST, with error nodes inserted around unparseable spans. The interstitial preservation property guarantees <code>emit(parse(bytes)) == bytes</code> for accepted inputs; <code>schema parse emit &lt;file&gt;</code> is the smoke test.</p>
 <h2 id="common-mistakes-17"><a class="header" href="#common-mistakes-17">Common mistakes</a></h2>
@@ -1560,6 +1574,7 @@ schema = reg.parse_with_protocol("qvr", source_bytes, "demo.qvr")  # uses the ne
 <h2 id="see-also-20"><a class="header" href="#see-also-20">See also</a></h2>
 <ul>
 <li><a href="#decorate-an-abstract-schema">Decorate an abstract schema</a> for the put-direction of the parse / emit lens.</li>
+<li><a href="#source-code-emission">Source-code emission</a> for the emitter’s structural pipeline.</li>
 <li><a href="#protocol-catalogue">Reference: protocol catalogue</a>.</li>
 <li><a href="#round-trip-with-format-preservation">Round-trip with format preservation</a>.</li>
 <li><a href="#layout-enrichment">Layout enrichment</a> for the categorical framing of the parse / decorate / emit pair.</li>
@@ -1654,9 +1669,11 @@ let bytes = reg.pretty_with_protocol("lilypond", &amp;abstract_schema, &amp;poli
 <li>Wrapping a parsed schema as an <code>AbstractSchema</code> and expecting <code>decorate</code> to keep its vertex IDs. The parse walker invents fresh IDs; the section law holds up to multiset equivalence, not pointwise. If you need the parse-side IDs preserved, work with the <code>DecoratedSchema</code> directly.</li>
 <li>Passing an <code>AbstractSchema</code> built against one protocol into <code>decorate</code> for a different protocol. The protocol-match guard rejects the call with <code>ParseError::SchemaConstruction</code>; build the schema against the right protocol or look up the parser by the schema’s own <code>protocol()</code>.</li>
 <li>Reaching for <code>DecoratedSchema::wrap_unchecked</code> on a hand-built schema and expecting <code>emit_pretty_with_protocol</code> to round-trip through byte-position arithmetic. The wrapping is a type-level assertion the constructor cannot verify; an empty layout fibre means the emitter falls back to a grammar walk, which is well-defined but uses the default <code>FormatPolicy</code>, not whatever policy you’d have passed to <code>decorate</code>.</li>
+<li>Calling <code>decorate</code> on a protocol that returns <code>EmitVerificationStatus::Generic</code>. <code>decorate</code> runs <code>emit_pretty</code> internally, so its output inherits whatever fidelity the emitter has on that grammar. Check <code>ParserRegistry::emit_verification_status(protocol)</code> first; if the result is <code>Generic</code>, the round-trip kind multiset still satisfies the section law, but byte-for-byte stability across re-emits is not guaranteed.</li>
 </ul>
 <h2 id="see-also-21"><a class="header" href="#see-also-21">See also</a></h2>
 <ul>
+<li><a href="#source-code-emission">Source-code emission</a> for what <code>emit_pretty</code> does internally during the decorate call.</li>
 <li><a href="#parse-full-asts">Parse full ASTs</a> for the get direction of the same lens.</li>
 <li><a href="#round-trip-with-format-preservation">Round-trip with format preservation</a> for the parallel codec story at the byte-position level.</li>
 <li><a href="#protocol-catalogue">Reference: protocol catalogue</a> for the registered grammars.</li>
@@ -3695,8 +3712,25 @@ schema = b.build()
 </div>
 <h2 id="defining-a-new-protocol"><a class="header" href="#defining-a-new-protocol">Defining a new protocol</a></h2>
 <p>To add a custom protocol, see <a href="#build-a-custom-protocol">Build a custom protocol</a>. The minimal recipe is: declare schema and instance GATs (Rust or via the <a href="#build-a-custom-protocol">theory DSL</a>), register a parser and emitter, and add a registration call to the relevant submodule.</p>
+<h2 id="source-code-grammars-and-emit-verification"><a class="header" href="#source-code-grammars-and-emit-verification">Source-code grammars and emit verification</a></h2>
+<p>In addition to the schema-language protocols catalogued above, panproto ships 261 tree-sitter grammars under <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-grammars"><code>crates/panproto-grammars/</code></a>. Each grammar registers a tree-sitter <code>Language</code> plus its <code>node-types.json</code> AST signature; the resulting parser walks source code into a full-AST schema, and <code>emit_pretty</code> renders the schema back to bytes via the structural pipeline described in <a href="#source-code-emission">Source-code emission</a>.</p>
+<p>The emitter’s correctness varies by grammar; <a href="https://docs.rs/panproto-parse/latest/panproto_parse/struct.ParserRegistry.html#method.emit_verification_status"><code>ParserRegistry::emit_verification_status</code></a> reports which tier each protocol falls into:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Meaning</th><th>Currently</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Verified</code></td><td>Has an explicit <code>&lt;lang&gt;_emit_is_fixed_point</code> test in panproto’s suite asserting <code>emit(parse(emit(s))) == emit(s)</code></td><td>bash, bugs, c, cpp, csharp, go, jags, java, javascript, julia, php, python, rust, scheme, stan, typescript</td></tr>
+<tr><td><code>Generic</code></td><td>Registered grammar; emit uses the generic dispatch + universal cassette path; no per-language test asserts correctness</td><td>the remaining ~230 grammars with vendored <code>grammar.json</code></td></tr>
+<tr><td><code>Unsupported</code></td><td>No <code>grammar.json</code> vendored, or protocol not registered</td><td>grammars whose upstream did not ship <code>grammar.json</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>Downstream tooling — <a href="https://github.com/aaronstevenwhite/quivers">quivers</a>’s transpile backends most prominently — should call this API upfront and refuse emit on protocols that return <code>Generic</code> or <code>Unsupported</code>. The full list of verified protocols is maintained as <code>VERIFIED_EMIT_PROTOCOLS</code> in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-parse/src/registry.rs"><code>crates/panproto-parse/src/registry.rs</code></a>.</p>
 <h2 id="see-also-36"><a class="header" href="#see-also-36">See also</a></h2>
 <ul>
+<li><a href="#source-code-emission">Source-code emission</a></li>
 <li><a href="#schemas-as-theories">Schemas as theories</a></li>
 <li><a href="#composing-protocols-by-colimit">Composing protocols by colimit</a></li>
 <li><a href="#theory-dsl-denotational-semantics">Theory DSL: denotational semantics</a></li>
@@ -4197,6 +4231,7 @@ complement : S -&gt; C
 <p>When panproto parses source code, it does two things at once. It records the <em>structure</em> of the program (which nodes are children of which, what kinds they are) and it records the <em>layout</em> of the source (where each token started in the byte stream, what whitespace sat between adjacent tokens, which alternative the parser took at each branch point). The structure is what most downstream operations care about. The layout is what the emitter needs to render bytes back.</p>
 <p>The two parts live together in one schema, but they are separable: you can strip the layout and have a perfectly good abstract description of the program, or you can keep it and round-trip back to source bytes. <code>decorate</code> is the operation that takes the abstract description and rebuilds the layout on top.</p>
 <p>The reason this matters: any tool that wants to <em>generate</em> source code from a panproto schema (a code refactorer, a reverse bridge from a domain model to a target language, a migration that materialises a new file) needs to produce a schema with the layout fibre attached. Before <code>decorate</code>, generators had to manually populate the layout constraints — disguised string concatenation, brittle to grammar revisions. With <code>decorate</code>, the operation is mechanical: write the abstract content, hand it to a grammar, get a schema the emitter can render byte-for-byte.</p>
+<p>This page is the categorical framing: the parse / emit pair as a Grothendieck-style fibration, the section law that ties <code>decorate</code> and <code>forget_layout</code> together, and the cross-crate registry that makes the parse-side machinery available to the lens layer. For the operational mechanics of the emitter itself — how it derives spacing, dispatches CHOICE alternatives, and resolves external tokens through the cassette system — see <a href="#source-code-emission">Source-code emission</a>.</p>
 <h2 id="the-forgetful-u-and-its-section"><a class="header" href="#the-forgetful-u-and-its-section">The forgetful U and its section</a></h2>
 <p>Take a schema <code>S</code> produced by parsing some source bytes. Every vertex carries some constraints. Split them into two groups: the <em>layout</em> constraints (<code>start-byte</code>, <code>end-byte</code>, <code>interstitial-N</code>, <code>chose-alt-fingerprint</code>, <code>chose-alt-child-kinds</code>) and everything else (vertex kind, edges, <code>literal-value</code>, anonymous-token <code>field:*</code>, plus any protocol-defined sorts). The first group is parser-only metadata; the second is the abstract content of the program.</p>
 <p>Stripping the first group is a function:</p>
@@ -4232,6 +4267,7 @@ complement : S -&gt; C
 <p>Two threads bear directly on the parse-emit fibration. The lens-based ancestry runs from Foster et al. (<a href="#foster2007combinators">2007</a>) through Bohannon et al. (<a href="#bohannonfosterpiercepilkiewiczschmitt2008boomerang">2008</a>)’s resourceful lenses (dictionary skeletons, quasi-obliviousness) and Foster et al. (<a href="#fosterpilkiewiczpierce2008quotient">2008</a>)’s quotient lenses (lenses modulo equivalences, canonizers via <code>lquot</code> and <code>rquot</code>), with Lutterkort (<a href="#lutterkort2008augeas">2008</a>) as the closest framework-level analogue. The grammar-based ancestry is Zhu et al. (<a href="#zhukozhanghu2015biyacc">2015</a>)’s BiYacc, whose reflective printer takes both the AST and the original concrete string. de &amp; Visser (<a href="#jongevisser2012algorithm">2012</a>)’s token-stream-and-origin-tracking algorithm is the closest match to the byte-level reconstruction strategy panproto uses inside the layout enrichment driver. See <a href="#related-work-5">Related work</a> for the full discussion.</p>
 <h2 id="see-also-45"><a class="header" href="#see-also-45">See also</a></h2>
 <ul>
+<li><a href="#source-code-emission">Source-code emission</a> for the operational mechanics of <code>emit_pretty</code>: token-role classification, CHOICE dispatch tiers, cassettes, and the verification tier API.</li>
 <li><a href="#decorate-an-abstract-schema">Decorate an abstract schema</a> for the operational recipe.</li>
 <li><a href="#lenses-and-round-trip-laws">Lenses and round-trip laws</a> for the lens machinery the enrichment rides on.</li>
 <li><a href="#architecture">Architecture</a> for the crate-level dependency direction that makes the cross-crate registry necessary.</li>
@@ -4243,8 +4279,131 @@ complement : S -&gt; C
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
-<h1 id="composing-protocols-by-colimit"><a class="header" href="#composing-protocols-by-colimit">Composing protocols by colimit</a></h1>
+<h1 id="source-code-emission"><a class="header" href="#source-code-emission">Source-code emission</a></h1>
 <h2 id="in-plain-terms-5"><a class="header" href="#in-plain-terms-5">In plain terms</a></h2>
+<p>panproto reads source code in 261 languages by sitting on top of <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a>, which has a community-maintained grammar for each one. The reverse direction — writing source code back out from a schema — is harder. tree-sitter grammars are written for parsing; they record the production rules the parser uses but not the spacing, indentation, or alternative-disambiguation choices an emitter needs. panproto’s source-code emitter, <code>emit_pretty</code>, closes that gap by deriving emission behaviour structurally from the same <code>grammar.json</code> the parser already ships.</p>
+<p>The output of every emit is a function of three things: the schema, the production grammar, and a small per-language <em>cassette</em> that supplies defaults for the cases <code>grammar.json</code> cannot describe. Everything else — token roles, bracket pairs, spacing rules, indent triggers, CHOICE dispatch — is derived at construction time from the grammar’s own structure. There is no per-language emitter code.</p>
+<p>A separate <a href="#round-trip-with-format-preservation">format-preserving codec</a> covers structured-data formats (JSON, YAML, TOML, XML, CSV) and guarantees byte-for-byte round-trip. The two systems are independent; this page is about the tree-sitter source-code path.</p>
+<h2 id="the-two-halves-of-the-gap"><a class="header" href="#the-two-halves-of-the-gap">The two halves of the gap</a></h2>
+<p><code>grammar.json</code> lists every rule (<code>SEQ</code>, <code>CHOICE</code>, <code>REPEAT</code>, <code>OPTIONAL</code>, <code>FIELD</code>, <code>ALIAS</code>, <code>SYMBOL</code>, <code>STRING</code>, <code>PATTERN</code>, <code>IMMEDIATE_TOKEN</code>, <code>PREC</code>, <code>TOKEN</code>, <code>RESERVED</code>) the parser walks. It does not record:</p>
+<ol>
+<li><strong>Whitespace and layout.</strong> Whether <code>a + b</code> or <code>a+b</code>; whether <code>if (x) { ... }</code> indents its body; whether <code>def f(): x = 1</code> is one line or two. Tree-sitter strips whitespace during parse; nothing in <code>grammar.json</code> says how to put it back.</li>
+<li><strong>CHOICE disambiguation for synthesised schemas.</strong> When two CHOICE alternatives both admit the same children — <code>binary_expression CHOICE[+, -, *, /, ...]</code> over the same operand kinds — the parser picks via its parse-table state. A schema built from scratch (no parse history) has no record of which alt was taken.</li>
+</ol>
+<p><code>emit_pretty</code> handles the first half structurally and the second half via a layered fallback hierarchy.</p>
+<h2 id="grammar-derived-token-roles"><a class="header" href="#grammar-derived-token-roles">Grammar-derived token roles</a></h2>
+<p>Every <code>STRING</code> literal in a rule body is classified by its <em>structural role</em> at <code>Grammar::from_bytes</code> time. There are six roles, classified per <code>(rule, position)</code> pair, not per token text:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Role</th><th>Identification rule</th></tr>
+</thead>
+<tbody>
+<tr><td><code>BracketOpen</code></td><td>First STRING in a SEQ whose first / last STRINGs satisfy the matched-pair predicate</td></tr>
+<tr><td><code>BracketClose</code></td><td>Last STRING of the same SEQ</td></tr>
+<tr><td><code>Separator</code></td><td>First STRING in a REPEAT body’s inner SEQ</td></tr>
+<tr><td><code>Keyword</code></td><td>STRING matching <code>[a-zA-Z_][a-zA-Z0-9_]*</code></td></tr>
+<tr><td><code>Operator</code></td><td>Non-alphanumeric STRING between two SYMBOL / FIELD members</td></tr>
+<tr><td><code>Terminal</code></td><td>Text from a leaf vertex’s <code>literal-value</code> constraint</td></tr>
+</tbody>
+</table>
+</div>
+<p>The matched-pair predicate identifies <code>()</code>, <code>[]</code>, <code>{}</code>, <code>&lt;&gt;</code>, <code>begin/end</code>, <code>do/done</code>, <code>|...|</code>, <code>&lt;&lt;&gt;&gt;</code>, <code>${}</code>, <code>⟨⟩</code>, and every other bracket-like construct from grammar structure alone. There is no fixed character set: a per-SEQ check that the first and last STRINGs are different (or same-text with at least one wrapped in <code>IMMEDIATE_TOKEN</code>, e.g. regex <code>/.../</code>), with non-STRING content between them, identifies the pair.</p>
+<p>The role-pair lookup table (<code>needs_space_by_role</code>) takes two adjacent token roles and returns whether to emit a space. No token text is inspected by the layout pass; spacing decisions are entirely role-driven. The table is small (one fixed function) and the same for every grammar.</p>
+<h2 id="indent-triggers"><a class="header" href="#indent-triggers">Indent triggers</a></h2>
+<p>A bracket-open token triggers indentation when the content between open and close contains <code>REPEAT</code> or <code>REPEAT1</code> (recursively through CHOICE / SEQ wrappers). This is the structural witness of “block-level content the source author would have indented”. Function bodies, statement lists, struct fields, namespace contents all match; inline constructs like type parameter lists, function arguments, and string interpolation do not, even though they may use the same bracket pair characters in other rules.</p>
+<p>Word-like bracket pairs (<code>function/end</code>, <code>if/end</code>, <code>module/end</code>, etc., the matched-pair shape with alphanumeric delimiters) always trigger indentation — they only appear in block constructs across the 261 vendored grammars.</p>
+<h2 id="choice-dispatch"><a class="header" href="#choice-dispatch">CHOICE dispatch</a></h2>
+<p>At emit time, <code>pick_choice_with_cursor</code> selects which CHOICE alternative to walk for a given vertex. The pipeline composes several structural filters; each rejects alternatives that cannot be the right pick given the cursor’s unconsumed edges and the schema’s constraint witnesses.</p>
+<p>The categorical core is the <strong>acceptance predicate</strong>, <code>accepts_first_edge(prod, edge_field, target_kind)</code>, an inductive function over the production tree:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Production</th><th>Acceptance rule</th></tr>
+</thead>
+<tbody>
+<tr><td><code>STRING</code> / <code>PATTERN</code> / <code>BLANK</code></td><td>reject (consumes no edges)</td></tr>
+<tr><td><code>SYMBOL X</code> (concrete)</td><td><code>edge_field == "child_of"</code> AND <code>target_kind ⊑ X</code></td></tr>
+<tr><td><code>SYMBOL X</code> (hidden / supertype)</td><td><code>accepts(X.rule, edge)</code></td></tr>
+<tr><td><code>ALIAS{c, named:true, value:V}</code></td><td><code>edge_field == "child_of"</code> AND <code>target_kind == V</code></td></tr>
+<tr><td><code>FIELD{name, content}</code></td><td><code>edge_field == name</code> AND <code>content.yield</code> admits <code>target_kind</code></td></tr>
+<tr><td><code>SEQ[m1, m2, ...]</code></td><td><code>accepts(m1, edge)</code> OR (<code>m1</code> ε-able AND <code>accepts(SEQ[m2..], edge)</code>)</td></tr>
+<tr><td><code>CHOICE[a1, a2, ...]</code></td><td>any of <code>accepts(ai, edge)</code></td></tr>
+<tr><td><code>OPTIONAL</code> / <code>REPEAT</code> / <code>REPEAT1</code> / wrappers</td><td><code>accepts(inner, edge)</code></td></tr>
+</tbody>
+</table>
+</div>
+<p><code>accepts_first_edge</code> fuses four previously-separate ad-hoc checks (FIELD-name matching, SYMBOL subtype dispatch, ALIAS rewrite, yield-set admission) into one rule.</p>
+<p>Three discriminators layer on top when more than one alternative passes <code>accepts_first_edge</code>:</p>
+<ol>
+<li><strong>Token-set restriction.</strong> An alt’s FIELD body of shape <code>ALIAS{CHOICE[STRING_1, STRING_2, ...], value: V}</code> constrains the field child’s literal to that set. If the cursor’s field-named edge target carries a literal outside the set, the alt is rejected. This is what disambiguates Go <code>call_expression</code> (alt 0 has <code>function: ALIAS{CHOICE["new","make"], value:"identifier"}</code> — only valid when the function name is literally <code>new</code> or <code>make</code>).</li>
+<li><strong>Alias-source filter.</strong> An alt’s FIELD body of shape <code>ALIAS{SYMBOL X, named: true, value: _}</code> requires the cursor’s field-named edge target to carry a <code>pre-alias-symbol</code> constraint equal to <code>X</code>. The walker records <code>pre-alias-symbol</code> from <code>tree_sitter::Node::grammar_name()</code> whenever it differs from <code>kind()</code>; this is the only ALIAS-disambiguation signal tree-sitter 0.25 / 0.26 actually exposes.</li>
+<li><strong>Positional interstitial scoring.</strong> When the above filters leave more than one candidate, alts are scored against the slice of recorded interstitials from the current cursor position forward. The cursor’s consumed count gives the slice offset, so a trailing CHOICE-with-BLANK at position N sees only the interstitial at gap N, not the comma separators from earlier REPEAT iterations.</li>
+</ol>
+<p>On yield-set ties after every filter, tree-sitter precedence (<code>PREC</code> annotations on alternatives) breaks the tie. This honours the grammar author’s explicit disambiguation rule.</p>
+<h2 id="the-subtype-closure"><a class="header" href="#the-subtype-closure">The subtype closure</a></h2>
+<p><code>accepts_first_edge</code> consults a precomputed <em>subtype closure</em> <code>K ⊑ Y</code> (“a vertex of kind K can appear where the grammar says SYMBOL Y”). The closure is computed once at <code>Grammar::from_bytes</code> time:</p>
+<ol>
+<li>Walk every hidden rule (<code>_</code>-prefixed) and supertype rule’s body to identify which concrete kinds satisfy each dispatch point.</li>
+<li>Walk every named ALIAS (<code>ALIAS{c, named:true, value:V}</code>) and record that the value <code>V</code> is satisfied by every kind reachable from <code>c</code>.</li>
+<li>Close the relation under composition: a Tarjan SCC over the dispatchable-only subgraph (hidden / supertype names form the nodes; satisfying edges are the transitions), producing an exact <code>O(V + E)</code> transitive closure without any iteration cap. The closure is keyed by concrete kind name, so <code>accepts_first_edge</code>’s lookup is <code>O(1)</code>.</li>
+</ol>
+<h2 id="cassettes"><a class="header" href="#cassettes">Cassettes</a></h2>
+<p>The output of every external scanner token must come from somewhere. tree-sitter’s external scanners are C code that produces tokens whose text varies at runtime; <code>grammar.json</code> declares the token name but not the text. Four resolution tiers cascade:</p>
+<ol>
+<li><strong>Anonymous ALIAS.</strong> <code>ALIAS{SYMBOL ext, named:false, value: V}</code> declares that the external token emits exactly <code>V</code>. Read directly from grammar structure.</li>
+<li><strong>CHOICE equivalence.</strong> <code>CHOICE[SYMBOL ext, STRING s]</code> declares that the external token is equivalent to the literal <code>s</code>. Read directly from grammar structure.</li>
+<li><strong>CstComplement.</strong> For tokens whose text was captured at parse time, the schema’s <code>literal-value</code> constraint on the vertex carries the actual text. Used for heredoc bodies, raw-string content, regex patterns, escape sequences.</li>
+<li><strong>Cassette default.</strong> When none of the above applies, a per-grammar <a href="https://docs.rs/panproto-parse/latest/panproto_parse/languages/cassettes/trait.GrammarCassette.html"><code>GrammarCassette</code></a> supplies a default.</li>
+</ol>
+<p>The cassette layer itself composes two parts:</p>
+<ul>
+<li><strong>Universal layer</strong> (<code>common_external_default</code>). A closed table of name-pattern → default-text mappings derived from a structural audit of every vendored grammar. Recognises layout markers (<code>_concat</code>, <code>_no_space</code>, <code>_brace_start</code>), immediate-position markers (<code>_immediate_*</code>), error sentinels (<code>_error_*</code>, <code>error_sentinel</code>), automatic-semicolon family (<code>_automatic_semicolon</code>, <code>_optional_semi</code>), generic string delimiters (<code>string_start</code>, <code>string_end</code>), heredoc / raw-string content (returns <code>""</code> — actual text comes from <code>literal-value</code>), and the descendant-operator family from CSS-like grammars.</li>
+<li><strong>Per-grammar override</strong> (<code>GrammarCassette::external_token_default</code>). A small per-grammar implementation that overrides specific tokens. The lookup composes per-grammar first, universal fallback second, via <code>resolve_external_token</code>.</li>
+</ul>
+<p>The per-grammar overrides exist only where the language needs an override on top of the universal layer. The default empty cassette (used for ~230 of the 261 grammars) delegates entirely to the universal layer.</p>
+<h2 id="immediate_token-as-a-layout-marker"><a class="header" href="#immediate_token-as-a-layout-marker">IMMEDIATE_TOKEN as a layout marker</a></h2>
+<p>tree-sitter’s <code>IMMEDIATE_TOKEN</code> is the grammar’s explicit signal that the wrapped token must have no preceding whitespace. <code>emit_pretty</code> lifts this to a single <code>NoSpace</code> marker emitted at the unique structural site where <code>IMMEDIATE_TOKEN</code> is declared:</p>
+<ul>
+<li>When the production walker enters <code>Production::ImmediateToken</code>, emit <code>NoSpace</code>.</li>
+<li>When <code>emit_vertex</code> enters a vertex whose rule body is <code>IMMEDIATE_TOKEN(...)</code> at the head, emit <code>NoSpace</code> before any content the leaf shortcut or rule-body walk produces.</li>
+</ul>
+<p>The layout pass reads the marker; downstream code does not need to inspect production shapes to recover the property. This is what makes regex literals like <code>/abc/g</code> round-trip tight on both delimiters: <code>regex_pattern</code>’s rule body starts with <code>IMMEDIATE_TOKEN</code>, and the trailing <code>/</code> is wrapped in <code>IMMEDIATE_TOKEN</code> in the <code>regex</code> SEQ.</p>
+<h2 id="the-verification-tier-api"><a class="header" href="#the-verification-tier-api">The verification tier API</a></h2>
+<p><code>emit_pretty</code> is structurally sound for any grammar with a vendored <code>grammar.json</code>, but “structurally sound” is not the same as “the output round-trips”. The fixed-point law <code>emit(parse(emit(s))) == emit(s)</code> is the actual correctness witness, and it has to be exercised per-grammar. <a href="https://docs.rs/panproto-parse/latest/panproto_parse/struct.ParserRegistry.html#method.emit_verification_status"><code>ParserRegistry::emit_verification_status</code></a> reports which tier a protocol falls into:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Status</th><th>Meaning</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Verified</code></td><td>The protocol has a <code>&lt;lang&gt;_emit_is_fixed_point</code> or <code>&lt;lang&gt;_roundtrip</code> test in panproto’s suite asserting the fixed-point law on representative source</td></tr>
+<tr><td><code>Generic</code></td><td>The protocol is registered and the generic dispatch path applies, but no per-language test asserts emit correctness</td></tr>
+<tr><td><code>Unsupported</code></td><td>The protocol is not registered, or its grammar lacks vendored <code>grammar.json</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>Downstream tooling — <a href="https://github.com/aaronstevenwhite/quivers">quivers</a> and other transpile pipelines most prominently — calls this API upfront and refuses emit on any backend returning <code>Generic</code> or <code>Unsupported</code>. No runtime warnings; the silence-vs-noise tradeoff falls on the caller.</p>
+<p>The current <code>Verified</code> set covers 16 protocols: bash, bugs, c, cpp, csharp, go, jags, java, javascript, julia, php, python, rust, scheme, stan, typescript. Adding a protocol to the set requires landing a fixed-point test and appending the name to <code>VERIFIED_EMIT_PROTOCOLS</code> in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-parse/src/registry.rs"><code>crates/panproto-parse/src/registry.rs</code></a>.</p>
+<h2 id="limitations"><a class="header" href="#limitations">Limitations</a></h2>
+<p>Three classes of input fall outside what the structural pipeline can recover:</p>
+<ul>
+<li><strong>By-construction CHOICEs with no constraint signal.</strong> When a schema is built from scratch (no parse history) and a CHOICE is over multiple alternatives that all admit the same children — <code>CHOICE[STRING "model", STRING "data"]</code> for a BUGS block keyword — nothing in the abstract content picks. The universal cassette + per-grammar cassette provide deterministic defaults, but the choice is opinionated and may not match the source author’s intent. <a href="#decorate-an-abstract-schema">Decorate an abstract schema</a> is the canonical workflow.</li>
+<li><strong>Heredoc / raw-string synthesis.</strong> The universal cassette returns <code>""</code> for heredoc / raw-string content because the actual text is parse-time-dependent. Synthesised vertices with such kinds but no captured <code>literal-value</code> will emit empty. Quivers and similar synthesis pipelines should populate <code>literal-value</code> explicitly.</li>
+<li><strong>Operator precedence in synthesised expressions.</strong> No precedence-driven parenthesisation pass exists. Parsed schemas preserve original parens via interstitial constraints, but synthesised <code>binary_expression</code> schemas may emit ambiguously and re-parse to a different tree. A precedence pass on the schema before emit would close this gap; deferred.</li>
+</ul>
+<p>The deeper limitation, structurally: tree-sitter’s parse-table state — the actual record of which CHOICE alternative the parser took at each step — is not exposed through the C API. The only ALIAS-disambiguation signal tree-sitter 0.25 / 0.26 surfaces is <code>grammar_name()</code> (the pre-alias SYMBOL name), which is consumed via <code>pre-alias-symbol</code>. A future upstream tree-sitter change exposing production / reduce IDs would let the emitter trace the parse exactly, eliminating the heuristic tiers entirely.</p>
+<h2 id="see-also-46"><a class="header" href="#see-also-46">See also</a></h2>
+<ul>
+<li><a href="#decorate-an-abstract-schema">Decorate an abstract schema</a> for the synthesise-then-render workflow.</li>
+<li><a href="#layout-enrichment">Layout enrichment</a> for the categorical framing of the parse / emit relationship.</li>
+<li><a href="#round-trip-with-format-preservation">Round-trip with format preservation</a> for the structured-data codec (JSON / YAML / TOML / XML / CSV), which is byte-exact and orthogonal to this system.</li>
+<li><a href="#parse-full-asts">Parse full ASTs</a> for the parser side.</li>
+<li><a href="#protocol-catalogue">Reference: protocol catalogue</a> for the list of supported languages.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="composing-protocols-by-colimit"><a class="header" href="#composing-protocols-by-colimit">Composing protocols by colimit</a></h1>
+<h2 id="in-plain-terms-6"><a class="header" href="#in-plain-terms-6">In plain terms</a></h2>
 <p>Every schema language has a lot in common with every other. They all have records, fields, references between records, ways to constrain what values a field can take, and ways to express that something is one of a fixed set of alternatives. Building each protocol’s schema model from scratch would mean reimplementing those shared pieces dozens of times.</p>
 <p>panproto solves this by defining each shared piece as a small theory, then combining them. The theory of <em>graphs</em> (vertices and edges) is one piece. The theory of <em>constraints</em> (predicates on edge values) is another. The theory of <em>multigraphs</em> (graphs that allow multiple parallel edges between the same pair of vertices) is a third. Each protocol is built by gluing these pieces together at the points where they share structure.</p>
 <p>The gluing operation is called a <em>colimit</em>. Conceptually, it takes several theories plus a description of how their shared parts identify, and produces a single combined theory whose vertices and edges are the union of the inputs, with the shared parts collapsed. The result is a new theory that has all the structure of the inputs and respects all their equations.</p>
@@ -4290,7 +4449,7 @@ complement : S -&gt; C
 <p>A protocol’s registration function is a recipe for combining these. To define a new protocol, see <a href="#build-a-custom-protocol">Build a custom protocol</a>.</p>
 <h2 id="related-work-3"><a class="header" href="#related-work-3">Related work</a></h2>
 <p>Cross-protocol translation has two mature precedents. The data-exchange line (Fagin, Kolaitis, Miller, and Popa on universal solutions and the chase (<a href="#faginkolaitispopa2005data">Fagin et al. 2005</a>); Fagin, Kolaitis, Popa, and Tan on second-order tgds as a closed-under-composition class (<a href="#faginkolaitispopatan2005composing">Fagin et al. 2005</a>)) sets the logical machinery: a universal solution is a colimit; composition needs a Skolemised second-order extension; cores pick out the canonical materialisation. The categorical version is the CQL line of Schultz &amp; Wisnesky (<a href="#schultzwisnesky2017algebraic">2017</a>) and Schultz et al. (<a href="#schultzspivakvasilakopoulouwisnesky2017algebraic">2017</a>), where a schema mapping is a functor, universal solutions are colimits in the category of instances, and data integration is a pushout. The engineering-IR line (<a href="https://calcite.apache.org/">Apache Calcite</a> (<a href="#begolicamachorodriguezhydemiorlemire2018calcite">Begoli et al. 2018</a>), <a href="https://substrait.io/">Substrait</a>, <a href="https://arrow.apache.org/">Apache Arrow</a>, <a href="https://mlir.llvm.org/">MLIR</a>) supplies the hub-and-spoke adapter pattern. panproto’s <code>colimit</code> and <code>pushout_by_name</code> run the same construction over GAT-presented wire-format schemas. See <a href="#5-cross-protocol-translation-and-data-exchange">Related work</a> for the full discussion.</p>
-<h2 id="see-also-46"><a class="header" href="#see-also-46">See also</a></h2>
+<h2 id="see-also-47"><a class="header" href="#see-also-47">See also</a></h2>
 <ul>
 <li><a href="#schemas-as-theories">Schemas as theories</a> for what a single theory is.</li>
 <li><a href="#pushouts-and-merge">Pushouts and merge</a> for the formal pushout construction and the universal property panproto verifies.</li>
@@ -4298,7 +4457,7 @@ complement : S -&gt; C
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="schema-version-control-semantics"><a class="header" href="#schema-version-control-semantics">Schema version control semantics</a></h1>
-<h2 id="in-plain-terms-6"><a class="header" href="#in-plain-terms-6">In plain terms</a></h2>
+<h2 id="in-plain-terms-7"><a class="header" href="#in-plain-terms-7">In plain terms</a></h2>
 <p>panproto-vcs is git, but for schemas. It tracks a history of schemas the way git tracks a history of source files: commits, branches, tags, merges, diffs, blame. The CLI verbs are the same (<code>init</code>, <code>add</code>, <code>commit</code>, <code>branch</code>, <code>merge</code>, <code>log</code>, <code>diff</code>).</p>
 <p>Two things make it different from git applied to the schema files themselves:</p>
 <ol>
@@ -4346,7 +4505,7 @@ complement : S -&gt; C
 <p>A consequence: history rewriting (rebase, amend) on a branch carrying data must lift the data through the rewritten history. panproto-vcs does this; the data is <em>not</em> a passive blob.</p>
 <h2 id="related-work-4"><a class="header" href="#related-work-4">Related work</a></h2>
 <p>Two threads sit directly behind panproto-vcs. The categorical-VCS lineage (Mimram and Di Giusto on patches as morphisms with merge as pushout (<a href="#mimramdigiusto2013categorical">Mimram and Giusto 2013</a>), Angiuli and colleagues’ homotopical patch theory (<a href="#angiuli2014homotopical">Angiuli et al. 2014</a>), Roundy’s Darcs (<a href="#roundy2005darcs">Roundy 2005</a>)) supplies the “merge is the pushout of the divergent patches against the common ancestor” semantics and the diagnosis of conflicts as failures of the pushout to exist. The schema-evolution lineage (Curino, Moon, and Zaniolo’s PRISM workbench (<a href="#curinomoonzaniolo2008graceful">Curino et al. 2008</a>) and Litt, van Hardenberg, and Henry’s Cambria [Litt et al. (<a href="#littvanhardenberghenry2020cambria">2020</a>); Litt et al. (<a href="#littvanhardenberghenry2021cambria">2021</a>)]) supplies the engineering vocabulary: schema-modification operators with forward and backward mappings, quasi-inverses for the operators that lose information, and a directed graph of schema versions connected by lenses. panproto-vcs is the four-artifact unification of these lines, with the protocol theory, schema, data, and lens complement committed together into a single content-addressed DAG. See <a href="#4-schema-versioning-as-structured-merge">Related work</a> for the full discussion.</p>
-<h2 id="see-also-47"><a class="header" href="#see-also-47">See also</a></h2>
+<h2 id="see-also-48"><a class="header" href="#see-also-48">See also</a></h2>
 <ul>
 <li><a href="#init-and-commit">Init and commit</a> for the practical workflow.</li>
 <li><a href="#branch-and-merge">Branch and merge</a>.</li>
@@ -4391,7 +4550,7 @@ complement : S -&gt; C
 <li><strong>Equivalence of two protocols with isomorphic theories but different parsers.</strong> Two protocols whose theories are the same up to isomorphism are still distinct from panproto’s perspective.</li>
 <li><strong>Application-level invariants not expressible in the schema theory.</strong> “Email addresses must contain <code>@</code>” is checked only if the schema actually carries a constraint expressing it.</li>
 </ul>
-<h2 id="see-also-48"><a class="header" href="#see-also-48">See also</a></h2>
+<h2 id="see-also-49"><a class="header" href="#see-also-49">See also</a></h2>
 <ul>
 <li><a href="#schema-version-control-semantics">Schema version control semantics</a> for the merge case.</li>
 <li><a href="#lenses-and-round-trip-laws">Lenses and round-trip laws</a> for the lens case.</li>
@@ -4518,7 +4677,7 @@ complement : S -&gt; C
 <p>The <code>schema</code> binary’s <code>--help</code> text is the source of truth for the CLI surface. The <a href="#cli-reference">reference/cli</a> page is regenerated by an <code>xtask</code> (see <a href="https://github.com/panproto/panproto/blob/main/xtask/src/bin/gen-cli-docs.rs"><code>xtask/src/bin/gen-cli-docs.rs</code></a>) and CI fails if the page is out of date. This is the only generated file in the docs site.</p>
 <h2 id="versioning"><a class="header" href="#versioning">Versioning</a></h2>
 <p>All workspace crates are versioned in lockstep at the workspace level (<code>workspace.package.version</code>). A release of <code>panproto-core 0.46.0</code> implies every panproto-* crate at 0.46.0. The TypeScript SDK and Python SDK follow the same version. See <a href="https://github.com/panproto/panproto/blob/main/CHANGELOG.md">Release process</a> for cadence.</p>
-<h2 id="see-also-49"><a class="header" href="#see-also-49">See also</a></h2>
+<h2 id="see-also-50"><a class="header" href="#see-also-50">See also</a></h2>
 <ul>
 <li><a href="#crate-map">Crate map</a> for one-line descriptions of every crate.</li>
 <li><a href="#what-panproto-verifies">What panproto verifies</a> for the per-crate properties checked.</li>
@@ -4526,7 +4685,7 @@ complement : S -&gt; C
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="related-work-5"><a class="header" href="#related-work-5">Related work</a></h1>
-<h2 id="in-plain-terms-7"><a class="header" href="#in-plain-terms-7">In plain terms</a></h2>
+<h2 id="in-plain-terms-8"><a class="header" href="#in-plain-terms-8">In plain terms</a></h2>
 <p>panproto sits at the intersection of five older research lines: schemas as algebraic theories, bidirectional lenses, format-preserving parsing, structured version control, and cross-protocol data exchange. Each of those lines has its own canonical papers, its own working systems, and its own vocabulary. This chapter walks each one in turn, names the works that shaped panproto’s design, and says where panproto’s contribution differs.</p>
 <p>The chapter is a capstone. Each individual idea is treated in depth in the topical explanation chapters; the goal here is the relationship between panproto and the literature, in one place.</p>
 <h2 id="1-schemas-as-theories"><a class="header" href="#1-schemas-as-theories">1. Schemas as theories</a></h2>
@@ -4611,7 +4770,7 @@ complement : S -&gt; C
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="shared-notation"><a class="header" href="#shared-notation">Shared notation</a></h1>
 <p>This page defines the meta-notation reused across the other denotational-semantics pages. Read this first.</p>
-<h2 id="in-plain-terms-8"><a class="header" href="#in-plain-terms-8">In plain terms</a></h2>
+<h2 id="in-plain-terms-9"><a class="header" href="#in-plain-terms-9">In plain terms</a></h2>
 <p>We use two complementary notations:</p>
 <ul>
 <li><em>Inference rules</em>, of the form <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.0309em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3449em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">conclusion</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">premises</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>, define a relation (typically a typing relation <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">Γ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⊢</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span></span></span></span>) inductively as the smallest relation closed under the rules.</li>
@@ -4644,14 +4803,14 @@ complement : S -&gt; C
 <p>In the expression language, evaluation is total within a step budget but the budget can be exceeded. We model this by adjoining a bottom element <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">⊥</span></span></span></span> to the value domain: <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">⊥</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∪</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">⊥</span><span class="mclose">}</span></span></span></span>. Reaching <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">⊥</span></span></span></span> corresponds to <code>ExprError::StepLimitExceeded</code> at runtime.</p>
 <h2 id="equality"><a class="header" href="#equality">Equality</a></h2>
 <p>Equality between values, types, and theories is definitional unless otherwise stated. Equality between schemas is structural up to alpha-renaming of bound names. Equality between morphisms is judgemental: <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span> when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span></span></span></span> have the same source, the same target, and agree on every input.</p>
-<h2 id="see-also-50"><a class="header" href="#see-also-50">See also</a></h2>
+<h2 id="see-also-51"><a class="header" href="#see-also-51">See also</a></h2>
 <ul>
 <li><a href="#expression-language-denotational-semantics">Expression language</a> for the first user of these conventions.</li>
 <li>The other pages in this cluster all build on these conventions.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="expression-language-denotational-semantics"><a class="header" href="#expression-language-denotational-semantics">Expression language: denotational semantics</a></h1>
-<h2 id="in-plain-terms-9"><a class="header" href="#in-plain-terms-9">In plain terms</a></h2>
+<h2 id="in-plain-terms-10"><a class="header" href="#in-plain-terms-10">In plain terms</a></h2>
 <p>The expression language <code>panproto-expr</code> is what you use to describe field-level transforms inside a migration (“the new <code>full_name</code> field is the old <code>first</code> plus a space plus the old <code>last</code>”) and predicates inside a query (“only records where <code>created_at &gt; '2024-01-01'</code>”). Everything in the language is pure: no IO, no mutation, no clock reads, no random numbers. Two expressions that look the same always do the same thing. Every expression terminates within a fixed number of evaluation steps.</p>
 <p>This page describes what those properties mean and what the evaluator actually computes.</p>
 <h2 id="surface-syntax-1"><a class="header" href="#surface-syntax-1">Surface syntax</a></h2>
@@ -4730,7 +4889,7 @@ literal ::= int | float | str | bool | "null"
 <li><strong>Step-budget tuning.</strong> The budget is a parameter set at the outermost call. The semantics treats it as fixed; the language itself does not expose it.</li>
 <li><strong>Floating-point determinism across architectures.</strong> <code>Float</code> operations follow IEEE 754, but bit-level reproducibility across hardware is not guaranteed.</li>
 </ul>
-<h2 id="see-also-51"><a class="header" href="#see-also-51">See also</a></h2>
+<h2 id="see-also-52"><a class="header" href="#see-also-52">See also</a></h2>
 <ul>
 <li><a href="#expression-language-reference">Reference: expression-language</a> for the builtin catalogue.</li>
 <li><a href="#apply-field-transforms">How-to: apply field transforms</a> for usage.</li>
@@ -4738,7 +4897,7 @@ literal ::= int | float | str | bool | "null"
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="lens-dsl-denotational-semantics"><a class="header" href="#lens-dsl-denotational-semantics">Lens DSL: denotational semantics</a></h1>
-<h2 id="in-plain-terms-10"><a class="header" href="#in-plain-terms-10">In plain terms</a></h2>
+<h2 id="in-plain-terms-11"><a class="header" href="#in-plain-terms-11">In plain terms</a></h2>
 <p>A lens DSL spec is a recipe for building a bidirectional transform between two schemas. You declare which fields map to which (with optional value-level expressions), and the compiler produces a triple of functions that satisfies three round-trip laws by construction. This page pins down what the spec compiles to and what “satisfies the laws” means.</p>
 <h2 id="surface-syntax-2"><a class="header" href="#surface-syntax-2">Surface syntax</a></h2>
 <p>The Nickel surface (canonical authoring form). JSON and YAML surfaces are isomorphic via <code>serde</code>.</p>
@@ -4851,7 +5010,7 @@ pub enum Step {
 <li><strong>Time complexity of <code>put</code>.</strong> Some combinators have linear <code>put</code> cost in the size of the source; the semantics fixes the value, not the cost.</li>
 <li><strong>Equivalence of two distinct DSL specs that compile to the same lens.</strong> The DSL deliberately exposes step ordering even when steps commute; canonicalisation is left to the user.</li>
 </ul>
-<h2 id="see-also-52"><a class="header" href="#see-also-52">See also</a></h2>
+<h2 id="see-also-53"><a class="header" href="#see-also-53">See also</a></h2>
 <ul>
 <li><a href="#lens-combinator-reference">Reference: lens combinators</a> for the combinator algebra.</li>
 <li><a href="#write-lenses-in-the-lens-dsl">How-to: write lenses in the lens DSL</a>.</li>
@@ -4861,7 +5020,7 @@ pub enum Step {
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="theory-dsl-denotational-semantics"><a class="header" href="#theory-dsl-denotational-semantics">Theory DSL: denotational semantics</a></h1>
-<h2 id="in-plain-terms-11"><a class="header" href="#in-plain-terms-11">In plain terms</a></h2>
+<h2 id="in-plain-terms-12"><a class="header" href="#in-plain-terms-12">In plain terms</a></h2>
 <p>The theory DSL is what you use to declare a new protocol’s schema language. You write down the basic kinds of thing the protocol talks about (its <em>sorts</em>), the constructors that build them (its <em>operations</em>), and the equations they satisfy. The DSL compiles to a generalized algebraic theory (GAT) that the rest of panproto consumes uniformly.</p>
 <p>This page pins down what a GAT presentation is, what category it generates, and what counts as a valid presentation.</p>
 <h2 id="surface-syntax-3"><a class="header" href="#surface-syntax-3">Surface syntax</a></h2>
@@ -4943,7 +5102,7 @@ pub struct TheorySpec {
 <li><strong>Infinitary signatures.</strong> Operations have finite arity. There is no way to declare an operation that takes an unbounded list of arguments.</li>
 <li><strong>Term rewriting decidability.</strong> Equation orientation and confluence are the user’s responsibility; the colimit construction does not check for a complete rewriting system.</li>
 </ul>
-<h2 id="see-also-53"><a class="header" href="#see-also-53">See also</a></h2>
+<h2 id="see-also-54"><a class="header" href="#see-also-54">See also</a></h2>
 <ul>
 <li><a href="#pushouts-and-merge">Pushouts and merge</a> for the colimit construction and verified universal property.</li>
 <li><a href="#composing-protocols-by-colimit">Composing protocols by colimit (plain-terms)</a>.</li>
@@ -4953,7 +5112,7 @@ pub struct TheorySpec {
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="pushouts-and-merge"><a class="header" href="#pushouts-and-merge">Pushouts and merge</a></h1>
-<h2 id="in-plain-terms-12"><a class="header" href="#in-plain-terms-12">In plain terms</a></h2>
+<h2 id="in-plain-terms-13"><a class="header" href="#in-plain-terms-13">In plain terms</a></h2>
 <p>When two branches of a schema repository diverge from a common ancestor and you want to merge them, you need a precise rule for combining their changes. panproto’s rule is the <em>pushout</em> construction from category theory.</p>
 <p>A pushout is the smallest object that contains two given objects and respects the way they share a common subobject. For schemas, “smallest” means containing exactly the union of the two branches’ changes, with their shared subschema identified rather than duplicated. The construction has a universal property: any other schema that also contains both branches admits a unique morphism from the pushout. That uniqueness is what makes the merge result <em>the</em> answer rather than <em>an</em> answer.</p>
 <p>panproto-vcs does not just compute the pushout. It also <em>verifies</em> the universal property at runtime: it constructs an alternative cocone and checks that the unique mediator exists. If the check fails, the merge raises an error rather than producing a wrong result.</p>
@@ -4994,7 +5153,7 @@ pub struct TheorySpec {
 <li><strong>Three-way merges with non-pushout common ancestors.</strong> If the branches’ divergence cannot be expressed as a span <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">←</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> (for instance, if the ancestor was rewritten by a rebase), the merge falls back to an interactive resolution; the formal pushout is not defined.</li>
 <li><strong>Merge time complexity.</strong> The construction is polynomial in the size of the inputs but no specific bound is guaranteed.</li>
 </ul>
-<h2 id="see-also-54"><a class="header" href="#see-also-54">See also</a></h2>
+<h2 id="see-also-55"><a class="header" href="#see-also-55">See also</a></h2>
 <ul>
 <li><a href="#schema-version-control-semantics">Schema version control semantics (plain terms)</a>.</li>
 <li><a href="#composing-protocols-by-colimit">Composing protocols by colimit</a> for the same construction applied at protocol-registration time.</li>
@@ -5003,7 +5162,7 @@ pub struct TheorySpec {
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="protolens-composition-1"><a class="header" href="#protolens-composition-1">Protolens composition</a></h1>
-<h2 id="in-plain-terms-13"><a class="header" href="#in-plain-terms-13">In plain terms</a></h2>
+<h2 id="in-plain-terms-14"><a class="header" href="#in-plain-terms-14">In plain terms</a></h2>
 <p>A <em>protolens</em> is a lens recipe parameterised over a schema rather than a fixed pair of schemas. Where a lens lives between two specific schemas <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span>, a protolens is a rule that says “for <em>any</em> schema <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Σ</span></span></span></span> satisfying some precondition, here is a lens from <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Σ</span></span></span></span> to a derived schema <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord">Σ</span><span class="mclose">)</span></span></span></span>.” Applying a protolens to a fleet of related schemas is one operation; you do not write one lens per schema.</p>
 <p>Composing protolenses requires more care than composing plain lenses. Two protolenses can be glued together end-to-end only when the schema produced by the first is precisely the schema consumed by the second. “Precisely” here is structural: the intermediate schemas have to agree as endofunctors on theories, not just on names. This page pins down that condition.</p>
 <h2 id="semantic-domain-3"><a class="header" href="#semantic-domain-3">Semantic domain</a></h2>
@@ -5041,7 +5200,7 @@ pub struct TheorySpec {
 <li><strong>Identity-sourced protolens equivalence beyond structural.</strong> Two protolenses that compute the same transform via different intermediate forms are treated as distinct.</li>
 <li><strong>Performance characteristics of fused vs sequential.</strong> The choice is semantic-equivalent; fused is preferred for metadata reasons, not performance.</li>
 </ul>
-<h2 id="see-also-55"><a class="header" href="#see-also-55">See also</a></h2>
+<h2 id="see-also-56"><a class="header" href="#see-also-56">See also</a></h2>
 <ul>
 <li><a href="#lens-dsl-denotational-semantics">Lens DSL: denotational semantics</a> for the underlying lens model and the three laws.</li>
 <li><a href="#lens-combinator-reference">Reference: lens combinators</a> for the protolens module and entry points.</li>
@@ -5050,7 +5209,7 @@ pub struct TheorySpec {
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="repl-command-language-denotational-semantics"><a class="header" href="#repl-command-language-denotational-semantics">REPL command language: denotational semantics</a></h1>
-<h2 id="in-plain-terms-14"><a class="header" href="#in-plain-terms-14">In plain terms</a></h2>
+<h2 id="in-plain-terms-15"><a class="header" href="#in-plain-terms-15">In plain terms</a></h2>
 <p>The REPL is the interactive surface for inspecting theories and terms: load a theory document, switch the active theory, ask for the type of a term, normalize a term under the directed equations, enumerate the free model. Every interactive command is a small operation on a stateful environment that holds the loaded theories, the loaded morphisms, and a pointer to the currently active theory.</p>
 <p>This page pins down what each command does, what state it touches, and what the bare-term-typecheck path means.</p>
 <h2 id="surface-syntax-4"><a class="header" href="#surface-syntax-4">Surface syntax</a></h2>
@@ -5110,7 +5269,7 @@ pub enum ReplLine {
 <li><strong>Concurrent state.</strong> A <code>Repl</code> instance is single-threaded. The shape above does not model concurrent line submission.</li>
 <li><strong>Persistent history.</strong> The REPL relies on <code>rustyline</code> for history; the persistence model is <code>rustyline</code>’s, not panproto’s.</li>
 </ul>
-<h2 id="see-also-56"><a class="header" href="#see-also-56">See also</a></h2>
+<h2 id="see-also-57"><a class="header" href="#see-also-57">See also</a></h2>
 <ul>
 <li><a href="#theory-dsl-denotational-semantics">Theory DSL: denotational semantics</a> for what <code>:load</code> consumes.</li>
 <li><a href="#cli-reference">Reference: CLI</a> for the <code>schema repl</code> invocation that wraps this.</li>
@@ -5137,12 +5296,24 @@ pub enum ReplLine {
 <p>The lens between byte sequences and decorated schemas. The get direction is <code>parse</code>; the put direction is <code>emit_pretty</code>. The complement (the data the schema does not pin down) is the byte-position layout fibre. Verified at the schema-level retraction law granularity by <code>panproto_parse::parse_emit_lens::check_emit_parse</code> and <code>check_parse_emit</code>. <em>Intuition:</em> the lens whose <code>get</code> reads source code into a schema and whose <code>put</code> writes a schema back to source code.</p>
 <h2 id="parse--decorate--emit-lens"><a class="header" href="#parse--decorate--emit-lens">Parse / decorate / emit lens</a></h2>
 <p>The schema-level version of the parse / emit lens, with the byte step skipped. The get direction is <code>forget_layout : DecoratedSchema → AbstractSchema</code>; the put direction is <code>decorate : AbstractSchema → DecoratedSchema</code>. The section law <code>forget_layout ∘ decorate ≅ id</code> holds up to kind / edge multiset equivalence. <em>Intuition:</em> the lens between abstract and decorated schemas, parameterised by a <code>LayoutPolicy</code>.</p>
+<h2 id="grammar-cassette"><a class="header" href="#grammar-cassette">Grammar cassette</a></h2>
+<p>A per-language implementation of <a href="https://docs.rs/panproto-parse/latest/panproto_parse/languages/cassettes/trait.GrammarCassette.html"><code>GrammarCassette</code></a> supplying default text for external scanner tokens that <code>grammar.json</code> cannot describe (variable-text delimiters, layout markers, scanner-state markers). Composed with the universal pattern table <code>common_external_default</code> via <code>resolve_external_token</code>: per-grammar override first, universal layer as fallback. <em>Intuition:</em> the small per-language patch sitting on top of the grammar-derived emit pipeline, supplying text for tokens whose actual content <code>grammar.json</code> alone cannot pin down.</p>
+<h2 id="token-role"><a class="header" href="#token-role">Token role</a></h2>
+<p>Structural classification of every STRING literal in a grammar rule, derived from the literal’s position in the production body. Six variants of <a href="https://docs.rs/panproto-parse/latest/panproto_parse/emit_pretty/enum.TokenRole.html"><code>panproto_parse::emit_pretty::TokenRole</code></a>: <code>BracketOpen</code>, <code>BracketClose</code>, <code>Separator</code>, <code>Keyword</code>, <code>Operator</code>, <code>Connector</code>, plus <code>Terminal</code> for emitted leaf vertices. Computed once at <code>Grammar::from_bytes</code> time and stored as the per-rule <code>token_roles</code> map; consumed by the layout pass via the <code>needs_space_by_role</code> table. <em>Intuition:</em> what the emitter uses instead of inspecting the token text — every spacing decision follows from the role pair, not from any character set.</p>
+<h2 id="acceptance-predicate"><a class="header" href="#acceptance-predicate">Acceptance predicate</a></h2>
+<p>The inductive function <code>accepts_first_edge(production, edge_field, target_kind)</code> over the production tree that decides whether a given alternative is structurally compatible with the cursor’s first unconsumed edge. Fuses FIELD-name matching, SYMBOL subtype dispatch, ALIAS rewrite, and yield-set admission into a single categorical rule. Implemented in <code>panproto-parse::emit_pretty::accepts_first_edge</code>. <em>Intuition:</em> the categorical core of CHOICE dispatch; the predicate the emitter consults before any heuristic tiebreaker.</p>
+<h2 id="pre-alias-symbol"><a class="header" href="#pre-alias-symbol">Pre-alias symbol</a></h2>
+<p>The walker-recorded <code>pre-alias-symbol</code> constraint capturing <code>tree_sitter::Node::grammar_name()</code> (the SYMBOL name as it appears in the rule body before <code>ALIAS { value: V }</code> rewriting). Only recorded when it differs from the post-alias <code>kind()</code>. Consumed by <code>alt_satisfies_pre_alias_constraints</code> as the alias-source discriminator: an alt with a named ALIAS over a SYMBOL is structurally compatible iff the cursor edge’s <code>pre-alias-symbol</code> matches that SYMBOL. <em>Intuition:</em> the only ALIAS-disambiguation signal tree-sitter 0.25 / 0.26 surfaces through its C API.</p>
+<h2 id="emit-verification-status"><a class="header" href="#emit-verification-status">Emit verification status</a></h2>
+<p>The programmatic tier reported by <a href="https://docs.rs/panproto-parse/latest/panproto_parse/struct.ParserRegistry.html#method.emit_verification_status"><code>ParserRegistry::emit_verification_status</code></a> classifying every protocol as <code>Verified</code> (has an explicit <code>&lt;lang&gt;_emit_is_fixed_point</code> test in panproto’s suite), <code>Generic</code> (registered with vendored <code>grammar.json</code>, no per-language test), or <code>Unsupported</code> (no grammar, emit will fail). Downstream tooling calls this upfront to refuse emit on protocols whose correctness has not been exercised. <em>Intuition:</em> panproto’s own honesty signal about which protocols its test suite verifies for round-trip correctness.</p>
+<h2 id="fixed-point-law-emit"><a class="header" href="#fixed-point-law-emit">Fixed-point law (emit)</a></h2>
+<p>The correctness witness for source-code emission: <code>emit(parse(emit(s))) == emit(s)</code>. Asserted per-protocol by <code>&lt;lang&gt;_emit_is_fixed_point</code> regression tests in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-parse/tests/emit_pretty_regressions.rs"><code>crates/panproto-parse/tests/emit_pretty_regressions.rs</code></a>. Stronger than the section law (which holds at the kind / edge multiset level); equality is byte-for-byte after the first emit. <em>Intuition:</em> the emitter has reached a fixed point of the parse / emit cycle, which is what guarantees that downstream re-parsing pipelines remain stable.</p>
 <h2 id="section-law"><a class="header" href="#section-law">Section law</a></h2>
 <p>For the parse / decorate / emit lens at <code>protocol</code> under <code>policy</code>:</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mord text"><span class="mord">forget_layout</span></span><span class="mopen">(</span><span class="mord text"><span class="mord">decorate</span></span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord text"><span class="mord">policy</span></span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel"><span class="mrel">≅</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">kin</span><span class="mord mathnormal mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span><span class="mord">.</span></span></span></span></span></p>
 <p>The equivalence is up to vertex-id renaming and the vertex-kind / edge-shape multiset. Verified for every grammar with a parse fixture in <code>crates/panproto-parse/tests/decorate_section_law.rs</code>. <em>Intuition:</em> decorating an abstract schema and stripping the layout back returns the same abstract content modulo the fresh IDs the parser invents.</p>
-<h2 id="see-also-57"><a class="header" href="#see-also-57">See also</a></h2>
-<p>For longer treatments: <a href="#schemas-as-theories">Schemas as theories</a>, <a href="#lenses-and-round-trip-laws">Lenses and round-trip laws</a>, <a href="#layout-enrichment">Layout enrichment</a>.</p>
+<h2 id="see-also-58"><a class="header" href="#see-also-58">See also</a></h2>
+<p>For longer treatments: <a href="#source-code-emission">Source-code emission</a>, <a href="#schemas-as-theories">Schemas as theories</a>, <a href="#lenses-and-round-trip-laws">Lenses and round-trip laws</a>, <a href="#layout-enrichment">Layout enrichment</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="bibliography"><a class="header" href="#bibliography">Bibliography</a></h1>
 <script type="text/javascript">
