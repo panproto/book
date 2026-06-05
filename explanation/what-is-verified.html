@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-52498229.js";
+            window.path_to_searchindex_js = "../searchindex-c19a58be.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-7f10f53f.js"></script>
@@ -198,6 +198,7 @@
 <tr><td>Lens GetPut law: <code>put(s, get(s), complement(s)) = s</code></td><td>CI property tests, every lens combinator</td><td>Property-test failure with shrunk counterexample</td><td><code>panproto-lens/src/laws.rs</code></td></tr>
 <tr><td>Lens PutGet law: <code>get(put(s, v, c)) = v</code></td><td>CI property tests, every lens combinator</td><td>Property-test failure with shrunk counterexample</td><td><code>panproto-lens/src/laws.rs</code></td></tr>
 <tr><td>Lens PutPut law: <code>put(put(s, v₁, c), v₂, c) = put(s, v₂, c)</code></td><td>CI property tests, every lens combinator</td><td>Property-test failure with shrunk counterexample</td><td><code>panproto-lens/src/laws.rs</code></td></tr>
+<tr><td>Source-code emit round-trips its grammar’s full corpus (<code>emit(parse(emit(s))) == emit(s)</code> plus vertex-kind and edge-shape multiset preservation, on every corpus entry, for every protocol in the verified set)</td><td>CI test (<code>emit_corpus_audit</code>)</td><td>Test panic naming the protocol and first divergent corpus entry</td><td><a href="https://github.com/panproto/panproto/blob/main/crates/panproto-parse/tests/emit_corpus_audit.rs"><code>panproto-parse/tests/emit_corpus_audit.rs</code></a></td></tr>
 <tr><td>Complement composition compatibility</td><td>Runtime, on <code>Complement::compose</code></td><td><code>LensError::ComplementFingerprintMismatch</code></td><td><code>panproto-lens/src/asymmetric.rs</code></td></tr>
 <tr><td>Complement composition agreement</td><td>Runtime, on <code>Complement::compose</code></td><td><code>LensError::ComplementConflict</code> (with offending key)</td><td><code>panproto-lens/src/asymmetric.rs</code></td></tr>
 <tr><td>Protolens composition: structural equality of the intermediate endofunctor</td><td>Runtime, on <code>vertical_compose</code></td><td><code>LensError::CompositionMismatch</code></td><td><code>panproto-lens/src/protolens.rs</code></td></tr>
@@ -210,6 +211,15 @@
 </tbody>
 </table>
 </div>
+<h2 id="source-code-emit-coverage"><a class="header" href="#source-code-emit-coverage">Source-code emit coverage</a></h2>
+<p>The source-code emitter (<code>emit_pretty</code>) is verified against the full upstream <code>test/corpus/</code> of <strong>255 of the 261</strong> vendored tree-sitter grammars: every corpus entry round-trips under the strict oracle described in the row above. The remaining six are blocked upstream, not by the emitter:</p>
+<ul>
+<li><strong><code>comment</code>, <code>todotxt</code>, <code>wolfram</code></strong> model their content as opaque free-text spans, so the grammar gives the emitter no structure to reconstruct and the captured text is dropped on emit (a corruption the char-multiset detector flags).</li>
+<li><strong><code>less</code></strong> is compiled against an older tree-sitter ABI than the 0.26 runtime loads, so its parser yields only error nodes; there is nothing to round-trip until the grammar is re-vendored.</li>
+<li><strong><code>move</code></strong> has no <code>let</code>-binding production in the vendored grammar, so real source already parses to an error tree on the way in; this is a parse-layer defect, not an emit one.</li>
+<li><strong><code>test</code></strong> parses tree-sitter’s own corpus format, whose <code>===</code> and <code>---</code> delimiters collide with the corpus reader, so it cannot be exercised inside the harness.</li>
+</ul>
+<p>The six are the irreducible residual under the current grammars and runtime; closing any of them needs an upstream grammar fix, an ABI re-vendor, or a harness change rather than emitter work.</p>
 <h2 id="what-is-not-verified"><a class="header" href="#what-is-not-verified">What is <em>not</em> verified</a></h2>
 <p>The following properties are <em>not</em> mechanically checked and should not be assumed:</p>
 <ul>

@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-52498229.js";
+            window.path_to_searchindex_js = "../searchindex-c19a58be.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-7f10f53f.js"></script>
@@ -190,8 +190,8 @@
 <h2 id="a-note-on-schema-input"><a class="header" href="#a-note-on-schema-input">A note on schema input</a></h2>
 <p><code>schema add</code> accepts three kinds of input:</p>
 <ul>
-<li>a source file in a language the parser registry knows (TypeScript, Rust, Python, etc.) — parsed via tree-sitter into a full-AST schema;</li>
-<li>a directory — parsed as a project into a unified schema; or</li>
+<li>a source file in a language the parser registry knows (TypeScript, Rust, Python, etc.), parsed via tree-sitter into a full-AST schema;</li>
+<li>a directory, parsed as a project into a unified schema; or</li>
 <li>a <code>.json</code> file whose content is a serialised <code>panproto-schema::Schema</code> struct.</li>
 </ul>
 <p>The hand-authored Schema JSON format is non-trivial (it’s the in-memory representation, not a pretty document language), so most workflows use the first two. This tutorial uses the source-file path.</p>

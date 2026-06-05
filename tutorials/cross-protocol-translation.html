@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-52498229.js";
+            window.path_to_searchindex_js = "../searchindex-c19a58be.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-7f10f53f.js"></script>
@@ -194,7 +194,7 @@
 <li>both schemas in a <strong>custom composed theory</strong> authored via the theory DSL (see <a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a>), or</li>
 <li>a <strong>hand-authored lens</strong> in the lens DSL bridging the two (see <a href="../how-to/lens-dsl.html">Write a lens (DSL)</a>).</li>
 </ul>
-<p>The CLI’s <code>schema lens</code> subcommands currently resolve <code>--protocol</code> against the built-in <code>atproto</code> only; everything multi-protocol lives in the SDK. The auto-aligning <code>Panproto.lens(from, to)</code> works at the WASM lens level but returns raw <code>WInstance</code> graphs rather than JS-native records, so it is not the right tool for a tutorial. We drive the translation from <code>Panproto.migration(from, to)</code> instead — its <code>liftJson</code>/<code>getJson</code>/<code>putJson</code> wrappers handle JSON encoding/decoding for you.</p>
+<p>The CLI’s <code>schema lens</code> subcommands currently resolve <code>--protocol</code> against the built-in <code>atproto</code> only; everything multi-protocol lives in the SDK. The auto-aligning <code>Panproto.lens(from, to)</code> works at the WASM lens level but returns raw <code>WInstance</code> graphs rather than JS-native records, so it is not the right tool for a tutorial. We drive the translation from <code>Panproto.migration(from, to)</code> instead: its <code>liftJson</code>/<code>getJson</code>/<code>putJson</code> wrappers handle JSON encoding/decoding for you.</p>
 <h2 id="step-1-build-the-source-schema"><a class="header" href="#step-1-build-the-source-schema">Step 1: build the source schema</a></h2>
 <p>Create <code>src/cross.ts</code>:</p>
 <pre><code class="language-ts">import { Panproto } from '@panproto/core';
@@ -213,7 +213,7 @@ const source = atproto.schema()
   .build();
 </code></pre>
 <h2 id="step-2-build-the-target-schema"><a class="header" href="#step-2-build-the-target-schema">Step 2: build the target schema</a></h2>
-<p>A second <code>atproto</code> schema for the same <code>user</code> model with different field names — <code>display_name</code> instead of <code>name</code>, <code>email_address</code> instead of <code>email</code>:</p>
+<p>A second <code>atproto</code> schema for the same <code>user</code> model with different field names (<code>display_name</code> instead of <code>name</code>, <code>email_address</code> instead of <code>email</code>):</p>
 <pre><code class="language-ts">const target = atproto.schema()
   .vertex('user',              'object')
   .vertex('user.display_name', 'string')
@@ -224,7 +224,7 @@ const source = atproto.schema()
   .edge('user', 'user.years',         'prop', { name: 'years' })
   .build();
 </code></pre>
-<p>The shapes differ structurally — different vertex ids, different edge names — but represent the same information.</p>
+<p>The shapes differ structurally (different vertex ids, different edge names) but represent the same information.</p>
 <h2 id="step-3-declare-the-migration"><a class="header" href="#step-3-declare-the-migration">Step 3: declare the migration</a></h2>
 <pre><code class="language-ts">const mig = p.migration(source, target)
   .map('user',       'user')
@@ -245,7 +245,7 @@ const source = atproto.schema()
   )
   .compile();
 </code></pre>
-<p><code>.map(srcVertex, tgtVertex)</code> aligns vertices; <code>.mapEdge(srcEdge, tgtEdge)</code> aligns edges. You need both — vertex-only mappings produce a migration that drops every field on lift. For larger schemas, <code>Panproto.lens(from, to)</code> and <code>LensHandle.autoGenerate</code> will infer many of these alignments via name similarity and structural priors, but the resulting <code>LensHandle</code> operates on opaque <code>WInstance</code> bytes rather than JS-native records.</p>
+<p><code>.map(srcVertex, tgtVertex)</code> aligns vertices; <code>.mapEdge(srcEdge, tgtEdge)</code> aligns edges. You need both: vertex-only mappings produce a migration that drops every field on lift. For larger schemas, <code>Panproto.lens(from, to)</code> and <code>LensHandle.autoGenerate</code> will infer many of these alignments via name similarity and structural priors, but the resulting <code>LensHandle</code> operates on opaque <code>WInstance</code> bytes rather than JS-native records.</p>
 <h2 id="step-4-convert-a-record"><a class="header" href="#step-4-convert-a-record">Step 4: convert a record</a></h2>
 <pre><code class="language-ts">const alice = { name: 'Alice', email: 'alice@example.com', years: 30 };
 const converted = mig.liftJson(alice, 'user');
