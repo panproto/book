@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-3d8c3f5e.js";
+            window.path_to_searchindex_js = "../searchindex-db0c3233.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f7bc0f04.js"></script>
+        <script src="../toc-6731c879.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -195,7 +195,10 @@
 <p>To also type-check at the GAT level (equivalent to a separate <code>schema typecheck</code>):</p>
 <pre><code class="language-sh">schema check --src schemas/v1.json --tgt schemas/v2.json --mapping migrations/v1-to-v2.json --typecheck
 </code></pre>
-<p>For schema-level diff classification, generate a lens between the two schemas:</p>
+<p>For schema-level diff classification, run <code>schema compat</code>:</p>
+<pre><code class="language-sh">schema compat schemas/v1.json schemas/v2.json --protocol atproto
+</code></pre>
+<p>It prints the changes grouped by tier and exits 0 when the change is non-breaking, 1 when it is breaking. To inspect the generated lens chain as well, pair <code>schema lens generate</code> with <code>schema diff --lens</code>:</p>
 <pre><code class="language-sh">schema lens generate --protocol atproto schemas/v1.json schemas/v2.json --save lens.json
 schema diff schemas/v1.json schemas/v2.json --lens --save lens.json
 </code></pre>
@@ -212,16 +215,16 @@ mig.put(view, complement);                       // backward
 </code></pre>
 <p><code>p.checkExistence(src, tgt, builder)</code> runs the same existence check as the CLI. Python and Rust SDKs use the same shape with language-idiomatic naming.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<p><code>schema check</code> exits zero if the migration is well-defined (existence conditions hold). For diff classification, use <code>panproto.diff_and_classify(old, new, protocol)</code> in Python, or <code>panproto_check::diff(old, new)</code> followed by <code>panproto_check::classify(&amp;diff, &amp;protocol)</code> in Rust. In TypeScript the equivalent is <code>Panproto.diffFull(old, new).classify(protocol)</code>, which returns a <code>CompatReport</code> with one of:</p>
+<p><code>schema check</code> exits zero if the migration is well-defined (existence conditions hold). For diff classification, use <code>panproto.diff_and_classify(old, new, protocol)</code> in Python, or <code>panproto_check::diff(old, new)</code> followed by <code>panproto_check::classify(&amp;diff, &amp;protocol)</code> in Rust. In TypeScript the equivalent is <code>Panproto.diffFull(old, new).classify(protocol)</code>. Each returns a <code>CompatReport</code> whose <code>classification</code> field records one of three tiers, alongside a list of breaking changes, a list of non-breaking changes, and a <code>compatible</code> boolean:</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Classification</th><th>Meaning</th></tr>
+<tr><th><code>classification</code></th><th>Meaning</th></tr>
 </thead>
 <tbody>
-<tr><td><code>fully-compatible</code></td><td>Old data lifts unchanged; the migration is a refinement.</td></tr>
-<tr><td><code>backward-compatible</code></td><td>Old data lifts via a value-level transform.</td></tr>
-<tr><td><code>breaking</code></td><td>Some old records cannot be lifted; CI should reject.</td></tr>
+<tr><td><code>fully-compatible</code></td><td>No breaking and no non-breaking changes; the two schemas agree in shape. Old data lifts unchanged.</td></tr>
+<tr><td><code>backward-compatible</code></td><td>Non-breaking changes only; old data lifts, either unchanged or via a value-level transform.</td></tr>
+<tr><td><code>breaking</code></td><td>At least one change cannot be lifted safely; CI should reject.</td></tr>
 </tbody>
 </table>
 </div>

@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-3d8c3f5e.js";
+            window.path_to_searchindex_js = "../../searchindex-db0c3233.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-f7bc0f04.js"></script>
+        <script src="../../toc-6731c879.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -187,32 +187,31 @@
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>A panproto repository under git. A CI system that can run shell commands.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
-<p><code>schema check</code> enforces existence conditions; it does not classify. Use <code>schema diff</code> (which reports structural changes) plus <code>schema lens generate</code> (which fails when no chain exists) and combine into a gate:</p>
+<p><code>schema compat</code> classifies the diff between two schema versions and sets its exit code by tier: 0 for a non-breaking change (fully compatible or backward compatible), 1 for a breaking one, 2 for a usage or load error. That exit code is the gate. Pair it with <code>schema check --typecheck</code>, which catches GAT-level type errors the structural classification does not:</p>
 <pre><code class="language-sh"># In your CI script.
 git fetch origin main
 git show origin/main:schemas/user.json &gt; /tmp/user-base.json
 
-# Existence + GAT-level type check.
+# Classify the change; exit 1 means breaking, exit 2 a usage or load error.
+schema compat /tmp/user-base.json schemas/user.json --protocol atproto
+
+# GAT-level type check.
 schema check \
   --src /tmp/user-base.json \
   --tgt schemas/user.json \
   --mapping migrations/user.json \
   --typecheck
-
-# Generate a chain; non-zero exit means the change is breaking
-# (no auto-generated lens covers it).
-schema lens generate --protocol atproto /tmp/user-base.json schemas/user.json --save /tmp/chain.json
 </code></pre>
 <p>Either step’s non-zero exit fails the build. To allow an explicit override, gate on a commit-message marker or a PR label:</p>
 <pre><code class="language-sh">if git log -1 --format=%B | grep -q '\[breaking-change-acknowledged\]'; then
+  schema compat /tmp/user-base.json schemas/user.json --protocol atproto || true
   schema check ... --typecheck || true
-  schema lens generate ... || true
 else
+  schema compat /tmp/user-base.json schemas/user.json --protocol atproto
   schema check ... --typecheck
-  schema lens generate ...
 fi
 </code></pre>
-<p>For richer classification, use the SDK: in Python, <code>panproto.diff_and_classify(old, new, protocol)</code> returns a <code>CompatReport</code>; in Rust, call <code>panproto_check::diff(...)</code> followed by <code>panproto_check::classify(&amp;diff, &amp;protocol)</code>; in TypeScript, <code>panproto.diffFull(old, new).classify(protocol)</code> returns the same report. Each carries a classification (<code>fully_compatible</code>, <code>backward_compatible</code>, or <code>breaking</code>) along with the offending elements.</p>
+<p>For richer reporting, add <code>--format json</code> to <code>schema compat</code>, or use the SDK: in Python, <code>panproto.diff_and_classify(old, new, protocol)</code> returns a <code>CompatReport</code>; in Rust, call <code>panproto_check::diff(...)</code> followed by <code>panproto_check::classify(&amp;diff, &amp;protocol)</code>; in TypeScript, <code>panproto.diffFull(old, new).classify(protocol)</code> returns the same report. Each <code>CompatReport</code> carries a <code>classification</code> tier (<code>fully-compatible</code>, <code>backward-compatible</code>, or <code>breaking</code>) alongside a <code>breaking</code> list, a <code>non_breaking</code> list, and a <code>compatible</code> boolean, along with the offending elements.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <p>Open a PR that adds a backward-compatible field; the gate passes. Open a PR that drops a required field; the gate fails. Add <code>[breaking-change-acknowledged]</code> to the commit message; the gate passes with a warning.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>

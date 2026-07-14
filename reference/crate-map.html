@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-3d8c3f5e.js";
+            window.path_to_searchindex_js = "../searchindex-db0c3233.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f7bc0f04.js"></script>
+        <script src="../toc-6731c879.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -199,7 +199,7 @@
 <tr><td><code>panproto-lens</code></td><td>Bidirectional lenses: get/put/complement, the three round-trip laws, fibration over schemas, optic kinds, protolenses, the cross-crate <code>enrichment_registry</code> for layout and other schema-level fibres.</td></tr>
 <tr><td><code>panproto-lens-dsl</code></td><td>Declarative lens DSL with Nickel, JSON, and YAML surfaces.</td></tr>
 <tr><td><code>panproto-theory-dsl</code></td><td>Declarative theory DSL for defining custom protocols.</td></tr>
-<tr><td><code>panproto-check</code></td><td>Breaking-change detection: classifies schema diffs as fully compatible, backward compatible, or breaking.</td></tr>
+<tr><td><code>panproto-check</code></td><td>Breaking-change detection: classifies a schema diff as fully compatible, backward compatible, or breaking via the <code>Classification</code> enum, alongside the <code>breaking</code>/<code>non_breaking</code> lists and <code>compatible</code> boolean on <code>CompatReport</code>.</td></tr>
 <tr><td><code>panproto-protocols</code></td><td>Built-in protocol definitions composed via theory colimits.</td></tr>
 <tr><td><code>panproto-expr</code></td><td>Pure, total expression language: terms, types, environment evaluation.</td></tr>
 <tr><td><code>panproto-expr-parser</code></td><td>Haskell-style surface syntax parser for <code>panproto-expr</code>.</td></tr>
@@ -237,7 +237,7 @@
 <tr><th>Crate</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><code>panproto-vcs</code></td><td>Schematic version control: DAG, refs, commit/branch/merge, pushout-based merge with universal-property verification, data versioning.</td></tr>
+<tr><td><code>panproto-vcs</code></td><td>Schematic version control: DAG, refs, commit/branch/merge, pushout-based merge with a merge-time cocone check, data versioning.</td></tr>
 <tr><td><code>panproto-git</code></td><td>Bidirectional bridge between <code>panproto-vcs</code> and git.</td></tr>
 <tr><td><code>panproto-git-remote</code></td><td>Custom git remote helper for cloning panproto repositories over git.</td></tr>
 <tr><td><code>panproto-xrpc</code></td><td>XRPC client for cospan-node VCS operations.</td></tr>
@@ -251,27 +251,15 @@
 <tr><th>Crate</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><code>panproto-core</code></td><td>Public re-export facade. The single dependency a downstream Rust user needs.</td></tr>
+<tr><td><code>panproto-core</code></td><td>Public re-export facade over the nine always-on library crates (<code>gat</code>, <code>schema</code>, <code>inst</code>, <code>mig</code>, <code>lens</code>, <code>check</code>, <code>protocols</code>, <code>io</code>, <code>vcs</code>); the expression and DSL crates (<code>panproto-expr</code>, <code>panproto-expr-parser</code>, <code>panproto-lens-dsl</code>, <code>panproto-theory-dsl</code>) are separate dependencies.</td></tr>
 <tr><td><code>panproto-cli</code></td><td>The <code>schema</code> binary.</td></tr>
 <tr><td><code>panproto-wasm</code></td><td>WebAssembly bindings; consumed by the TypeScript SDK.</td></tr>
 <tr><td><code>panproto-py</code></td><td>Native Python bindings via PyO3.</td></tr>
 <tr><td><code>panproto-c</code></td><td>C ABI for non-Rust language bindings; the Haskell binding consumes its 112-entry surface.</td></tr>
-<tr><td><code>panproto-repl</code></td><td>REPL engine for theories, terms, and morphisms.</td></tr>
 </tbody>
 </table>
 </div>
-<h2 id="acceleration"><a class="header" href="#acceleration">Acceleration</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Crate</th><th>Description</th></tr>
-</thead>
-<tbody>
-<tr><td><code>panproto-jit</code></td><td>LLVM JIT compilation for accelerated migrations.</td></tr>
-<tr><td><code>panproto-llvm</code></td><td>LLVM IR protocol definition and lowering.</td></tr>
-</tbody>
-</table>
-</div>
+<p>The interactive REPL for theories, terms, and morphisms is part of <code>panproto-cli</code>, reachable as <code>schema theory repl</code>; it is not a separate crate.</p>
 <h2 id="repository-tasks"><a class="header" href="#repository-tasks">Repository tasks</a></h2>
 <div class="table-wrapper">
 <table>

@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-3d8c3f5e.js";
+            window.path_to_searchindex_js = "../../searchindex-db0c3233.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-f7bc0f04.js"></script>
+        <script src="../../toc-6731c879.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -194,7 +194,7 @@ cmd      ::= "load" | "theories" | "use" | "sorts" | "ops"
            | "quit" | "q"
 args     ::= /* command-specific, see table below */
 </code></pre>
-<p>A line that does not begin with <code>:</code> is treated as a term and routed through the typecheck path under the active theory. Comments and blank lines are ignored. The grammar lives in <code>crates/panproto-repl/src/lib.rs</code>.</p>
+<p>A line that does not begin with <code>:</code> is treated as a term and routed through the typecheck path under the active theory. Comments and blank lines are ignored. The grammar lives in <code>crates/panproto-cli/src/repl/engine.rs</code>.</p>
 <h2 id="abstract-syntax"><a class="header" href="#abstract-syntax">Abstract syntax</a></h2>
 <pre><code class="language-rust ignore">pub enum ReplCommand {
     Load(PathBuf),
@@ -226,7 +226,7 @@ pub enum ReplLine {
 <p>The bare-term path:</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0497em;vertical-align:-0.2997em;"></span><span class="mopen"><span class="mopen">[</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mopen">[</span></span><span class="mord mathnormal">t</span><span class="mclose"><span class="mclose"><span class="mclose">]</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mclose">]</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1786em;"><span style="top:-2.4003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mopen"><span class="delimsizing size1">(</span></span><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span><span class="mpunct">,</span><span class="mspace"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathsf">Typed</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathsf">typecheck_term</span></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mclose">)))</span><span class="mclose"><span class="delimsizing size1">)</span></span></span></span></span></span></p>
 <p>When <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">⊥</span></span></span></span> (no active theory), all <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mclose">)</span></span></span></span>-dependent equations short-circuit to <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathsf" style="margin-right:0.01389em;">NoActiveTheory</span></span><span class="mclose">)</span></span></span></span>. When any auxiliary (<code>compile</code>, <code>typecheck_term</code>, <code>normalize</code>, <code>free_model</code>, <code>compile_instance</code>) returns an error, the outcome is <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathsf" style="margin-right:0.01389em;">Error</span></span><span class="mopen">(</span><span class="mord mathnormal">e</span><span class="mclose">)</span></span></span></span> and the state is unchanged.</p>
-<p><code>Repl::handle_command</code> and <code>Repl::handle_term_typecheck</code> in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-repl/src/lib.rs"><code>crates/panproto-repl/src/lib.rs</code></a> implement these equations pointwise.</p>
+<p><code>Repl::handle_command</code> and <code>Repl::handle_term_typecheck</code> in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-cli/src/repl/engine.rs"><code>crates/panproto-cli/src/repl/engine.rs</code></a> implement these equations pointwise.</p>
 <h2 id="soundness"><a class="header" href="#soundness">Soundness</a></h2>
 <p>The REPL is a thin orchestration layer over the GAT engine and the theory DSL compiler. It introduces no new failure modes; every error it reports comes from one of:</p>
 <ul>
@@ -246,8 +246,8 @@ pub enum ReplLine {
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="./theory-dsl.html">Theory DSL: denotational semantics</a> for what <code>:load</code> consumes.</li>
-<li><a href="../../reference/cli.html">Reference: CLI</a> for the <code>schema repl</code> invocation that wraps this.</li>
-<li><a href="../../reference/crate-map.html">Crate map</a> for <code>panproto-repl</code>.</li>
+<li><a href="../../reference/cli.html">Reference: CLI</a> for the <code>schema theory repl</code> invocation that wraps this.</li>
+<li><a href="../../reference/crate-map.html">Crate map</a> for <code>panproto-cli</code>, which hosts the REPL.</li>
 </ul>
 
                     </main>

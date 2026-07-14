@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-3d8c3f5e.js";
+            window.path_to_searchindex_js = "../searchindex-db0c3233.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f7bc0f04.js"></script>
+        <script src="../toc-6731c879.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -191,7 +191,6 @@
         WASM[panproto-wasm]
         PY[panproto-py]
         C[panproto-c]
-        REPL[panproto-repl]
     end
 
     subgraph "Facade"
@@ -205,11 +204,6 @@
         GITREMOTE[panproto-git-remote]
         PROJ[panproto-project]
         CHECK[panproto-check]
-    end
-
-    subgraph "Codegen"
-        LLVM[panproto-llvm]
-        JIT[panproto-jit]
     end
 
     subgraph "Pipeline"
@@ -239,7 +233,6 @@
     WASM --&gt; CORE
     PY --&gt; CORE
     C --&gt; CORE
-    REPL --&gt; CORE
 
     CORE --&gt; VCS
     CORE --&gt; GIT
@@ -249,8 +242,6 @@
     CORE --&gt; LENS
     CORE --&gt; IO
     CORE --&gt; PARSE
-    CORE --&gt; LLVM
-    CORE --&gt; JIT
 
     VCS --&gt; MIG
     GIT --&gt; VCS
@@ -269,10 +260,6 @@
     PARSE --&gt; INST
     PARSE --&gt; LENS
     PARSE --&gt; GRAMMARS
-
-    LLVM --&gt; PROTOS
-    LLVM --&gt; SCHEMA
-    JIT --&gt; EXPR
 
     LENS --&gt; EXPR
     MIG --&gt; EXPR

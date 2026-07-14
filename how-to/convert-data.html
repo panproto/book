@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-3d8c3f5e.js";
+            window.path_to_searchindex_js = "../searchindex-db0c3233.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f7bc0f04.js"></script>
+        <script src="../toc-6731c879.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -211,7 +211,7 @@ schema lens verify --protocol atproto data/users.json schemas/user-v2.json
 <p>Lens verification on test data exercises the three round-trip laws (GetPut, PutGet, PutPut); a pass means the chain is loss-free for the sampled records.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
-<li>Assuming all schema pairs are loss-free. They are not. Run <code>schema lens verify</code> after conversion to exercise the round-trip laws on representative data, and run <code>schema check --src --tgt --mapping ... --typecheck</code> to classify the diff as fully compatible, backward compatible, or breaking.</li>
+<li>Assuming all schema pairs are loss-free. They are not. Run <code>schema lens verify</code> after conversion to exercise the round-trip laws on representative data, and run <code>schema compat &lt;old&gt; &lt;new&gt; --protocol &lt;name&gt;</code> to classify the diff as fully compatible, backward compatible, or breaking.</li>
 <li>Skipping lens verification in CI. Without it, silent loss is possible.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>

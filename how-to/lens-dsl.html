@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-3d8c3f5e.js";
+            window.path_to_searchindex_js = "../searchindex-db0c3233.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f7bc0f04.js"></script>
+        <script src="../toc-6731c879.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -205,14 +205,19 @@
 </code></pre>
 <p>Each step is a single-key object. The key picks the variant; the value carries its parameters. The DSL applies steps left-to-right against the source schema, producing a target schema and a <code>CompiledLens</code> between them. Full step grammar: <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-lens-dsl/src/document.rs"><code>crates/panproto-lens-dsl/src/document.rs</code></a>.</p>
 <h3 id="compile-a-chain"><a class="header" href="#compile-a-chain">Compile a chain</a></h3>
-<p><code>schema lens</code> does not consume <code>.ncl</code>/<code>.json</code>/<code>.yaml</code> lens documents directly through the CLI. The DSL is compiled by the <code>panproto-lens-dsl</code> library; the CLI works on the compiled <code>ProtolensChain</code> it produces. To go from a pair of schemas to a chain via the CLI, use:</p>
+<p><code>schema lens compile</code> loads a lens DSL document and compiles it to a <code>ProtolensChain</code>, writing the chain JSON to stdout or to <code>--out</code>:</p>
+<pre><code class="language-sh">schema lens compile lenses/user-v1-to-v2.ncl \
+  --body-vertex record:body \
+  --out lenses/user-v1-to-v2.json
+</code></pre>
+<p><code>--body-vertex</code> names the parent vertex under which field-level steps attach (default <code>record:body</code>). The command compiles the schema-parametric bodies (<code>steps</code>, <code>rules</code>, <code>compose</code>, <code>symmetric</code>) and resolves <code>compose</code> references by lens <code>id</code> against sibling documents in the same directory. The <code>auto</code> and <code>from_diff</code> bodies need a concrete source and target schema, so they compile through the library entry point <code>compile_with_schemas</code> or the SDK bindings rather than this command.</p>
+<p>To auto-derive a chain from a pair of schemas instead of authoring a document, use <code>schema lens generate</code>:</p>
 <pre><code class="language-sh">schema lens generate \
   --protocol atproto \
   schemas/user-v1.json \
   schemas/user-v2.json \
   --save lenses/user-v1-to-v2.json
 </code></pre>
-<p>This auto-derives a chain. To author a chain by hand, write the lens DSL and call <code>panproto_lens_dsl::load</code> and <code>panproto_lens_dsl::compile</code> from Rust (or the equivalent SDK calls).</p>
 <h3 id="apply"><a class="header" href="#apply">Apply</a></h3>
 <pre><code class="language-sh">schema lens apply --protocol atproto lenses/user-v1-to-v2.json data/users.json
 </code></pre>

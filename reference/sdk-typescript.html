@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-3d8c3f5e.js";
+            window.path_to_searchindex_js = "../searchindex-db0c3233.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f7bc0f04.js"></script>
+        <script src="../toc-6731c879.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -214,7 +214,7 @@ const p = await Panproto.init();
 <tr><td><code>MigrationBuilder</code></td><td>Builder. <code>.map(srcVertex, tgtVertex)</code>, <code>.mapEdge(srcEdge, tgtEdge)</code>, <code>.resolve(...)</code>, <code>.compile()</code> returns <code>CompiledMigration</code>.</td></tr>
 <tr><td><code>CompiledMigration</code></td><td>A migration that <em>is</em> a lens. <code>.lift(record)</code> returns <code>LiftResult { data, _rawBytes? }</code>; <code>.get(record)</code> returns <code>GetResult { view, complement }</code>; <code>.put(view, complement)</code> returns <code>LiftResult</code>.</td></tr>
 <tr><td><code>LensHandle</code></td><td>A free-standing protolens chain. <code>.get(bytes)</code>, <code>.put(view, complement)</code>, <code>.checkLaws(instance)</code> returns <code>LawCheckResult { holds, violation }</code>; <code>.checkGetPut</code>, <code>.checkPutGet</code> for individual laws; <code>.toJson()</code>.</td></tr>
-<tr><td><code>FullDiffReport</code> / <code>CompatReport</code></td><td>Returned by <code>Panproto.diffFull(old, new)</code>. Call <code>.classify(protocol)</code> on the diff to get a <code>CompatReport</code> with <code>classification</code> of <code>fully-compatible</code> / <code>backward-compatible</code> / <code>breaking</code>.</td></tr>
+<tr><td><code>FullDiffReport</code> / <code>CompatReport</code></td><td>Returned by <code>Panproto.diffFull(old, new)</code>. Call <code>.classify(protocol)</code> on the diff to get a <code>CompatReport</code> with a <code>classification</code> field (the kebab-case string <code>"fully-compatible"</code>, <code>"backward-compatible"</code>, or <code>"breaking"</code>) alongside a <code>breaking</code> list, a <code>non_breaking</code> list, and a <code>compatible</code> boolean.</td></tr>
 <tr><td><code>executeQuery(query, instance, wasm)</code></td><td>Standalone query function. The <code>query</code> is <code>InstanceQuery { anchor, predicate?, projection?, path?, groupBy?, limit? }</code>; the <code>predicate</code> is an <code>Expr</code> object, not a source string.</td></tr>
 <tr><td><code>parseExpr</code>, <code>evalExpr</code>, <code>formatExpr</code>, <code>ExprBuilder</code></td><td>Expression-language entry points.</td></tr>
 <tr><td><code>IoRegistry</code></td><td>Multi-protocol parse/emit registry.</td></tr>
