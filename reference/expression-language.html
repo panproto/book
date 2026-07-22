@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-db0c3233.js";
+            window.path_to_searchindex_js = "../searchindex-40431d2a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-6731c879.js"></script>
@@ -206,7 +206,7 @@
 </table>
 </div>
 <h2 id="builtins"><a class="header" href="#builtins">Builtins</a></h2>
-<p>The 59 built-in operations are in <code>panproto_expr::BuiltinOp</code>, grouped by family in <code>crates/panproto-expr/src/builtin.rs</code>.</p>
+<p>The 60 built-in operations are in <code>panproto_expr::BuiltinOp</code>, grouped by family in <code>crates/panproto-expr/src/builtin.rs</code>.</p>
 <h3 id="arithmetic"><a class="header" href="#arithmetic">Arithmetic</a></h3>
 <p><code>Add</code>, <code>Sub</code>, <code>Mul</code>, <code>Div</code>, <code>Mod</code>, <code>Neg</code>, <code>Abs</code>, <code>Floor</code>, <code>Ceil</code>, <code>Round</code>. <code>Div</code> and <code>Mod</code> raise <code>DivisionByZero</code> on a zero divisor. Integer arithmetic uses checked operations; overflow raises <code>Overflow</code>.</p>
 <h3 id="comparison"><a class="header" href="#comparison">Comparison</a></h3>
@@ -214,9 +214,11 @@
 <h3 id="boolean"><a class="header" href="#boolean">Boolean</a></h3>
 <p><code>And</code>, <code>Or</code>, <code>Not</code>. Short-circuit evaluation.</p>
 <h3 id="string"><a class="header" href="#string">String</a></h3>
-<p><code>Concat</code>, <code>Len</code>, <code>Slice</code>, <code>Upper</code>, <code>Lower</code>, <code>Trim</code>, <code>Split</code>, <code>Join</code>, <code>Replace</code>, <code>Contains</code>.</p>
+<p><code>Concat</code>, <code>Len</code>, <code>Slice</code>, <code>Upper</code>, <code>Lower</code>, <code>Trim</code>, <code>Split</code>, <code>Join</code>, <code>Replace</code>, <code>Contains</code>. <code>Contains</code> is overloaded on its first argument: substring containment on a string, element membership on a list.</p>
 <h3 id="list"><a class="header" href="#list">List</a></h3>
-<p><code>Map</code>, <code>Filter</code>, <code>Fold</code>, <code>FlatMap</code>, <code>Append</code>, <code>Head</code>, <code>Tail</code>, <code>Reverse</code>, <code>Length</code>. <code>Head</code> and <code>Tail</code> raise on the empty list.</p>
+<p><code>Map</code>, <code>Filter</code>, <code>Fold</code>, <code>FlatMap</code>, <code>Append</code>, <code>Head</code>, <code>Tail</code>, <code>Reverse</code>, <code>Length</code>, <code>Range</code>. <code>Head</code> and <code>Tail</code> raise on the empty list.</p>
+<p><code>Map</code>, <code>Filter</code>, <code>Fold</code>, and <code>FlatMap</code> take the list first and the function last in the abstract syntax, while the surface syntax names the function first (<code>map f xs</code>, <code>fold f z xs</code>); the parser permutes between the two. <code>Expr</code> is serialized into stored lens documents, so the abstract order is the compatibility-bearing one.</p>
+<p><code>Range</code> constructs <code>[start, ..., stop]</code> with both bounds inclusive, yielding the empty list when <code>stop &lt; start</code>. The surface syntax <code>[a..b]</code> lowers to it. Its length is checked against <code>max_list_len</code> before allocating, since it is the only builtin that turns a constant-size expression into an arbitrarily long list. Open-ended <code>[a..]</code> is rejected: there are no lazy lists to lower it to.</p>
 <h3 id="record"><a class="header" href="#record">Record</a></h3>
 <p><code>MergeRecords</code>, <code>Keys</code>, <code>Values</code>, <code>HasField</code>.</p>
 <h3 id="utility"><a class="header" href="#utility">Utility</a></h3>
