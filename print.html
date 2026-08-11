@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-40431d2a.js";
+            window.path_to_searchindex_js = "searchindex-704fd3b0.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-6731c879.js"></script>
+        <script src="toc-1b21fe02.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -188,7 +188,7 @@
 <h2 id="how-to-guides"><a class="header" href="#how-to-guides"><a href="#how-to-guides-1">How-to guides</a></a></h2>
 <p>Recipes for specific tasks: defining a schema in your language of choice, building a migration, wiring breaking-change detection into CI, querying instances, parsing full ASTs, bridging panproto’s version control to git. Pick this when you know what you want to do and need the steps.</p>
 <h2 id="reference"><a class="header" href="#reference"><a href="#reference-1">Reference</a></a></h2>
-<p>Authoritative listings: every CLI subcommand, the SDK surfaces for Rust, TypeScript, and Python, the protocol catalogue, the expression-language builtins, the lens combinator algebra, the <code>panproto.toml</code> schema. Tables and signatures, no exposition.</p>
+<p>Authoritative listings: every CLI subcommand, the SDK surfaces for Rust, TypeScript, Python, Haskell, and Swift, the protocol catalogue, the expression-language builtins, the lens combinator algebra, the <code>panproto.toml</code> schema. Tables and signatures, no exposition.</p>
 <h2 id="explanation"><a class="header" href="#explanation"><a href="#explanation-1">Explanation</a></a></h2>
 <p>Why the system is shaped the way it is. What schemas, migrations, lenses, and merges <em>mean</em> under the hood. The denotational semantics of panproto’s three DSLs, and a precise account of which categorical properties the implementation mechanically verifies. Most pages here are accessible to working developers; the <code>semantics/</code> cluster is the place where the math is load-bearing.</p>
 <h2 id="where-to-start"><a class="header" href="#where-to-start">Where to start</a></h2>
@@ -799,6 +799,8 @@ back: { email: 'alice@example.com', name: 'Alice', years: 30 }
 <tr><td>Rust application</td><td><a href="#install-the-rust-sdk">Install the Rust SDK</a></td><td><code>panproto-core</code> (crates.io)</td></tr>
 <tr><td>TypeScript / JavaScript application</td><td><a href="#install-the-typescript-sdk">Install the TypeScript SDK</a></td><td><code>@panproto/core</code> (npm)</td></tr>
 <tr><td>Python application</td><td><a href="#install-the-python-sdk">Install the Python SDK</a></td><td><code>panproto</code> (PyPI)</td></tr>
+<tr><td>Haskell application</td><td><a href="#install-the-haskell-sdk">Install the Haskell SDK</a></td><td><code>panproto</code> (this repository)</td></tr>
+<tr><td>Swift application</td><td><a href="#install-the-swift-sdk">Install the Swift SDK</a></td><td><code>panproto</code> (this repository, SwiftPM)</td></tr>
 </tbody>
 </table>
 </div>
@@ -989,6 +991,78 @@ main = do
 <li><a href="#crate-map">Crate map</a> for <code>panproto-c</code> and the rest of the workspace.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="install-the-swift-sdk"><a class="header" href="#install-the-swift-sdk">Install the Swift SDK</a></h1>
+<h2 id="prerequisites-9"><a class="header" href="#prerequisites-9">Prerequisites</a></h2>
+<p><a href="https://www.swift.org/">Swift</a> 6.0 or later, which on Apple platforms means Xcode 16 or later. The package builds in Swift 6 language mode with strict concurrency, so an older toolchain will not compile it.</p>
+<p>Building <code>libpanproto_c</code> from source additionally needs a <a href="https://www.rust-lang.org/">Rust</a> toolchain; <code>rustup</code> is recommended. The prebuilt path below needs neither Rust nor a workspace checkout.</p>
+<h2 id="install-5"><a class="header" href="#install-5">Install</a></h2>
+<p>The package is not yet on a registry; it lives at <a href="https://github.com/panproto/panproto/tree/main/bindings/swift"><code>bindings/swift/</code></a> in the repository. Every product links <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>libpanproto_c</code></a>, the C ABI exposed by the <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>panproto-c</code></a> crate, so the library has to be staged before <code>swift build</code> will link. There are three ways to get it.</p>
+<h3 id="build-from-source-1"><a class="header" href="#build-from-source-1">Build from source</a></h3>
+<p><code>bootstrap/dev-link.sh</code> runs <code>cargo build -p panproto-c --release</code>, stages the resulting library and header under <code>bindings/swift/.panproto-c/</code>, and syncs the vendored copy of <code>panproto.h</code> that the package compiles against. <code>Package.swift</code> looks in <code>.panproto-c/lib</code> by default, so nothing else needs configuring.</p>
+<pre><code class="language-sh">git clone https://github.com/panproto/panproto.git
+cd panproto/bindings/swift
+./bootstrap/dev-link.sh
+swift build
+swift test
+</code></pre>
+<p>Run <code>dev-link.sh</code> again after every change to <code>panproto-c</code> or the workspace <code>Cargo.toml</code>. Set <code>PANPROTO_C_LIB_DIR</code> to stage somewhere else.</p>
+<h3 id="prebuilt-binaries-1"><a class="header" href="#prebuilt-binaries-1">Prebuilt binaries</a></h3>
+<p><code>bootstrap/fetch-bindist.sh [version] [variant]</code> downloads the prebuilt library for the host platform from the corresponding GitHub Release. It detects <code>aarch64-apple-darwin</code>, <code>x86_64-apple-darwin</code>, <code>x86_64-unknown-linux-gnu</code>, and <code>aarch64-unknown-linux-gnu</code>. The version defaults to whatever the checkout declares.</p>
+<pre><code class="language-sh">cd panproto/bindings/swift
+./bootstrap/fetch-bindist.sh
+swift build
+</code></pre>
+<h3 id="xcframework"><a class="header" href="#xcframework">XCFramework</a></h3>
+<p>iOS builds go through the XCFramework, which carries a macOS-universal slice, an iOS device slice, and a universal simulator slice, together with the headers and a module map.</p>
+<pre><code class="language-sh">cd panproto/bindings/swift
+./bootstrap/fetch-bindist.sh v0.69.0 default --xcframework
+PANPROTO_SWIFT_XCFRAMEWORK=.panproto-c/panproto_c.xcframework swift build
+</code></pre>
+<p>To depend on the package from another project, point <code>PANPROTO_SWIFT_XCFRAMEWORK_URL</code> and <code>PANPROTO_SWIFT_XCFRAMEWORK_CHECKSUM</code> at the published artifact and its checksum, both of which the release attaches. That mode adds no linker flags of its own, which is what makes the package usable as a dependency; the <code>dev-link.sh</code> mode passes an unsafe <code>-L</code> flag and is for building the package directly.</p>
+<h2 id="products"><a class="header" href="#products">Products</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Product</th><th>Contents</th></tr>
+</thead>
+<tbody>
+<tr><td><code>PanprotoStructural</code></td><td>The pure value layer: schemas, chains, migrations, and instances as Swift values, plus the CBOR codec. No engine, no FFI.</td></tr>
+<tr><td><code>Panproto</code></td><td>The engine-backed core: protocols, schemas, instances, I/O codecs, compatibility checking, migrations, lenses, expressions, theories, enrichment, homomorphism search, graph fibers, and datasets.</td></tr>
+<tr><td><code>PanprotoVcs</code></td><td>Schematic version control.</td></tr>
+<tr><td><code>PanprotoParse</code></td><td>Full-AST source parsing. Feature-gated.</td></tr>
+<tr><td><code>PanprotoProject</code></td><td>Multi-file project assembly. Feature-gated.</td></tr>
+<tr><td><code>PanprotoGit</code></td><td>The git bridge. Feature-gated.</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="feature-gated-tiers"><a class="header" href="#feature-gated-tiers">Feature-gated tiers</a></h2>
+<p>The default <code>libpanproto_c</code> exports 103 entry points. The <code>parse</code>, <code>project</code>, and <code>git</code> tiers add 17 more that are absent from that build, so reaching them takes a library built with the matching cargo features and a Swift build told to compile the gated shims in:</p>
+<pre><code class="language-sh">PANPROTO_C_FEATURES=full ./bootstrap/dev-link.sh
+swift build --traits PANPROTO_PARSE,PANPROTO_PROJECT,PANPROTO_GIT
+</code></pre>
+<p>Each tier is a <a href="https://www.swift.org/documentation/package-manager/">package trait</a>, and a trait defines a compilation condition of its own name, which is what the <code>#if PANPROTO_PARSE</code> blocks in the gated sources read.</p>
+<p>The three gated products exist in the package graph either way, so a build that omits the features still resolves; their modules are simply empty. On the prebuilt path, fetch the <code>full</code> variant:</p>
+<pre><code class="language-sh">./bootstrap/fetch-bindist.sh v0.70.0 full
+swift build --traits PANPROTO_PARSE,PANPROTO_PROJECT,PANPROTO_GIT
+</code></pre>
+<h2 id="verification-5"><a class="header" href="#verification-5">Verification</a></h2>
+<pre><code class="language-swift">import Panproto
+import PanprotoStructural
+
+let names = try await ProtocolSpec.builtinNames()
+print(names.count, "builtin protocols")
+
+let atproto = try await ProtocolHandle.builtin("atproto")
+let lexicon = try Data(contentsOf: URL(fileURLWithPath: "app.bsky.feed.post.json"))
+let schema = try await SchemaHandle.parseAtprotoLexicon(lexicon)
+let value = try await schema.value()
+print(value.protocolName, value.vertexCount, "vertices")
+
+let messages = try await schema.violations(against: atproto)
+print(messages.isEmpty ? "valid" : messages.joined(separator: "\n"))
+</code></pre>
+<p>Every call is <code>await</code>: engine work runs on the <code>@PanprotoEngine</code> global actor, which is pinned to a single thread. See the <a href="#swift-sdk-reference">Swift SDK reference</a> for why, and for what that means when you hold a handle.</p>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="define-a-schema"><a class="header" href="#define-a-schema">Define a schema</a></h1>
 <p>A schema in panproto is a graph of vertices and edges, validated against a protocol’s GAT. You can build one from any of the four surfaces, with the same outcome.</p>
 <div class="table-wrapper">
@@ -1001,6 +1075,8 @@ main = do
 <tr><td>TypeScript SDK</td><td><a href="#define-a-schema-from-typescript">From TypeScript</a></td></tr>
 <tr><td>Python SDK</td><td><a href="#define-a-schema-from-python">From Python</a></td></tr>
 <tr><td>Rust SDK</td><td><a href="#define-a-schema-from-rust">From Rust</a></td></tr>
+<tr><td>Haskell SDK</td><td><a href="#define-a-schema-from-haskell">From Haskell</a></td></tr>
+<tr><td>Swift SDK</td><td><a href="#define-a-schema-from-swift">From Swift</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -1012,7 +1088,7 @@ main = do
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="define-a-schema-from-the-cli"><a class="header" href="#define-a-schema-from-the-cli">Define a schema from the CLI</a></h1>
-<h2 id="prerequisites-9"><a class="header" href="#prerequisites-9">Prerequisites</a></h2>
+<h2 id="prerequisites-10"><a class="header" href="#prerequisites-10">Prerequisites</a></h2>
 <p>The <code>schema</code> binary installed (<a href="#install-the-cli">Install the CLI</a>). A schema file in a supported protocol, or a protocol name to scaffold an empty one.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
 <h3 id="validate-an-existing-schema"><a class="header" href="#validate-an-existing-schema">Validate an existing schema</a></h3>
@@ -1027,7 +1103,7 @@ main = do
 <pre><code class="language-sh">schema diff schemas/post-v1.json schemas/post-v2.json
 </code></pre>
 <p><code>diff</code> reports vertex and edge changes between two schemas. Inside a panproto repository, <code>schema show &lt;ref&gt;</code> resolves a commit, schema, or migration object and prints its contents.</p>
-<h2 id="verification-5"><a class="header" href="#verification-5">Verification</a></h2>
+<h2 id="verification-6"><a class="header" href="#verification-6">Verification</a></h2>
 <p>After validation, run:</p>
 <pre><code class="language-sh">schema verify --protocol atproto path/to/schema.json
 </code></pre>
@@ -1044,7 +1120,7 @@ main = do
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="define-a-schema-from-typescript"><a class="header" href="#define-a-schema-from-typescript">Define a schema from TypeScript</a></h1>
-<h2 id="prerequisites-10"><a class="header" href="#prerequisites-10">Prerequisites</a></h2>
+<h2 id="prerequisites-11"><a class="header" href="#prerequisites-11">Prerequisites</a></h2>
 <p><code>@panproto/core</code> installed (<a href="#install-the-typescript-sdk">Install the TypeScript SDK</a>).</p>
 <h2 id="the-task-1"><a class="header" href="#the-task-1">The task</a></h2>
 <pre><code class="language-ts">import { Panproto } from '@panproto/core';
@@ -1061,7 +1137,7 @@ const schema = proto.schema()
   .build();
 </code></pre>
 <p><code>p.protocol(name)</code> loads the named protocol’s theory. <code>proto.schema()</code> returns a <code>SchemaBuilder</code>. Each <code>.vertex()</code> call adds a vertex (record kind) with optional constraints; each <code>.edge()</code> call adds an edge (field, item, or variant) between vertices. <code>.build()</code> validates the constructed schema against the protocol’s theory and returns a <code>Schema</code> handle.</p>
-<h2 id="verification-6"><a class="header" href="#verification-6">Verification</a></h2>
+<h2 id="verification-7"><a class="header" href="#verification-7">Verification</a></h2>
 <pre><code class="language-ts">const result = schema.validate(proto);
 if (!result.isValid) throw new Error(JSON.stringify(result.issues));
 </code></pre>
@@ -1080,7 +1156,7 @@ if (!result.isValid) throw new Error(JSON.stringify(result.issues));
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="define-a-schema-from-python"><a class="header" href="#define-a-schema-from-python">Define a schema from Python</a></h1>
-<h2 id="prerequisites-11"><a class="header" href="#prerequisites-11">Prerequisites</a></h2>
+<h2 id="prerequisites-12"><a class="header" href="#prerequisites-12">Prerequisites</a></h2>
 <p><code>panproto</code> installed (<a href="#install-the-python-sdk">Install the Python SDK</a>).</p>
 <h2 id="the-task-2"><a class="header" href="#the-task-2">The task</a></h2>
 <pre><code class="language-python">import panproto
@@ -1097,7 +1173,7 @@ schema = b.build()
 </code></pre>
 <p><code>panproto.get_builtin_protocol(name)</code> returns the named protocol; <code>.vertex(id, kind, nsid=None)</code> and <code>.edge(src, tgt, kind, name=None)</code> each mutate the <code>SchemaBuilder</code> in place (returning <code>None</code>), and <code>.build()</code> validates and returns a <code>Schema</code>. The TypeScript SDK exposes the same operations as a chainable surface; the Python binding does not.</p>
 <p>Call <code>panproto.list_builtin_protocols()</code> to see every registered protocol name (atproto, openapi, cddl, geojson, …).</p>
-<h2 id="verification-7"><a class="header" href="#verification-7">Verification</a></h2>
+<h2 id="verification-8"><a class="header" href="#verification-8">Verification</a></h2>
 <pre><code class="language-python">issues = schema.validate(proto)
 assert not issues, issues
 </code></pre>
@@ -1115,7 +1191,7 @@ assert not issues, issues
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="define-a-schema-from-rust"><a class="header" href="#define-a-schema-from-rust">Define a schema from Rust</a></h1>
-<h2 id="prerequisites-12"><a class="header" href="#prerequisites-12">Prerequisites</a></h2>
+<h2 id="prerequisites-13"><a class="header" href="#prerequisites-13">Prerequisites</a></h2>
 <p><code>panproto-core</code> in your <code>Cargo.toml</code> (<a href="#install-the-rust-sdk">Install the Rust SDK</a>).</p>
 <h2 id="the-task-3"><a class="header" href="#the-task-3">The task</a></h2>
 <pre class="playground"><code class="language-rust no_run">use panproto_core::protocols::atproto;
@@ -1137,7 +1213,7 @@ fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
     Ok(())
 }</code></pre>
 <p><code>SchemaBuilder::new(&amp;protocol)</code> constructs the builder; each <code>vertex</code> and <code>edge</code> call validates against the protocol’s edge rules and obj-kind list. <code>entry</code> declares basepoint vertices for instance rooting. <code>build</code> returns a <code>Schema</code> (or a <code>SchemaError</code>).</p>
-<h2 id="verification-8"><a class="header" href="#verification-8">Verification</a></h2>
+<h2 id="verification-9"><a class="header" href="#verification-9">Verification</a></h2>
 <pre class="playground"><code class="language-rust no_run">use panproto_core::schema::{SchemaBuilder, validate};
 <span class="boring">fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
 </span><span class="boring">let proto = panproto_core::protocols::atproto::protocol();
@@ -1162,7 +1238,7 @@ assert!(errors.is_empty(), "validation errors: {errors:?}");
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="define-a-schema-from-haskell"><a class="header" href="#define-a-schema-from-haskell">Define a schema from Haskell</a></h1>
-<h2 id="prerequisites-13"><a class="header" href="#prerequisites-13">Prerequisites</a></h2>
+<h2 id="prerequisites-14"><a class="header" href="#prerequisites-14">Prerequisites</a></h2>
 <p>The <code>panproto</code> package installed and linked against <code>libpanproto_c</code> (<a href="#install-the-haskell-sdk">Install the Haskell SDK</a>).</p>
 <h2 id="the-task-4"><a class="header" href="#the-task-4">The task</a></h2>
 <pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
@@ -1190,7 +1266,7 @@ geoProtocol :: CanonicalProtocol
 geoProtocol = defaultProtocol {name = "geojson"}
 </code></pre>
 <p><code>fromTheories</code> builds a protocol from its schema theory, instance theory, and the structural and enrichment feature flags when you need to spell out a full GAT configuration; <code>defaultProtocol {name = ...}</code> is enough whenever you only need a registered codec by name.</p>
-<h2 id="verification-9"><a class="header" href="#verification-9">Verification</a></h2>
+<h2 id="verification-10"><a class="header" href="#verification-10">Verification</a></h2>
 <p>Validation runs on the <code>Rust</code> backend, so the schema and the protocol both pass through <code>fromSchema (Proxy @Rust)</code> and <code>fromCanonical (Proxy @Rust)</code> on the way in. The <code>Proxy @Rust</code> at ingestion fixes the backend for everything downstream; <code>validateSchema</code> then returns the protocol’s complaints, and an empty list means the schema is well-formed.</p>
 <pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeApplications #-}
@@ -1223,11 +1299,77 @@ validate =
 <li><a href="#build-a-migration">Build a migration</a>.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="define-a-schema-from-swift"><a class="header" href="#define-a-schema-from-swift">Define a schema from Swift</a></h1>
+<h2 id="prerequisites-15"><a class="header" href="#prerequisites-15">Prerequisites</a></h2>
+<p>The <code>panproto</code> Swift package, with <code>libpanproto_c</code> staged or pinned (<a href="#install-the-swift-sdk">Install the Swift SDK</a>).</p>
+<h2 id="the-task-5"><a class="header" href="#the-task-5">The task</a></h2>
+<p><code>Schema</code> in <code>PanprotoStructural</code> is a value. Building one starts nothing, allocates no engine resource, and runs on whatever thread you are already on.</p>
+<pre><code class="language-swift">import PanprotoStructural
+
+var post = Schema(protocol: "geojson")
+post.addVertex(Vertex(id: "post", kind: "record"))
+post.addVertex(Vertex(id: "text", kind: "string"))
+post.addVertex(Vertex(id: "title", kind: "string"))
+post.addEdge(Edge(src: "post", tgt: "text", kind: "prop", name: "text"))
+post.addEdge(Edge(src: "post", tgt: "title", kind: "prop", name: "title"))
+post.addConstraint(Constraint(sort: "maxLength", value: "120"), to: "title")
+post.addEntry("post")
+</code></pre>
+<p>Every value here is a plain struct. A <code>Vertex</code> carries an <code>id</code>, a <code>kind</code> drawn from the protocol’s recognized vertex kinds, and an optional <code>nsid</code>. An <code>Edge</code> carries its <code>src</code>, <code>tgt</code>, structural <code>kind</code> (<code>prop</code>, <code>item</code>, <code>variant</code>), and an optional <code>name</code>. A <code>Constraint</code> attaches a sort and a value to one vertex, and <code>addEntry</code> declares which vertices an instance may be rooted at.</p>
+<p>The three adjacency indices the Rust type precomputes are not stored on the Swift value: they are derivable from the edge set, so they are recomputed on the way to the engine and exposed here as accessors.</p>
+<pre><code class="language-swift">for edge in post.outgoingEdges(from: "post") {
+    print(edge.name ?? edge.kind, "-&gt;", edge.tgt)
+}
+</code></pre>
+<h2 id="validating-against-a-protocol"><a class="header" href="#validating-against-a-protocol">Validating against a protocol</a></h2>
+<p>Validation is engine work, so it needs a handle on each side and it needs an <code>await</code>. <code>SchemaHandle</code> ingests the value; <code>ProtocolHandle.builtin</code> takes a registered codec by name.</p>
+<pre><code class="language-swift">import Panproto
+import PanprotoStructural
+
+let geojson = try await ProtocolHandle.builtin("geojson")
+let handle = try await SchemaHandle(post)
+let messages = try await handle.violations(against: geojson)
+
+if messages.isEmpty {
+    print("valid")
+} else {
+    for message in messages { print(message) }
+}
+</code></pre>
+<p>Both handles free themselves when they go out of scope. Call <code>release()</code> when you want the slab entry back sooner, such as inside a loop over many candidate schemas.</p>
+<p>To go the other way, ask a handle for its value:</p>
+<pre><code class="language-swift">let roundTripped = try await handle.value()
+#expect(roundTripped.vertexCount == post.vertexCount)
+</code></pre>
+<h2 id="building-through-the-engine-instead"><a class="header" href="#building-through-the-engine-instead">Building through the engine instead</a></h2>
+<p><code>SchemaBuilder</code> accumulates the same operations and compiles them in the engine rather than in Swift, which is what you want when the protocol’s own build rules should be applied as you go rather than checked at the end.</p>
+<pre><code class="language-swift">import Panproto
+
+var builder = SchemaBuilder()
+builder.vertex(id: "post", kind: "record")
+builder.vertex(id: "text", kind: "string")
+builder.edge(src: "post", tgt: "text", kind: "prop", name: "text")
+builder.entry("post")
+
+let built = try await builder.build(protocol: geojson)
+</code></pre>
+<h2 id="parsing-one-instead-of-writing-it"><a class="header" href="#parsing-one-instead-of-writing-it">Parsing one instead of writing it</a></h2>
+<p>Most schemas are not written by hand. An atproto lexicon parses directly:</p>
+<pre><code class="language-swift">let lexicon = try Data(contentsOf: lexiconURL)
+let schema = try await SchemaHandle.parseAtprotoLexicon(lexicon)
+print(try await schema.value().vertexCount, "vertices")
+</code></pre>
+<h2 id="next-steps"><a class="header" href="#next-steps">Next steps</a></h2>
+<ul>
+<li><a href="how-to/build-migration/index.html">Build a migration</a> between two versions of this schema.</li>
+<li><a href="#swift-sdk-reference">Swift SDK reference</a> for the engine actor, the handle taxonomy, and the error hierarchy.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="build-a-migration"><a class="header" href="#build-a-migration">Build a migration</a></h1>
 <p>A migration is a structured map between two schemas plus, optionally, value-level transforms applied during lift. This page covers building one from the CLI and from the SDKs.</p>
-<h2 id="prerequisites-14"><a class="header" href="#prerequisites-14">Prerequisites</a></h2>
+<h2 id="prerequisites-16"><a class="header" href="#prerequisites-16">Prerequisites</a></h2>
 <p>Two schemas in the same protocol (or compatible protocols). The <code>schema</code> CLI installed, or one of the language SDKs.</p>
-<h2 id="the-task-5"><a class="header" href="#the-task-5">The task</a></h2>
+<h2 id="the-task-6"><a class="header" href="#the-task-6">The task</a></h2>
 <h3 id="from-the-cli"><a class="header" href="#from-the-cli">From the CLI</a></h3>
 <p>Given <code>schemas/v1.json</code> and <code>schemas/v2.json</code>, plus a mapping file <code>migrations/v1-to-v2.json</code>:</p>
 <pre><code class="language-sh">schema check --src schemas/v1.json --tgt schemas/v2.json --mapping migrations/v1-to-v2.json
@@ -1255,7 +1397,7 @@ const { view, complement } = mig.get(oldRecord); // forward, retaining complemen
 mig.put(view, complement);                       // backward
 </code></pre>
 <p><code>p.checkExistence(src, tgt, builder)</code> runs the same existence check as the CLI. Python and Rust SDKs use the same shape with language-idiomatic naming.</p>
-<h2 id="verification-10"><a class="header" href="#verification-10">Verification</a></h2>
+<h2 id="verification-11"><a class="header" href="#verification-11">Verification</a></h2>
 <p><code>schema check</code> exits zero if the migration is well-defined (existence conditions hold). For diff classification, use <code>panproto.diff_and_classify(old, new, protocol)</code> in Python, or <code>panproto_check::diff(old, new)</code> followed by <code>panproto_check::classify(&amp;diff, &amp;protocol)</code> in Rust. In TypeScript the equivalent is <code>Panproto.diffFull(old, new).classify(protocol)</code>. Each returns a <code>CompatReport</code> whose <code>classification</code> field records one of three tiers, alongside a list of breaking changes, a list of non-breaking changes, and a <code>compatible</code> boolean:</p>
 <div class="table-wrapper">
 <table>
@@ -1285,9 +1427,9 @@ mig.put(view, complement);                       // backward
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="apply-field-transforms"><a class="header" href="#apply-field-transforms">Apply field transforms</a></h1>
 <p>A <em>field transform</em> is a value-level expression applied during migration: a way to compute the new field’s value from the old data. Transforms are written in the <a href="#expression-language-reference">expression language</a>.</p>
-<h2 id="prerequisites-15"><a class="header" href="#prerequisites-15">Prerequisites</a></h2>
+<h2 id="prerequisites-17"><a class="header" href="#prerequisites-17">Prerequisites</a></h2>
 <p>A migration mapping between two schemas. The expression language reference for available builtins.</p>
-<h2 id="the-task-6"><a class="header" href="#the-task-6">The task</a></h2>
+<h2 id="the-task-7"><a class="header" href="#the-task-7">The task</a></h2>
 <h3 id="inline-a-transform-in-a-mapping-file"><a class="header" href="#inline-a-transform-in-a-mapping-file">Inline a transform in a mapping file</a></h3>
 <p>The mapping JSON consumed by <code>schema check</code> is a serialized <a href="https://docs.rs/panproto-mig/latest/panproto_mig/struct.Migration.html"><code>Migration</code></a>. Field-level value transforms attach as <strong>expression resolvers</strong> indexed by the <code>(src_vertex, tgt_vertex)</code> pair they bridge:</p>
 <pre><code class="language-json">{
@@ -1318,7 +1460,7 @@ chain = panproto.rename_field("user", "full_name", "full_name", "name")
 print(chain.to_json())
 </code></pre>
 <p>To attach a value-level expression resolver to a <code>Migration</code> between two specific schemas, write the mapping JSON by hand (see above) and call <code>panproto.compile_migration(migration, src_schema, tgt_schema)</code>.</p>
-<h2 id="verification-11"><a class="header" href="#verification-11">Verification</a></h2>
+<h2 id="verification-12"><a class="header" href="#verification-12">Verification</a></h2>
 <pre><code class="language-sh">schema check --src schemas/v1.json --tgt schemas/v2.json --mapping migration.json --typecheck
 </code></pre>
 <p><code>check --typecheck</code> ensures the transforms type-check against the source and target schemas. Property tests in CI then verify the lens laws on sampled data.</p>
@@ -1337,9 +1479,9 @@ print(chain.to_json())
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="use-lenses"><a class="header" href="#use-lenses">Use lenses</a></h1>
 <p>Every migration is a lens. The lens API gives you direct access to the bidirectional transform: <code>get</code> lifts data forward, <code>put</code> projects new data back to the old shape, <code>complement</code> records what <code>get</code> discarded so <code>put</code> can restore it.</p>
-<h2 id="prerequisites-16"><a class="header" href="#prerequisites-16">Prerequisites</a></h2>
+<h2 id="prerequisites-18"><a class="header" href="#prerequisites-18">Prerequisites</a></h2>
 <p>A migration (<a href="#build-a-migration">Build a migration</a>) or a hand-written lens via the <a href="#write-lenses-in-the-lens-dsl">lens DSL</a>.</p>
-<h2 id="the-task-7"><a class="header" href="#the-task-7">The task</a></h2>
+<h2 id="the-task-8"><a class="header" href="#the-task-8">The task</a></h2>
 <p>A <code>CompiledMigration</code> is itself a lens; reach for <code>LensHandle</code> only when you want a free-standing protolens chain.</p>
 <pre><code class="language-ts">const { view, complement } = mig.get(oldRecord);
 
@@ -1354,7 +1496,7 @@ const { data: updatedOld } = mig.put(editedView, complement);
 <pre><code class="language-ts">const composedChain = p.composeLenses(chainAB, chainBC);
 </code></pre>
 <p>Both are methods on <code>Panproto</code>; composition fails (throws) if the intermediate schemas do not chain.</p>
-<h2 id="verification-12"><a class="header" href="#verification-12">Verification</a></h2>
+<h2 id="verification-13"><a class="header" href="#verification-13">Verification</a></h2>
 <pre><code class="language-ts">const result = lens.checkLaws(instanceBytes);
 console.log(result.holds, result.violation);
 
@@ -1379,9 +1521,9 @@ const putget = lens.checkPutGet(instanceBytes);
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="use-protolenses"><a class="header" href="#use-protolenses">Use protolenses</a></h1>
 <p>A <em>protolens</em> is a schema-parameterised lens family: one declaration that produces a lens for <em>any</em> schema satisfying a precondition. Use protolenses when you want to apply the same transform across a fleet of related schemas without writing one lens per schema.</p>
-<h2 id="prerequisites-17"><a class="header" href="#prerequisites-17">Prerequisites</a></h2>
+<h2 id="prerequisites-19"><a class="header" href="#prerequisites-19">Prerequisites</a></h2>
 <p>The Rust SDK (<a href="https://docs.rs/panproto-lens/latest/panproto_lens/protolens/"><code>panproto-lens::protolens</code></a>) or the lens DSL with <code>parametric</code> declarations enabled.</p>
-<h2 id="the-task-8"><a class="header" href="#the-task-8">The task</a></h2>
+<h2 id="the-task-9"><a class="header" href="#the-task-9">The task</a></h2>
 <h3 id="declare"><a class="header" href="#declare">Declare</a></h3>
 <p>A <code>Protolens</code> packages a precondition (a <code>TheoryConstraint</code> on the source theory) with a <code>TheoryTransform</code>. Build elementary protolenses via the <code>elementary</code> helpers, or compose them into a <code>ProtolensChain</code>:</p>
 <pre class="playground"><code class="language-rust no_run">use panproto_lens::protolens::{ProtolensChain, combinators};
@@ -1427,7 +1569,7 @@ let composed = vertical_compose(&amp;first, &amp;second)?;
 <span class="boring">let _ = composed;
 </span><span class="boring">Ok(()) }</span></code></pre>
 <p><code>vertical_compose</code> requires the target endofunctor of <code>first</code> to structurally match the source endofunctor of <code>second</code>. A mismatch returns <code>LensError</code>.</p>
-<h2 id="verification-13"><a class="header" href="#verification-13">Verification</a></h2>
+<h2 id="verification-14"><a class="header" href="#verification-14">Verification</a></h2>
 <p>After <code>instantiate</code> returns a <code>Lens</code>, exercise the round-trip laws on representative data via <code>Lens::get</code> / <code>Lens::put</code> (or use the higher-level lens-law harness in <code>panproto_lens::laws</code>). Property tests in <code>crates/panproto-lens/tests/</code> are the canonical examples.</p>
 <h2 id="common-mistakes-13"><a class="header" href="#common-mistakes-13">Common mistakes</a></h2>
 <ul>
@@ -1444,9 +1586,9 @@ let composed = vertical_compose(&amp;first, &amp;second)?;
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="use-dependent-optics"><a class="header" href="#use-dependent-optics">Use dependent optics</a></h1>
 <p>A <em>dependent optic</em> is an optic-kind chosen by the schema edge it is applied at: a <code>prop</code> edge yields a Lens, an <code>item</code> edge yields a Traversal, a <code>variant</code> edge yields a Prism. Dependent optics let you write transforms that work uniformly across all three edge kinds, with the optic kind unified at instantiation.</p>
-<h2 id="prerequisites-18"><a class="header" href="#prerequisites-18">Prerequisites</a></h2>
+<h2 id="prerequisites-20"><a class="header" href="#prerequisites-20">Prerequisites</a></h2>
 <p>The Rust SDK. The <code>panproto-lens</code> crate (re-exported from <code>panproto-core::lens</code>).</p>
-<h2 id="the-task-9"><a class="header" href="#the-task-9">The task</a></h2>
+<h2 id="the-task-10"><a class="header" href="#the-task-10">The task</a></h2>
 <h3 id="apply-a-scoped-transform"><a class="header" href="#apply-a-scoped-transform">Apply a scoped transform</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -1468,7 +1610,7 @@ match scoped.optic_kind() {
 <p><code>elementary::scoped</code> wraps an inner protolens at the given focus vertex. At the instance level the optic kind follows from the edge kind connecting the parent to the focus vertex: <code>prop</code> -&gt; Lens, <code>item</code> -&gt; Traversal, <code>variant</code> -&gt; Prism.</p>
 <h3 id="field-level-combinators"><a class="header" href="#field-level-combinators">Field-level combinators</a></h3>
 <p>The <code>panproto_lens::protolens::combinators</code> module exposes higher-level chains assembled from elementary steps; for instance <code>combinators::rename_field(parent, field, old_name, new_name)</code> returns a <code>ProtolensChain</code> that renames a JSON property key. To traverse an <code>item</code> edge and apply an inner transform per element, use <code>elementary::scoped</code> (or the <code>combinators::map_items</code> helper) targeting the array element’s vertex; the result is a Traversal under the optic-kind classifier.</p>
-<h2 id="verification-14"><a class="header" href="#verification-14">Verification</a></h2>
+<h2 id="verification-15"><a class="header" href="#verification-15">Verification</a></h2>
 <p>The lens laws apply uniformly across all three optic kinds. Instantiate the protolens into a <code>Lens</code> against a concrete schema, then call <code>panproto_lens::laws::check_laws(&amp;lens, &amp;instance)</code> (or <code>check_get_put</code> / <code>check_put_get</code> individually) on representative data; each returns <code>Result&lt;(), LawViolation&gt;</code>.</p>
 <h2 id="common-mistakes-14"><a class="header" href="#common-mistakes-14">Common mistakes</a></h2>
 <ul>
@@ -1484,9 +1626,9 @@ match scoped.optic_kind() {
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="write-lenses-in-the-lens-dsl"><a class="header" href="#write-lenses-in-the-lens-dsl">Write lenses in the lens DSL</a></h1>
 <p>The lens DSL is a declarative way to specify a lens between two schemas. Specs are written in Nickel, JSON, or YAML and compile to the lens combinator algebra.</p>
-<h2 id="prerequisites-19"><a class="header" href="#prerequisites-19">Prerequisites</a></h2>
+<h2 id="prerequisites-21"><a class="header" href="#prerequisites-21">Prerequisites</a></h2>
 <p>A pair of schemas to bridge. The <code>schema</code> CLI or <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-lens-dsl"><code>panproto-lens-dsl</code></a> crate.</p>
-<h2 id="the-task-10"><a class="header" href="#the-task-10">The task</a></h2>
+<h2 id="the-task-11"><a class="header" href="#the-task-11">The task</a></h2>
 <h3 id="write-the-spec-nickel"><a class="header" href="#write-the-spec-nickel">Write the spec (Nickel)</a></h3>
 <pre><code class="language-nickel"># lenses/user-v1-to-v2.ncl
 {
@@ -1540,7 +1682,7 @@ chain = panproto.ProtolensChain.from_dsl_yaml(yaml_source, "record:body")
 chain = panproto.ProtolensChain.from_dsl_nickel(nickel_source, "record:body")
 </code></pre>
 <p><code>from_dsl_path</code> dispatches on file extension (<code>.ncl</code> / <code>.json</code> / <code>.yaml</code> / <code>.yml</code>). For Nickel, an optional <code>import_paths</code> argument extends the import-resolution lookup so user-defined modules can be referenced.</p>
-<h2 id="verification-15"><a class="header" href="#verification-15">Verification</a></h2>
+<h2 id="verification-16"><a class="header" href="#verification-16">Verification</a></h2>
 <pre><code class="language-sh"># Check the chain is applicable to every schema in a directory.
 schema lens check --protocol atproto lenses/user-v1-to-v2.json schemas/
 
@@ -1563,9 +1705,9 @@ schema lens verify --protocol atproto data/users.json schemas/user-v2.json
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="query-instances"><a class="header" href="#query-instances">Query instances</a></h1>
 <p>A panproto instance is a graph of records. Queries filter and project that graph using the <a href="#expression-language-reference">expression language</a>.</p>
-<h2 id="prerequisites-20"><a class="header" href="#prerequisites-20">Prerequisites</a></h2>
+<h2 id="prerequisites-22"><a class="header" href="#prerequisites-22">Prerequisites</a></h2>
 <p>A schema and an instance loaded against it. The expression-language reference for predicates.</p>
-<h2 id="the-task-11"><a class="header" href="#the-task-11">The task</a></h2>
+<h2 id="the-task-12"><a class="header" href="#the-task-12">The task</a></h2>
 <h3 id="filter-and-project"><a class="header" href="#filter-and-project">Filter and project</a></h3>
 <p><code>executeQuery</code> is exported from <code>@panproto/core</code>. Its signature is <code>executeQuery(query, instance, wasm)</code> (query first, instance second, WASM module third). The query keys are <code>anchor</code>, <code>predicate</code> (an <code>Expr</code> object, not a string), <code>projection</code> (string array), <code>groupBy</code>, <code>limit</code>, and <code>path</code>.</p>
 <pre><code class="language-ts">import { executeQuery, parseExpr, ExprBuilder } from '@panproto/core';
@@ -1590,7 +1732,7 @@ const recent = executeQuery(
 );
 </code></pre>
 <p>To filter on edge presence, build a predicate with the instance-aware builtins (<code>Edge</code>, <code>Children</code>, <code>HasEdge</code>, <code>EdgeCount</code>) using <code>ExprBuilder</code> or <code>parseExpr</code>.</p>
-<h2 id="verification-16"><a class="header" href="#verification-16">Verification</a></h2>
+<h2 id="verification-17"><a class="header" href="#verification-17">Verification</a></h2>
 <p>Predicates are type-checked against the schema before evaluation; an ill-typed predicate raises before any data is touched.</p>
 <h2 id="common-mistakes-16"><a class="header" href="#common-mistakes-16">Common mistakes</a></h2>
 <ul>
@@ -1605,9 +1747,9 @@ const recent = executeQuery(
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="convert-data-between-formats"><a class="header" href="#convert-data-between-formats">Convert data between formats</a></h1>
 <p>panproto’s parse/migrate/emit pipeline converts data between any two protocols whose theories overlap. The intermediate is a <code>panproto-inst</code> instance graph; you do not need to write a transcoder per format pair.</p>
-<h2 id="prerequisites-21"><a class="header" href="#prerequisites-21">Prerequisites</a></h2>
+<h2 id="prerequisites-23"><a class="header" href="#prerequisites-23">Prerequisites</a></h2>
 <p>The <code>schema</code> CLI installed, or the SDK in your language. The source and target protocol names.</p>
-<h2 id="the-task-12"><a class="header" href="#the-task-12">The task</a></h2>
+<h2 id="the-task-13"><a class="header" href="#the-task-13">The task</a></h2>
 <h3 id="single-file-or-directory-within-one-protocol"><a class="header" href="#single-file-or-directory-within-one-protocol">Single file or directory (within one protocol)</a></h3>
 <pre><code class="language-sh">schema data convert --protocol atproto \
   --from schemas/user-v1.json --to schemas/user-v2.json \
@@ -1624,7 +1766,7 @@ const recent = executeQuery(
 });
 </code></pre>
 <p><code>Panproto.convert(data, opts)</code> auto-generates a lens between the two <code>BuiltSchema</code> arguments, applies it forward, and returns the converted record. Pass <code>defaults</code> in <code>opts</code> to supply complement defaults for fields the source does not determine.</p>
-<h2 id="verification-17"><a class="header" href="#verification-17">Verification</a></h2>
+<h2 id="verification-18"><a class="header" href="#verification-18">Verification</a></h2>
 <p>To verify round-trip fidelity, generate a chain explicitly and run <code>schema lens verify</code>:</p>
 <pre><code class="language-sh">schema lens generate --protocol atproto schemas/user-v1.json schemas/user-v2.json --save chain.json
 schema lens verify --protocol atproto data/users.json schemas/user-v2.json
@@ -1645,9 +1787,9 @@ schema lens verify --protocol atproto data/users.json schemas/user-v2.json
 <h1 id="round-trip-with-format-preservation"><a class="header" href="#round-trip-with-format-preservation">Round-trip with format preservation</a></h1>
 <p>When you parse a JSON, YAML, TOML, XML, or CSV file and emit it back without changes, panproto can guarantee <code>emit(parse(bytes)) == bytes</code> byte-for-byte. This requires the format-preserving codec, which uses tree-sitter grammars and a CST complement to capture whitespace, comments, and ordering.</p>
 <p>This page covers the structured-data path (JSON / YAML / TOML / XML / CSV). For source-code grammars (Rust, Python, Stan, BUGS, and 257 more), the emit path is <code>emit_pretty</code>, which derives spacing and dispatch from <code>grammar.json</code> structurally and exercises a per-protocol verification tier. See <a href="#parse-full-asts">Parse full ASTs</a> and <a href="#source-code-emission">Source-code emission</a>. The two systems are independent and serve different formats; choose one based on what you are parsing.</p>
-<h2 id="prerequisites-22"><a class="header" href="#prerequisites-22">Prerequisites</a></h2>
+<h2 id="prerequisites-24"><a class="header" href="#prerequisites-24">Prerequisites</a></h2>
 <p>Format preservation is gated behind the <code>tree-sitter</code> feature flag on <code>panproto-core</code> (or directly on <code>panproto-io</code>). The shipped <code>schema</code> binary does not enable this feature, so its round-trips are not byte-for-byte: a format-preserving parse or emit requested from the default binary returns canonical output with no layout complement and prints a one-line notice to stderr. Byte preservation requires a build that turns the feature on, for instance a tool built against <code>panproto-core</code> with <code>features = ["tree-sitter"]</code>, or a direct dependency on <code>panproto-io</code> with the same feature. The snippets below assume such a build.</p>
-<h2 id="the-task-13"><a class="header" href="#the-task-13">The task</a></h2>
+<h2 id="the-task-14"><a class="header" href="#the-task-14">The task</a></h2>
 <p>The format-preserving round-trip is exposed by the codec API, not by the shipped CLI. <code>parse_wtype_preserving</code> returns the instance together with a complement carrying the CST data the schema does not see, and <code>emit_wtype_preserving</code> reconstructs the byte-for-byte original from the pair.</p>
 <p>In Rust:</p>
 <pre class="playground"><code class="language-rust no_run">use panproto_core::io::unified_codec::UnifiedCodec;
@@ -1663,7 +1805,7 @@ assert_eq!(out, bytes);
 <span class="boring">Ok(()) }</span></code></pre>
 <p>The complement carries the CST data that the schema does not see. <code>emit_wtype_preserving</code> reconstructs the byte-for-byte original from <code>(instance, complement)</code>. Constructors exist for each supported format: <code>UnifiedCodec::json</code>, <code>xml</code>, <code>yaml</code>, <code>toml</code>, <code>csv</code>, and <code>tsv</code>.</p>
 <p>Without the <code>tree-sitter</code> feature these constructors are compiled out. For code that must run in either build, the registry exposes <code>parse_wtype_preserving_or_canonical</code> and <code>emit_wtype_preserving_or_canonical</code>, which delegate to the preserving codecs when the feature is present and otherwise return canonical output with a stderr notice, so a caller learns the build cannot honor the request rather than silently receiving reformatted data.</p>
-<h2 id="verification-18"><a class="header" href="#verification-18">Verification</a></h2>
+<h2 id="verification-19"><a class="header" href="#verification-19">Verification</a></h2>
 <p>The byte equality is the verification. Property tests in CI check <code>emit(parse(b)) == b</code> against a corpus of real-world JSON, YAML, TOML, XML, and CSV files.</p>
 <h2 id="common-mistakes-18"><a class="header" href="#common-mistakes-18">Common mistakes</a></h2>
 <ul>
@@ -1679,9 +1821,9 @@ assert_eq!(out, bytes);
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="parse-full-asts"><a class="header" href="#parse-full-asts">Parse full ASTs</a></h1>
 <p>panproto can parse source code in 261 languages via tree-sitter and treat the full AST as a schema instance. The resulting instance can be queried, diffed, migrated, and version-controlled like any other schema.</p>
-<h2 id="prerequisites-23"><a class="header" href="#prerequisites-23">Prerequisites</a></h2>
+<h2 id="prerequisites-25"><a class="header" href="#prerequisites-25">Prerequisites</a></h2>
 <p>The <code>schema</code> CLI, or the Rust SDK with the <code>full-parse</code> feature enabled. For the Python SDK, the relevant grammar pack (the wheel ships eleven core languages; install <code>panproto-grammars-functional</code>, <code>-web</code>, <code>-systems</code>, etc. for more).</p>
-<h2 id="the-task-14"><a class="header" href="#the-task-14">The task</a></h2>
+<h2 id="the-task-15"><a class="header" href="#the-task-15">The task</a></h2>
 <h3 id="single-file"><a class="header" href="#single-file">Single file</a></h3>
 <pre><code class="language-sh">schema parse file src/main.rs &gt; main.ast.json
 </code></pre>
@@ -1756,7 +1898,7 @@ match reg.emit_verification_status("python") {
 }
 <span class="boring">Ok(()) }</span></code></pre>
 <p>The 255 protocols currently in the <code>Verified</code> set are listed in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-parse/src/registry.rs"><code>crates/panproto-parse/src/registry.rs</code></a> under <code>VERIFIED_EMIT_PROTOCOLS</code>. A protocol earns the tier by round-tripping its grammar author’s full <code>test/corpus/</code> under the strict <code>emit_corpus_audit</code> oracle (<code>emit(parse(emit(s))) == emit(s)</code> plus vertex-kind and edge-shape multiset preservation on every entry), or by being pinned to a quivers transpile backend test.</p>
-<h2 id="verification-19"><a class="header" href="#verification-19">Verification</a></h2>
+<h2 id="verification-20"><a class="header" href="#verification-20">Verification</a></h2>
 <p>Tree-sitter parsing is total: every byte sequence parses into <em>some</em> AST, with error nodes inserted around unparseable spans. The verified guarantee is a round-trip up to the vertex-kind and edge-shape multiset: <code>emit(parse(bytes))</code> re-parses to the same abstract syntax tree, which <code>check_parse_emit</code> in <code>panproto_parse::parse_emit_lens</code> asserts. Interstitial preservation makes that emit reproduce the original whitespace byte-for-byte for most inputs, but some legitimately reformat (json re-indents arrays), so byte equality is not promised universally. <code>schema parse emit &lt;file&gt;</code> is the smoke test.</p>
 <h2 id="common-mistakes-19"><a class="header" href="#common-mistakes-19">Common mistakes</a></h2>
 <ul>
@@ -1775,9 +1917,9 @@ match reg.emit_verification_status("python") {
 <h1 id="decorate-an-abstract-schema"><a class="header" href="#decorate-an-abstract-schema">Decorate an abstract schema</a></h1>
 <p>When you parse source code into a schema, the parse walker attaches <em>layout data</em> to every vertex: byte spans, the whitespace between adjacent tokens, and a discriminator recording which CHOICE alternative tree-sitter took. The emitter consumes those constraints to render source bytes back. A schema you build by hand from <code>SchemaBuilder</code> has none of them, so <code>emit_pretty_with_protocol</code> falls back to a grammar walk that may pick the wrong alternative or render nothing at all.</p>
 <p><code>decorate</code> fills the gap. Given an abstract schema (vertex kinds, <code>child_of</code> edges, leaf <code>literal-value</code> constraints) and a registered grammar, it attaches the full layout fibre and returns a <code>DecoratedSchema</code> the emitter can render.</p>
-<h2 id="prerequisites-24"><a class="header" href="#prerequisites-24">Prerequisites</a></h2>
+<h2 id="prerequisites-26"><a class="header" href="#prerequisites-26">Prerequisites</a></h2>
 <p>The Rust SDK with the <code>full-parse</code> feature, or the CLI. Python bindings are forthcoming.</p>
-<h2 id="the-task-15"><a class="header" href="#the-task-15">The task</a></h2>
+<h2 id="the-task-16"><a class="header" href="#the-task-16">The task</a></h2>
 <h3 id="build-the-abstract-schema"><a class="header" href="#build-the-abstract-schema">Build the abstract schema</a></h3>
 <pre class="playground"><code class="language-rust no_run">use panproto_core::schema::{Protocol, SchemaBuilder};
 
@@ -1850,7 +1992,7 @@ let bytes = reg.pretty_with_protocol("lilypond", &amp;abstract_schema, &amp;poli
 <span class="boring">let _ = stripped;
 </span><span class="boring">Ok(()) }</span></code></pre>
 <p><code>forget_layout</code> is the schema-level forgetful U: it drops every constraint whose sort is in the layout fibre (per <code>panproto_gat::is_layout_sort</code>) and returns an <code>AbstractSchema</code>. The section law <code>forget_layout(decorate(a)) ≅ a</code> holds up to vertex-id renaming and kind/edge-multiset equivalence, which is the granularity panproto’s round-trip law machinery already uses.</p>
-<h2 id="verification-20"><a class="header" href="#verification-20">Verification</a></h2>
+<h2 id="verification-21"><a class="header" href="#verification-21">Verification</a></h2>
 <p>The section-law smoke test in <code>crates/panproto-parse/tests/decorate_section_law.rs</code> walks a sample source through <code>parse → forget_layout → decorate → forget_layout</code> for every grammar with a parse fixture and asserts that both the vertex-kind multiset and the edge-shape multiset match before and after. Run it with:</p>
 <pre><code class="language-sh">cargo test -p panproto-parse --test decorate_section_law \
     --features lang-json,lang-lilypond
@@ -1874,9 +2016,9 @@ let bytes = reg.pretty_with_protocol("lilypond", &amp;abstract_schema, &amp;poli
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="build-a-custom-protocol"><a class="header" href="#build-a-custom-protocol">Build a custom protocol</a></h1>
 <p>A custom protocol is a new GAT plus a parser/emitter pair, registered with panproto so it can participate in the same diff/migrate/version-control workflow as the built-ins.</p>
-<h2 id="prerequisites-25"><a class="header" href="#prerequisites-25">Prerequisites</a></h2>
+<h2 id="prerequisites-27"><a class="header" href="#prerequisites-27">Prerequisites</a></h2>
 <p>Familiarity with <a href="#schemas-as-theories">Schemas as theories</a> and <a href="#composing-protocols-by-colimit">Composing protocols by colimit</a>. The Rust toolchain.</p>
-<h2 id="the-task-16"><a class="header" href="#the-task-16">The task</a></h2>
+<h2 id="the-task-17"><a class="header" href="#the-task-17">The task</a></h2>
 <h3 id="declare-the-theory"><a class="header" href="#declare-the-theory">Declare the theory</a></h3>
 <p>The fastest path is the theory DSL (<a href="https://github.com/panproto/panproto/tree/main/crates/panproto-theory-dsl"><code>panproto-theory-dsl</code></a>):</p>
 <pre><code class="language-nickel">{
@@ -1924,7 +2066,7 @@ pub fn register_theories&lt;S: ::std::hash::BuildHasher&gt;(
     );
 }</code></pre>
 <p>Pick the <code>theories::register_*</code> helper that matches your theory shape (<code>register_constrained_multigraph_wtype</code>, <code>register_typed_graph_wtype</code>, <code>register_hypergraph_functor</code>, …). Colimit failures during registration panic with a named intermediate step; that is a build-time bug to fix in the theory composition. To expose <code>my_proto</code> to the language SDKs and CLI, add it to the <code>lookup</code> table in <code>crates/panproto-py/src/protocols.rs</code> and the <code>lookup_builtin_protocol</code> table in <code>crates/panproto-wasm/src/api/helpers.rs</code>.</p>
-<h2 id="verification-21"><a class="header" href="#verification-21">Verification</a></h2>
+<h2 id="verification-22"><a class="header" href="#verification-22">Verification</a></h2>
 <pre><code class="language-sh">cargo test -p panproto-protocols my_proto
 </code></pre>
 <p>The standard property-test suite for protocols verifies parse/emit round-trip, schema validation against the theory, and migration existence between two scaffolded schemas.</p>
@@ -1964,9 +2106,9 @@ pub fn register_theories&lt;S: ::std::hash::BuildHasher&gt;(
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="init-and-commit"><a class="header" href="#init-and-commit">Init and commit</a></h1>
-<h2 id="prerequisites-26"><a class="header" href="#prerequisites-26">Prerequisites</a></h2>
+<h2 id="prerequisites-28"><a class="header" href="#prerequisites-28">Prerequisites</a></h2>
 <p>The <code>schema</code> CLI installed. A directory containing schema files (or a fresh directory you are about to populate).</p>
-<h2 id="the-task-17"><a class="header" href="#the-task-17">The task</a></h2>
+<h2 id="the-task-18"><a class="header" href="#the-task-18">The task</a></h2>
 <pre><code class="language-sh">cd my-schemas/
 schema init                 # create .panproto/
 schema add user.json
@@ -1979,7 +2121,7 @@ schema log                  # show history
 schema diff               # diff working tree vs HEAD
 schema show &lt;commit-hash&gt;
 </code></pre>
-<h2 id="verification-22"><a class="header" href="#verification-22">Verification</a></h2>
+<h2 id="verification-23"><a class="header" href="#verification-23">Verification</a></h2>
 <pre><code class="language-sh">schema log --oneline
 </code></pre>
 <p>prints the commit history. Each commit shows its blake3 hash, schema hash, message, and author.</p>
@@ -1996,9 +2138,9 @@ schema show &lt;commit-hash&gt;
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="branch-and-merge"><a class="header" href="#branch-and-merge">Branch and merge</a></h1>
-<h2 id="prerequisites-27"><a class="header" href="#prerequisites-27">Prerequisites</a></h2>
+<h2 id="prerequisites-29"><a class="header" href="#prerequisites-29">Prerequisites</a></h2>
 <p>A panproto repository with at least one commit (<a href="#init-and-commit">Init and commit</a>).</p>
-<h2 id="the-task-18"><a class="header" href="#the-task-18">The task</a></h2>
+<h2 id="the-task-19"><a class="header" href="#the-task-19">The task</a></h2>
 <pre><code class="language-sh">schema branch feature/add-handle
 schema checkout feature/add-handle
 # edit the schema, add a `handle` field
@@ -2017,7 +2159,7 @@ schema show &lt;conflict&gt;     # inspect the contradiction
 schema add &lt;conflict&gt;
 schema commit -m "resolve conflict"
 </code></pre>
-<h2 id="verification-23"><a class="header" href="#verification-23">Verification</a></h2>
+<h2 id="verification-24"><a class="header" href="#verification-24">Verification</a></h2>
 <pre><code class="language-sh">schema log --graph
 </code></pre>
 <p>shows the DAG with the merge commit visible. The merge commit has two parents (HEAD and the merged branch’s HEAD).</p>
@@ -2035,9 +2177,9 @@ schema commit -m "resolve conflict"
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="version-data-alongside-schemas"><a class="header" href="#version-data-alongside-schemas">Version data alongside schemas</a></h1>
 <p>panproto-vcs commits can carry data instances. When a branch’s schema migrates, the data carried by its commits is automatically lifted forward by the migration’s lens. This makes data evolution part of the schema history rather than a parallel concern.</p>
-<h2 id="prerequisites-28"><a class="header" href="#prerequisites-28">Prerequisites</a></h2>
+<h2 id="prerequisites-30"><a class="header" href="#prerequisites-30">Prerequisites</a></h2>
 <p>A panproto repository with at least one schema and a corresponding data instance.</p>
-<h2 id="the-task-19"><a class="header" href="#the-task-19">The task</a></h2>
+<h2 id="the-task-20"><a class="header" href="#the-task-20">The task</a></h2>
 <p>Data is staged together with its schema via <code>schema add --data</code>:</p>
 <pre><code class="language-sh">schema add user.json --data records/
 schema commit -m "v1 schema and seed data"
@@ -2060,7 +2202,7 @@ schema data status records/
 <pre><code class="language-sh">schema checkout &lt;commit&gt;
 # read records/
 </code></pre>
-<h2 id="verification-24"><a class="header" href="#verification-24">Verification</a></h2>
+<h2 id="verification-25"><a class="header" href="#verification-25">Verification</a></h2>
 <pre><code class="language-sh">schema data status records/
 </code></pre>
 <p>reports staleness relative to the current schema. A clean status means the data conforms.</p>
@@ -2080,9 +2222,9 @@ schema data status records/
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="bridge-to-git"><a class="header" href="#bridge-to-git">Bridge to git</a></h1>
 <p>panproto-vcs is independent of git, but most projects host their source in git. The bridge lets a panproto-vcs repository live alongside (or inside) a git one, and lets git remotes serve panproto histories.</p>
-<h2 id="prerequisites-29"><a class="header" href="#prerequisites-29">Prerequisites</a></h2>
+<h2 id="prerequisites-31"><a class="header" href="#prerequisites-31">Prerequisites</a></h2>
 <p>A git repository (the host project) and either a <code>.panproto/</code> directory inside it or a sibling panproto repository.</p>
-<h2 id="the-task-20"><a class="header" href="#the-task-20">The task</a></h2>
+<h2 id="the-task-21"><a class="header" href="#the-task-21">The task</a></h2>
 <h3 id="sidecar-mode"><a class="header" href="#sidecar-mode">Sidecar mode</a></h3>
 <p>The simplest setup: keep <code>.panproto/</code> next to <code>.git/</code>. Both are tracked by their own tools; commits to either are independent.</p>
 <pre><code class="language-sh">git add .panproto/
@@ -2099,7 +2241,7 @@ schema git export path/to/output-git-repo --repo .
 <p>The <code>panproto-git-remote</code> crate registers a custom git remote helper that exposes a panproto-vcs repository to git clients (so <code>git clone panproto://path/to/repo</code> works). The helper is separate from <code>schema git</code>; install the binary and configure git accordingly. See <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-git-remote"><code>crates/panproto-git-remote</code></a>.</p>
 <h3 id="merge-bridging"><a class="header" href="#merge-bridging">Merge bridging</a></h3>
 <p>A git merge that touches <code>.panproto/objects/</code> will not preserve panproto’s structural merge guarantees, since git merges the bytes. The supported pattern is to do schema-level work in panproto and then <code>schema git export</code> the result. There is no automatic git-merge-to-pushout translation in the CLI; the merge must originate in <code>schema merge</code> to get the universal-property-checked pushout.</p>
-<h2 id="verification-25"><a class="header" href="#verification-25">Verification</a></h2>
+<h2 id="verification-26"><a class="header" href="#verification-26">Verification</a></h2>
 <pre><code class="language-sh">schema status
 git status
 </code></pre>
@@ -2118,9 +2260,9 @@ git status
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="translate-across-protocols"><a class="header" href="#translate-across-protocols">Translate across protocols</a></h1>
 <p>Cross-protocol translation moves schemas between schema languages: JSON Schema to Protobuf, ATProto Lexicon to GraphQL SDL, and so on. Translation is a migration whose source and target theories belong to different protocols.</p>
-<h2 id="prerequisites-30"><a class="header" href="#prerequisites-30">Prerequisites</a></h2>
+<h2 id="prerequisites-32"><a class="header" href="#prerequisites-32">Prerequisites</a></h2>
 <p>Two protocols whose theories overlap on enough building-block theories that a colimit-mediated translation exists. The CLI or one of the SDKs.</p>
-<h2 id="the-task-21"><a class="header" href="#the-task-21">The task</a></h2>
+<h2 id="the-task-22"><a class="header" href="#the-task-22">The task</a></h2>
 <p>Cross-protocol translation runs through the colimit-of-theories construction in <code>panproto-protocols</code>. There is no single CLI subcommand that takes a source-protocol schema and emits a target-protocol schema directly; instead, the workflow is:</p>
 <ol>
 <li><strong>Compose the theory.</strong> Use the theory DSL to declare a composition theory whose colimit covers both protocols, or rely on the built-in compositions for the protocol pair you want.</li>
@@ -2162,7 +2304,7 @@ schema lens apply --protocol &lt;protocol&gt; lenses/a-to-b.json data/user.json
   --from schemas/user-v1.json --to schemas/user-v2.json \
   data/users/
 </code></pre>
-<h2 id="verification-26"><a class="header" href="#verification-26">Verification</a></h2>
+<h2 id="verification-27"><a class="header" href="#verification-27">Verification</a></h2>
 <p><code>schema lens verify --protocol &lt;name&gt; &lt;data&gt; &lt;schema&gt;</code> checks the round-trip laws on the converted data. A clean run means the chain is loss-free for the given samples.</p>
 <h2 id="common-mistakes-26"><a class="header" href="#common-mistakes-26">Common mistakes</a></h2>
 <ul>
@@ -2199,9 +2341,9 @@ schema lens apply --protocol &lt;protocol&gt; lenses/a-to-b.json data/user.json
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="breaking-change-gate"><a class="header" href="#breaking-change-gate">Breaking-change gate</a></h1>
 <p>A breaking-change gate is a CI step that fails the build when a PR introduces a schema change panproto classifies as breaking. It runs against the diff between the PR’s schema and the schema at <code>main</code>.</p>
-<h2 id="prerequisites-31"><a class="header" href="#prerequisites-31">Prerequisites</a></h2>
+<h2 id="prerequisites-33"><a class="header" href="#prerequisites-33">Prerequisites</a></h2>
 <p>A panproto repository under git. A CI system that can run shell commands.</p>
-<h2 id="the-task-22"><a class="header" href="#the-task-22">The task</a></h2>
+<h2 id="the-task-23"><a class="header" href="#the-task-23">The task</a></h2>
 <p><code>schema compat</code> classifies the diff between two schema versions and sets its exit code by tier: 0 for a non-breaking change (fully compatible or backward compatible), 1 for a breaking one, 2 for a usage or load error. That exit code is the gate. Pair it with <code>schema check --typecheck</code>, which catches GAT-level type errors the structural classification does not:</p>
 <pre><code class="language-sh"># In your CI script.
 git fetch origin main
@@ -2227,7 +2369,7 @@ else
 fi
 </code></pre>
 <p>For richer reporting, add <code>--format json</code> to <code>schema compat</code>, or use the SDK: in Python, <code>panproto.diff_and_classify(old, new, protocol)</code> returns a <code>CompatReport</code>; in Rust, call <code>panproto_check::diff(...)</code> followed by <code>panproto_check::classify(&amp;diff, &amp;protocol)</code>; in TypeScript, <code>panproto.diffFull(old, new).classify(protocol)</code> returns the same report. Each <code>CompatReport</code> carries a <code>classification</code> tier (<code>fully-compatible</code>, <code>backward-compatible</code>, or <code>breaking</code>) alongside a <code>breaking</code> list, a <code>non_breaking</code> list, and a <code>compatible</code> boolean, along with the offending elements.</p>
-<h2 id="verification-27"><a class="header" href="#verification-27">Verification</a></h2>
+<h2 id="verification-28"><a class="header" href="#verification-28">Verification</a></h2>
 <p>Open a PR that adds a backward-compatible field; the gate passes. Open a PR that drops a required field; the gate fails. Add <code>[breaking-change-acknowledged]</code> to the commit message; the gate passes with a warning.</p>
 <h2 id="common-mistakes-27"><a class="header" href="#common-mistakes-27">Common mistakes</a></h2>
 <ul>
@@ -2243,9 +2385,9 @@ fi
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="github-actions"><a class="header" href="#github-actions">GitHub Actions</a></h1>
 <p>A drop-in workflow for schema validation and breaking-change detection on every pull request.</p>
-<h2 id="prerequisites-32"><a class="header" href="#prerequisites-32">Prerequisites</a></h2>
+<h2 id="prerequisites-34"><a class="header" href="#prerequisites-34">Prerequisites</a></h2>
 <p>A panproto repository on GitHub. The <code>panproto-cli</code> Homebrew tap, shell installer, or <code>cargo install</code> available on Linux runners.</p>
-<h2 id="the-task-23"><a class="header" href="#the-task-23">The task</a></h2>
+<h2 id="the-task-24"><a class="header" href="#the-task-24">The task</a></h2>
 <pre><code class="language-yaml"># .github/workflows/panproto.yml
 name: panproto
 
@@ -2286,7 +2428,7 @@ jobs:
 </code></pre>
 <p>The <code>--protocol</code> flag is required for every per-file <code>schema validate</code>. There is no <code>--project</code> flag; per-file iteration is the supported pattern.</p>
 <p>Two jobs: validation and the breaking-change gate. Validation fails on a malformed schema; the gate fails on a breaking diff.</p>
-<h2 id="verification-28"><a class="header" href="#verification-28">Verification</a></h2>
+<h2 id="verification-29"><a class="header" href="#verification-29">Verification</a></h2>
 <p>Push a PR and watch the workflow run. The validation step exits zero on a clean schema; the gate prints the classification and exits non-zero on breaking.</p>
 <h2 id="common-mistakes-28"><a class="header" href="#common-mistakes-28">Common mistakes</a></h2>
 <ul>
@@ -2301,9 +2443,9 @@ jobs:
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="pre-commit-hooks"><a class="header" href="#pre-commit-hooks">Pre-commit hooks</a></h1>
 <p>A pre-commit hook runs schema validation before each <code>git commit</code>, so you catch malformed schemas before they enter the history. Optionally, it can also warn about breaking changes.</p>
-<h2 id="prerequisites-33"><a class="header" href="#prerequisites-33">Prerequisites</a></h2>
+<h2 id="prerequisites-35"><a class="header" href="#prerequisites-35">Prerequisites</a></h2>
 <p>The <code>schema</code> CLI installed. A git repository.</p>
-<h2 id="the-task-24"><a class="header" href="#the-task-24">The task</a></h2>
+<h2 id="the-task-25"><a class="header" href="#the-task-25">The task</a></h2>
 <h3 id="plain-git-hook"><a class="header" href="#plain-git-hook">Plain git hook</a></h3>
 <pre><code class="language-sh"># .git/hooks/pre-commit
 #!/usr/bin/env bash
@@ -2341,7 +2483,7 @@ repos:
 </code></pre>
 <p>The hook receives the staged file paths as positional arguments; the <code>--protocol</code> flag is required.</p>
 <p><code>pre-commit install</code> activates it.</p>
-<h2 id="verification-29"><a class="header" href="#verification-29">Verification</a></h2>
+<h2 id="verification-30"><a class="header" href="#verification-30">Verification</a></h2>
 <p>Stage a malformed schema and try to commit; the hook rejects. Fix the schema and commit again; the hook passes.</p>
 <h2 id="common-mistakes-29"><a class="header" href="#common-mistakes-29">Common mistakes</a></h2>
 <ul>
@@ -2366,6 +2508,8 @@ repos:
 <tr><td><a href="#rust-sdk-reference">Rust SDK</a></td><td>Crate selection, feature flags, public re-exports, and the canonical entry points. Links into docs.rs for full type signatures.</td></tr>
 <tr><td><a href="#typescript-sdk-reference">TypeScript SDK</a></td><td>Package layout, initialization, the high-level facade, and the handle-based API. Links into TypeDoc.</td></tr>
 <tr><td><a href="#python-sdk-reference">Python SDK</a></td><td>PyO3 native module surface, top-level re-exports, and the companion grammar packs. Links into the mkdocs reference site.</td></tr>
+<tr><td><a href="#haskell-sdk-reference">Haskell SDK</a></td><td>The capability typeclasses, the two backends, the effect layer, and the standard-class integration.</td></tr>
+<tr><td><a href="#swift-sdk-reference">Swift SDK</a></td><td>Product tiers, the engine actor and its thread confinement, the handle taxonomy, the error hierarchy, and the CBOR codec.</td></tr>
 <tr><td><a href="#protocol-catalogue">Protocol catalogue</a></td><td>Every protocol panproto recognises, with its theory composition and supported operations.</td></tr>
 <tr><td><a href="#expression-language-reference">Expression language</a></td><td>Surface grammar, builtins by category, and the type signatures of each builtin.</td></tr>
 <tr><td><a href="#lens-combinator-reference">Lens combinators</a></td><td>The combinator algebra exposed by <code>panproto-lens</code>, organised by optic kind.</td></tr>
@@ -2583,6 +2727,7 @@ Options:
   -v, --verbose      Enable verbose output
   -f, --force        Force staging even if validation fails
       --data &lt;DATA&gt;  Stage data files alongside the schema
+      --skip-verify  Skip GAT migration validation while staging (leaves the stage pending; the migration is still recorded)
   -h, --help         Print help
 </code></pre>
 <h3 id="schema-commit"><a class="header" href="#schema-commit"><code>schema commit</code></a></h3>
@@ -4034,6 +4179,140 @@ validate =
 <li><a href="#define-a-schema-from-haskell">Define a schema from Haskell</a> for the builder walkthrough.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="swift-sdk-reference"><a class="header" href="#swift-sdk-reference">Swift SDK reference</a></h1>
+<p>The Swift binding lives at <a href="https://github.com/panproto/panproto/tree/main/bindings/swift"><code>bindings/swift/</code></a> and is a <a href="https://www.swift.org/documentation/package-manager/">SwiftPM</a> package. It links <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>libpanproto_c</code></a>, the C ABI exposed by the <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>panproto-c</code></a> crate, and reaches every one of its 120 entry points: schemas, instances, migrations, lenses, the GAT layer, the expression language, compatibility checking, homomorphism search, graph fibers, datasets, I/O codecs, version control, and the feature-gated parse, project, and git tiers.</p>
+<h2 id="installation-3"><a class="header" href="#installation-3">Installation</a></h2>
+<p>The package is not yet on a registry; install from this repository. See <a href="#install-the-swift-sdk">Install the Swift SDK</a> for the bootstrap scripts, the XCFramework path, and the toolchain prerequisites.</p>
+<h2 id="products-1"><a class="header" href="#products-1">Products</a></h2>
+<p>The package splits along the line between values and the engine, and again along the line between what the default library exports and what it does not.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Product</th><th>Tier</th><th>Depends on the engine</th><th>Feature</th></tr>
+</thead>
+<tbody>
+<tr><td><code>PanprotoStructural</code></td><td>pure value layer</td><td>no</td><td></td></tr>
+<tr><td><code>Panproto</code></td><td>core runtime</td><td>yes</td><td></td></tr>
+<tr><td><code>PanprotoVcs</code></td><td>version control</td><td>yes</td><td></td></tr>
+<tr><td><code>PanprotoParse</code></td><td>full-AST parsing</td><td>yes</td><td><code>parse</code></td></tr>
+<tr><td><code>PanprotoProject</code></td><td>multi-file assembly</td><td>yes</td><td><code>project</code></td></tr>
+<tr><td><code>PanprotoGit</code></td><td>git bridge</td><td>yes</td><td><code>git</code></td></tr>
+</tbody>
+</table>
+</div>
+<p><code>PanprotoStructural</code> imports no FFI module at all, which the package graph enforces: it depends on nothing but the standard library. Everything in it is a <code>Sendable</code>, <code>Hashable</code>, <code>Codable</code> value, including the CBOR codec that gives those values their wire form. A pipeline that only reads and rewrites schemas can link it alone and never start an engine.</p>
+<p>The three feature-gated products always exist in the package graph, so resolution does not depend on how the library was built. Each is selected by a package trait (<code>PANPROTO_PARSE</code>, <code>PANPROTO_PROJECT</code>, <code>PANPROTO_GIT</code>), and a trait defines a compilation condition of its own name, which is what the <code>#if</code> blocks in the gated sources read. Without its trait a module is empty, and the raw shims that would reference the absent symbols are compiled out. That matters because the default <code>libpanproto_c</code> exports 103 of the 120 entry points; referencing the other 17 unconditionally would make every default build fail to link.</p>
+<h2 id="the-engine-actor"><a class="header" href="#the-engine-actor">The engine actor</a></h2>
+<p><code>PanprotoEngine</code> is a global actor whose executor is pinned to one dedicated thread for the lifetime of the process. Everything that touches a handle is isolated to it.</p>
+<p>The reason is narrower than it looks. The slab that hands out handles is process-global and mutex-guarded, so a handle really is valid from any thread. What is thread-local is the <em>last-error slot</em>: a failing entry point stashes its <code>ErrorEnvelope</code> where only the calling thread can drain it, and <code>pp_last_error_take</code> on any other thread answers empty. Every error message the binding reports depends on the drain landing on the thread that failed.</p>
+<p>A serial <code>DispatchQueue</code> would give mutual exclusion but not thread identity, so that invariant would hold only as long as no call ever suspended between the failure and the drain. Pinning a thread makes it hold unconditionally, and costs one resident thread.</p>
+<pre><code class="language-swift">// Each call hops to the engine and back.
+let schema = try await SchemaHandle.parseAtprotoLexicon(lexicon)
+let messages = try await schema.violations(against: atproto)
+
+// Or amortize the hops by isolating a region of your own code.
+@PanprotoEngine
+func migrateEverything(_ records: [Data]) throws(PanprotoError) -&gt; [Data] { ... }
+</code></pre>
+<p>Engine methods are synchronous CPU-bound work performed off the caller’s executor. Task cancellation is therefore observed <em>between</em> calls, never in the middle of one: the engine has no cancellation channel, and a partially executed migration is not a state the C ABI can express.</p>
+<h2 id="handle-taxonomy"><a class="header" href="#handle-taxonomy">Handle taxonomy</a></h2>
+<p>A handle owns one slab entry. <code>PanprotoHandle</code> is the base class; the fourteen slab variants are its final subclasses, so the variant is a compile-time fact and a <code>SchemaHandle</code> cannot be passed where the ABI wants a <code>ProtocolHandle</code>.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Swift type</th><th>Slab variant</th><th>Tier</th></tr>
+</thead>
+<tbody>
+<tr><td><code>ProtocolHandle</code></td><td><code>Protocol</code></td><td>core</td></tr>
+<tr><td><code>SchemaHandle</code></td><td><code>Schema</code></td><td>core</td></tr>
+<tr><td><code>MigrationHandle</code></td><td><code>Migration</code></td><td>core</td></tr>
+<tr><td><code>CompiledMigrationHandle</code></td><td><code>MigrationWithSchemas</code></td><td>core</td></tr>
+<tr><td><code>IoRegistryHandle</code></td><td><code>IoRegistry</code></td><td>core</td></tr>
+<tr><td><code>TheoryHandle</code></td><td><code>Theory</code></td><td>core</td></tr>
+<tr><td><code>ModelHandle</code></td><td><code>Model</code></td><td>core</td></tr>
+<tr><td><code>ProtolensChainHandle</code></td><td><code>ProtolensChain</code></td><td>core</td></tr>
+<tr><td><code>SymmetricLensHandle</code></td><td><code>SymmetricLens</code></td><td>core</td></tr>
+<tr><td><code>DataSetHandle</code></td><td><code>DataSet</code></td><td>core</td></tr>
+<tr><td><code>RepositoryHandle</code></td><td><code>VcsRepo</code></td><td>vcs</td></tr>
+<tr><td><code>AstRegistryHandle</code></td><td><code>AstRegistry</code></td><td>parse</td></tr>
+<tr><td><code>ProjectBuilderHandle</code></td><td><code>ProjectBuilder</code></td><td>project</td></tr>
+<tr><td><code>ProjectSchemaHandle</code></td><td><code>ProjectSchema</code></td><td>project</td></tr>
+</tbody>
+</table>
+</div>
+<p><code>Model</code> is the one resource that cannot leave the engine as data: a model interprets each operation as a Rust closure, so what crosses the boundary is the result of evaluating in it, or its carrier read out sort by sort.</p>
+<p>Handles are engine-isolated classes, so they are safe to hold anywhere and usable only inside the engine. Deinitialization does not suspend, so it cannot hop onto the actor the way ordinary code does; a handle’s <code>deinit</code> appends its index to the executor’s release queue instead, and the engine thread frees it on its next pass. Call <code>release()</code> to return an entry earlier than that. It is idempotent, and safe to interleave with deinitialization.</p>
+<h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
+<p><code>PanprotoError</code> has twelve cases, one per family of operations: <code>parse</code>, <code>migration</code>, <code>lens</code>, <code>schemaValidation</code>, <code>check</code>, <code>existenceCheck</code>, <code>expr</code>, <code>gat</code>, <code>io</code>, <code>vcs</code>, <code>gitBridge</code>, <code>project</code>. Every method is declared <code>throws(PanprotoError)</code>, so the type is exact rather than existential.</p>
+<p>The C ABI collapses all engine failures into six status codes and a message, which is too coarse to branch on, so the binding restores the distinctions from two sources. The domain comes from the call site, which means it is exact: a lens failure and a VCS failure are never confusable, because different code raised them. The <code>Fault</code> comes from the envelope, where the engine’s message is specific enough to recognize: <code>complementFingerprintMismatch</code>, <code>complementConflict</code>, <code>invalidHandle</code>, <code>typeMismatch</code>, and <code>panic</code>. An unrecognized message leaves the fault absent rather than mis-classifying it.</p>
+<pre><code class="language-swift">do {
+    let record = try await lens.put(view: edited, complement: complement)
+} catch .lens(let detail) {
+    if case .complementFingerprintMismatch(let left, let right) = detail.fault {
+        // The two complements were captured against different source schemas.
+    }
+}
+</code></pre>
+<p>The two complement faults are the ones worth catching by name. <code>Complement.compose</code> is a <em>partial</em> monoid: composition is defined exactly when two complements agree on every shared key, and disagreement is the boundary of its domain of definition rather than a recoverable condition.</p>
+<h2 id="standard-protocol-integration"><a class="header" href="#standard-protocol-integration">Standard-protocol integration</a></h2>
+<p>Where a panproto structure already is a known algebra, the binding gives it the corresponding Swift conformance, and where it is not, the binding declines to pretend.</p>
+<p>A <code>ProtolensChain</code> is a monoid under step concatenation: <code>+</code> concatenates and <code>.empty</code> is a genuine two-sided unit. <code>OpticKind</code> is a monoid under the optics lattice, with <code>iso</code> the unit and <code>traversal</code> absorbing. A <code>Migration</code> composes, but composition is deliberately exposed as a method rather than an operator with an identity: the engine’s composition is drop-on-miss, so a vertex the right migration does not map is removed, and the only identity is the per-schema self-map, which has no schema-independent value. Calling that a monoid would be a lie the type system would then let you rely on.</p>
+<p>The value types conform to <code>Hashable</code> and <code>Sendable</code>, so they compare structurally and work as dictionary keys.</p>
+<h2 id="the-structured-schema"><a class="header" href="#the-structured-schema">The structured schema</a></h2>
+<p><code>Schema</code> in <code>PanprotoStructural</code> is the primary schema type: a value carrying the semantic fields of <code>panproto_schema::Schema</code>, with vertices, edges, hyper-edges, constraints, variants, recursion points, spans, and the enrichment maps. <code>SchemaHandle</code> in <code>Panproto</code> is the engine-side resource, and the two convert in both directions.</p>
+<p>The Rust type stores three precomputed adjacency indices. The Swift value does not: they are derivable from the edge set, so the encoder recomputes them on the way out and the decoder ignores them on the way in, with <code>outgoingEdges(from:)</code>, <code>incomingEdges(to:)</code>, and <code>edges(between:and:)</code> as pure accessors. That keeps a decoded schema from carrying two representations of the same fact that could drift apart under mutation.</p>
+<h2 id="cbor"><a class="header" href="#cbor">CBOR</a></h2>
+<p>Every payload crossing the ABI is CBOR produced by <a href="https://docs.rs/ciborium"><code>ciborium</code></a> driven by <a href="https://serde.rs/"><code>serde</code></a>, so <code>PanprotoStructural</code> ships a codec written against that data model rather than a general-purpose one. <code>CBOREncoder</code> and <code>CBORDecoder</code> conform to Swift’s <code>Encoder</code> and <code>Decoder</code>, so ordinary <code>Codable</code> conformances work.</p>
+<p>Encoding is deterministic: definite lengths everywhere, the shortest integer head that fits, the narrowest float width that reproduces the value exactly, and canonical key ordering for collections that carry no order of their own. Two encodes of the same Swift value agree byte for byte.</p>
+<p>The engine’s output does not have that property, and conformance is not defined in terms of it. Most schema and instance fields are Rust <code>HashMap</code>s, and <code>ciborium</code> writes a map in whatever order the map iterates, so two runs of the engine can emit the same schema as different bytes. Two other differences are structural rather than incidental: an <code>Option</code> field with no value encodes as an explicit null on the way out but decodes from an absent key as well, and Swift’s synthesized encoder omits it, which serde reads back as <code>None</code>. Conformance therefore means <em>the decoded value is equal</em>, checked by re-encoding a payload, handing it back to the engine, and reading it out again. Bytes the engine rejects are the failure this layer exists to catch; bytes that differ from a previous run are not a failure at all.</p>
+<p>Decoding is tolerant in the ways a forward-compatible host has to be: indefinite lengths, unknown map keys, semantic tags, and every float width all decode.</p>
+<p><code>CBORValue</code> is the untyped escape hatch. It decodes any payload without a static type, and it is itself <code>Codable</code>, so a field typed <code>CBORValue</code> passes a fragment the Swift model does not describe through unchanged.</p>
+<h2 id="parity-with-the-other-sdks"><a class="header" href="#parity-with-the-other-sdks">Parity with the other SDKs</a></h2>
+<p>The Swift binding reaches every one of the C ABI’s 120 entry points, which is the same surface the Haskell binding consumes, so the two are at parity with each other and with the ABI.</p>
+<p>The Python SDK is a superset of both, and the reason is architectural rather than a shortfall in either binding: <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-py"><code>panproto-py</code></a> is a <a href="https://pyo3.rs/">PyO3</a> extension linking <code>panproto-core</code> directly, so it reaches engine surfaces the ABI never exposed. Fifty-two members of the Python surface have no <code>pp_*</code> entry point behind them, in five groups:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Group</th><th>What Python reaches</th><th>Scale of the gap</th></tr>
+</thead>
+<tbody>
+<tr><td>Schema-document and IDL parsing</td><td><code>parse_schema_document</code> over 106 JSON-document parsers and <code>parse_schema_source</code> over ten text and IDL parsers</td><td>the ABI carries only <code>pp_schema_parse_atproto_lexicon</code></td></tr>
+<tr><td>Version-control porcelain</td><td>tags, rebase, cherry-pick, reset, amend, bisect, reflog, the full stash stack, data versioning</td><td>the ABI carries 13 operations, all bound</td></tr>
+<tr><td>Theory construction</td><td><code>Theory.from_json</code> / <code>from_yaml</code> / <code>from_nickel</code> / <code>from_path</code>, and deriving a theory from a schema</td><td>the ABI takes a CBOR theory or two handles, with no loader and no schema-to-theory induction</td></tr>
+<tr><td>Steered lens generation</td><td><code>auto_generate_with_hints</code> and <code>auto_generate_with_hint_spec</code></td><td>the ABI takes a stringency string and nothing else</td></tr>
+<tr><td>Runtime grammars and lexicon bundles</td><td><code>AstParserRegistry(extra_grammars=...)</code>, <code>override_grammar</code>, <code>parse_schema_bundle_project</code></td><td>no entry point</td></tr>
+</tbody>
+</table>
+</div>
+<p>One of these is silent rather than merely absent, and is worth knowing about: the ABI’s lens entry points take no protocol handle, so a schema built against a protocol you defined yourself is aligned and instantiated against a synthesized default (three object kinds, no edge rules, no constraint sorts) rather than against your rules. That affects Haskell identically.</p>
+<p>Swift reaches seven surfaces Python does not, all of them ABI entry points <code>panproto-py</code> has no wrapper for: instance queries, the graph fiber calculus, schema enrichment, the dataset and staleness layer, symmetric lenses, evaluation in a model, and expression typechecking.</p>
+<h2 id="gates"><a class="header" href="#gates">Gates</a></h2>
+<p>Three gates run in CI, each closing a hole that a binding of this size grows on its own.</p>
+<p>The header-drift gate regenerates <code>panproto.h</code> from the crate and requires it to be byte-identical to the copy the Swift package compiles against. A silent ABI change is the failure this catches: the shims would still compile, and would call the wrong thing.</p>
+<p>The parity gate reads both headers, computes each entry point’s Swift name mechanically (drop <code>pp_</code>, snake_case to lowerCamelCase, no acronym special-casing), and requires a matching <code>Raw</code> method. It then requires every shim to be called from somewhere other than the raw layer, and every public method of the domain layer to be named by a test or an example. Parity holds by construction rather than by release notes.</p>
+<p>The lint gate runs <code>swift format lint --strict</code>, with <code>AllPublicDeclarationsHaveDocumentation</code> on.</p>
+<h2 id="native-backend"><a class="header" href="#native-backend">Native backend</a></h2>
+<p><code>PanprotoStructural</code> implements the capabilities that need no engine: decoding, re-encoding, and structural manipulation of schemas, protocols, protolens chains, and instances, plus the value algebra. Everything else, including validation, migration compilation, lens evaluation, and every law check, requires the engine, because the semantics live in Rust and the binding does not reimplement them.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Capability</th><th><code>PanprotoStructural</code></th><th><code>Panproto</code></th></tr>
+</thead>
+<tbody>
+<tr><td>Schema and protocol round-trip</td><td>yes</td><td>yes</td></tr>
+<tr><td>Chain concatenation and optic-kind join</td><td>yes</td><td>yes</td></tr>
+<tr><td>Adjacency accessors</td><td>yes</td><td>yes</td></tr>
+<tr><td>Schema validation</td><td></td><td>yes</td></tr>
+<tr><td>Diff and classification</td><td></td><td>yes</td></tr>
+<tr><td>Migration compile, compose, invert, lift</td><td></td><td>yes</td></tr>
+<tr><td>Lens generation, instantiation, get, put, sync</td><td></td><td>yes</td></tr>
+<tr><td>Law checking</td><td></td><td>yes</td></tr>
+<tr><td>Theories, expressions, enrichment</td><td></td><td>yes</td></tr>
+<tr><td>Version control</td><td></td><td>yes</td></tr>
+</tbody>
+</table>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="protocol-catalogue"><a class="header" href="#protocol-catalogue">Protocol catalogue</a></h1>
 <p>A <em>protocol</em> in panproto is a schema language: Avro, CDDL, OpenAPI, ATProto Lexicons, Parquet, FHIR, a Kubernetes CRD. Each one is defined by a pair of GATs (a schema theory and an instance theory) composed by colimit from reusable building-block theories. Every protocol provides both a parser (native format → <code>Schema</code>) and an emitter (<code>Schema</code> → native format), so panproto can round-trip data through any pair.</p>
 <p>For the model behind these registrations, see <a href="#schemas-as-theories">Schemas as theories</a> and <a href="#composing-protocols-by-colimit">Composing protocols by colimit</a>.</p>
@@ -4147,7 +4426,7 @@ validate =
 <p><code>TypeOf</code>, <code>IsNull</code>, <code>IsList</code>.</p>
 <h3 id="graph-traversal-instance-aware"><a class="header" href="#graph-traversal-instance-aware">Graph traversal (instance-aware)</a></h3>
 <p><code>Edge</code>, <code>Children</code>, <code>HasEdge</code>, <code>EdgeCount</code>, <code>Anchor</code>. These return <code>Null</code> in the standard evaluator. To use them, evaluate in an instance environment via <code>panproto_inst::instance_env</code>.</p>
-<h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
+<h2 id="errors-1"><a class="header" href="#errors-1">Errors</a></h2>
 <p>The full list of <code>ExprError</code> variants is in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/error.rs"><code>crates/panproto-expr/src/error.rs</code></a>.</p>
 <div class="table-wrapper">
 <table>
@@ -4382,7 +4661,7 @@ protocol = "avro"
 <tr><td><code>panproto-cli</code></td><td>The <code>schema</code> binary.</td></tr>
 <tr><td><code>panproto-wasm</code></td><td>WebAssembly bindings; consumed by the TypeScript SDK.</td></tr>
 <tr><td><code>panproto-py</code></td><td>Native Python bindings via PyO3.</td></tr>
-<tr><td><code>panproto-c</code></td><td>C ABI for non-Rust language bindings; the Haskell binding consumes its 112-entry surface.</td></tr>
+<tr><td><code>panproto-c</code></td><td>C ABI for non-Rust language bindings; the Haskell and Swift bindings consume it. 103 entry points by default, 120 with the <code>full-parse</code>, <code>project</code>, and <code>git</code> features.</td></tr>
 </tbody>
 </table>
 </div>
@@ -5088,7 +5367,7 @@ complement : S -&gt; C
 <h3 id="python-boundary"><a class="header" href="#python-boundary">Python boundary</a></h3>
 <p><code>panproto-py</code> is the only crate that knows about PyO3. It exposes <code>panproto-core</code> to Python with native bindings (no WASM). The Python wheel ships eleven core tree-sitter grammars; the rest are in companion <code>panproto-grammars-*</code> packs.</p>
 <h3 id="c-boundary"><a class="header" href="#c-boundary">C boundary</a></h3>
-<p><code>panproto-c</code> is the only crate that knows about C ABI. It exposes a stable C interface used by the Haskell binding (and any other non-Rust language). CBOR is the over-the-boundary format here.</p>
+<p><code>panproto-c</code> is the only crate that knows about C ABI. It exposes a stable C interface used by the Haskell and Swift bindings (and any other non-Rust language). CBOR is the over-the-boundary format here.</p>
 <h2 id="the-generated-cli-reference"><a class="header" href="#the-generated-cli-reference">The generated CLI reference</a></h2>
 <p>The <code>schema</code> binary’s <code>--help</code> text is the source of truth for the CLI surface. The <a href="#cli-reference">reference/cli</a> page is regenerated by an <code>xtask</code> (see <a href="https://github.com/panproto/panproto/blob/main/xtask/src/bin/gen-cli-docs.rs"><code>xtask/src/bin/gen-cli-docs.rs</code></a>) and CI fails if the page is out of date. This is the only generated file in the docs site.</p>
 <h2 id="versioning"><a class="header" href="#versioning">Versioning</a></h2>
