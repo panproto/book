@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-704fd3b0.js";
+            window.path_to_searchindex_js = "../../searchindex-8259401e.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-1b21fe02.js"></script>
@@ -198,7 +198,7 @@ swift test
 </code></pre>
 <p>Run <code>dev-link.sh</code> again after every change to <code>panproto-c</code> or the workspace <code>Cargo.toml</code>. Set <code>PANPROTO_C_LIB_DIR</code> to stage somewhere else.</p>
 <h3 id="prebuilt-binaries"><a class="header" href="#prebuilt-binaries">Prebuilt binaries</a></h3>
-<p><code>bootstrap/fetch-bindist.sh [version] [variant]</code> downloads the prebuilt library for the host platform from the corresponding GitHub Release. It detects <code>aarch64-apple-darwin</code>, <code>x86_64-apple-darwin</code>, <code>x86_64-unknown-linux-gnu</code>, and <code>aarch64-unknown-linux-gnu</code>. The version defaults to whatever the checkout declares.</p>
+<p><code>bootstrap/fetch-bindist.sh [version] [variant]</code> downloads the prebuilt library for the host platform from the corresponding GitHub Release. It detects <code>aarch64-apple-darwin</code>, <code>x86_64-apple-darwin</code>, <code>x86_64-unknown-linux-gnu</code>, and <code>aarch64-unknown-linux-gnu</code>. Both arguments are optional and are read by shape rather than by position, so either can be given alone: the version defaults to whatever the checkout declares, and the variant (<code>default</code> or <code>full</code>, also spelled <code>--default</code> and <code>--full</code>) defaults to <code>default</code>.</p>
 <pre><code class="language-sh">cd panproto/bindings/swift
 ./bootstrap/fetch-bindist.sh
 swift build
@@ -206,7 +206,7 @@ swift build
 <h3 id="xcframework"><a class="header" href="#xcframework">XCFramework</a></h3>
 <p>iOS builds go through the XCFramework, which carries a macOS-universal slice, an iOS device slice, and a universal simulator slice, together with the headers and a module map.</p>
 <pre><code class="language-sh">cd panproto/bindings/swift
-./bootstrap/fetch-bindist.sh v0.69.0 default --xcframework
+./bootstrap/fetch-bindist.sh --xcframework
 PANPROTO_SWIFT_XCFRAMEWORK=.panproto-c/panproto_c.xcframework swift build
 </code></pre>
 <p>To depend on the package from another project, point <code>PANPROTO_SWIFT_XCFRAMEWORK_URL</code> and <code>PANPROTO_SWIFT_XCFRAMEWORK_CHECKSUM</code> at the published artifact and its checksum, both of which the release attaches. That mode adds no linker flags of its own, which is what makes the package usable as a dependency; the <code>dev-link.sh</code> mode passes an unsafe <code>-L</code> flag and is for building the package directly.</p>
@@ -233,7 +233,7 @@ swift build --traits PANPROTO_PARSE,PANPROTO_PROJECT,PANPROTO_GIT
 </code></pre>
 <p>Each tier is a <a href="https://www.swift.org/documentation/package-manager/">package trait</a>, and a trait defines a compilation condition of its own name, which is what the <code>#if PANPROTO_PARSE</code> blocks in the gated sources read.</p>
 <p>The three gated products exist in the package graph either way, so a build that omits the features still resolves; their modules are simply empty. On the prebuilt path, fetch the <code>full</code> variant:</p>
-<pre><code class="language-sh">./bootstrap/fetch-bindist.sh v0.70.0 full
+<pre><code class="language-sh">./bootstrap/fetch-bindist.sh full
 swift build --traits PANPROTO_PARSE,PANPROTO_PROJECT,PANPROTO_GIT
 </code></pre>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
