@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-1b21fe02.js"></script>
+        <script src="../../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,15 +183,15 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="continuous-integration"><a class="header" href="#continuous-integration">Continuous integration</a></h1>
-<p>CI for panproto projects covers two questions: did this change validate, and did this change break compatibility?</p>
+<p>Add CI after schemas validate locally. The smallest useful gate classifies compatibility; local hooks and a hosted workflow apply the same checks earlier and on every pull request.</p>
 <div class="table-wrapper">
 <table>
 <thead>
 <tr><th>Page</th><th>Purpose</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="./breaking-change-gate.html">Breaking-change gate</a></td><td>Block PRs that introduce a breaking schema change unless explicitly acknowledged.</td></tr>
-<tr><td><a href="./github-actions.html">GitHub Actions</a></td><td>Drop-in workflows for schema validation and breaking-change detection.</td></tr>
+<tr><td><a href="./breaking-change-gate.html">Breaking-change gate</a></td><td>Fail CI when a schema change is classified as breaking unless the change is explicitly acknowledged.</td></tr>
+<tr><td><a href="./github-actions.html">GitHub Actions</a></td><td>Run schema validation and compatibility classification on pull requests.</td></tr>
 <tr><td><a href="./pre-commit-hooks.html">Pre-commit hooks</a></td><td>Run schema validation before each local commit.</td></tr>
 </tbody>
 </table>

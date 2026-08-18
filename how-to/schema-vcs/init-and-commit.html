@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-1b21fe02.js"></script>
+        <script src="../../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,6 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="init-and-commit"><a class="header" href="#init-and-commit">Init and commit</a></h1>
+<p>Initialize a panproto repository, stage a schema, and record the first content-addressed commit.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>The <code>schema</code> CLI installed. A directory containing schema files (or a fresh directory you are about to populate).</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
@@ -192,7 +193,7 @@ schema add user.json
 schema commit -m "initial user schema"
 schema log                  # show history
 </code></pre>
-<p><code>init</code> creates a <code>.panproto/</code> directory analogous to <code>.git/</code>. <code>add</code> stages a schema; <code>commit</code> creates a content-addressed snapshot. The behaviour matches git for the parts that overlap.</p>
+<p><code>init</code> creates a <code>.panproto/</code> directory analogous to <code>.git/</code>. <code>add</code> stages a schema; <code>commit</code> creates a content-addressed snapshot. The behavior matches git for the parts that overlap.</p>
 <p>To inspect the current state:</p>
 <pre><code class="language-sh">schema status
 schema diff               # diff working tree vs HEAD

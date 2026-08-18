@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,24 +183,30 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="use-lenses"><a class="header" href="#use-lenses">Use lenses</a></h1>
-<p>Every migration is a lens. The lens API gives you direct access to the bidirectional transform: <code>get</code> lifts data forward, <code>put</code> projects new data back to the old shape, <code>complement</code> records what <code>get</code> discarded so <code>put</code> can restore it.</p>
+<p>The lens API runs a migration in both directions. <code>get</code> lifts data forward, <code>put</code> projects an edited view back to the source shape, and the complement retains data needed for reconstruction.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>A migration (<a href="./build-migration.html">Build a migration</a>) or a hand-written lens via the <a href="./lens-dsl.html">lens DSL</a>.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
-<p>A <code>CompiledMigration</code> is itself a lens; reach for <code>LensHandle</code> only when you want a free-standing protolens chain.</p>
-<pre><code class="language-ts">const { view, complement } = mig.get(oldRecord);
+<p>A <code>CompiledMigration</code> exposes the lens operations directly. <code>LensHandle</code> represents a concrete auto-generated or DSL-compiled lens, while <code>ProtolensChainHandle</code> represents a schema-parameterized chain.</p>
+<pre><code class="language-ts">const { view, complement } = mig.getJson(oldRecord, "user:body");
+const recordView = view as { age: number };
 
-const editedView = { ...view, age: view.age + 1 };
-const { data: updatedOld } = mig.put(editedView, complement);
+const editedView = { ...recordView, age: recordView.age + 1 };
+const updatedOld = mig.putJson(editedView, complement, "user:body") as {
+  age: number;
+};
 </code></pre>
-<p><code>mig.get</code> returns the forward view together with the complement (the data discarded by <code>get</code>); <code>mig.put</code> consumes them and returns a <code>LiftResult { data, ... }</code> reconstructed with the edit applied. The round-trip laws guarantee this is well-defined.</p>
+<p><code>mig.getJson</code> returns the forward view together with the complement, which retains data discarded by the forward operation. <code>mig.putJson</code> consumes both values and reconstructs a JavaScript record with the edit applied. The law checks below test the round trip for a supplied instance.</p>
 <p>To compose two compiled migrations sequentially:</p>
 <pre><code class="language-ts">const composed = p.compose(mig_ab, mig_bc);
 </code></pre>
-<p>To compose two free-standing protolens chains:</p>
-<pre><code class="language-ts">const composedChain = p.composeLenses(chainAB, chainBC);
+<p>To compose two concrete <code>LensHandle</code> values:</p>
+<pre><code class="language-ts">const composedLens = p.composeLenses(lensAB, lensBC);
 </code></pre>
-<p>Both are methods on <code>Panproto</code>; composition fails (throws) if the intermediate schemas do not chain.</p>
+<p>To compose schema-parameterized chains, call the method on the first chain:</p>
+<pre><code class="language-ts">const composedChain = chainAB.compose(chainBC);
+</code></pre>
+<p><code>Panproto.compose</code> and <code>Panproto.composeLenses</code> compose compiled migrations and concrete lenses, respectively. <code>ProtolensChainHandle.compose</code> handles protolens chains. Each operation throws if the intermediate schemas or theory transforms do not chain.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <pre><code class="language-ts">const result = lens.checkLaws(instanceBytes);
 console.log(result.holds, result.violation);

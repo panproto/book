@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-1b21fe02.js"></script>
+        <script src="../../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -210,7 +210,7 @@ post.addEntry("post")
 import PanprotoStructural
 
 let geojson = try await ProtocolHandle.builtin("geojson")
-let handle = try await SchemaHandle(post)
+let handle = try await SchemaHandle.define(post)
 let messages = try await handle.violations(against: geojson)
 
 if messages.isEmpty {
@@ -221,30 +221,34 @@ if messages.isEmpty {
 </code></pre>
 <p>Both handles free themselves when they go out of scope. Call <code>release()</code> when you want the slab entry back sooner, such as inside a loop over many candidate schemas.</p>
 <p>To go the other way, ask a handle for its value:</p>
-<pre><code class="language-swift">let roundTripped = try await handle.value()
-#expect(roundTripped.vertexCount == post.vertexCount)
+<pre><code class="language-swift">let roundTripped = try await handle.schema()
+precondition(roundTripped.vertexCount == post.vertexCount)
 </code></pre>
 <h2 id="building-through-the-engine-instead"><a class="header" href="#building-through-the-engine-instead">Building through the engine instead</a></h2>
 <p><code>SchemaBuilder</code> accumulates the same operations and compiles them in the engine rather than in Swift, which is what you want when the protocol’s own build rules should be applied as you go rather than checked at the end.</p>
 <pre><code class="language-swift">import Panproto
 
-var builder = SchemaBuilder()
-builder.vertex(id: "post", kind: "record")
-builder.vertex(id: "text", kind: "string")
-builder.edge(src: "post", tgt: "text", kind: "prop", name: "text")
+var builder = geojson.schemaBuilder()
+builder.vertex("post", kind: "record")
+builder.vertex("text", kind: "string")
+builder.edge(from: "post", to: "text", kind: "prop", name: "text")
 builder.entry("post")
 
-let built = try await builder.build(protocol: geojson)
+let built = try await builder.build()
 </code></pre>
 <h2 id="parsing-one-instead-of-writing-it"><a class="header" href="#parsing-one-instead-of-writing-it">Parsing one instead of writing it</a></h2>
 <p>Most schemas are not written by hand. An atproto lexicon parses directly:</p>
-<pre><code class="language-swift">let lexicon = try Data(contentsOf: lexiconURL)
+<pre><code class="language-swift">import Foundation
+import Panproto
+import PanprotoStructural
+
+let lexicon = try Data(contentsOf: lexiconURL)
 let schema = try await SchemaHandle.parseAtprotoLexicon(lexicon)
-print(try await schema.value().vertexCount, "vertices")
+print(try await schema.schema().vertexCount, "vertices")
 </code></pre>
 <h2 id="next-steps"><a class="header" href="#next-steps">Next steps</a></h2>
 <ul>
-<li><a href="../build-migration/index.html">Build a migration</a> between two versions of this schema.</li>
+<li><a href="../build-migration.html">Build a migration</a> between two versions of this schema.</li>
 <li><a href="../../reference/sdk-swift.html">Swift SDK reference</a> for the engine actor, the handle taxonomy, and the error hierarchy.</li>
 </ul>
 

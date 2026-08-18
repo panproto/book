@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,116 +183,86 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="cross-protocol-translation"><a class="header" href="#cross-protocol-translation">Cross-protocol translation</a></h1>
-<p>You will translate the <code>user</code> schema from one shape to another using an explicit field-by-field mapping, then verify the translation reverses cleanly. About twenty minutes.</p>
-<p>By the end you will have: two <code>user</code> schemas with different vertex and edge names expressing the same model, a <code>CompiledMigration</code> connecting them, a record converted from one shape to the other, and the reverse-direction restoration verified.</p>
-<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>Completed <a href="./schema-vcs-basics.html">Schema version control basics</a>. The <code>my-first-schema/</code> project with <code>@panproto/core</code> installed.</p>
-<h2 id="state-of-the-art"><a class="header" href="#state-of-the-art">State of the art</a></h2>
-<p>True cross-protocol translation (a JSON Schema document automatically converted into a Protobuf <code>.proto</code>) requires both schemas to be expressible against a single composed theory that the migration generator can align them in. Today that means either:</p>
-<ul>
-<li>both schemas in the <strong>same protocol</strong> with an explicit edge mapping (demonstrated here), or</li>
-<li>both schemas in a <strong>custom composed theory</strong> authored via the theory DSL (see <a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a>), or</li>
-<li>a <strong>hand-authored lens</strong> in the lens DSL bridging the two (see <a href="../how-to/lens-dsl.html">Write a lens (DSL)</a>).</li>
-</ul>
-<p>The CLI’s <code>schema lens</code> subcommands currently resolve <code>--protocol</code> against the built-in <code>atproto</code> only; everything multi-protocol lives in the SDK. The auto-aligning <code>Panproto.lens(from, to)</code> works at the WASM lens level but returns raw <code>WInstance</code> graphs rather than JS-native records, so it is not the right tool for a tutorial. We drive the translation from <code>Panproto.migration(from, to)</code> instead: its <code>liftJson</code>/<code>getJson</code>/<code>putJson</code> wrappers handle JSON encoding/decoding for you.</p>
-<h2 id="step-1-build-the-source-schema"><a class="header" href="#step-1-build-the-source-schema">Step 1: build the source schema</a></h2>
-<p>Create <code>src/cross.ts</code>:</p>
-<pre><code class="language-ts">import { Panproto } from '@panproto/core';
+<p>A migration can connect schemas registered under different protocols when their relevant structure agrees. This tutorial converts a <code>User</code> record from a <a href="https://json-schema.org/">JSON Schema</a> graph to an <a href="https://www.openapis.org/">OpenAPI</a> schema graph by mapping each object and property explicitly. It is the advanced continuation of <a href="./your-first-migration.html">Your first migration</a> and takes about fifteen minutes.</p>
+<p>The example is deliberately narrow. JSON Schema and OpenAPI use the same constrained-multigraph schema basis and W-type instance shape in panproto, so their object, scalar, and property structure can align directly. Protocol pairs with different bases require a composed theory or a hand-authored lens; the tutorial returns to that boundary after the working conversion.</p>
+<h2 id="build-both-endpoints"><a class="header" href="#build-both-endpoints">Build both endpoints</a></h2>
+<p>Continue in the <code>my-first-schema/</code> project, where <code>@panproto/core</code> and <code>tsx</code> are already installed. Create <code>src/cross.ts</code>:</p>
+<pre><code class="language-ts">import assert from 'node:assert/strict';
+import { Panproto } from '@panproto/core';
 
 const p = await Panproto.init();
-const atproto = p.protocol('atproto');
 
-const source = atproto.schema()
-  .vertex('user',       'object')
-  .vertex('user.name',  'string')
-  .vertex('user.email', 'string')
+// Register the source protocol before running its existence check.
+p.protocol('json-schema');
+const openapi = p.protocol('openapi');
+
+const source = p.parseSchemaDocument('json-schema', {
+  title: 'User',
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    age: { type: 'integer' },
+  },
+  required: ['name'],
+});
+
+const target = openapi.schema()
+  .vertex('user', 'object')
+  .vertex('user.displayName', 'string')
   .vertex('user.years', 'integer')
-  .edge('user', 'user.name',  'prop', { name: 'name' })
-  .edge('user', 'user.email', 'prop', { name: 'email' })
+  .edge('user', 'user.displayName', 'prop', { name: 'displayName' })
   .edge('user', 'user.years', 'prop', { name: 'years' })
   .build();
-</code></pre>
-<h2 id="step-2-build-the-target-schema"><a class="header" href="#step-2-build-the-target-schema">Step 2: build the target schema</a></h2>
-<p>A second <code>atproto</code> schema for the same <code>user</code> model with different field names (<code>display_name</code> instead of <code>name</code>, <code>email_address</code> instead of <code>email</code>):</p>
-<pre><code class="language-ts">const target = atproto.schema()
-  .vertex('user',              'object')
-  .vertex('user.display_name', 'string')
-  .vertex('user.email_address','string')
-  .vertex('user.years',        'integer')
-  .edge('user', 'user.display_name',  'prop', { name: 'display_name' })
-  .edge('user', 'user.email_address', 'prop', { name: 'email_address' })
-  .edge('user', 'user.years',         'prop', { name: 'years' })
-  .build();
-</code></pre>
-<p>The shapes differ structurally (different vertex ids, different edge names) but represent the same information.</p>
-<h2 id="step-3-declare-the-migration"><a class="header" href="#step-3-declare-the-migration">Step 3: declare the migration</a></h2>
-<pre><code class="language-ts">const mig = p.migration(source, target)
-  .map('user',       'user')
-  .map('user.name',  'user.display_name')
-  .map('user.email', 'user.email_address')
-  .map('user.years', 'user.years')
+
+const mapping = p.migration(source, target)
+  .map('root', 'user')
+  .map('root.name', 'user.displayName')
+  .map('root.age', 'user.years')
   .mapEdge(
-    { src: 'user', tgt: 'user.name',  kind: 'prop', name: 'name' },
-    { src: 'user', tgt: 'user.display_name', kind: 'prop', name: 'display_name' },
+    { src: 'root', tgt: 'root.name', kind: 'prop', name: 'name' },
+    {
+      src: 'user',
+      tgt: 'user.displayName',
+      kind: 'prop',
+      name: 'displayName',
+    },
   )
   .mapEdge(
-    { src: 'user', tgt: 'user.email', kind: 'prop', name: 'email' },
-    { src: 'user', tgt: 'user.email_address', kind: 'prop', name: 'email_address' },
-  )
-  .mapEdge(
+    { src: 'root', tgt: 'root.age', kind: 'prop', name: 'age' },
     { src: 'user', tgt: 'user.years', kind: 'prop', name: 'years' },
-    { src: 'user', tgt: 'user.years', kind: 'prop', name: 'years' },
-  )
-  .compile();
-</code></pre>
-<p><code>.map(srcVertex, tgtVertex)</code> aligns vertices; <code>.mapEdge(srcEdge, tgtEdge)</code> aligns edges. You need both: vertex-only mappings produce a migration that drops every field on lift. For larger schemas, <code>Panproto.lens(from, to)</code> and <code>LensHandle.autoGenerate</code> will infer many of these alignments via name similarity and structural priors, but the resulting <code>LensHandle</code> operates on opaque <code>WInstance</code> bytes rather than JS-native records.</p>
-<h2 id="step-4-convert-a-record"><a class="header" href="#step-4-convert-a-record">Step 4: convert a record</a></h2>
-<pre><code class="language-ts">const alice = { name: 'Alice', email: 'alice@example.com', years: 30 };
-const converted = mig.liftJson(alice, 'user');
+  );
+
+const existence = p.checkExistence(source, target, mapping);
+if (!existence.valid) {
+  throw new Error(JSON.stringify(existence.errors));
+}
+
+const migration = mapping.compile();
+const converted = migration.liftJson({ name: 'Alice', age: 30 }, 'root');
+
+assert.deepEqual(converted, { displayName: 'Alice', years: 30 });
+console.log('existence valid?', existence.valid);
 console.log('converted:', converted);
+
+migration[Symbol.dispose]();
+source[Symbol.dispose]();
+target[Symbol.dispose]();
+p[Symbol.dispose]();
 </code></pre>
-<p><code>mig.liftJson(record, rootVertex)</code> round-trips JSON through the migration: it parses the input against <code>source</code>, lifts it through the edge mapping, and emits the result in <code>target</code>’s shape as a plain JS object. You see:</p>
-<pre><code class="language-js">{ display_name: 'Alice', email_address: 'alice@example.com', years: 30 }
+<p><em>Listing 6.1: An explicit forward migration from a JSON Schema graph to an OpenAPI schema graph.</em></p>
+<p>Run the program:</p>
+<pre><code class="language-sh">npx tsx src/cross.ts
 </code></pre>
-<h2 id="step-5-round-trip-via-getput"><a class="header" href="#step-5-round-trip-via-getput">Step 5: round-trip via get/put</a></h2>
-<pre><code class="language-ts">const { view, complement } = mig.getJson(alice, 'user');
-console.log('view:', view);
-const back = mig.putJson(view, complement, 'user');
-console.log('back:', back);
+<p>The output is:</p>
+<pre><code class="language-text">existence valid? true
+converted: { displayName: 'Alice', years: 30 }
 </code></pre>
-<p><code>mig.getJson(record, rootVertex)</code> returns <code>{ view, complement }</code>. <code>view</code> is the target-shape projection (same as <code>liftJson</code>’s output); <code>complement</code> carries the encoding state the forward projection sets aside. <code>mig.putJson(view, complement, rootVertex)</code> reverses the translation, restoring the source-shape record:</p>
-<pre><code class="language-js">view: { display_name: 'Alice', email_address: 'alice@example.com', years: 30 }
-back: { email: 'alice@example.com', name: 'Alice', years: 30 }
-</code></pre>
-<p>The restored record’s field ordering is not preserved (object keys come out alphabetised), so structural equality, not JSON-string equality, is the right round-trip predicate.</p>
-<h2 id="step-6-dispose"><a class="header" href="#step-6-dispose">Step 6: dispose</a></h2>
-<pre><code class="language-ts">mig[Symbol.dispose]();
-</code></pre>
-<p><code>CompiledMigration</code> holds a WASM-side resource. Call <code>[Symbol.dispose]()</code> explicitly or use a <code>using</code> declaration so it is released at scope exit:</p>
-<pre><code class="language-ts">using mig = p.migration(source, target). /* ... */ .compile();
-</code></pre>
-<h2 id="what-you-built"><a class="header" href="#what-you-built">What you built</a></h2>
-<p>Two schemas expressing the same model with different field names, an explicit field-by-field migration between them, a forward conversion of a record, and a verified reverse-direction restoration. The same pattern works for any pair of schemas in a single protocol; for genuinely cross-protocol pairs (e.g. JSON Schema ↔ Protobuf), express both against a composed theory authored via the theory DSL, or author the bridge in the lens DSL.</p>
-<h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
-<ul>
-<li><a href="../how-to/cross-protocol.html">Translate across protocols</a> for the operational how-to.</li>
-<li><a href="../how-to/lens-dsl.html">Write a lens (DSL)</a> for hand-authored translations.</li>
-<li><a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a> for the model.</li>
-<li><a href="../explanation/semantics/theory-dsl.html">Theory DSL: denotational semantics</a>.</li>
-</ul>
-<h2 id="next"><a class="header" href="#next">Next</a></h2>
-<ul>
-<li>The plain-terms explanation of cross-protocol translation is at <a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a>.</li>
-<li>For non-trivial pairs of protocols, the auto-derived translation may be a starting point; <a href="../how-to/cross-protocol.html">Translate across protocols</a> covers when to extend it by hand.</li>
-<li>For the formal account of how the colimit makes this possible: <a href="../explanation/semantics/pushouts-and-merge.html">Pushouts and merge</a>.</li>
-</ul>
-<h2 id="where-to-go-from-here"><a class="header" href="#where-to-go-from-here">Where to go from here</a></h2>
-<p>You have walked through the four core flows of panproto: defining schemas, evolving them via migrations, version-controlling the history, and translating between protocols. From here:</p>
-<ul>
-<li>The <a href="../how-to/index.html">how-to guides</a> cover specific workflows in depth (CI, lenses, format-preserving codecs).</li>
-<li>The <a href="../reference/index.html">reference quadrant</a> is the lookup for everything: CLI, SDKs, protocols, expression language, lens combinators, configuration.</li>
-<li>The <a href="../explanation/index.html">explanation quadrant</a> is for understanding <em>why</em> the system is shaped the way it is.</li>
-</ul>
+<h2 id="what-crossed-the-protocol-boundary"><a class="header" href="#what-crossed-the-protocol-boundary">What crossed the protocol boundary</a></h2>
+<p><code>parseSchemaDocument('json-schema', ...)</code> uses the JSON Schema document parser and produces a schema rooted at <code>root</code>. The target is built against the registered <code>openapi</code> protocol. The migration maps vertices and edges across those two schema handles, and <code>liftJson()</code> emits the target field names.</p>
+<p>The existence report checks whether the explicit mapping supplies the target structure. The <code>assert.deepEqual</code> call separately checks the forward result. This tutorial does not claim a cross-protocol round trip: reverse conversion must be exercised with a compatible composed theory and concrete sample data before it can be treated as a lens-law guarantee.</p>
+<p>The target is an OpenAPI schema graph, not a complete emitted OpenAPI document. Document emission, constraint translation, references, variants, and defaults add structure beyond this two-field example. Those are the points at which a composed theory or an explicit lens specification becomes necessary.</p>
+<h2 id="continue-on-the-advanced-path"><a class="header" href="#continue-on-the-advanced-path">Continue on the advanced path</a></h2>
+<p><a href="../how-to/cross-protocol.html">Translate across protocols</a> covers the operational choices for larger pairs, and <a href="../how-to/lens-dsl.html">Write lenses in the lens DSL</a> covers hand-authored bridges. <a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a> explains how shared theories are constructed. For the formal account, continue to <a href="../explanation/semantics/theory-dsl.html">Theory DSL: denotational semantics</a>.</p>
 
                     </main>
 

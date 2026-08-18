@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -228,6 +228,7 @@ schema = b.build()
 <tr><td>Protocol registry</td><td><code>get_builtin_protocol(name)</code>, <code>list_builtin_protocols()</code>, <code>define_protocol(...)</code></td></tr>
 <tr><td>Schema construction</td><td><code>Protocol.schema()</code> returns a <code>SchemaBuilder</code>. Each <code>.vertex(id, kind)</code> / <code>.edge(src, tgt, kind, name=None)</code> / <code>.constraint(vid, sort, value)</code> mutates the builder in place and returns <code>None</code>; call <code>.build()</code> on the final builder. Chain syntax is a TypeScript-only convenience; Python is statement-by-statement.</td></tr>
 <tr><td>Migration</td><td><code>MigrationBuilder</code>, <code>compile_migration</code>, <code>compose_migrations</code>, <code>invert_migration</code>, <code>pipeline</code></td></tr>
+<tr><td>Morphism and span search</td><td><code>find_span</code>, <code>find_morphisms</code>, <code>find_best_morphism</code>, and the <code>SchemaSpan</code> / <code>FoundMorphism</code> result classes</td></tr>
 <tr><td>Check</td><td><code>diff_and_classify</code>, <code>diff_schemas</code>, <code>check_existence</code>, <code>check_coverage</code></td></tr>
 <tr><td>Lens</td><td><code>Lens</code>, <code>ProtolensChain</code> (with <code>from_dsl_json</code> / <code>from_dsl_yaml</code> / <code>from_dsl_nickel</code> / <code>from_dsl_path</code> loaders), <code>auto_generate_lens</code>, <code>auto_generate_lens_candidates</code></td></tr>
 <tr><td>GAT</td><td><code>Theory</code> (with <code>from_json</code> / <code>from_yaml</code> / <code>from_nickel</code> / <code>from_path</code> DSL loaders and <code>to_yaml</code> / <code>from_dict_yaml</code> for the flat-shape round-trip), <code>TheoryBuilder</code>, <code>Model</code>, <code>colimit_theories</code>, <code>free_model</code>, <code>migrate_model</code>, <code>check_model</code>, <code>check_morphism</code></td></tr>
@@ -244,12 +245,46 @@ schema = b.build()
 <li><a href="https://panproto.dev/python/">Python SDK reference</a> (mkdocs)</li>
 </ul>
 <p>The package source is at <a href="https://github.com/panproto/panproto/tree/main/bindings/python"><code>bindings/python/</code></a>.</p>
+<h2 id="morphism-and-span-search"><a class="header" href="#morphism-and-span-search">Morphism and span search</a></h2>
+<p><code>find_span</code> returns a <code>SchemaSpan</code> of the form <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord"><span class="mord mathit">src</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">←</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8095em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathit">tgt</span></span></span></span></span>, where the apex <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span> is the sub-schema of <code>src</code> induced on the vertices assigned a target. It does not return <code>None</code> or raise an exception merely because the schemas have nothing in common; that case produces an empty apex.</p>
+<pre><code class="language-python">span = panproto.find_span(old, new, proto, anchors={"post": "post"}, monic=True)
+
+print(span.apex_coverage)      # 0.777... : 7 of the 9 source vertices
+print(span.quality_bounds)     # (0.812, 0.812) when proven_optimal
+if span.is_total:
+    morphism = span.as_total_morphism()
+</code></pre>
+<p><code>protocol</code> is a positional argument because the apex is a schema, and a schema is well formed only against a protocol; inducing the apex re-validates it rather than assuming it, and a <code>Schema</code> carries its protocol’s name alone. <code>anchors</code> are mappings the caller <em>knows</em>, which the search may not reconsider. Setting <code>epic=True</code> raises <code>MigrationError</code>, since surjectivity is a property of a total morphism and a span’s right leg is deliberately partial.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Attribute of <code>SchemaSpan</code></th><th>What it holds</th></tr>
+</thead>
+<tbody>
+<tr><td><code>apex: Schema</code></td><td>The sub-schema of <code>src</code> the search covered.</td></tr>
+<tr><td><code>left: Migration</code></td><td>Inclusion from the apex into <code>src</code>.</td></tr>
+<tr><td><code>right: Migration</code></td><td>Assignment from the apex into <code>tgt</code>; this field carries the identification.</td></tr>
+<tr><td><code>quality: float</code></td><td>How well the covered part matches, in <code>[0, 1]</code>, with the drop count excluded.</td></tr>
+<tr><td><code>quality_bounds: tuple[float, float]</code></td><td>The interval bracketing <code>quality</code>. Its ends are equal exactly when <code>proven_optimal</code> holds.</td></tr>
+<tr><td><code>apex_coverage: float</code></td><td>The share of the source’s vertices the apex covers, or one on an empty source.</td></tr>
+<tr><td><code>proven_optimal: bool</code></td><td>Whether the search proved its answer optimal.</td></tr>
+<tr><td><code>is_total: bool</code></td><td>Whether the apex is the whole source, which makes the span a total morphism.</td></tr>
+<tr><td><code>legs_are_functorial: bool</code></td><td>Whether both legs passed the functoriality check.</td></tr>
+<tr><td><code>apex_digest: str</code></td><td>The apex’s content digest, lower-case hexadecimal.</td></tr>
+</tbody>
+</table>
+</div>
+<p><code>as_total_morphism()</code> returns a <code>FoundMorphism</code> when <code>is_total</code> holds and <code>None</code> otherwise, <code>to_overlap()</code> gives the sorted pair lists a pushout takes, and <code>to_dict()</code> flattens the whole span. <code>quality</code> ranks spans over <em>one</em> source schema and nothing else, because every denominator of the objective is fixed by <code>src</code>; read <code>apex_coverage</code> alongside it.</p>
+<h3 id="what-find_morphisms-returns"><a class="header" href="#what-find_morphisms-returns">What <code>find_morphisms</code> returns</a></h3>
+<p><code>find_morphisms</code> returns the morphisms <strong>attaining the optimum</strong>, and nothing else. Every element carries the same quality, so <code>results[0]</code> is the best answer there is and iterating further for a suboptimal alternative will not find one. The engine’s cap of 1024 bounds every request rather than only <code>max_results=0</code>, so asking for more is answered with the cap. Python receives a plain list, so the flag the engine sets when the cap cut the answer short does not cross this surface; a caller that needs to tell a cut list from an exhausted one compares <code>len(results)</code> against 1024.</p>
+<p>An empty list means that no total morphism exists, and only that. A search that could not be posed raises <code>MigrationError</code> instead, so the two are distinguishable; <code>find_span</code> is the function that answers with what the two schemas do share.</p>
 <h2 id="type-stubs"><a class="header" href="#type-stubs">Type stubs</a></h2>
 <p>The package ships <code>_native.pyi</code> so that signatures are visible to type checkers (mypy, pyright). Stub signatures are kept in lockstep with the PyO3 runtime by CI.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="../how-to/install/python.html">Install the Python SDK</a>.</li>
 <li><a href="../how-to/define-schema/python.html">Define a schema from Python</a>.</li>
+<li><a href="../how-to/spans.html">Find a span between two schemas</a>, and <a href="../explanation/morphism-search.html">Searching for a morphism</a> for what the search is doing.</li>
 </ul>
 
                     </main>

@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,124 +183,69 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="schema-version-control-basics"><a class="header" href="#schema-version-control-basics">Schema version control basics</a></h1>
-<p>You will turn a small TypeScript source file into a panproto repository, commit two versions of the schema parsed from that file, branch off a feature, and merge it back. About twenty minutes.</p>
-<p>By the end you will have: a <code>.panproto/</code> directory tracking schema history, two commits on <code>main</code>, a feature branch with a third commit merged back, and an attempted conflict you can inspect.</p>
-<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>The <code>schema</code> CLI installed (<a href="../how-to/install/cli.html">Install the CLI</a>). This tutorial does not depend on the SDK; it stays at the CLI throughout.</p>
-<h2 id="a-note-on-schema-input"><a class="header" href="#a-note-on-schema-input">A note on schema input</a></h2>
-<p><code>schema add</code> accepts three kinds of input:</p>
-<ul>
-<li>a source file in a language the parser registry knows (TypeScript, Rust, Python, etc.), parsed via tree-sitter into a full-AST schema;</li>
-<li>a directory, parsed as a project into a unified schema; or</li>
-<li>a <code>.json</code> file whose content is a serialised <code>panproto-schema::Schema</code> struct.</li>
-</ul>
-<p>The hand-authored Schema JSON format is non-trivial (it’s the in-memory representation, not a pretty document language), so most workflows use the first two. This tutorial uses the source-file path.</p>
-<h2 id="step-1-initialise"><a class="header" href="#step-1-initialise">Step 1: initialise</a></h2>
-<pre><code class="language-sh">mkdir vcs-tutorial/src -p &amp;&amp; cd vcs-tutorial
+<p>Two schema files record two states; a repository records how those states relate over time. In this tutorial, the <code>schema</code> CLI commits a TypeScript interface, creates a feature branch, and merges the branch back into <code>main</code>. The path takes about twelve minutes and does not require the SDK.</p>
+<h2 id="prerequisite"><a class="header" href="#prerequisite">Prerequisite</a></h2>
+<p>Install the <code>schema</code> binary by following <a href="../how-to/install/cli.html">Install the CLI</a>. The commands below create a new <code>vcs-tutorial/</code> directory.</p>
+<h2 id="commit-the-first-version"><a class="header" href="#commit-the-first-version">Commit the first version</a></h2>
+<p>Create the repository and its first source file:</p>
+<pre><code class="language-sh">mkdir -p vcs-tutorial/src
+cd vcs-tutorial
 schema init
-ls .panproto/
-</code></pre>
-<p>A <code>.panproto/</code> directory appears, structurally similar to <code>.git/</code>. It has <code>objects/</code>, <code>refs/</code>, <code>HEAD</code>, and a small config.</p>
-<h2 id="step-2-commit-v1"><a class="header" href="#step-2-commit-v1">Step 2: commit v1</a></h2>
-<p>Save the v1 user shape as <code>src/user.ts</code>:</p>
-<pre><code class="language-ts">export interface User {
-  name: string;
-  age: number;
-}
-</code></pre>
-<p>Stage and commit:</p>
-<pre><code class="language-sh">schema add src/user.ts
-schema commit -m "v1 user schema"
-schema log --oneline
-</code></pre>
-<p><code>schema add</code> runs the TypeScript tree-sitter parser, extracts a schema from the AST (vertices for the interface and its property types, edges for the properties, plus a fine layer of byte-position constraints used for round-tripping), and stages it. <code>schema log --oneline</code> now shows one commit with a blake3 hash.</p>
-<h2 id="step-3-commit-v2"><a class="header" href="#step-3-commit-v2">Step 3: commit v2</a></h2>
-<p>Edit <code>src/user.ts</code> to rename <code>age</code> and add <code>email</code>:</p>
-<pre><code class="language-ts">export interface User {
-  name: string;
-  years: number;
-  email: string;
-}
-</code></pre>
-<p>Stage and commit:</p>
-<pre><code class="language-sh">schema add src/user.ts
-schema diff --staged
-schema commit -m "v2: rename age to years, add email"
-schema log --oneline
-</code></pre>
-<p><code>schema diff --staged</code> shows the structural changes (a renamed property, a new property, plus the tree-sitter byte-position constraint deltas). Two commits now.</p>
-<h2 id="step-4-branch"><a class="header" href="#step-4-branch">Step 4: branch</a></h2>
-<pre><code class="language-sh">schema branch feature/handle
-schema checkout feature/handle
-</code></pre>
-<p>You are on a new branch sharing history with <code>main</code> up to the v2 commit. Add a <code>handle</code> field:</p>
-<pre><code class="language-ts">export interface User {
-  name: string;
-  years: number;
-  email: string;
-  handle: string;
-}
-</code></pre>
-<p>Then:</p>
-<pre><code class="language-sh">schema add src/user.ts
-schema commit -m "add handle"
-schema log --oneline
-</code></pre>
-<p>You see the linear history with the new commit on <code>feature/handle</code>.</p>
-<h2 id="step-5-merge"><a class="header" href="#step-5-merge">Step 5: merge</a></h2>
-<pre><code class="language-sh">schema checkout main
-schema merge feature/handle
-schema log --oneline
-</code></pre>
-<p>Since <code>main</code> is an ancestor of <code>feature/handle</code> (no conflicting work was done on <code>main</code> in parallel), the merge is a fast-forward and produces no merge commit. The output ends with <code>Merge successful.</code> and reports the merged schema’s vertex/edge counts. For a non-trivial three-way merge, pass <code>--no-ff</code> to force a merge commit.</p>
-<h2 id="step-6-provoke-a-conflict"><a class="header" href="#step-6-provoke-a-conflict">Step 6: provoke a conflict</a></h2>
-<p>For a clean conflict demonstration, start fresh in a new repo so the conflicting branches diverge from the same commit:</p>
-<pre><code class="language-sh">cd .. &amp;&amp; mkdir vcs-conflict/src -p &amp;&amp; cd vcs-conflict
-schema init
+
 cat &gt; src/user.ts &lt;&lt;'EOF'
 export interface User {
   name: string;
   age: number;
 }
 EOF
-schema add src/user.ts &amp;&amp; schema commit -m "v1"
 
-# Create both branches at v1 (each branch starts at HEAD).
-schema branch feature/handle-str
-schema branch feature/handle-int
-
-schema checkout feature/handle-str
-# edit src/user.ts: add  handle: string;
-schema add src/user.ts &amp;&amp; schema commit -m "handle as string"
-schema checkout main
-schema merge feature/handle-str    # fast-forward, succeeds
-
-schema checkout feature/handle-int
-# edit src/user.ts: add  handle: number;
-schema add src/user.ts &amp;&amp; schema commit -m "handle as number"
-schema checkout main
-schema merge feature/handle-int
+schema add src/user.ts
+schema commit -m "v1 user schema"
+schema log --oneline
 </code></pre>
-<p>The second merge fails with conflict objects. For the type clash above you see entries like:</p>
-<pre><code class="language-text">Merge produced 3 conflict(s):
-  BothAddedConstraintDifferently {
-    vertex_id: "src/user.ts::User::$2::$11",
-    sort: "literal-value",
-    ours_value: "string",
-    theirs_value: "number"
-  }
-  ...
-Error:   × merge failed with 3 conflict(s)
+<p><em>Listing 5.1: Initializing a repository and committing a parsed TypeScript schema.</em></p>
+<p><code>schema add</code> parses <code>src/user.ts</code> through the tree-sitter registry and stages the resulting schema graph. The commit stores that graph under <code>.panproto/</code>; the source file remains an ordinary TypeScript file.</p>
+<h2 id="commit-the-rename"><a class="header" href="#commit-the-rename">Commit the rename</a></h2>
+<p>Replace the file with v2, inspect the staged diff, and commit it:</p>
+<pre><code class="language-sh">cat &gt; src/user.ts &lt;&lt;'EOF'
+export interface User {
+  name: string;
+  years: number;
+  email: string;
+}
+EOF
+
+schema add src/user.ts
+schema diff --staged
+schema commit -m "rename age and add email"
+schema log --oneline
 </code></pre>
-<p>Each conflict is a structural object reported by the pushout construction, not a textual three-way merge marker. The variants you can hit include <code>BothAddedConstraintDifferently</code> (used here, when two branches set the same constraint to different values) and <code>UniversalFactorizationFailure</code> (raised by <code>panproto-vcs</code>’s pushout when no universal merge object exists at all). To resolve, choose one branch’s shape, edit the source file, <code>schema add</code>, <code>schema commit</code>.</p>
-<h2 id="what-you-built"><a class="header" href="#what-you-built">What you built</a></h2>
-<p>A schema history that you can navigate, branch, and merge with the same affordances as a git history, but where the merge operation is a precise structural construction rather than a three-way text merge.</p>
+<p><em>Listing 5.2: Staging and committing the second schema state.</em></p>
+<p>The staged diff compares schema structure rather than source lines. Full-AST parsers also preserve syntax-level structure needed for source round trips, so a source edit may produce more graph changes than the two interface fields alone suggest.</p>
+<h2 id="branch-and-merge"><a class="header" href="#branch-and-merge">Branch and merge</a></h2>
+<p>Create and switch to a feature branch, add <code>handle</code>, then merge the branch into <code>main</code>:</p>
+<pre><code class="language-sh">schema checkout -b feature/handle
+
+cat &gt; src/user.ts &lt;&lt;'EOF'
+export interface User {
+  name: string;
+  years: number;
+  email: string;
+  handle: string;
+}
+EOF
+
+schema add src/user.ts
+schema commit -m "add handle"
+schema checkout main
+schema merge feature/handle
+schema log --oneline
+</code></pre>
+<p><em>Listing 5.3: Creating a feature branch and merging it into <code>main</code>.</em></p>
+<p><code>main</code> has not moved since the branch was created, so this merge is a fast-forward. The command reports <code>Merge successful.</code> and moves the <code>main</code> ref to the feature commit.</p>
+<p>There is one deliberate difference from <a href="https://git-scm.com/">git</a>: <code>schema checkout</code> moves the schema-history ref but does not rewrite <code>src/user.ts</code>. Panproto stores and merges parsed schemas; your editor, build system, or an explicit emit step remains responsible for working-source files.</p>
 <h2 id="next"><a class="header" href="#next">Next</a></h2>
-<ul>
-<li><a href="./cross-protocol-translation.html">Cross-protocol translation</a> for translating the schema from JSON Schema to Protobuf.</li>
-<li>The plain-terms explanation of merge is at <a href="../explanation/vcs-semantics.html">Schema version control semantics</a>.</li>
-<li>The formal pushout construction is in <a href="../explanation/semantics/pushouts-and-merge.html">Pushouts and merge</a>.</li>
-</ul>
+<p>The <a href="../how-to/schema-vcs/index.html">schema version control how-to</a> covers non-fast-forward merges, data versioning, and the git bridge. <a href="../explanation/vcs-semantics.html">Schema version control semantics</a> explains why the merge operation is structural, while <a href="../explanation/semantics/pushouts-and-merge.html">Pushouts and merge</a> develops the formal construction.</p>
 
                     </main>
 

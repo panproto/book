@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,7 +183,8 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="architecture"><a class="header" href="#architecture">Architecture</a></h1>
-<p>panproto is a layered Rust workspace. The bottom layer is the GAT engine; everything else builds on it. The top layer is the surfaces (CLI, WASM, PyO3, C ABI) that downstream users actually call. Each layer depends only on layers below it; the dependency graph is acyclic.</p>
+<p>panproto is a Rust workspace with an acyclic Cargo dependency graph. We place the expression crate below the GAT engine because conflict policies and directed equations can contain expressions. Schema and instance code depends on both; most user-facing surfaces reach the higher operations through <code>panproto-core</code>.</p>
+<p>Read this chapter after <a href="./schemas-as-theories.html">Schemas as theories</a> and <a href="./migrations-as-morphisms.html">Migrations as morphisms</a>. Use the graph as a boundary map and the <a href="../reference/crate-map.html">crate map</a> for the crate-by-crate inventory.</p>
 <h2 id="layering"><a class="header" href="#layering">Layering</a></h2>
 <pre class="mermaid">graph TD
     subgraph "Surfaces"
@@ -212,21 +213,25 @@
         LENSDSL[panproto-lens-dsl]
         IO[panproto-io]
         PARSE[panproto-parse]
-        GRAMMARS[panproto-grammars&lt;br/&gt;+ grammars-{all,web,data,jvm,&lt;br/&gt;scripting,systems,functional,&lt;br/&gt;devops,mobile,music}]
+        GRAMMARS["panproto-grammars&lt;br/&gt;+ grammars-{all,web,data,jvm,&lt;br/&gt;scripting,systems,functional,&lt;br/&gt;devops,mobile,music}"]
     end
 
-    subgraph "Protocols and theories"
+    subgraph "DSLs and protocol definitions"
         PROTOS[panproto-protocols]
         THEORYDSL[panproto-theory-dsl]
-        EXPR[panproto-expr]
         EXPRPARSER[panproto-expr-parser]
+        DSLEVAL[panproto-dsl-eval]
     end
 
-    subgraph "Foundation"
+    subgraph "Theory and data model"
         GAT[panproto-gat]
         GATMACROS[panproto-gat-macros]
         SCHEMA[panproto-schema]
         INST[panproto-inst]
+    end
+
+    subgraph "Expression foundation"
+        EXPR[panproto-expr]
     end
 
     CLI --&gt; CORE
@@ -267,27 +272,35 @@
     PROTOS --&gt; SCHEMA
     PROTOS --&gt; INST
     THEORYDSL --&gt; GAT
-    GATMACROS --&gt; GAT
+    THEORYDSL --&gt; SCHEMA
+    THEORYDSL --&gt; PROTOS
+    THEORYDSL --&gt; EXPR
+    THEORYDSL --&gt; EXPRPARSER
+    THEORYDSL --&gt; LENS
+    THEORYDSL --&gt; DSLEVAL
 
     SCHEMA --&gt; GAT
+    SCHEMA --&gt; EXPR
     INST --&gt; GAT
-    EXPR --&gt; GAT
+    INST --&gt; SCHEMA
+    INST --&gt; EXPR
+    GAT --&gt; EXPR
 </pre>
 
-<p>The diagram shows the <em>direction</em> of dependency, not every individual edge. The full set is in the workspace <a href="https://github.com/panproto/panproto/blob/main/Cargo.toml"><code>Cargo.toml</code></a>. The ten <code>panproto-grammars-*</code> pack crates are grouped together in the diagram: each is a leaf re-exporting a subset of the tree-sitter grammars under feature flags, consumed transitively by <code>panproto-parse</code>.</p>
+<p>An arrow points from a crate to one of its dependencies. The diagram omits many direct edges and feature-gated dependencies; each crate’s <code>Cargo.toml</code> is authoritative. The ten <code>panproto-grammars-*</code> pack crates are grouped together: each re-exports a subset of tree-sitter grammars under feature flags.</p>
 <p>One arrow worth pointing out: <code>panproto-parse</code> depends on <code>panproto-lens</code>, not the other way around. The two crates meet through the <code>enrichment_registry</code> module in <code>panproto-lens</code>, a thin trait-and-registry pair the lens crate exposes for downstream crates to populate. <code>panproto-parse</code> installs an adapter for every parser it accepts so that protolens machinery in <code>panproto-lens</code> can dispatch grammar-driven enrichment synthesis without depending on tree-sitter. The mechanism is documented in <a href="./layout-enrichment.html">Layout enrichment</a>; the registry pattern keeps the lens crate grammar-agnostic and the dependency direction acyclic.</p>
 <h2 id="the-boundaries"><a class="header" href="#the-boundaries">The boundaries</a></h2>
 <p>Three places in the system are <em>boundary layers</em> in the sense that they convert between panproto’s internal representation and an external one. They are deliberately thin and concentrated in single crates so they can be audited independently.</p>
 <h3 id="wasm-boundary"><a class="header" href="#wasm-boundary">WASM boundary</a></h3>
-<p><code>panproto-wasm</code> is the only crate that knows about <code>wasm-bindgen</code>. It exposes <code>panproto-core</code> to JavaScript through a slab of opaque integer handles, with MessagePack encoding for data crossing the boundary. The TypeScript SDK (<a href="https://www.npmjs.com/package/@panproto/core"><code>@panproto/core</code></a>) is a thin wrapper over the WASM exports; it adds the fluent builder ergonomics but no logic.</p>
+<p>JavaScript reaches <code>panproto-core</code> through the <code>wasm-bindgen</code> boundary in <code>panproto-wasm</code>. Structured data crosses that boundary as MessagePack, while a slab of opaque integer handles keeps Rust resources alive. The TypeScript SDK (<a href="https://www.npmjs.com/package/@panproto/core"><code>@panproto/core</code></a>) adds initialization, handle management, types, and higher-level operations.</p>
 <h3 id="python-boundary"><a class="header" href="#python-boundary">Python boundary</a></h3>
-<p><code>panproto-py</code> is the only crate that knows about PyO3. It exposes <code>panproto-core</code> to Python with native bindings (no WASM). The Python wheel ships eleven core tree-sitter grammars; the rest are in companion <code>panproto-grammars-*</code> packs.</p>
+<p>Python uses the native PyO3 bindings in <code>panproto-py</code> rather than WASM. Its default Rust feature is <code>group-core</code>, and the published wheel is built with default features, so it ships the eleven core tree-sitter grammars; the other 250 of the 261 the feature manifest declares live in the companion <code>panproto-grammars-*</code> packs.</p>
 <h3 id="c-boundary"><a class="header" href="#c-boundary">C boundary</a></h3>
 <p><code>panproto-c</code> is the only crate that knows about C ABI. It exposes a stable C interface used by the Haskell and Swift bindings (and any other non-Rust language). CBOR is the over-the-boundary format here.</p>
 <h2 id="the-generated-cli-reference"><a class="header" href="#the-generated-cli-reference">The generated CLI reference</a></h2>
 <p>The <code>schema</code> binary’s <code>--help</code> text is the source of truth for the CLI surface. The <a href="../reference/cli.html">reference/cli</a> page is regenerated by an <code>xtask</code> (see <a href="https://github.com/panproto/panproto/blob/main/xtask/src/bin/gen-cli-docs.rs"><code>xtask/src/bin/gen-cli-docs.rs</code></a>) and CI fails if the page is out of date. This is the only generated file in the docs site.</p>
 <h2 id="versioning"><a class="header" href="#versioning">Versioning</a></h2>
-<p>All workspace crates are versioned in lockstep at the workspace level (<code>workspace.package.version</code>). A release of <code>panproto-core 0.46.0</code> implies every panproto-* crate at 0.46.0. The TypeScript SDK and Python SDK follow the same version. See <a href="https://github.com/panproto/panproto/blob/main/CHANGELOG.md">Release process</a> for cadence.</p>
+<p>All workspace crates read their version from <code>workspace.package.version</code> and are released in lockstep. The language SDKs follow the workspace release version. See the <a href="https://github.com/panproto/panproto/blob/main/CHANGELOG.md">changelog</a> for release history.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="../reference/crate-map.html">Crate map</a> for one-line descriptions of every crate.</li>

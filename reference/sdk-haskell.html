@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -187,7 +187,7 @@
 <h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
 <p>The package is not yet on a registry; install from this repository. See <a href="../how-to/install/haskell.html">Install the Haskell SDK</a> for the bootstrap scripts and the toolchain prerequisites.</p>
 <h2 id="two-backends-behind-capability-classes"><a class="header" href="#two-backends-behind-capability-classes">Two backends behind capability classes</a></h2>
-<p>Each domain is one typeclass parameterised by a backend tag, and every class method returns <code>IO</code>. There are two backends. <code>Rust</code> is FFI-backed and implements every class; it consumes the 112-entry C ABI documented in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-c/CONTRACT.md"><code>crates/panproto-c/CONTRACT.md</code></a>. <code>Native</code> is pure Haskell and implements the protocol and schema round-trips plus the backend-independent value algebra, for pipelines that never start a Rust runtime.</p>
+<p>Each domain is one typeclass parameterized by a backend tag, and every class method returns <code>IO</code>. There are two backends. <code>Rust</code> is FFI-backed and implements every class; it consumes the 122-entry C ABI documented in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-c/CONTRACT.md"><code>crates/panproto-c/CONTRACT.md</code></a>, of which 105 are present in a default build and 17 behind the <code>full-parse</code>, <code>project</code>, and <code>git</code> features. <code>Native</code> is pure Haskell and implements the protocol and schema round-trips plus the backend-independent value algebra, for pipelines that never start a Rust runtime.</p>
 <p>A call like <code>compile mig src tgt</code> resolves to whichever backend the representations carry. Capability methods take and return backend-specific representations (<code>ProtocolRep back</code>, <code>SchemaRep back</code>, <code>LensRep back</code>, and so on), which are associated data families on each class: the <code>Rust</code> representations wrap opaque <code>u32</code> slab handles, the <code>Native</code> representations wrap the canonical value. The <code>toCanonical</code> / <code>fromCanonical</code> bridge (and <code>toSchema</code> / <code>fromSchema</code> for the structured schema) moves a value between backends.</p>
 <div class="table-wrapper">
 <table>
@@ -287,6 +287,30 @@ validate =
         validateSchema schema proto   -- [] means valid
 </code></pre>
 <p><em>Listing R.3: Ingesting a structured schema into the <code>Rust</code> backend and validating it against a protocol. It reuses <code>postSchema</code> from Listing R.1.</em></p>
+<h2 id="morphism-and-span-search"><a class="header" href="#morphism-and-span-search">Morphism and span search</a></h2>
+<p><code>HomBackend</code> carries the search. <code>findSpan</code> is the method to reach for, because it never refuses for want of a match: leaving every source vertex out of the apex is a feasible answer, so two schemas with nothing in common come back as a <code>FoundSpan</code> with an empty apex rather than as an exception.</p>
+<pre><code class="language-haskell">import Panproto.Class (ProtocolBackend (..), Rust, SchemaBackend (..))
+import Panproto.Hom
+    ( FoundSpan
+    , HomBackend (..)
+    , SearchOptions (..)
+    , defaultDomainConstraints
+    , defaultFindOpts
+    )
+import Panproto.Rust.Hom ()
+
+sharedPart :: SchemaRep Rust -&gt; SchemaRep Rust -&gt; ProtocolRep Rust -&gt; IO FoundSpan
+sharedPart old new proto =
+    findSpan old new proto
+        (defaultFindOpts {monic = True})
+        defaultDomainConstraints
+</code></pre>
+<p><em>Listing R.4: Asking what two schemas share, under an injective vertex map.</em> The protocol is an argument because the apex is a schema, a schema is well formed only against a protocol, and inducing the apex re-validates it; a schema carries its protocol’s name alone, so the protocol cannot be read back off <code>old</code>.</p>
+<p><code>FoundSpan</code> is a plain record, so it carries the span’s measurements flat rather than nesting the engine’s certificate: <code>apex</code>, <code>left</code> and <code>right</code> for the span itself, then <code>quality</code>, <code>qualityLo</code>, <code>qualityHi</code>, <code>apexCoverage</code>, <code>provenOptimal</code>, <code>isTotal</code>, <code>apexDigest</code> and <code>legsAreFunctorial</code>. The last two are what identifying a span takes: the digest together with the two leg maps is the span’s identity, and there is no schema-digest entry point on the C ABI to recompute it from, so a Haskell host that wants to dedupe or cache a span reads it here or not at all. The package is compiled with <code>NoFieldSelectors</code>, so those fields are read through <code>OverloadedRecordDot</code> (<code>found.apexCoverage</code>) rather than through selector functions, which never come into scope. The two quality ends are equal exactly when <code>provenOptimal</code> holds, which is what separates a score nothing beats from a score the search ran out of budget before improving on. <code>quality</code> ranks spans over <em>one</em> source schema and nothing else, since every denominator of the objective is fixed by the source, so <code>apexCoverage</code> is read alongside it. The pure <code>spanAsTotalMorphism</code> hands back the older <code>FoundMorphism</code> shape when <code>isTotal</code> holds, and <code>spanToOverlap</code> (which takes a <code>Proxy</code> for the backend the argument and result types do not mention) gives the identification list a pushout takes.</p>
+<p><code>SearchOptions</code> is shared with the two total-morphism methods: <code>monic</code>, <code>epic</code>, <code>iso</code>, <code>maxResults</code>, and <code>hardPins</code>, with <code>defaultFindOpts</code> the all-default record. <code>epic</code> is honored by <code>findMorphisms</code> and <code>findBestMorphism</code> and refused by <code>findSpan</code>, since surjectivity is a property of a total morphism and a span’s right leg is deliberately partial. Hard domain restrictions travel separately in <code>DomainConstraints</code> (<code>restrictedDomains</code>, <code>excludedTargets</code>, <code>excludedSources</code>, <code>scoringWeights</code>), which only <code>findSpan</code> takes.</p>
+<h3 id="what-findmorphisms-returns"><a class="header" href="#what-findmorphisms-returns">What <code>findMorphisms</code> returns</a></h3>
+<p><code>findMorphisms</code> returns the morphisms <strong>attaining the optimum</strong>, and nothing else. The engine’s cap of 1024 bounds every request rather than only <code>maxResults = 0</code>, so asking for more is answered with the cap and Haskell has no flag saying so. Every element carries the same <code>quality</code>, so the head of the list is what <code>findBestMorphism</code> answers with and there is no second, worse tier to walk to. The <code>ByQuality</code> wrapper orders results by score, which matters across separate searches rather than within one.</p>
+<p>An empty list means that no total morphism exists, and only that. A search that could not be posed throws instead: the <code>hom</code> methods go through the generic status check, so what arrives is a <code>PanprotoError</code> carrying the FFI <code>PpStatus</code> and its envelope rather than one of the twelve domain children. <code>findSpan</code> is the method that answers with what the two schemas do share.</p>
 <h2 id="cabal-flags"><a class="header" href="#cabal-flags">Cabal flags</a></h2>
 <div class="table-wrapper">
 <table>
@@ -310,6 +334,7 @@ validate =
 <li><a href="../how-to/install/haskell.html">Install the Haskell SDK</a> for setup and the bootstrap scripts.</li>
 <li><a href="./crate-map.html">Crate map</a> for <code>panproto-c</code> and the rest of the workspace.</li>
 <li><a href="../how-to/define-schema/haskell.html">Define a schema from Haskell</a> for the builder walkthrough.</li>
+<li><a href="../how-to/spans.html">Find a span between two schemas</a>, and <a href="../explanation/morphism-search.html">Searching for a morphism</a> for what the search is doing.</li>
 </ul>
 
                     </main>

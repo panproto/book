@@ -1,0 +1,390 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Find a span between two schemas - panproto</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Documentation: tutorials, how-to guides, reference, and explanation">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href=".././theme/cite.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "navy";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-adbb6774.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">panproto</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/aaronstevenwhite/panproto" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/aaronstevenwhite/panproto/edit/main/book/src/how-to/spans.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="find-a-span-between-two-schemas"><a class="header" href="#find-a-span-between-two-schemas">Find a span between two schemas</a></h1>
+<p>Choose a span search when two schemas overlap but no total morphism embeds one in the other. A <em>span</em> is a pair of schema morphisms from a shared middle, written <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord"><span class="mord mathit">src</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">←</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8095em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathit">tgt</span></span></span></span></span>; its <strong>apex</strong> <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span> is the part of the source that found a target. This is the common case in the measured corpus: 5117 of 5852 ordered lexicon pairs admit no total morphism. <a href="../explanation/migrations-as-morphisms.html#spans-and-why-partiality-is-the-ordinary-case">Migrations as morphisms</a> gives the test and breakdown.</p>
+<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
+<p>The Rust SDK (<a href="https://docs.rs/panproto-mig/latest/panproto_mig/"><code>panproto-mig</code></a>) or the <code>schema</code> CLI. A protocol, because the apex is itself a schema and a schema is well formed only against a protocol.</p>
+<h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
+<h3 id="from-the-cli"><a class="header" href="#from-the-cli">From the CLI</a></h3>
+<pre><code class="language-sh">schema auto-migrate schemas/v1.json schemas/v2.json
+</code></pre>
+<p>The output reports the apex size, what fraction of the source it covers, the quality, and the interval the search proved the quality lies in. Running it on the pair the Rust listing below builds, a <code>post</code> record that renamed <code>text</code> to <code>body</code> and dropped a <code>likes</code> counter:</p>
+<pre><code class="language-text">Found span (quality: 0.230, bounds: [0.230, 0.230]):
+
+Apex: 2 of 3 vertices (66.7% coverage), 1 edge
+
+Vertex map:
+  post -&gt; post
+  post.text -&gt; post.body
+
+Edge map:
+  post-&gt;post.text (prop) text -&gt; post-&gt;post.body (prop) body
+</code></pre>
+<p>The bounds collapse to a point exactly when the search proved optimality, and the edge map appears only when the apex has an arc to carry.</p>
+<p>Two flags and their absence select how much of an answer counts as one. They form a <strong>strictness ladder</strong> over a single search rather than selecting between searches:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Flag</th><th>Accepts</th></tr>
+</thead>
+<tbody>
+<tr><td><code>--total</code></td><td>Only a span whose left leg is onto, which is to say a total morphism. Totality needs the edges as well as the vertices, so this is a stricter test than full vertex coverage. Exits non-zero otherwise.</td></tr>
+<tr><td>(none)</td><td>Any span covering at least one vertex.</td></tr>
+<tr><td><code>--span</code></td><td>Any span, including an empty apex, which reports that the two schemas share nothing.</td></tr>
+</tbody>
+</table>
+</div>
+<p>The two flags name opposite ends of the ladder, so passing both is rejected before either search runs. <code>--monic</code> sits outside the ladder and constrains the search rather than the acceptance: it requires the vertex map to be injective, and composes with either end. <code>--json</code> writes the span’s right leg, a <a href="https://docs.rs/panproto-mig/latest/panproto_mig/migration/struct.Migration.html"><code>Migration</code></a> out of the apex.</p>
+<h3 id="when-to-ask-for-a-total-morphism"><a class="header" href="#when-to-ask-for-a-total-morphism">When to ask for a total morphism</a></h3>
+<p>Use <code>--total</code> when a partial answer is not worth having: a release gate that will migrate every record or none, a compiled lens whose source schema must be covered, a CI check that should fail loudly when a field has nowhere to go. Leave it off when the question is descriptive, and in particular when you are ranking candidate targets or reporting how far apart two versions have drifted.</p>
+<p>The flag does not filter the default answer. The span objective is lexicographic in <code>(quality, drops)</code> and the reported quality excludes the drop count, so a span that drops a vertex can score strictly better than a total morphism that keeps it. An optimal span that turns out to be partial is thus no evidence about whether a total morphism exists. This is why <code>--total</code> runs a second search, on <strong>the bail path</strong>, that is, the branch taken only when the optimal span comes back partial: a pair whose optimal span is already total pays nothing extra, and a pair whose optimal span is partial gets the question it actually asked. In Rust the same distinction is the choice between <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/fn.find_span.html"><code>find_span</code></a> and <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/fn.find_best_morphism.html"><code>find_best_morphism</code></a>.</p>
+<p>An answer recovered on the bail path prints without an apex, a coverage figure or a certificate. A total morphism carries none of those, so what you get is a report with fewer headings rather than one with empty ones.</p>
+<h3 id="from-rust"><a class="header" href="#from-rust">From Rust</a></h3>
+<p><a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/fn.find_span.html"><code>find_span</code></a> is total: it never refuses for want of a match, because leaving every source vertex out of the apex is always a feasible answer. A pair with nothing in common gets an empty apex rather than an error.</p>
+<pre class="playground"><code class="language-rust">use panproto_mig::hom_search::{SearchOptions, find_span};
+use panproto_schema::{Protocol, SchemaBuilder};
+
+fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+    let protocol = Protocol {
+        name: "demo".into(),
+        schema_theory: "ThTest".into(),
+        instance_theory: "ThWType".into(),
+        obj_kinds: vec!["object".into(), "string".into(), "integer".into()],
+        ..Protocol::default()
+    };
+
+    let old = SchemaBuilder::new(&amp;protocol)
+        .vertex("post", "object", None::&lt;&amp;str&gt;)?
+        .vertex("post.text", "string", None::&lt;&amp;str&gt;)?
+        .vertex("post.likes", "integer", None::&lt;&amp;str&gt;)?
+        .edge("post", "post.text", "prop", Some("text"))?
+        .edge("post", "post.likes", "prop", Some("likes"))?
+        .entry("post")
+        .build()?;
+
+    // The new schema renamed one field and dropped the counter, so no
+    // total morphism out of `old` exists.
+    let new = SchemaBuilder::new(&amp;protocol)
+        .vertex("post", "object", None::&lt;&amp;str&gt;)?
+        .vertex("post.body", "string", None::&lt;&amp;str&gt;)?
+        .edge("post", "post.body", "prop", Some("body"))?
+        .entry("post")
+        .build()?;
+
+    let span = find_span(&amp;old, &amp;new, &amp;protocol, &amp;SearchOptions::default())?;
+
+    assert!(!span.is_total(), "the counter has nowhere to go");
+    assert_eq!(span.apex.vertices.len(), 2);
+    assert!((span.apex_coverage - 2.0 / 3.0).abs() &lt; 1e-12);
+    assert!(span.certificate.proven_optimal);
+
+    // The left leg is an inclusion, so the apex reuses source identifiers
+    // and the right leg carries the renaming.
+    assert_eq!(
+        span.right.vertex_map.get("post.text").map(|n| n.as_str()),
+        Some("post.body"),
+    );
+    Ok(())
+}</code></pre>
+<p><em>Listing 1: Searching for a span between two schemas, one of which dropped a field.</em></p>
+<p>The left leg is an inclusion: apex vertex identifiers <em>are</em> source vertex identifiers. That is what makes it a mono by construction and what makes two spans comparable without a graph-isomorphism test.</p>
+<p>Every SDK carries the search. Python spells it <code>panproto.find_span(src, tgt, protocol)</code>, TypeScript <code>p.span(from, to, hints?)</code>, Haskell <code>findSpan</code>, and Swift <code>findSpan(to:in:options:constraints:)</code>. What comes back over the wire is narrower than the Rust type, and narrower in two different ways. Swift and Haskell decode the whole <code>SchemaSpan</code>: the apex, both legs, the quality and its bounds, the coverage, <code>proven_optimal</code> and <code>is_total</code>. TypeScript’s <code>SpanResponse</code> decodes the apex as a vertex list and an edge list, the right leg as <code>vertex_map</code>, and the same scalars, with no apex schema and no left leg, on the reasoning that the caller already holds the source and can induce the rest.</p>
+<p>None of them carries the leg shape. A host that needs to know whether the right leg embeds should ask for injectivity up front rather than infer it after the fact. Where that is not possible, comparing the number of distinct values in the right leg’s vertex map against its number of keys settles the vertex half of the question, and nothing on the wire settles the edge half.</p>
+<h3 id="pinning-what-you-already-know"><a class="header" href="#pinning-what-you-already-know">Pinning what you already know</a></h3>
+<p>A correspondence you <em>know</em> goes in <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/struct.SearchOptions.html"><code>SearchOptions::hard_pins</code></a>, which restricts a source vertex to exactly that target. A correspondence something <em>inferred</em> belongs in the evidence table <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/struct.SpanSearch.html"><code>SpanSearch::with_evidence</code></a> reads, where it changes which assignment is optimal without removing any other from the search. The distinction is load-bearing: two individually plausible pins can be jointly infeasible, and a pin that turns out to be wrong costs a solution rather than a rank.</p>
+<p>Evidence never removes a value from a domain, which has a consequence you can rely on when tuning: adding a strategy, or raising the confidence of one already firing, cannot make a pair that previously answered stop answering. The feasible set is the same whichever strategies ran; only which member of it is optimal changes.</p>
+<h3 id="merging-along-the-apex"><a class="header" href="#merging-along-the-apex">Merging along the apex</a></h3>
+<p>A span is the input a pushout wants. <code>SchemaSpan::to_overlap</code> produces the pair list <code>schema_pushout</code> expects, and <code>SchemaSpan::pushout</code> performs the merge, returning <code>src ⊔_A tgt</code> together with the two injections. The pushout is the integrated schema; the CLI reaches it through <code>schema integrate --auto-overlap</code>.</p>
+<p>The merge has a precondition: the right leg must not identify two apex vertices. A merge along the apex has to commute, and a right leg that sends two apex vertices to one target vertex makes that impossible, since the merge identifies elements by a map keyed on the target element and a repeated key names only one preimage. A contracting right leg is an ordinary answer from the default search, so <code>SchemaSpan::pushout</code> reports <code>SpanError::ContractingRightLeg</code> rather than returning a square that does not commute. Search with <code>SearchOptions::iso</code> for a span that embeds; <code>discover_overlap</code> does exactly that, which is why the CLI path is safe.</p>
+<h3 id="when-the-right-leg-contracts"><a class="header" href="#when-the-right-leg-contracts">When the right leg contracts</a></h3>
+<p>A source with four string fields and a target with one produces a right leg that sends all four to the same place. Nothing is wrong with that as a span. It costs you every operation downstream that assumes a preimage is unique.</p>
+<p>It shows up in three places. First, the CLI prints a warning on stderr, which keeps stdout pipeable under <code>--json</code>:</p>
+<pre><code class="language-text">warning: the right leg is not injective on vertices, so this migration
+identifies two source vertices. Lifting it has no well-defined answer
+without a rule for combining them; pass --monic to search for a leg
+that embeds.
+</code></pre>
+<p>Second, in Rust, <code>span.certificate.shape.right_is_mono</code> is false, and <code>span.certificate.shape.right_edge_images</code> reports <code>EdgeImages::Shared</code> when two apex arcs also share an image. The two come apart: an injective vertex map may still send two parallel apex arcs to one target arc, so a caller merging along the span reads both. Third, and loudest, <code>SchemaSpan::pushout</code> refuses outright, which is likely the symptom you meet first.</p>
+<p>There are three responses, in increasing order of effort. First, ask for injectivity up front: <code>--monic</code> on the CLI, <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/struct.SearchOptions.html"><code>SearchOptions::monic</code></a> in Rust. The search then optimizes over the injective assignments, so what you get back is the best embedding rather than the best map filtered after the fact, and a source vertex with no free target drops out of the apex instead of colliding. Second, ask for <code>SearchOptions::iso</code> when the span has to feed a pushout or a symmetric lens, since only that path promises an injective edge map as well. Third, keep the contraction and decide the collision yourself, by excluding the losing source vertices through <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/struct.DomainConstraints.html"><code>DomainConstraints::excluded_sources</code></a> so that they leave the apex, and then recovering their data at the value level with a <a href="./field-transforms.html">field transform</a> that reads the whole record. That third route is the one to take when the collision is genuine, that is, when two source fields do belong in one target field and you know how they combine.</p>
+<h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
+<h3 id="coverage-and-quality"><a class="header" href="#coverage-and-quality">Coverage and quality</a></h3>
+<p><code>apex_coverage</code> is <code>|apex.vertices| / |src.vertices|</code>, or one when the source has no vertices. It answers <em>how much</em> of the source was covered. <code>quality</code> answers <em>how well the covered part matches</em>, and it excludes the drop count for exactly that reason. Read them together. A coverage of 0.2 with a quality of 0.95 says the search found a small, confident overlap; a coverage of 0.95 with a quality of 0.2 says it found a large, doubtful one. Those two ask for different responses from you, and neither number alone distinguishes them.</p>
+<p>Coverage counts vertices only. <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/struct.SchemaSpan.html"><code>SchemaSpan::is_total</code></a> additionally requires that every mappable source edge survive, so a span can report a coverage of 1.0 and still not be a total morphism: every vertex found a home and some arc between two of them did not. When you need the total-morphism answer, test <code>is_total</code> rather than comparing the coverage against one.</p>
+<p>Quality ranks spans over one source schema and nothing else. Every denominator in the objective is fixed by the source, so two spans out of the same schema are comparable and two spans out of different schemas are not.</p>
+<h3 id="the-certificate"><a class="header" href="#the-certificate">The certificate</a></h3>
+<p>Every span carries a <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/struct.SpanCertificate.html"><code>SpanCertificate</code></a> recording what the construction proved rather than what it assumed. Read it alongside <code>span.quality_bounds</code>, which sits on the span itself rather than on the certificate:</p>
+<ul>
+<li><code>proven_optimal</code> says whether the search ruled out a better span, or merely ran out of budget. When it is false, <code>span.quality_bounds</code> is the interval that separates “0.4, and nothing better exists” from “0.4, and the search stopped before it could tell”. The two ends are equal exactly when <code>proven_optimal</code> holds.</li>
+<li><code>limit_hit</code> names what stopped it: <a href="https://docs.rs/panproto-mig/latest/panproto_mig/solve/enum.LimitKind.html"><code>LimitKind::Nodes</code></a> for the node budget, <code>LimitKind::Time</code> for a wall-clock budget the caller set. There is no default wall-clock budget, so a <code>Time</code> reading means the caller asked for one and accepted a non-deterministic result.</li>
+<li><code>path</code> records which algorithm answered. <a href="https://docs.rs/panproto-mig/latest/panproto_mig/solve/enum.SolverPath.html"><code>SolverPath::Eliminate { width }</code></a> is exact bucket elimination, which never prunes and always proves optimality; <code>BranchAndBound { width }</code> is the fallback taken when the message tables would not fit the budget; <code>Monic</code> and <code>Iso</code> are the injective and maximum-common-sub-schema paths, neither of which eliminates. The <code>width</code> on the first two is the induced width of the order actually used, and it has been 1 or 2 throughout both committed corpus snapshots: across the 861 record-typed lexicon pairs whose answers are recorded, and across all 5852 ordered pairs whose networks are, 5168 at width 1 and 684 at width 2.</li>
+<li><code>shape</code> reports what the two legs are, as a <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/struct.LegShape.html"><code>LegShape</code></a>. <code>left_is_mono</code> is true by construction, since an inclusion is a mono. <code>right_is_mono</code> and <code>right_edge_images</code> are the two halves of “does the right leg embed”, reported separately because an injective vertex map can still collapse parallel arcs. <code>left_is_iso</code> is what <code>is_total</code> reads.</li>
+<li><code>legs_are_functorial</code> records that both legs passed the schema-morphism check: every mapped edge lands between the images of its own endpoints.</li>
+<li><code>left_existence</code> and <code>right_existence</code> report the existence check on each leg separately, because the two legs have different codomains and can fail different obligations. The left leg is an inclusion and so cannot fail functoriality, but it can fail reachability: an apex whose every vertex sits on a cycle has no root, and the check reports that. It is a finding about the apex rather than a defect in the leg.</li>
+<li><code>apex_pointed</code> says whether the apex has an entry point. <a href="https://docs.rs/panproto-schema/latest/panproto_schema/induce/fn.induce.html"><code>induce</code></a> never synthesizes one, so an apex with no entries is recorded rather than repaired.</li>
+<li><code>tie_break_order</code> is the sequence the tie among equally good assignments was settled in, when exact inference produced the answer. It is the <em>reverse</em> of the elimination order, so reading the rule against the elimination order names the wrong sequence. <code>SpanSearch::optima</code> enumerates the rest of the tie for a caller wanting a different canonical choice.</li>
+<li><code>apex_digest</code> plus the two leg maps is the span’s identity, which is how a caller checks that a span was not assembled from parts.</li>
+</ul>
+<h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
+<ul>
+<li><strong>Comparing <code>quality</code> across source schemas.</strong> There is no absolute reading of the number, and no threshold on it is meaningful across pairs. Read <code>apex_coverage</code> alongside it.</li>
+<li><strong>Reading an empty apex as a verdict.</strong> An empty apex charges the full penalty on each component the source gives mass to, and a component has mass only when the source has something for it to measure. Name and degree are per source vertex and always charge; the edge component is per source edge and the Jaccard component per source vertex with a named outgoing edge, so an edgeless source charges neither. Under the default weights an empty apex therefore reads <code>0.0</code> over a source with at least one named edge, <code>0.30</code> over a source whose edges are all unnamed, <code>0.55</code> over an edgeless source, and <code>1.0</code> over an empty source. All four say “these two share nothing” on four different scales, which is what makes each a floor rather than a verdict.</li>
+<li><strong>Reading an empty morphism list as proof that no total morphism exists, without checking the return.</strong> It is that, and only when the call succeeded. A search that could not be posed reports <code>SpanError::Build</code>, and one that spent its budget before reaching any complete assignment reports <code>SpanError::Stopped</code> naming the limit that ran out, so the empty answer is a statement about the pair and a refusal is a statement about the budget.</li>
+<li><strong>Reading a partial optimal span as proof that no total morphism exists.</strong> It is not. The two searches answer different questions, and <code>--total</code> runs the second one for you; in Rust, call <code>find_best_morphism</code> rather than inferring from <code>is_total</code>.</li>
+<li><strong>Treating a coverage of 1.0 as totality.</strong> Totality needs the edges too. Test <code>is_total</code>.</li>
+<li><strong>Confusing the apex with a symmetric lens’s apex.</strong> The two are different objects related by pushout and then <code>Mod</code>. <code>SchemaSpan::pushout</code> gates on <code>right_is_mono</code> alone, which <code>--monic</code> already delivers; what the iso path adds on top is an injective <em>edge</em> map, and that is why <code>auto_symmetric</code> runs iso rather than monic.</li>
+<li><strong>Routing inferred correspondences through <code>hard_pins</code>.</strong> See <a href="#pinning-what-you-already-know">Pinning what you already know</a>: a pin collapses a domain, and a collapsed domain cannot be recovered by the objective.</li>
+<li><strong>Expecting <code>find_morphisms</code> to hand back the whole hom-set.</strong> It returns the morphisms attaining the optimum, bounded by an engine cap of 1024 that applies to every request rather than only to <code>max_results = 0</code>. Walking the list for a second-best alternative finds nothing, because there is no k-best over distinct quality levels: every element is a tie for first.</li>
+</ul>
+<h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
+<ul>
+<li><a href="./build-migration.html">Build a migration</a> for turning a span into a checked mapping, or for the case where a mapping file already exists.</li>
+<li><a href="./field-transforms.html">Apply field transforms</a> for the correspondences a vertex map cannot state.</li>
+<li><a href="./use-lenses.html">Use lenses</a> for the bidirectional layer built on top of an alignment.</li>
+<li><a href="../explanation/migrations-as-morphisms.html">Migrations as morphisms</a> for the model the span sits in.</li>
+<li><a href="../reference/cli.html">CLI reference</a> for the full <code>schema auto-migrate</code> help text.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../how-to/build-migration.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../how-to/field-transforms.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../how-to/build-migration.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../how-to/field-transforms.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src=".././theme/cite-group.js"></script>
+        <script src=".././theme/mermaid.min.js"></script>
+        <script src=".././theme/mermaid-init.js"></script>
+        <script src=".././theme/bib-links.js"></script>
+        <script src=".././theme/bib-linkify.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

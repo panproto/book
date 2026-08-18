@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Protocol catalogue - panproto</title>
+        <title>Protocol catalog - panproto</title>
 
 
         <!-- Custom HTML head -->
@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -182,11 +182,11 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
-<h1 id="protocol-catalogue"><a class="header" href="#protocol-catalogue">Protocol catalogue</a></h1>
-<p>A <em>protocol</em> in panproto is a schema language: Avro, CDDL, OpenAPI, ATProto Lexicons, Parquet, FHIR, a Kubernetes CRD. Each one is defined by a pair of GATs (a schema theory and an instance theory) composed by colimit from reusable building-block theories. Every protocol provides both a parser (native format → <code>Schema</code>) and an emitter (<code>Schema</code> → native format), so panproto can round-trip data through any pair.</p>
+<h1 id="protocol-catalog"><a class="header" href="#protocol-catalog">Protocol catalog</a></h1>
+<p>A <a href="../glossary.html#protocol" title="A protocol identifies a schema language and the theories and structural rules that define it."><em>protocol</em></a> in panproto is a schema language: <a href="https://avro.apache.org/docs/current/specification/">Avro</a>, <a href="https://www.rfc-editor.org/rfc/rfc8610.html">CDDL</a>, <a href="https://spec.openapis.org/oas/latest.html">OpenAPI</a>, <a href="https://atproto.com/specs/lexicon">ATProto Lexicons</a>, <a href="https://parquet.apache.org/docs/file-format/">Parquet</a>, <a href="https://hl7.org/fhir/">FHIR</a>, or a <a href="https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/">Kubernetes CRD</a>. Each one is defined by a <a href="../glossary.html#schema-theory" title="A schema theory specifies the structures and laws available to schemas for one protocol.">schema theory</a> and an <a href="../glossary.html#instance-theory" title="An instance theory specifies how data may inhabit schemas for one protocol.">instance theory</a> composed by <a href="../glossary.html#colimit" title="A colimit combines theories over their explicitly shared parts.">colimit</a> from reusable <a href="../glossary.html#generalized-algebraic-theory-gat" title="A GAT is a named collection of dependent sorts, operations, and equations.">generalized algebraic theories (GATs)</a>. A protocol registration supplies a <a href="../glossary.html#parser" title="A parser reads a protocol&#39;s native schema representation into panproto&#39;s internal model.">parser</a> from its native format to <a href="../glossary.html#schema" title="A schema is a model of a protocol&#39;s schema theory."><code>Schema</code></a> and an <a href="../glossary.html#emitter" title="An emitter writes panproto&#39;s internal schema model in a protocol&#39;s native representation.">emitter</a> in the reverse direction.</p>
 <p>For the model behind these registrations, see <a href="../explanation/schemas-as-theories.html">Schemas as theories</a> and <a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a>.</p>
 <h2 id="categories"><a class="header" href="#categories">Categories</a></h2>
-<p>The built-in protocols are organised by category in <code>panproto-protocols</code>. Each category is a Rust submodule.</p>
+<p>The built-in protocols are organized by category in <code>panproto-protocols</code>. Each category is a Rust submodule.</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -225,7 +225,7 @@
 <h2 id="defining-a-new-protocol"><a class="header" href="#defining-a-new-protocol">Defining a new protocol</a></h2>
 <p>To add a custom protocol, see <a href="../how-to/build-protocol.html">Build a custom protocol</a>. The minimal recipe is: declare schema and instance GATs (Rust or via the <a href="../how-to/build-protocol.html">theory DSL</a>), register a parser and emitter, and add a registration call to the relevant submodule.</p>
 <h2 id="source-code-grammars-and-emit-verification"><a class="header" href="#source-code-grammars-and-emit-verification">Source-code grammars and emit verification</a></h2>
-<p>In addition to the schema-language protocols catalogued above, panproto ships 261 tree-sitter grammars under <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-grammars"><code>crates/panproto-grammars/</code></a>. Each grammar registers a tree-sitter <code>Language</code> plus its <code>node-types.json</code> AST signature; the resulting parser walks source code into a full-AST schema, and <code>emit_pretty</code> renders the schema back to bytes via the structural pipeline described in <a href="../explanation/emit-pretty.html">Source-code emission</a>.</p>
+<p>In addition to the schema-language protocols cataloged above, panproto ships 261 tree-sitter grammars under <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-grammars"><code>crates/panproto-grammars/</code></a>. Each grammar registers a tree-sitter <code>Language</code> plus its <code>node-types.json</code> AST signature; the resulting parser walks source code into a full-AST schema, and <code>emit_pretty</code> renders the schema back to bytes via the structural pipeline described in <a href="../explanation/emit-pretty.html">Source-code emission</a>.</p>
 <p>The emitter’s correctness varies by grammar; <a href="https://docs.rs/panproto-parse/latest/panproto_parse/struct.ParserRegistry.html#method.emit_verification_status"><code>ParserRegistry::emit_verification_status</code></a> reports which tier each protocol falls into:</p>
 <div class="table-wrapper">
 <table>

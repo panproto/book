@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-1b21fe02.js"></script>
+        <script src="../../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,15 +183,8 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="denotational-semantics"><a class="header" href="#denotational-semantics">Denotational semantics</a></h1>
-<p>This cluster pins panproto’s three DSLs and two structural constructions to a precise mathematical specification. Each page opens with an “In plain terms” section and then proceeds through a six-step skeleton:</p>
-<ol>
-<li><strong>Surface syntax.</strong> BNF for what a user types.</li>
-<li><strong>Abstract syntax.</strong> The Rust enum the parser produces.</li>
-<li><strong>Semantic domain.</strong> The mathematical universe the syntax interprets into.</li>
-<li><strong>Interpretation function.</strong> A semantic function <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen"><span class="mopen">[</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mopen">[</span></span><span class="mord">⋅</span><span class="mclose"><span class="mclose">]</span><span class="mspace" style="margin-right:-0.1778em;"></span><span class="mclose">]</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathsf">Syntax</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathsf" style="margin-right:0.01389em;">Env</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathsf">Val</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">⊥</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> defined by structural recursion on the abstract syntax, in the Scott-Strachey idiom. Typing is presented separately as an inductive relation <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">Γ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⊢</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span></span></span></span>; evaluation is not a relation.</li>
-<li><strong>Soundness.</strong> Statement of what the implementation guarantees, and which property tests or runtime checks enforce it.</li>
-<li><strong>What is intentionally not modelled.</strong> The boundary of the formal account.</li>
-</ol>
+<p>This cluster gives formal and operational models for panproto’s DSLs and structural constructions. Because a denotational model may be broader than the executable fragment, each page labels implemented behavior, checked properties, and explanatory interpretation separately.</p>
+<p>Read <a href="./shared-notation.html">Shared notation</a> first. The remaining pages assume comfort with typed abstract syntax and elementary category theory; <a href="../decoder-ring.html">The vocabulary in plain terms</a> and <a href="../schemas-as-theories.html">Schemas as theories</a> provide the intermediate bridge.</p>
 <p>The pages in turn:</p>
 <div class="table-wrapper">
 <table>
@@ -199,17 +192,17 @@
 <tr><th>Page</th><th>What it pins down</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="./shared-notation.html">Shared notation</a></td><td>The judgement forms, environments, and meta-notation used across the others. Read this first.</td></tr>
-<tr><td><a href="./expression-language.html">Expression language</a></td><td><code>panproto-expr</code>: terms, types, total evaluation under a step budget.</td></tr>
+<tr><td><a href="./shared-notation.html">Shared notation</a></td><td>The judgment forms, environments, and meta-notation used across the others. Read this first.</td></tr>
+<tr><td><a href="./expression-language.html">Expression language</a></td><td><code>panproto-expr</code>: abstract syntax, best-effort type classification, and resource-bounded evaluation.</td></tr>
 <tr><td><a href="./lens-dsl.html">Lens DSL</a></td><td><code>panproto-lens-dsl</code>: the lens triple <code>(get, put, complement)</code>, the three round-trip laws, complement composition as a partial commutative monoid.</td></tr>
-<tr><td><a href="./theory-dsl.html">Theory DSL</a></td><td><code>panproto-theory-dsl</code>: GAT presentations, sort/operation/equation judgements, the colimit interpretation.</td></tr>
+<tr><td><a href="./theory-dsl.html">Theory DSL</a></td><td><code>panproto-theory-dsl</code>: GAT presentations, compilation, typechecking, and the boundary of the CwF interpretation.</td></tr>
 <tr><td><a href="./pushouts-and-merge.html">Pushouts and merge</a></td><td>The pushout construction in the category of GATs, the universal property, and what the implementation verifies.</td></tr>
 <tr><td><a href="./protolens-composition.html">Protolens composition</a></td><td>Protolenses as natural transformations between schema endofunctors, the structural-equality criterion for composition, sequential vs fused instantiation.</td></tr>
 <tr><td><a href="./repl-commands.html">REPL command language</a></td><td>The REPL (<code>schema theory repl</code>, part of <code>panproto-cli</code>): state model, command interpretation, and the bare-term typecheck path.</td></tr>
 </tbody>
 </table>
 </div>
-<p>The cluster is meant to be read by anyone who wants to know exactly what panproto guarantees. Familiarity with category theory helps but is not required: every page restates its formal content in plain terms before invoking it.</p>
+<p>The <a href="../what-is-verified.html">What panproto verifies</a> chapter remains the guarantee catalog. These pages supply the definitions needed to interpret that catalog.</p>
 
                     </main>
 

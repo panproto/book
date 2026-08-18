@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -194,6 +194,54 @@ page.</p>
 <a href="../explanation/schemas-as-theories.html">Schemas as theories</a>,
 <a href="../explanation/migrations-as-morphisms.html">Migrations as morphisms</a>, and
 <a href="../explanation/vcs-semantics.html">Schema version control semantics</a>.</p>
+<h2 id="discovering-a-migration"><a class="header" href="#discovering-a-migration">Discovering a migration</a></h2>
+<p><code>schema auto-migrate</code> runs one search over spans. Write the apex as <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span>; the two
+legs have the shape</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1191em;vertical-align:-0.011em;"></span><span class="mord"><span class="mord mathit">old</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel x-arrow"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.1081em;"><span style="top:-3.322em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight x-arrow-pad"><span class="mord mtight"><span class="mord mtight">ℓ</span></span></span></span><span class="svg-align" style="top:-2.689em;"><span class="pstrut" style="height:2.7em;"></span><span class="hide-tail" style="height:0.522em;min-width:1.469em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.522em" viewbox="0 0 400000 522" preserveaspectratio="xMinYMin slice"><path d="M400000 241H110l3-3c68.7-52.7 113.7-120  135-202 4-14.7 6-23 6-25 0-7.3-7-11-21-11-8 0-13.2.8-15.5 2.5-2.3 1.7-4.2 5.8 -5.5 12.5-1.3 4.7-2.7 10.3-4 17-12 48.7-34.8 92-68.5 130S65.3 228.3 18 247 c-10 4-16 7.7-18 11 0 8.7 6 14.3 18 17 47.3 18.7 87.8 47 121.5 85S196 441.3 208  490c.7 2 1.3 5 2 9s1.2 6.7 1.5 8c.3 1.3 1 3.3 2 6s2.2 4.5 3.5 5.5c1.3 1 3.3  1.8 6 2.5s6 1 10 1c14 0 21-3.7 21-11 0-2-2-10.3-6-25-20-79.3-65-146.7-135-202  l-3-3h399890zM100 241v40h399900v-40z" /></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.011em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9344em;vertical-align:-0.011em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel x-arrow"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9234em;"><span style="top:-3.322em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight x-arrow-pad"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="svg-align" style="top:-2.689em;"><span class="pstrut" style="height:2.7em;"></span><span class="hide-tail" style="height:0.522em;min-width:1.469em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.522em" viewbox="0 0 400000 522" preserveaspectratio="xMaxYMin slice"><path d="M0 241v40h399891c-47.3 35.3-84 78-110 128 -16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20  11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7  39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85 -40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5 -12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67  151.7 139 205zm0 0v40h399900v-40z" /></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.011em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord"><span class="mord mathit">new</span></span><span class="mord">.</span></span></span></span></span></p>
+<p>The apex is the sub-schema of <code>old</code> whose vertices found a target in <code>new</code>. That
+search never refuses for want of a match: leaving every source vertex out of the
+apex is always feasible, so two schemas with nothing in common come back with an
+empty apex rather than with an error. Two of the three flags below therefore
+select which of its answers counts as an answer, and the search underneath is the
+same one either way; the third constrains the search itself.</p>
+<p><code>--span</code> accepts every answer, the empty apex included. Without it the command
+accepts a span covering at least one source vertex and reports the empty apex as
+a failure naming the two files.</p>
+<p><code>--total</code> accepts only a span whose left leg is onto, which is to say a total
+morphism. Totality is a condition on the edges as well as the vertices, so an
+apex holding every source vertex is not on its own enough: a source arc that
+found no image in the target leaves the answer partial at full vertex coverage.
+The command does not read that off the span alone. An optimal span that
+drops a vertex is no evidence about whether a total morphism exists, because span
+quality excludes the drop count while the objective is lexicographic in quality
+first and drops second, so a span that drops a vertex can score strictly better
+than a total morphism that keeps it. When the optimal span is not total, the
+command runs the total-morphism search before giving up, and it fails only when
+that second search comes back empty, quoting the coverage the span did reach.
+<code>--total</code> and <code>--span</code> conflict, and the pair is rejected before either search
+runs.</p>
+<p><code>--monic</code> constrains the search rather than the acceptance, so it composes with
+either of the others. It requires the vertex map to be injective, so that no two
+source vertices land on the same target. Injectivity on vertices does not force
+injectivity on edges, and a monic answer may still send two parallel source edges
+to one target edge. When the answer is not injective on vertices, the command
+says so on stderr, since a migration identifying two source vertices has no
+well-defined lift without a rule for combining them.</p>
+<p>The human report opens with the shape, the score, and the interval the search
+certified, then sizes the apex:</p>
+<pre><code class="language-text">Found span (quality: 0.812, bounds: [0.812, 0.884]):
+
+Apex: 7 of 9 vertices (77.8% coverage), 6 edges
+</code></pre>
+<p>The bounds collapse to a point exactly when the answer was proved optimal. When
+they do not, a following line records that the search stopped before it could
+rule out a better span, which is what separates a quality of 0.812 that nothing
+beats from a quality of 0.812 the search never got to improve on. Underneath
+come the right leg’s vertex map and, when it has one, its edge map. A total
+morphism recovered by the second search prints a shorter report, with no apex
+line and no bounds, because it carries neither.</p>
+<p><code>--json</code> writes the span’s right leg, a migration out of the apex, to stdout.
+Warnings stay on stderr, so the output pipes.</p>
 <h2 id="schema"><a class="header" href="#schema"><code>schema</code></a></h2>
 <pre><code class="language-text">Schematic version control: schema migration toolkit based on generalized algebraic theories
 
@@ -763,7 +811,9 @@ Arguments:
 Options:
       --monic    Require injective (one-to-one) vertex mapping
   -v, --verbose  Enable verbose output
-      --json     Output the migration as JSON
+      --total    Require a total morphism; fail on a partial answer
+      --span     Report the span even when it covers nothing at all
+      --json     Output the span's right leg, a migration out of the apex, as JSON
   -h, --help     Print help
 </code></pre>
 <h3 id="schema-gc"><a class="header" href="#schema-gc"><code>schema gc</code></a></h3>

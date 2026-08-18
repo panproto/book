@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,27 +183,39 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="reference"><a class="header" href="#reference">Reference</a></h1>
-<p>Reference pages are authoritative lookups: signatures, flags, tables, and grammars. They contain no exposition. If you want to understand the model behind these signatures, follow the per-page link to the corresponding <a href="../explanation/index.html">explanation</a> chapter.</p>
+<p>Use these pages to look up a name, flag, signature, field, <a href="../glossary.html#protocol" title="A protocol identifies a schema language and the theories and structural rules that define it.">protocol</a>, or grammar. Procedures live in the <a href="../how-to/index.html">how-to guides</a>, and the mathematical model lives in <a href="../explanation/index.html">explanation</a>.</p>
+<h2 id="operational-contracts"><a class="header" href="#operational-contracts">Operational contracts</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Page</th><th>What it lists</th></tr>
+<tr><th>Page</th><th>Contract</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="./cli.html">CLI</a></td><td>Every <code>schema</code> subcommand, with usage, options, and examples. Generated from the clap derive tree; never stale.</td></tr>
-<tr><td><a href="./sdk-rust.html">Rust SDK</a></td><td>Crate selection, feature flags, public re-exports, and the canonical entry points. Links into docs.rs for full type signatures.</td></tr>
-<tr><td><a href="./sdk-typescript.html">TypeScript SDK</a></td><td>Package layout, initialization, the high-level facade, and the handle-based API. Links into TypeDoc.</td></tr>
-<tr><td><a href="./sdk-python.html">Python SDK</a></td><td>PyO3 native module surface, top-level re-exports, and the companion grammar packs. Links into the mkdocs reference site.</td></tr>
-<tr><td><a href="./sdk-haskell.html">Haskell SDK</a></td><td>The capability typeclasses, the two backends, the effect layer, and the standard-class integration.</td></tr>
-<tr><td><a href="./sdk-swift.html">Swift SDK</a></td><td>Product tiers, the engine actor and its thread confinement, the handle taxonomy, the error hierarchy, and the CBOR codec.</td></tr>
-<tr><td><a href="./protocols.html">Protocol catalogue</a></td><td>Every protocol panproto recognises, with its theory composition and supported operations.</td></tr>
-<tr><td><a href="./expression-language.html">Expression language</a></td><td>Surface grammar, builtins by category, and the type signatures of each builtin.</td></tr>
-<tr><td><a href="./lens-combinators.html">Lens combinators</a></td><td>The combinator algebra exposed by <code>panproto-lens</code>, organised by optic kind.</td></tr>
-<tr><td><a href="./configuration.html">Configuration</a></td><td>The <code>panproto.toml</code> manifest schema.</td></tr>
-<tr><td><a href="./crate-map.html">Crate map</a></td><td>The 38 <code>panproto-*</code> crates in the workspace, with one-line descriptions and dependency direction.</td></tr>
+<tr><td><a href="./cli.html">CLI</a></td><td>Every <code>schema</code> subcommand and its generated <code>--help</code> text.</td></tr>
+<tr><td><a href="./configuration.html">Configuration</a></td><td>Fields and defaults in <code>panproto.toml</code>.</td></tr>
+<tr><td><a href="./protocols.html">Protocol catalog</a></td><td>Registered protocols, their module categories, and emit support.</td></tr>
 </tbody>
 </table>
 </div>
+<h2 id="sdk-contracts"><a class="header" href="#sdk-contracts">SDK contracts</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Surface</th><th>Contract</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="./sdk-rust.html">Rust</a></td><td>Crate selection, feature flags, re-exports, and morphism-search types.</td></tr>
+<tr><td><a href="./sdk-typescript.html">TypeScript</a></td><td>Package initialization, facade objects, and the handle boundary.</td></tr>
+<tr><td><a href="./sdk-python.html">Python</a></td><td>Native-module exports, type stubs, and companion grammar packs.</td></tr>
+<tr><td><a href="./sdk-haskell.html">Haskell</a></td><td>Capability classes, backends, effects, and Cabal flags.</td></tr>
+<tr><td><a href="./sdk-swift.html">Swift</a></td><td>Products, engine isolation, handles, errors, and feature gates.</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="intermediate-lookup"><a class="header" href="#intermediate-lookup">Intermediate lookup</a></h2>
+<p>The <a href="./expression-language.html">expression-language reference</a> lists the surface grammar, types, builtins, and errors used by queries and field transforms. The <a href="./lens-combinators.html">lens-combinator reference</a> lists optic kinds, constructor families, complement composition, and protolens instantiation.</p>
+<h2 id="advanced-lookup"><a class="header" href="#advanced-lookup">Advanced lookup</a></h2>
+<p>The <a href="./crate-map.html">crate map</a> lists the 36 <code>panproto-*</code> workspace crates and their dependency roles. Use it when the facade does not expose the level at which an extension or integration must be implemented.</p>
 
                     </main>
 

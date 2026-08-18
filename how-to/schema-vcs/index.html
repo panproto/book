@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-1b21fe02.js"></script>
+        <script src="../../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,15 +183,14 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="schema-version-control"><a class="header" href="#schema-version-control">Schema version control</a></h1>
-<p>panproto-vcs is git for schemas: an immutable DAG of schema, migration, lens, and data objects with branches, tags, merges, and a content-addressed store. The CLI verbs match git: <code>init</code>, <code>add</code>, <code>commit</code>, <code>branch</code>, <code>merge</code>, <code>log</code>, <code>diff</code>.</p>
-<p>The four pages here cover the practical workflows.</p>
+<p>These guides put schemas, migrations, and associated data under panproto version control. Begin with repository creation and commits; add branching, data migration, or a git bridge only when the project needs that workflow.</p>
 <div class="table-wrapper">
 <table>
 <thead>
 <tr><th>Page</th><th>Purpose</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="./init-and-commit.html">Init and commit</a></td><td>Start a repository, stage and commit changes.</td></tr>
+<tr><td><a href="./init-and-commit.html">Initialize and commit</a></td><td>Start a repository, then stage and commit schema changes.</td></tr>
 <tr><td><a href="./branch-and-merge.html">Branch and merge</a></td><td>Diverge a feature branch, merge it back via pushout.</td></tr>
 <tr><td><a href="./data-versioning.html">Version data alongside schemas</a></td><td>Carry data instances in commits and lift them through migrations automatically.</td></tr>
 <tr><td><a href="./git-bridge.html">Bridge to git</a></td><td>Run panproto-vcs alongside git, or as a custom git remote.</td></tr>

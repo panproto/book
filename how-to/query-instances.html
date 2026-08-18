@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,22 +183,22 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="query-instances"><a class="header" href="#query-instances">Query instances</a></h1>
-<p>A panproto instance is a graph of records. Queries filter and project that graph using the <a href="../reference/expression-language.html">expression language</a>.</p>
+<p>An instance query can filter records, select fields, or follow schema edges. Predicates and projections use the <a href="../reference/expression-language.html">expression language</a>.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>A schema and an instance loaded against it. The expression-language reference for predicates.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
 <h3 id="filter-and-project"><a class="header" href="#filter-and-project">Filter and project</a></h3>
 <p><code>executeQuery</code> is exported from <code>@panproto/core</code>. Its signature is <code>executeQuery(query, instance, wasm)</code> (query first, instance second, WASM module third). The query keys are <code>anchor</code>, <code>predicate</code> (an <code>Expr</code> object, not a string), <code>projection</code> (string array), <code>groupBy</code>, <code>limit</code>, and <code>path</code>.</p>
-<pre><code class="language-ts">import { executeQuery, parseExpr, ExprBuilder } from '@panproto/core';
+<pre><code class="language-ts">import { executeQuery, parseExpr } from '@panproto/core';
 
 const recent = executeQuery(
   {
     anchor: 'post',
-    predicate: parseExpr('post.created_at &gt; "2024-01-01"'),
+    predicate: parseExpr('post.created_at &gt; "2024-01-01"', p._wasm),
     projection: ['id', 'title'],
   },
   instance,
-  panproto._wasm,
+  p._wasm,
 );
 </code></pre>
 <p>The predicate is evaluated against each matched node; <code>projection</code> selects the fields included in each <code>QueryMatch</code>.</p>
@@ -207,7 +207,7 @@ const recent = executeQuery(
 <pre><code class="language-ts">const userPosts = executeQuery(
   { anchor: 'user', path: ['authored'], projection: ['title'] },
   instance,
-  panproto._wasm,
+  p._wasm,
 );
 </code></pre>
 <p>To filter on edge presence, build a predicate with the instance-aware builtins (<code>Edge</code>, <code>Children</code>, <code>HasEdge</code>, <code>EdgeCount</code>) using <code>ExprBuilder</code> or <code>parseExpr</code>.</p>

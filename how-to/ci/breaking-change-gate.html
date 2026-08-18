@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-1b21fe02.js"></script>
+        <script src="../../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,14 +183,15 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="breaking-change-gate"><a class="header" href="#breaking-change-gate">Breaking-change gate</a></h1>
-<p>A breaking-change gate is a CI step that fails the build when a PR introduces a schema change panproto classifies as breaking. It runs against the diff between the PR’s schema and the schema at <code>main</code>.</p>
+<p>A breaking-change gate fails CI when a pull request introduces a schema change that panproto classifies as breaking. The gate compares the proposed schema with the merge base on <code>main</code>.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>A panproto repository under git. A CI system that can run shell commands.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
 <p><code>schema compat</code> classifies the diff between two schema versions and sets its exit code by tier: 0 for a non-breaking change (fully compatible or backward compatible), 1 for a breaking one, 2 for a usage or load error. That exit code is the gate. Pair it with <code>schema check --typecheck</code>, which catches GAT-level type errors the structural classification does not:</p>
 <pre><code class="language-sh"># In your CI script.
 git fetch origin main
-git show origin/main:schemas/user.json &gt; /tmp/user-base.json
+base_commit=$(git merge-base HEAD origin/main)
+git show "$base_commit:schemas/user.json" &gt; /tmp/user-base.json
 
 # Classify the change; exit 1 means breaking, exit 2 a usage or load error.
 schema compat /tmp/user-base.json schemas/user.json --protocol atproto
@@ -205,10 +206,18 @@ schema check \
 <p>Either step’s non-zero exit fails the build. To allow an explicit override, gate on a commit-message marker or a PR label:</p>
 <pre><code class="language-sh">if git log -1 --format=%B | grep -q '\[breaking-change-acknowledged\]'; then
   schema compat /tmp/user-base.json schemas/user.json --protocol atproto || true
-  schema check ... --typecheck || true
+  schema check \
+    --src /tmp/user-base.json \
+    --tgt schemas/user.json \
+    --mapping migrations/user.json \
+    --typecheck || true
 else
   schema compat /tmp/user-base.json schemas/user.json --protocol atproto
-  schema check ... --typecheck
+  schema check \
+    --src /tmp/user-base.json \
+    --tgt schemas/user.json \
+    --mapping migrations/user.json \
+    --typecheck
 fi
 </code></pre>
 <p>For richer reporting, add <code>--format json</code> to <code>schema compat</code>, or use the SDK: in Python, <code>panproto.diff_and_classify(old, new, protocol)</code> returns a <code>CompatReport</code>; in Rust, call <code>panproto_check::diff(...)</code> followed by <code>panproto_check::classify(&amp;diff, &amp;protocol)</code>; in TypeScript, <code>panproto.diffFull(old, new).classify(protocol)</code> returns the same report. Each <code>CompatReport</code> carries a <code>classification</code> tier (<code>fully-compatible</code>, <code>backward-compatible</code>, or <code>breaking</code>) alongside a <code>breaking</code> list, a <code>non_breaking</code> list, and a <code>compatible</code> boolean, along with the offending elements.</p>
@@ -221,7 +230,7 @@ fi
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="./github-actions.html">GitHub Actions</a> for a drop-in workflow.</li>
+<li><a href="./github-actions.html">GitHub Actions</a> for a hosted workflow.</li>
 <li><a href="./pre-commit-hooks.html">Pre-commit hooks</a> for catching breakage before push.</li>
 <li><a href="../build-migration.html">Build a migration</a>.</li>
 </ul>

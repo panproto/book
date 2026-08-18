@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,76 +183,82 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="your-first-diff"><a class="header" href="#your-first-diff">Your first diff</a></h1>
-<p>You will take two versions of a schema file, diff them, generate a migration between them, and convert a record from the old shape to the new one. Everything happens on the command line, with schema files you could have written before ever hearing of panproto. About ten minutes.</p>
-<p>By the end you will have: a diff that identifies exactly what changed, a generated bidirectional converter (a <em>lens</em>), a record converted forward through it, and a verification pass confirming the conversion loses nothing.</p>
-<p>You will not build a schema through the SDK, and you will not meet a vertex, an edge, or a theory. Those exist, and the later tutorials introduce them where they are needed; the core workflow does not require them.</p>
-<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>The <code>schema</code> binary (<a href="../how-to/install/cli.html">Install the CLI</a>). Nothing else.</p>
-<h2 id="step-1-write-version-1"><a class="header" href="#step-1-write-version-1">Step 1: write version 1</a></h2>
-<p>Create a working directory and a schema file. We use an ATProto lexicon here because <code>atproto</code> is the most fully-built-out protocol in the registry, but the file is ordinary JSON of a kind you may have seen on Bluesky’s GitHub; the workflow is the same for the other <a href="../reference/protocols.html">protocols</a>.</p>
-<p><code>user-v1.json</code>:</p>
-<pre><code class="language-json">{
+<p>A schema change should be inspectable before any data moves. In this tutorial, panproto compares two <a href="https://atproto.com/">ATProto</a> Lexicon documents and reports that one field disappeared while another appeared. The first result takes about five minutes once the CLI is installed.</p>
+<p>You will create two versions of a <code>User</code> record and run one structural diff. The inputs remain ordinary Lexicon JSON rather than panproto’s internal schema representation.</p>
+<h2 id="prerequisite"><a class="header" href="#prerequisite">Prerequisite</a></h2>
+<p>Install the <code>schema</code> binary by following <a href="../how-to/install/cli.html">Install the CLI</a>, then confirm that <code>schema --version</code> succeeds.</p>
+<h2 id="create-two-versions"><a class="header" href="#create-two-versions">Create two versions</a></h2>
+<p>The following block creates a fresh directory, a small manifest that identifies the document protocol, and both input files:</p>
+<pre><code class="language-sh">mkdir -p panproto-first-diff
+cd panproto-first-diff
+
+cat &gt; panproto.toml &lt;&lt;'EOF'
+[workspace]
+name = "first-diff"
+
+[[package]]
+name = "lexicons"
+path = "."
+protocol = "atproto"
+EOF
+
+cat &gt; user-v1.json &lt;&lt;'EOF'
+{
   "lexicon": 1,
   "id": "com.example.user",
   "defs": {
     "main": {
       "type": "record",
-      "description": "A user profile.",
       "key": "tid",
       "record": {
         "type": "object",
-        "required": ["name"],
         "properties": {
-          "name": { "type": "string", "maxLength": 640 },
-          "age": { "type": "integer", "minimum": 0 }
+          "name": { "type": "string" },
+          "age": { "type": "integer" }
         }
       }
     }
   }
 }
+EOF
+
+cat &gt; user-v2.json &lt;&lt;'EOF'
+{
+  "lexicon": 1,
+  "id": "com.example.user",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "years": { "type": "integer" }
+        }
+      }
+    }
+  }
+}
+EOF
 </code></pre>
-<p>Check that panproto can read it:</p>
-<pre><code class="language-sh">schema validate --protocol atproto user-v1.json
-</code></pre>
-<p>A zero exit code means the file parses and satisfies the protocol’s rules.</p>
-<h2 id="step-2-write-version-2"><a class="header" href="#step-2-write-version-2">Step 2: write version 2</a></h2>
-<p>Copy the file to <code>user-v2.json</code> and make one change: rename <code>age</code> to <code>years</code> (in both <code>properties</code> and, if you made it required, in <code>required</code>). A rename is the awkward case for diffing: plain-text tools see it as a removal plus an addition.</p>
-<h2 id="step-3-diff-the-two-versions"><a class="header" href="#step-3-diff-the-two-versions">Step 3: diff the two versions</a></h2>
+<p><em>Listing 2.1: A manifest and two complete Lexicon inputs for the first structural diff.</em></p>
+<p>The two files differ by one field name: <code>age</code> became <code>years</code>.</p>
+<h2 id="run-the-diff"><a class="header" href="#run-the-diff">Run the diff</a></h2>
+<p>From <code>panproto-first-diff/</code>, run:</p>
 <pre><code class="language-sh">schema diff user-v1.json user-v2.json
 </code></pre>
-<p>The diff is structural, not textual: it reports the schema elements that changed, rather than the lines. As far as this diff can tell, <code>age</code> was removed and <code>years</code> was added. Now ask panproto to look harder:</p>
+<p>The command uses <code>panproto.toml</code> to select the ATProto document parser, then compares the resulting schema graphs. Its report includes a removed <code>com.example.user:body.age</code> vertex and an added <code>com.example.user:body.years</code> vertex, together with the corresponding property edges. That report establishes the structural removal/addition pair; the rename interpretation requires the second pass below.</p>
+<p>Rename detection is a second pass over that structural result:</p>
 <pre><code class="language-sh">schema diff user-v1.json user-v2.json --detect-renames
 </code></pre>
-<p>With rename detection on, the pair is reported as a likely rename instead of a removal plus an addition. The distinction matters: a removal is a breaking change, while a rename is migratable with no data loss.</p>
-<h2 id="step-4-generate-the-migration"><a class="header" href="#step-4-generate-the-migration">Step 4: generate the migration</a></h2>
-<pre><code class="language-sh">schema lens generate --protocol atproto user-v1.json user-v2.json --save chain.json
+<p>If a removed and added element clear the detector’s similarity threshold, the command adds them to a <code>Detected renames</code> section with confidence scores. This score is evidence for a possible correspondence; <a href="./your-first-migration.html">Your first migration</a> later records the correspondence explicitly.</p>
+<p>For a compact count rather than the element-by-element report, run:</p>
+<pre><code class="language-sh">schema diff user-v1.json user-v2.json --stat
 </code></pre>
-<p>This produces a <em>lens</em>: a converter that runs in both directions. Forward takes v1 records to v2 shape; backward takes v2 records to v1 shape. The generated chain lands in <code>chain.json</code> as plain JSON. Open it if you are curious; it reads as a short list of steps, and for this schema pair the load-bearing step is the rename.</p>
-<p>Add <code>--explain</code> to see why the generator aligned the fields the way it did, with a confidence per step.</p>
-<h2 id="step-5-convert-a-record"><a class="header" href="#step-5-convert-a-record">Step 5: convert a record</a></h2>
-<p>Create <code>alice.json</code>:</p>
-<pre><code class="language-json">{ "$type": "com.example.user", "name": "Alice", "age": 30 }
-</code></pre>
-<p>Convert it:</p>
-<pre><code class="language-sh">schema data convert --protocol atproto \
-  --from user-v1.json --to user-v2.json \
-  alice.json -o alice-v2.json
-</code></pre>
-<p><code>alice-v2.json</code> contains the same record with <code>years</code> in place of <code>age</code>. Point the positional argument at a directory instead of a file and the same command converts a batch.</p>
-<h2 id="step-6-verify-the-round-trip"><a class="header" href="#step-6-verify-the-round-trip">Step 6: verify the round trip</a></h2>
-<p>panproto checks that the conversion loses nothing, rather than asking you to trust it:</p>
-<pre><code class="language-sh">schema lens verify --protocol atproto alice.json user-v2.json
-</code></pre>
-<p>Verification exercises the round-trip laws on your data: converting forward and then backward must return the record you started with. A pass means the migration is loss-free for the records you tested.</p>
-<h2 id="what-you-built"><a class="header" href="#what-you-built">What you built</a></h2>
-<p>A structural diff, a rename detected as a rename, a generated two-way migration, a converted record, and a mechanical check that nothing was lost. You wrote two JSON files and ran five commands; panproto generated the migration.</p>
-<h2 id="where-next"><a class="header" href="#where-next">Where next</a></h2>
-<ul>
-<li><a href="./your-first-schema.html">Your first schema</a> introduces the SDK and the schema-construction API, for when you need to build or inspect schemas programmatically rather than from files.</li>
-<li><a href="./schema-vcs-basics.html">Schema version control basics</a> turns the v1/v2 pair into a history with commits and branches.</li>
-<li><a href="../explanation/decoder-ring.html">The vocabulary in plain terms</a> translates panproto’s terms of art (lens, complement, morphism, and the rest), one line each.</li>
-<li><a href="../explanation/what-panproto-solves.html">What panproto solves</a> is the plain-terms account of the problem this workflow addresses.</li>
-</ul>
+<p>The diff is structural in a precise sense: panproto compares parsed vertices, edges, and constraints rather than changed lines. The shared diff loader also accepts panproto schema JSON, source files supported by the <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a> registry, and manifest-backed directories.</p>
+<h2 id="next"><a class="header" href="#next">Next</a></h2>
+<p><a href="./your-first-schema.html">Your first schema</a> builds the same <code>User</code> model through the SDK and validates records against it. If the command line is your main interface, <a href="./schema-vcs-basics.html">Schema version control basics</a> turns these source files into commits and branches. <a href="../explanation/decoder-ring.html">The vocabulary in plain terms</a> defines <em>vertex</em>, <em>edge</em>, <em>migration</em>, and <em>lens</em> when you are ready for those names.</p>
 
                     </main>
 

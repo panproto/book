@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="convert-data-between-formats"><a class="header" href="#convert-data-between-formats">Convert data between formats</a></h1>
-<p>panproto’s parse/migrate/emit pipeline converts data between any two protocols whose theories overlap. The intermediate is a <code>panproto-inst</code> instance graph; you do not need to write a transcoder per format pair.</p>
+<p>Data conversion between schemas in one protocol follows the parse/migrate/emit pipeline. It passes through a <code>panproto-inst</code> instance graph and does not require a format-pair transcoder.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>The <code>schema</code> CLI installed, or the SDK in your language. The source and target protocol names.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
@@ -197,12 +197,11 @@
 <h3 id="across-protocols"><a class="header" href="#across-protocols">Across protocols</a></h3>
 <p>Cross-protocol conversion goes through a composed theory; see <a href="./cross-protocol.html">Translate across protocols</a>. <code>schema data convert</code> is intra-protocol only.</p>
 <h3 id="from-the-sdks"><a class="header" href="#from-the-sdks">From the SDKs</a></h3>
-<pre><code class="language-ts">const out = await p.convert(jsonBytes, {
-  from: srcSchema,
-  to: tgtSchema,
-});
+<pre><code class="language-ts">using lens = p.lens(srcSchema, tgtSchema);
+const { view, complement } = lens.getJson(inputRecord, "user:body");
+const out = view as Record&lt;string, unknown&gt;;
 </code></pre>
-<p><code>Panproto.convert(data, opts)</code> auto-generates a lens between the two <code>BuiltSchema</code> arguments, applies it forward, and returns the converted record. Pass <code>defaults</code> in <code>opts</code> to supply complement defaults for fields the source does not determine.</p>
+<p><code>Panproto.lens(from, to)</code> auto-generates a lens between two <code>BuiltSchema</code> arguments. <code>getJson</code> accepts an ordinary JavaScript record and returns the converted view together with the complement needed for a backward update. Keep that complement if the application may call <code>putJson</code> later.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <p>To verify round-trip fidelity, generate a chain explicitly and run <code>schema lens verify</code>:</p>
 <pre><code class="language-sh">schema lens generate --protocol atproto schemas/user-v1.json schemas/user-v2.json --save chain.json
@@ -216,7 +215,7 @@ schema lens verify --protocol atproto data/users.json schemas/user-v2.json
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../reference/protocols.html">Reference: protocol catalogue</a>.</li>
+<li><a href="../reference/protocols.html">Reference: protocol catalog</a>.</li>
 <li><a href="./format-preserving.html">Round-trip with format preservation</a>.</li>
 <li><a href="./cross-protocol.html">Translate across protocols</a>.</li>
 </ul>

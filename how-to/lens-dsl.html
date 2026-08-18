@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,25 +183,29 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="write-lenses-in-the-lens-dsl"><a class="header" href="#write-lenses-in-the-lens-dsl">Write lenses in the lens DSL</a></h1>
-<p>The lens DSL is a declarative way to specify a lens between two schemas. Specs are written in Nickel, JSON, or YAML and compile to the lens combinator algebra.</p>
+<p>The lens DSL stores a lens specification outside application code. Nickel, JSON, and YAML specifications compile to the same lens combinator algebra.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>A pair of schemas to bridge. The <code>schema</code> CLI or <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-lens-dsl"><code>panproto-lens-dsl</code></a> crate.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
 <h3 id="write-the-spec-nickel"><a class="header" href="#write-the-spec-nickel">Write the spec (Nickel)</a></h3>
 <pre><code class="language-nickel"># lenses/user-v1-to-v2.ncl
+let L = import "panproto/lens.ncl" in
 {
   id = "user.v1-to-v2",
   description = "Rename name fields and add display_name",
+  source = "dev.example.user.v1",
+  target = "dev.example.user.v2",
   steps = [
-    { rename_field = { from = "first_name", to = "given_name" } },
-    { rename_field = { from = "last_name",  to = "family_name" } },
+    { rename_field = { old = "first_name", new = "given_name" } },
+    { rename_field = { old = "last_name",  new = "family_name" } },
     { add_field = {
         name = "display_name",
-        default = "",
-        expr = "Concat(record.given_name, \" \", record.family_name)",
+        kind = "string",
+        fallback = "",
+        expr = "self.given_name ++ \" \" ++ self.family_name",
       } },
   ],
-}
+} | L.Lens
 </code></pre>
 <p>Each step is a single-key object. The key picks the variant; the value carries its parameters. The DSL applies steps left-to-right against the source schema, producing a target schema and a <code>CompiledLens</code> between them. Full step grammar: <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-lens-dsl/src/document.rs"><code>crates/panproto-lens-dsl/src/document.rs</code></a>.</p>
 <h3 id="compile-a-chain"><a class="header" href="#compile-a-chain">Compile a chain</a></h3>

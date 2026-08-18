@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-1b21fe02.js"></script>
+        <script src="../../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -200,7 +200,7 @@ cabal test
 <p><code>bootstrap/fetch-bindist.sh [version]</code> downloads the prebuilt <code>libpanproto_c</code> for the host platform from the corresponding GitHub Release (it detects <code>aarch64-apple-darwin</code>, <code>x86_64-apple-darwin</code>, <code>x86_64-unknown-linux-gnu</code>, and <code>aarch64-unknown-linux-gnu</code>), rebuilds the C glue against the fetched header, and writes the same <code>cabal.project.local</code>. No Rust toolchain is needed on this path.</p>
 <pre><code class="language-sh">git clone https://github.com/panproto/panproto.git
 cd panproto/bindings/haskell
-./bootstrap/fetch-bindist.sh           # downloads + stages the platform tarball
+./bootstrap/fetch-bindist.sh v0.71.0   # downloads + stages the platform tarball
 cabal build
 cabal test
 </code></pre>

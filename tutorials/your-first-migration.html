@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,99 +183,82 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="your-first-migration"><a class="header" href="#your-first-migration">Your first migration</a></h1>
-<p>You will take the <code>user</code> schema from <a href="./your-first-schema.html">Your first schema</a> and evolve it to v2 by renaming <code>age</code> to <code>years</code>, then lift existing v1 records to v2 shape. About fifteen minutes.</p>
-<p>By the end you will have: a v2 schema, a migration from v1 to v2 with explicit edge mappings, a compatibility report, an existence check that passes, and v2-shape data lifted from your v1 records with a verified round-trip.</p>
-<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>Completed <a href="./your-first-schema.html">Your first schema</a>. The same <code>my-first-schema/</code> project.</p>
-<h2 id="step-1-write-both-schemas-in-one-file"><a class="header" href="#step-1-write-both-schemas-in-one-file">Step 1: write both schemas in one file</a></h2>
-<p><code>src/migration.ts</code>:</p>
-<pre><code class="language-ts">import { Panproto } from '@panproto/core';
+<p>A structural diff records that <code>age</code> disappeared and <code>years</code> appeared. A migration adds the missing information: those two fields correspond. This tutorial declares that correspondence, checks it, converts Alice, and asserts that the reverse trip restores the original record.</p>
+<p>Continue in the <code>my-first-schema/</code> project from <a href="./your-first-schema.html">Your first schema</a>. The complete example takes about twelve minutes.</p>
+<h2 id="build-both-schemas-and-the-mapping"><a class="header" href="#build-both-schemas-and-the-mapping">Build both schemas and the mapping</a></h2>
+<p>Create <code>src/migration.ts</code>:</p>
+<pre><code class="language-ts">import assert from 'node:assert/strict';
+import { Panproto } from '@panproto/core';
 
 const p = await Panproto.init();
-const proto = p.protocol('atproto');
+const atproto = p.protocol('atproto');
 
-const v1 = proto.schema()
-  .vertex('user', 'object')
-  .vertex('user.name', 'string')
-  .vertex('user.age',  'integer')
-  .edge('user', 'user.name', 'prop', { name: 'name' })
-  .edge('user', 'user.age',  'prop', { name: 'age' })
-  .required('user', [{ src: 'user', tgt: 'user.name', kind: 'prop', name: 'name' }])
-  .build();
+function userSchema(numericField: 'age' | 'years') {
+  return atproto.schema()
+    .vertex('user', 'object')
+    .vertex('user.name', 'string')
+    .vertex(`user.${numericField}`, 'integer')
+    .edge('user', 'user.name', 'prop', { name: 'name' })
+    .edge('user', `user.${numericField}`, 'prop', { name: numericField })
+    .required('user', [
+      { src: 'user', tgt: 'user.name', kind: 'prop', name: 'name' },
+    ])
+    .build();
+}
 
-const v2 = proto.schema()
-  .vertex('user', 'object')
-  .vertex('user.name',  'string')
-  .vertex('user.years', 'integer')
-  .edge('user', 'user.name',  'prop', { name: 'name' })
-  .edge('user', 'user.years', 'prop', { name: 'years' })
-  .required('user', [{ src: 'user', tgt: 'user.name', kind: 'prop', name: 'name' }])
-  .build();
-</code></pre>
-<p>The only change: <code>age</code> is renamed to <code>years</code> (a structural rename of both vertex id and edge name). We deliberately keep this minimal: adding a <em>new</em> required field with no v1 source would make <code>lift</code> produce records that do not satisfy v2, which the existence check would flag in Step 4.</p>
-<h2 id="step-2-declare-the-migration"><a class="header" href="#step-2-declare-the-migration">Step 2: declare the migration</a></h2>
-<pre><code class="language-ts">const builder = p.migration(v1, v2)
-  .map('user',      'user')
+const v1 = userSchema('age');
+const v2 = userSchema('years');
+
+const mapping = p.migration(v1, v2)
+  .map('user', 'user')
   .map('user.name', 'user.name')
-  .map('user.age',  'user.years')
+  .map('user.age', 'user.years')
   .mapEdge(
     { src: 'user', tgt: 'user.name', kind: 'prop', name: 'name' },
     { src: 'user', tgt: 'user.name', kind: 'prop', name: 'name' },
   )
   .mapEdge(
-    { src: 'user', tgt: 'user.age',  kind: 'prop', name: 'age'  },
+    { src: 'user', tgt: 'user.age', kind: 'prop', name: 'age' },
     { src: 'user', tgt: 'user.years', kind: 'prop', name: 'years' },
   );
 
-const mig = builder.compile();
-</code></pre>
-<p><code>MigrationBuilder</code> is fluent: <code>.map(srcVertex, tgtVertex)</code> aligns vertices and <code>.mapEdge(srcEdge, tgtEdge)</code> aligns edges. Vertex mappings alone are not enough: without the edge maps the lift drops every field and you get back <code>{}</code>. <code>.compile()</code> returns a <code>CompiledMigration</code> exposing <code>.lift()</code>, <code>.get()</code>, and <code>.put()</code> (a migration is a lens). For value-level transforms that compute one field from another, reach for the lens DSL or <code>panproto-lens-dsl</code> from the SDK.</p>
-<h2 id="step-3-classify-the-change"><a class="header" href="#step-3-classify-the-change">Step 3: classify the change</a></h2>
-<pre><code class="language-ts">const report = p.diffFull(v1, v2).classify(proto);
-console.log('compatible?', report.isCompatible);
-console.log('breaking changes:', report.breakingChanges);
-console.log('non-breaking changes:', report.nonBreakingChanges);
-</code></pre>
-<p><code>Panproto.diffFull(old, new)</code> returns a <code>FullDiffReport</code>; calling <code>.classify(protocol)</code> returns a <code>CompatReport</code> with three booleans (<code>isCompatible</code>, <code>isBackwardCompatible</code>, <code>isBreaking</code>) and two arrays (<code>breakingChanges</code>, <code>nonBreakingChanges</code>). For human-readable output call <code>report.toText()</code>; for a machine-readable summary <code>report.toJson()</code>.</p>
-<p>For this rename, <code>isCompatible</code> is <code>false</code>: the diff classifies the removal of <code>user.age</code>/edge <code>age</code> as breaking, even though the migration we declared explicitly carries the field forward under a new name. The classifier looks only at the structural diff, not at the migration mapping, so a “rename” between schemas registers as a removal plus an addition. Whether that is a problem for <em>your</em> downstream consumers depends on whether they have been told about the migration.</p>
-<h2 id="step-4-check-before-you-lift"><a class="header" href="#step-4-check-before-you-lift">Step 4: check before you lift</a></h2>
-<pre><code class="language-ts">const existence = p.checkExistence(v1, v2, builder);
-console.log('existence valid?', existence.valid);
-console.log('existence errors:', JSON.stringify(existence.errors, null, 2));
+const existence = p.checkExistence(v1, v2, mapping);
 if (!existence.valid) {
-  throw new Error('existence check failed');
+  throw new Error(JSON.stringify(existence.errors));
 }
-</code></pre>
-<p><code>Panproto.checkExistence(src, tgt, builder)</code> runs the existence-condition test: for every required v2 field, is the mapping populated from a v1 source? It returns an <code>ExistenceReport</code> with <code>valid: boolean</code> and <code>errors: ExistenceError[]</code>. Each error is a serde-tagged object (for example <code>{ "RequiredFieldMissing": { "vertex": "user", "field": "name" } }</code>), so inspect them as structured data rather than expecting a <code>message</code> string. Inspect <code>valid</code> before lifting; an invalid report means the lift will produce data that does not satisfy the v2 schema.</p>
-<h2 id="step-5-lift-the-data"><a class="header" href="#step-5-lift-the-data">Step 5: lift the data</a></h2>
-<pre><code class="language-ts">import { writeFileSync } from 'node:fs';
 
-const v1Records = [
-  { name: 'Alice', age: 30 },
-  { name: 'Bob',   age: 42 },
-];
+const compatibility = p.diffFull(v1, v2).classify(atproto);
+const migration = mapping.compile();
+const original = { name: 'Alice', age: 30 };
+const converted = migration.liftJson(original, 'user');
+const { view, complement } = migration.getJson(original, 'user');
+const restored = migration.putJson(view, complement, 'user');
 
-const v2Records = v1Records.map((r) =&gt; mig.liftJson(r, 'user'));
-console.log('v2:', v2Records);
-writeFileSync('data/v2.jsonl', v2Records.map((r) =&gt; JSON.stringify(r)).join('\n'));
+assert.deepEqual(restored, original);
+console.log('existence valid?', existence.valid);
+console.log('compatible?', compatibility.isCompatible);
+console.log('converted:', converted);
+console.log('round trip:', restored);
+
+migration[Symbol.dispose]();
+v1[Symbol.dispose]();
+v2[Symbol.dispose]();
+p[Symbol.dispose]();
 </code></pre>
-<p><code>mig.liftJson(record, rootVertex)</code> round-trips a JSON-shaped record through the migration: the wrapper parses it as an instance of the source schema rooted at <code>rootVertex</code>, lifts it through the edge mapping, and emits the target shape as a JS object. (The lower-level <code>mig.lift()</code> exists too, but it expects already-encoded <code>Instance</code> bytes rather than JSON-native records.) The complement (the data discarded by the forward direction) is captured on the <code>get</code>/<code>put</code> path; see Step 6.</p>
-<h2 id="step-6-confirm-round-trip"><a class="header" href="#step-6-confirm-round-trip">Step 6: confirm round-trip</a></h2>
-<pre><code class="language-ts">const original = v1Records[0];
-const { view, complement } = mig.getJson(original, 'user');
-const back = mig.putJson(view, complement, 'user');
-console.log('view:', view);
-console.log('round-trip:', back);
+<p><em>Listing 4.1: A checked field rename with forward and reverse data conversion.</em></p>
+<p>Run the program:</p>
+<pre><code class="language-sh">npx tsx src/migration.ts
 </code></pre>
-<p><code>mig.getJson(record, rootVertex)</code> returns <code>{ view, complement }</code>; <code>mig.putJson(view, complement, rootVertex)</code> returns the restored record. The complement carries the data the v2 shape does not see; together, get and put satisfy the round-trip laws. (The lower-level <code>mig.get()</code> / <code>mig.put()</code> exist for already-encoded <code>Instance</code> bytes; the <code>*Json</code> wrappers handle the JSON-native path.) The restored record’s field ordering is not preserved (object keys come out alphabetised), so structural equality, not JSON-string equality, is the right round-trip predicate.</p>
-<h2 id="what-you-built"><a class="header" href="#what-you-built">What you built</a></h2>
-<p>A migration that is type-checked, classified, existence-checked, and reversible via the get/put pair. None of those properties was hand-asserted; each was checked by the panproto tooling.</p>
+<p>The expected output is:</p>
+<pre><code class="language-text">existence valid? true
+compatible? false
+converted: { name: 'Alice', years: 30 }
+round trip: { age: 30, name: 'Alice' }
+</code></pre>
+<h2 id="what-the-checks-establish"><a class="header" href="#what-the-checks-establish">What the checks establish</a></h2>
+<p>The structural classifier reports incompatibility because it sees a removed <code>age</code> field and an added <code>years</code> field; it does not consult the explicit migration. Every required target edge nevertheless has a source, so existence checking passes and <code>compile()</code> can produce the migration. Round-trip behavior is checked separately: <code>getJson()</code> produces the view and an opaque complement, and <code>putJson()</code> uses both to restore the source record. The <code>assert.deepEqual</code> call checks that result structurally, so JSON object key order does not affect it.</p>
 <h2 id="next"><a class="header" href="#next">Next</a></h2>
-<ul>
-<li><a href="./schema-vcs-basics.html">Schema version control basics</a> makes the v1/v2 history first-class with commits and branches.</li>
-<li>The plain-terms explanation of migrations is at <a href="../explanation/migrations-as-morphisms.html">Migrations as morphisms</a>.</li>
-<li>For when you want to script field transforms beyond a one-liner: <a href="../how-to/field-transforms.html">Apply field transforms</a> and <a href="../reference/expression-language.html">Reference: expression language</a>.</li>
-</ul>
+<p><a href="./schema-vcs-basics.html">Schema version control basics</a> stores the v1 and v2 schemas as history. <a href="./cross-protocol-translation.html">Cross-protocol translation</a> carries the explicit-mapping pattern across two registered protocols. For computed field values rather than a rename, continue with <a href="../how-to/field-transforms.html">Apply field transforms</a>.</p>
 
                     </main>
 

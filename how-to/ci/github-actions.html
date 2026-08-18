@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-1b21fe02.js"></script>
+        <script src="../../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="github-actions"><a class="header" href="#github-actions">GitHub Actions</a></h1>
-<p>A drop-in workflow for schema validation and breaking-change detection on every pull request.</p>
+<p>Add this workflow to validate schemas and classify compatibility on every pull request.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>A panproto repository on GitHub. The <code>panproto-cli</code> Homebrew tap, shell installer, or <code>cargo install</code> available on Linux runners.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
@@ -219,20 +219,19 @@ jobs:
       - name: Breaking-change gate
         run: |
           base=$(git merge-base origin/${{ github.base_ref }} HEAD)
-          git show $base:schemas/user.json &gt; /tmp/base.json
+          git show "$base:schemas/user.json" &gt; /tmp/base.json
+          schema compat /tmp/base.json schemas/user.json --protocol atproto
           schema check --src /tmp/base.json --tgt schemas/user.json \
             --mapping migrations/user.json --typecheck
-          schema lens generate --protocol atproto /tmp/base.json schemas/user.json \
-            --save /tmp/chain.json
 </code></pre>
 <p>The <code>--protocol</code> flag is required for every per-file <code>schema validate</code>. There is no <code>--project</code> flag; per-file iteration is the supported pattern.</p>
-<p>Two jobs: validation and the breaking-change gate. Validation fails on a malformed schema; the gate fails on a breaking diff.</p>
+<p>The job has separate validation and breaking-change steps. Validation fails on a malformed schema; <code>schema compat</code> gives the gate its compatibility exit code, and <code>schema check --typecheck</code> rejects an invalid migration mapping.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <p>Push a PR and watch the workflow run. The validation step exits zero on a clean schema; the gate prints the classification and exits non-zero on breaking.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Omitting <code>fetch-depth: 0</code>. Shallow clones make the merge-base lookup fail; the gate then runs against the wrong base.</li>
-<li>Pinning <code>panproto-cli</code> to a stale version. Use the latest installer; the protocol catalogue and existence-check rules evolve.</li>
+<li>Pinning <code>panproto-cli</code> to a stale version. Use the latest installer; the protocol catalog and existence-check rules evolve.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

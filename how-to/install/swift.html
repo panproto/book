@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-1b21fe02.js"></script>
+        <script src="../../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -227,7 +227,7 @@ PANPROTO_SWIFT_XCFRAMEWORK=.panproto-c/panproto_c.xcframework swift build
 </table>
 </div>
 <h2 id="feature-gated-tiers"><a class="header" href="#feature-gated-tiers">Feature-gated tiers</a></h2>
-<p>The default <code>libpanproto_c</code> exports 103 entry points. The <code>parse</code>, <code>project</code>, and <code>git</code> tiers add 17 more that are absent from that build, so reaching them takes a library built with the matching cargo features and a Swift build told to compile the gated shims in:</p>
+<p>The default <code>libpanproto_c</code> exports 105 entry points. The <code>parse</code>, <code>project</code>, and <code>git</code> tiers add 17 more that are absent from that build, so reaching them takes a library built with the matching cargo features and a Swift build told to compile the gated shims in:</p>
 <pre><code class="language-sh">PANPROTO_C_FEATURES=full ./bootstrap/dev-link.sh
 swift build --traits PANPROTO_PARSE,PANPROTO_PROJECT,PANPROTO_GIT
 </code></pre>
@@ -237,16 +237,17 @@ swift build --traits PANPROTO_PARSE,PANPROTO_PROJECT,PANPROTO_GIT
 swift build --traits PANPROTO_PARSE,PANPROTO_PROJECT,PANPROTO_GIT
 </code></pre>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<pre><code class="language-swift">import Panproto
+<pre><code class="language-swift">import Foundation
+import Panproto
 import PanprotoStructural
 
-let names = try await ProtocolSpec.builtinNames()
+let names = try await ProtocolHandle.builtinNames()
 print(names.count, "builtin protocols")
 
 let atproto = try await ProtocolHandle.builtin("atproto")
 let lexicon = try Data(contentsOf: URL(fileURLWithPath: "app.bsky.feed.post.json"))
 let schema = try await SchemaHandle.parseAtprotoLexicon(lexicon)
-let value = try await schema.value()
+let value = try await schema.schema()
 print(value.protocolName, value.vertexCount, "vertices")
 
 let messages = try await schema.violations(against: atproto)

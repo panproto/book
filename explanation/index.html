@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,32 +183,36 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="explanation"><a class="header" href="#explanation">Explanation</a></h1>
-<p>Explanation pages cover <em>why</em> the system is the way it is. They are essays, not recipes. Each one is built in two tiers:</p>
-<ul>
-<li>An <strong>In plain terms</strong> opener (3-5 sentences) that names the concept and gives the working-developer analogue. You can read the entire quadrant at this level and come away with a working mental model.</li>
-<li>A formal section that names the underlying construction and points into the reference and semantics pages where it is precisely defined.</li>
-</ul>
-<p>The pages here, in increasing order of formality:</p>
+<p>The explanation quadrant develops the concepts behind panproto. It assumes that you can read a <a href="../glossary.html#schema" title="A schema is a model of a protocol&#39;s schema theory.">schema</a> and a <a href="../glossary.html#structural-diff" title="A structural diff records added, removed, and modified schema elements without classifying compatibility.">structural diff</a>, but it does not assume category theory. The pages remain explanations in the Diátaxis sense: they account for design choices and guarantees, while the <a href="../how-to/index.html">how-to guides</a> provide procedures and the <a href="../reference/index.html">reference</a> records the interfaces.</p>
+<p>The material has three levels. Each level has a stopping point, so the route can match the question that brought you here.</p>
+<h2 id="intermediate-path-from-schemas-to-migrations"><a class="header" href="#intermediate-path-from-schemas-to-migrations">Intermediate path: from schemas to migrations</a></h2>
+<p>Start with <a href="./what-panproto-solves.html">What panproto solves</a>, then keep <a href="./decoder-ring.html">The vocabulary in plain terms</a> nearby while reading <a href="./schemas-as-theories.html">Schemas as theories</a> and <a href="./migrations-as-morphisms.html">Migrations as morphisms</a>. This route explains why <a href="../glossary.html#protocol" title="A protocol identifies a schema language and the theories and structural rules that define it.">protocols</a> share one internal model, what a <a href="../glossary.html#migration" title="A migration maps a source schema to a target schema and determines how instances move between them.">migration</a> records, and why a partial correspondence is returned as a <a href="../glossary.html#span" title="A span states a partial correspondence through a common apex and one morphism into each schema.">span</a>. It is enough background for the tutorials and most how-to guides.</p>
+<p>When backward updates or information loss are part of the problem, continue from the glossary definition of a <a href="../glossary.html#lens" title="A lens pairs a forward conversion with a law-governed backward update.">lens</a> to <a href="./lenses-roundtrip.html">Lenses and round-trip laws</a>. The intermediate stopping point is <a href="./what-is-verified.html">What panproto verifies</a>, which separates runtime checks, CI evidence, and properties that remain assumptions.</p>
+<h2 id="advanced-path-search-composition-and-version-control"><a class="header" href="#advanced-path-search-composition-and-version-control">Advanced path: search, composition, and version control</a></h2>
+<p>The advanced route assumes the intermediate one. <a href="./morphism-search.html">Searching for a morphism</a> gives the optimization model; <a href="./alignment-evidence.html">Alignment evidence</a> explains how uncertain correspondences enter that model. These two chapters are the densest part of the main path, and the second depends on the reward-only evidence discipline defined in the first.</p>
+<p>Protocol and repository composition form the next pair. The <a href="../glossary.html#colimit" title="A colimit combines theories over their explicitly shared parts.">colimit</a> construction is developed in <a href="./protocol-colimits.html">Composing protocols by colimit</a>, then <a href="./vcs-semantics.html">Schema version control semantics</a> applies the related pushout construction to merge. <a href="./layout-enrichment.html">Layout enrichment</a> and <a href="./emit-pretty.html">Source-code emission</a> form a separate branch for readers concerned with parsing, canonical emission, or source-layout preservation.</p>
+<p>Read <a href="./architecture.html">Architecture</a> after one of these branches rather than before it. The crate graph is easier to retain once the abstractions crossing its boundaries have names.</p>
+<h2 id="formal-path-denotational-semantics"><a class="header" href="#formal-path-denotational-semantics">Formal path: denotational semantics</a></h2>
+<p>The <a href="./semantics/index.html">denotational semantics</a> cluster is the formal endpoint. Its pages specify the expression language, both DSLs, protolens composition, pushout-based merge, and the theory REPL. Begin with <a href="./semantics/shared-notation.html">Shared notation</a>; the cluster otherwise assumes comfort with typed abstract syntax, inference rules, and elementary category theory.</p>
+<p><a href="./related-work.html">Related work</a> is a capstone for either the advanced or formal route. It locates the design in the literature without introducing the constructions from scratch.</p>
+<h2 id="chapter-map"><a class="header" href="#chapter-map">Chapter map</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Page</th><th>Tier</th></tr>
+<tr><th>Question</th><th>Read</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="./what-panproto-solves.html">What panproto solves</a></td><td>Plain</td></tr>
-<tr><td><a href="./decoder-ring.html">The vocabulary in plain terms</a></td><td>Plain; a one-line translation of every term of art</td></tr>
-<tr><td><a href="./schemas-as-theories.html">Schemas as theories</a></td><td>Plain, with one formal section</td></tr>
-<tr><td><a href="./migrations-as-morphisms.html">Migrations as morphisms</a></td><td>Plain, with one formal section</td></tr>
-<tr><td><a href="./lenses-roundtrip.html">Lenses and round-trip laws</a></td><td>Plain, with the three laws stated formally</td></tr>
-<tr><td><a href="./layout-enrichment.html">Layout enrichment</a></td><td>Plain, with the section law stated formally</td></tr>
-<tr><td><a href="./protocol-colimits.html">Composing protocols by colimit</a></td><td>Plain, with one formal section</td></tr>
-<tr><td><a href="./vcs-semantics.html">Schema version control semantics</a></td><td>Plain, with one formal section</td></tr>
-<tr><td><a href="./what-is-verified.html">What panproto verifies</a></td><td>Catalogue of mechanically-checked properties</td></tr>
-<tr><td><a href="./architecture.html">Architecture</a></td><td>Crate dependency graph and the layering that holds the system together</td></tr>
+<tr><td>What problem and vocabulary do I need?</td><td><a href="./what-panproto-solves.html">What panproto solves</a>, then <a href="./decoder-ring.html">The vocabulary in plain terms</a></td></tr>
+<tr><td>How are schemas and migrations represented?</td><td><a href="./schemas-as-theories.html">Schemas as theories</a>, then <a href="./migrations-as-morphisms.html">Migrations as morphisms</a></td></tr>
+<tr><td>How does automatic correspondence work?</td><td><a href="./morphism-search.html">Searching for a morphism</a>, then <a href="./alignment-evidence.html">Alignment evidence</a></td></tr>
+<tr><td>What makes a migration bidirectional?</td><td><a href="./lenses-roundtrip.html">Lenses and round-trip laws</a></td></tr>
+<tr><td>How are protocols or branches combined?</td><td><a href="./protocol-colimits.html">Composing protocols by colimit</a>, then <a href="./vcs-semantics.html">Schema version control semantics</a></td></tr>
+<tr><td>How does source-code round-tripping work?</td><td><a href="./layout-enrichment.html">Layout enrichment</a>, then <a href="./emit-pretty.html">Source-code emission</a></td></tr>
+<tr><td>Which claims are mechanically checked?</td><td><a href="./what-is-verified.html">What panproto verifies</a></td></tr>
+<tr><td>Where does the implementation live?</td><td><a href="./architecture.html">Architecture</a></td></tr>
 </tbody>
 </table>
 </div>
-<p>The <a href="./semantics/index.html">denotational semantics</a> cluster is separate and load-bearing. It is the place where the implementation is pinned to a precise mathematical specification: the expression language, the lens DSL, the theory DSL, the pushout-based merge, and protolens composition. Each of those pages still opens with a plain-terms section, but the body is dense.</p>
 
                     </main>
 

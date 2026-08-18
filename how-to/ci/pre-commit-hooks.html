@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-1b21fe02.js"></script>
+        <script src="../../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="pre-commit-hooks"><a class="header" href="#pre-commit-hooks">Pre-commit hooks</a></h1>
-<p>A pre-commit hook runs schema validation before each <code>git commit</code>, so you catch malformed schemas before they enter the history. Optionally, it can also warn about breaking changes.</p>
+<p>A pre-commit hook rejects malformed staged schemas before they enter the history. The optional second check warns about breaking changes.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>The <code>schema</code> CLI installed. A git repository.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
@@ -203,7 +203,7 @@ done
 # between the staged version and the upstream copy. Failure suggests
 # the change is breaking.
 for f in $changed; do
-  base_blob=$(git show :@{u}:"$f" 2&gt;/dev/null) || continue
+  base_blob=$(git show "@{u}:$f" 2&gt;/dev/null) || continue
   echo "$base_blob" &gt; /tmp/base.json
   if ! schema lens generate --protocol atproto /tmp/base.json "$f" --save /tmp/chain.json 2&gt;/dev/null; then
     echo "warning: $f introduces a breaking change (commit anyway? Ctrl-C to abort)"

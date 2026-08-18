@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-1b21fe02.js"></script>
+        <script src="../../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -208,7 +208,7 @@ assert not issues, issues
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Chaining the builder calls. The Python <code>SchemaBuilder.vertex(...)</code> / <code>edge(...)</code> / <code>constraint(...)</code> methods mutate in place and return <code>None</code>; hold the builder in a variable and mutate it statement-by-statement, then call <code>.build()</code>.</li>
-<li>Using a Python dict where the SDK expects a <code>Schema</code> handle. Conversion is deliberate; to materialise an <code>Instance</code> from bytes against a built <code>Schema</code>, use <code>panproto.IoRegistry().parse(protocol, schema, data)</code>.</li>
+<li>Using a Python dict where the SDK expects a <code>Schema</code> handle. Conversion is deliberate; to materialize an <code>Instance</code> from bytes against a built <code>Schema</code>, use <code>panproto.IoRegistry().parse(protocol, schema, data)</code>.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

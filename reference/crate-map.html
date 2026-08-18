@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -193,10 +193,11 @@
 <tbody>
 <tr><td><code>panproto-gat</code></td><td>Generalized algebraic theories: sorts, operations, equations, and the colimit machinery that composes them.</td></tr>
 <tr><td><code>panproto-gat-macros</code></td><td><code>class!</code> and <code>inductive!</code> macros for declaring GATs in Rust source.</td></tr>
-<tr><td><code>panproto-schema</code></td><td>Schema representation: vertices, edges, the schema graph, validation. Hosts the <code>AbstractSchema</code> / <code>DecoratedSchema</code> typed-newtype distinction and the layout-fibre forgetful U (<code>Schema::forget_layout</code>).</td></tr>
+<tr><td><code>panproto-schema</code></td><td>Schema representation: vertices, edges, the schema graph, validation. Hosts the <code>AbstractSchema</code> / <code>DecoratedSchema</code> typed-newtype distinction, the layout-fiber forgetful U (<code>Schema::forget_layout</code>), <code>induce</code> (the one supported way to cut a well-formed sub-schema, accounting for all twenty-one <code>Schema</code> fields), and <code>canonical_digest</code>.</td></tr>
 <tr><td><code>panproto-inst</code></td><td>Instances: data records over a schema, including <code>Value::List</code> and the typed value lattice.</td></tr>
-<tr><td><code>panproto-mig</code></td><td>Migration engine: morphisms between schema theories, restrict and lift.</td></tr>
-<tr><td><code>panproto-lens</code></td><td>Bidirectional lenses: get/put/complement, the three round-trip laws, fibration over schemas, optic kinds, protolenses, the cross-crate <code>enrichment_registry</code> for layout and other schema-level fibres.</td></tr>
+<tr><td><code>panproto-mig</code></td><td>Migration engine: morphisms between schema theories, restrict and lift, plus the <code>solve</code> / <code>span</code> / <code>hom_search</code> subsystem that <em>finds</em> those morphisms by minimizing a cost function network.</td></tr>
+<tr><td><code>panproto-lens</code></td><td>Bidirectional lenses: get/put/complement, the three round-trip laws, fibration over schemas, optic kinds, protolenses, the cross-crate <code>enrichment_registry</code> for layout and other schema-level fibers.</td></tr>
+<tr><td><code>panproto-dsl-eval</code></td><td>Shared Nickel, JSON, and YAML evaluation for the lens and theory DSL crates.</td></tr>
 <tr><td><code>panproto-lens-dsl</code></td><td>Declarative lens DSL with Nickel, JSON, and YAML surfaces.</td></tr>
 <tr><td><code>panproto-theory-dsl</code></td><td>Declarative theory DSL for defining custom protocols.</td></tr>
 <tr><td><code>panproto-check</code></td><td>Breaking-change detection: classifies a schema diff as fully compatible, backward compatible, or breaking via the <code>Classification</code> enum, alongside the <code>breaking</code>/<code>non_breaking</code> lists and <code>compatible</code> boolean on <code>CompatReport</code>.</td></tr>
@@ -206,6 +207,7 @@
 </tbody>
 </table>
 </div>
+<p>One line does not locate the morphism search, which is the largest subsystem inside <code>panproto-mig</code>. <a href="https://docs.rs/panproto-mig/latest/panproto_mig/solve/"><code>panproto_mig::solve</code></a> poses the search for a schema morphism as a <strong>cost function network</strong> (CFN): one variable per source vertex, one value per kind-compatible target vertex, and a distinguished bottom value meaning that the vertex is left out of the result. Minimizing the total cost over that network is the search. Because bottom is an ordinary value rather than a failure, the maximum common sub-schema falls out as the network’s optimum and no separate subgraph search is needed. <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/"><code>panproto_mig::span</code></a> assembles the winning assignment into a span, re-inducing and re-validating its apex, and <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/"><code>panproto_mig::hom_search</code></a> is the surface a caller reaches for. Four algorithms sit behind that surface: exact bucket elimination (<a href="../bibliography.html#dechter1999bucket">Dechter 1999</a>) on the primary path, hybrid best-first search (<a href="../bibliography.html#allouchedegivrykatsirelosschiexzytnicki2015anytime">Allouche et al. 2015</a>) over branch and bound maintaining existential directional arc consistency (<a href="../bibliography.html#degivryheraszytnickilarrosa2005existential">Givry et al. 2005</a>) when the network is too wide to eliminate, that same search with a counting-based all-different propagator (<a href="../bibliography.html#mccreeshprosser2015backjumping">McCreesh and Prosser 2015</a>) added for an injective request, and McSplit (<a href="../bibliography.html#mccreeshprossertrimble2017partitioning">McCreesh et al. 2017</a>) for an isomorphism request.</p>
 <h2 id="io-and-parsing"><a class="header" href="#io-and-parsing">I/O and parsing</a></h2>
 <div class="table-wrapper">
 <table>
@@ -251,11 +253,11 @@
 <tr><th>Crate</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><code>panproto-core</code></td><td>Public re-export facade over the nine always-on library crates (<code>gat</code>, <code>schema</code>, <code>inst</code>, <code>mig</code>, <code>lens</code>, <code>check</code>, <code>protocols</code>, <code>io</code>, <code>vcs</code>); the expression and DSL crates (<code>panproto-expr</code>, <code>panproto-expr-parser</code>, <code>panproto-lens-dsl</code>, <code>panproto-theory-dsl</code>) are separate dependencies.</td></tr>
+<tr><td><code>panproto-core</code></td><td>Public facade over thirteen always-on library crates: the nine core schema and migration crates plus <code>panproto-expr</code>, <code>panproto-expr-parser</code>, <code>panproto-lens-dsl</code>, and <code>panproto-theory-dsl</code>.</td></tr>
 <tr><td><code>panproto-cli</code></td><td>The <code>schema</code> binary.</td></tr>
 <tr><td><code>panproto-wasm</code></td><td>WebAssembly bindings; consumed by the TypeScript SDK.</td></tr>
 <tr><td><code>panproto-py</code></td><td>Native Python bindings via PyO3.</td></tr>
-<tr><td><code>panproto-c</code></td><td>C ABI for non-Rust language bindings; the Haskell and Swift bindings consume it. 103 entry points by default, 120 with the <code>full-parse</code>, <code>project</code>, and <code>git</code> features.</td></tr>
+<tr><td><code>panproto-c</code></td><td>C ABI for non-Rust language bindings; the Haskell and Swift bindings consume it. 105 entry points by default, 122 with the <code>full-parse</code>, <code>project</code>, and <code>git</code> features.</td></tr>
 </tbody>
 </table>
 </div>
@@ -274,6 +276,7 @@
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="../explanation/architecture.html">Architecture</a> for the dependency direction and layering.</li>
+<li><a href="../explanation/morphism-search.html">Searching for a morphism</a> for the cost function network the <code>panproto-mig</code> search subsystem is posed over, and <a href="../explanation/alignment-evidence.html">Alignment evidence</a> for what feeds its anchor term.</li>
 <li>The repository <a href="https://github.com/panproto/panproto/blob/main/Cargo.toml"><code>Cargo.toml</code></a> for authoritative workspace membership.</li>
 </ul>
 

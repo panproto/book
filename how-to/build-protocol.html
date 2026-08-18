@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,32 +183,38 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="build-a-custom-protocol"><a class="header" href="#build-a-custom-protocol">Build a custom protocol</a></h1>
-<p>A custom protocol is a new GAT plus a parser/emitter pair, registered with panproto so it can participate in the same diff/migrate/version-control workflow as the built-ins.</p>
+<p>A custom protocol is needed when panproto must parse, emit, compare, and migrate a schema language outside the built-in catalog. The implementation consists of a GAT, a parser/emitter pair, and registrations for the required surfaces.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>Familiarity with <a href="../explanation/schemas-as-theories.html">Schemas as theories</a> and <a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a>. The Rust toolchain.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
 <h3 id="declare-the-theory"><a class="header" href="#declare-the-theory">Declare the theory</a></h3>
 <p>The fastest path is the theory DSL (<a href="https://github.com/panproto/panproto/tree/main/crates/panproto-theory-dsl"><code>panproto-theory-dsl</code></a>):</p>
-<pre><code class="language-nickel">{
-  name = "MyProto",
-  components = ["ThGraph", "ThConstraint", "ThNamed"],
-  extensions = {
-    sorts = ["Permission"],
-    ops = [
-      { name = "perm_of", in = ["Edge"], out = "Permission" },
-    ],
-    eqns = [],
-  },
-}
+<pre><code class="language-nickel">let T = import "panproto/theory.ncl" in
+{
+  id = "dev.example.my-proto-schema",
+  description = "A directed graph whose edges carry permissions",
+  theory = "ThMyProtoSchema",
+  sorts = [
+    T.simple "Vertex",
+    T.simple "Edge",
+    T.val_sort "Permission" "string",
+  ],
+  ops = [
+    T.unary "src" "Edge" "Vertex",
+    T.unary "tgt" "Edge" "Vertex",
+    T.unary "perm_of" "Edge" "Permission",
+  ],
+  equations = [],
+} | T.Theory
 </code></pre>
-<p><code>components</code> lists the building-block theories to compose by colimit. <code>extensions</code> adds sorts, operations, and equations on top of the colimit.</p>
+<p>This document declares the schema-side theory directly. Give every document a stable <code>id</code> and <code>description</code>; the <code>theory</code> field supplies the name used by registrations and later compositions. Use a <code>compose</code> document when the schema theory should instead be a colimit of existing theories.</p>
 <p>For finer control, declare the theory directly in Rust with the <code>class!</code> and <code>inductive!</code> macros from <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-gat-macros"><code>panproto-gat-macros</code></a>.</p>
 <p>From Python, the same DSL document loads via <code>Theory.from_nickel(source)</code>, <code>Theory.from_yaml(source)</code>, <code>Theory.from_json(source)</code>, or <code>Theory.from_path(path)</code> (dispatches by extension). The loaders accept the <code>theory</code>, <code>class</code>, and <code>inductive</code> body variants; multi-body documents (morphism, composition, protocol, bundle) belong in <code>panproto-theory-dsl::load_and_compile</code> directly. For incremental authoring, <code>panproto.TheoryBuilder</code> mirrors <code>class!</code> in a chainable form. Round-trip the flat Theory shape via <code>to_json</code> / <code>to_yaml</code> paired with <code>from_dict_json</code> / <code>from_dict_yaml</code>.</p>
 <h3 id="implement-parser-and-emitter"><a class="header" href="#implement-parser-and-emitter">Implement parser and emitter</a></h3>
 <p>Each protocol provides a <code>Parser: Bytes -&gt; Schema</code> and an <code>Emitter: Schema -&gt; Bytes</code>. Implement both in a new submodule of <code>panproto-protocols</code>. See existing modules (<code>serialization::avro</code>, <code>data_schema::cddl</code>, <code>web_document::atproto</code>) for canonical structure.</p>
 <h3 id="register"><a class="header" href="#register">Register</a></h3>
-<p>Each protocol module exposes <code>protocol() -&gt; Protocol</code> and <code>register_theories(&amp;mut HashMap&lt;String, Theory, _&gt;)</code>:</p>
-<pre><code class="language-rust ignore">// crates/panproto-protocols/src/my_proto.rs
+<p>Each protocol module exposes <code>protocol() -&gt; Protocol</code> and <code>register_theories(&amp;mut HashMap&lt;String, Theory, _&gt;)</code>. The internal module skeleton below is repository code, not a standalone Rust program:</p>
+<pre><code class="language-text">// crates/panproto-protocols/src/my_proto.rs
 use std::collections::HashMap;
 use panproto_gat::Theory;
 use panproto_schema::Protocol;
@@ -232,12 +238,13 @@ pub fn register_theories&lt;S: ::std::hash::BuildHasher&gt;(
         "ThMyProtoSchema",
         "ThMyProtoInstance",
     );
-}</code></pre>
+}
+</code></pre>
 <p>Pick the <code>theories::register_*</code> helper that matches your theory shape (<code>register_constrained_multigraph_wtype</code>, <code>register_typed_graph_wtype</code>, <code>register_hypergraph_functor</code>, …). Colimit failures during registration panic with a named intermediate step; that is a build-time bug to fix in the theory composition. To expose <code>my_proto</code> to the language SDKs and CLI, add it to the <code>lookup</code> table in <code>crates/panproto-py/src/protocols.rs</code> and the <code>lookup_builtin_protocol</code> table in <code>crates/panproto-wasm/src/api/helpers.rs</code>.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<pre><code class="language-sh">cargo test -p panproto-protocols my_proto
+<pre><code class="language-sh">cargo nextest run -p panproto-protocols -E 'test(/my_proto/)'
 </code></pre>
-<p>The standard property-test suite for protocols verifies parse/emit round-trip, schema validation against the theory, and migration existence between two scaffolded schemas.</p>
+<p>Add tests under the new protocol module with names containing <code>my_proto</code>; the command above runs that subset. At minimum, cover theory registration, schema validation, and a parse/emit round trip. Add a migration test when the protocol claims migration support.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Declaring extensions before the colimit components are correct. Extensions interact with the colimit structure; if a building-block step is wrong, the extension may not even reach registration.</li>
@@ -245,7 +252,7 @@ pub fn register_theories&lt;S: ::std::hash::BuildHasher&gt;(
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../reference/protocols.html">Reference: protocol catalogue</a>.</li>
+<li><a href="../reference/protocols.html">Reference: protocol catalog</a>.</li>
 <li><a href="../explanation/semantics/theory-dsl.html">Theory DSL: denotational semantics</a>.</li>
 <li><a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a>.</li>
 </ul>

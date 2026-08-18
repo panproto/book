@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="use-protolenses"><a class="header" href="#use-protolenses">Use protolenses</a></h1>
-<p>A <em>protolens</em> is a schema-parameterised lens family: one declaration that produces a lens for <em>any</em> schema satisfying a precondition. Use protolenses when you want to apply the same transform across a fleet of related schemas without writing one lens per schema.</p>
+<p>A protolens applies the same transform to several schemas that satisfy one precondition. A single schema-parameterized declaration instantiates a lens for each matching schema.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>The Rust SDK (<a href="https://docs.rs/panproto-lens/latest/panproto_lens/protolens/"><code>panproto-lens::protolens</code></a>) or the lens DSL with <code>parametric</code> declarations enabled.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>

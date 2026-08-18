@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="use-dependent-optics"><a class="header" href="#use-dependent-optics">Use dependent optics</a></h1>
-<p>A <em>dependent optic</em> is an optic-kind chosen by the schema edge it is applied at: a <code>prop</code> edge yields a Lens, an <code>item</code> edge yields a Traversal, a <code>variant</code> edge yields a Prism. Dependent optics let you write transforms that work uniformly across all three edge kinds, with the optic kind unified at instantiation.</p>
+<p>A dependent optic applies one transform uniformly to <code>prop</code>, <code>item</code>, and <code>variant</code> edges. Instantiation selects <code>Lens</code>, <code>Traversal</code>, or <code>Prism</code> from the edge kind.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>The Rust SDK. The <code>panproto-lens</code> crate (re-exported from <code>panproto-core::lens</code>).</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>

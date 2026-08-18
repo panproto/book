@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-1b21fe02.js"></script>
+        <script src="../../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -188,11 +188,11 @@
 <h2 id="install"><a class="header" href="#install">Install</a></h2>
 <pre><code class="language-toml"># Cargo.toml
 [dependencies]
-panproto-core = "0.49"
+panproto-core = "0.71"
 </code></pre>
 <p>For specific feature flags (<code>full-parse</code>, <code>project</code>, <code>git</code>, <code>tree-sitter</code>), see <a href="../../reference/sdk-rust.html">Reference: Rust SDK</a>.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<pre class="playground"><code class="language-rust no_run">use panproto_core::protocols::atproto;
+<pre class="playground"><code class="language-rust">use panproto_core::protocols::atproto;
 use panproto_core::schema::SchemaBuilder;
 
 fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {

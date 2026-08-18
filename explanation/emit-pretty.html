@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -184,14 +184,14 @@
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="source-code-emission"><a class="header" href="#source-code-emission">Source-code emission</a></h1>
 <h2 id="in-plain-terms"><a class="header" href="#in-plain-terms">In plain terms</a></h2>
-<p>panproto reads source code in 261 languages by sitting on top of <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a>, which has a community-maintained grammar for each one. The reverse direction, writing source code back out from a schema, is harder. tree-sitter grammars are written for parsing; they record the production rules the parser uses but not the spacing, indentation, or alternative-disambiguation choices an emitter needs. panproto’s source-code emitter, <code>emit_pretty</code>, closes that gap by deriving emission behaviour structurally from the same <code>grammar.json</code> the parser already ships.</p>
+<p>panproto reads source code in 261 languages by sitting on top of <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a>, which has a community-maintained grammar for each one. The reverse direction, writing source code back out from a schema, is harder. tree-sitter grammars are written for parsing; they record the production rules the parser uses but not the spacing, indentation, or alternative-disambiguation choices an emitter needs. panproto’s source-code emitter, <code>emit_pretty</code>, closes that gap by deriving emission behavior structurally from the same <code>grammar.json</code> the parser already ships.</p>
 <p>The output of every emit is a function of three things: the schema, the production grammar, and a small per-language <em>cassette</em> that supplies defaults for the cases <code>grammar.json</code> cannot describe. Everything else (token roles, bracket pairs, spacing rules, indent triggers, CHOICE dispatch) is derived at construction time from the grammar’s own structure. There is no per-language emitter code.</p>
 <p>A separate <a href="../how-to/format-preserving.html">format-preserving codec</a> covers structured-data formats (JSON, YAML, TOML, XML, CSV) and guarantees byte-for-byte round-trip. The two systems are independent; this page is about the tree-sitter source-code path.</p>
 <h2 id="the-two-halves-of-the-gap"><a class="header" href="#the-two-halves-of-the-gap">The two halves of the gap</a></h2>
 <p><code>grammar.json</code> lists every rule (<code>SEQ</code>, <code>CHOICE</code>, <code>REPEAT</code>, <code>OPTIONAL</code>, <code>FIELD</code>, <code>ALIAS</code>, <code>SYMBOL</code>, <code>STRING</code>, <code>PATTERN</code>, <code>IMMEDIATE_TOKEN</code>, <code>PREC</code>, <code>TOKEN</code>, <code>RESERVED</code>) the parser walks. It does not record:</p>
 <ol>
 <li><strong>Whitespace and layout.</strong> Whether <code>a + b</code> or <code>a+b</code>; whether <code>if (x) { ... }</code> indents its body; whether <code>def f(): x = 1</code> is one line or two. Tree-sitter strips whitespace during parse; nothing in <code>grammar.json</code> says how to put it back.</li>
-<li><strong>CHOICE disambiguation for synthesised schemas.</strong> When two CHOICE alternatives both admit the same children (<code>binary_expression CHOICE[+, -, *, /, ...]</code> over the same operand kinds), the parser picks via its parse-table state. A schema built from scratch (no parse history) has no record of which alt was taken.</li>
+<li><strong>CHOICE disambiguation for synthesized schemas.</strong> When two CHOICE alternatives both admit the same children (<code>binary_expression CHOICE[+, -, *, /, ...]</code> over the same operand kinds), the parser picks via its parse-table state. A schema built from scratch (no parse history) has no record of which alt was taken.</li>
 </ol>
 <p><code>emit_pretty</code> handles the first half structurally and the second half via a layered fallback hierarchy.</p>
 <h2 id="grammar-derived-token-roles"><a class="header" href="#grammar-derived-token-roles">Grammar-derived token roles</a></h2>
@@ -209,7 +209,7 @@
 <tr><td><code>Operator</code></td><td>Non-alphanumeric STRING between content members inside a CHOICE alternative</td></tr>
 <tr><td><code>Connector</code></td><td>Non-alphanumeric STRING between content members in a standalone SEQ (a structural connector such as <code>.</code> or <code>::</code>, not an algebraic operator); emits no surrounding space</td></tr>
 <tr><td><code>Terminal</code></td><td>Text from a leaf vertex’s <code>literal-value</code> constraint</td></tr>
-<tr><td><code>Immediate</code></td><td>A token the grammar wraps in <code>IMMEDIATE_TOKEN</code>, glued to its neighbour with no intervening whitespace</td></tr>
+<tr><td><code>Immediate</code></td><td>A token the grammar wraps in <code>IMMEDIATE_TOKEN</code>, glued to its neighbor with no intervening whitespace</td></tr>
 </tbody>
 </table>
 </div>
@@ -238,14 +238,14 @@
 </tbody>
 </table>
 </div>
-<p><code>accepts_first_edge</code> fuses four previously-separate ad-hoc checks (FIELD-name matching, SYMBOL subtype dispatch, ALIAS rewrite, yield-set admission) into one rule.</p>
+<p><code>accepts_first_edge</code> fuses four otherwise-separate ad-hoc checks (FIELD-name matching, SYMBOL subtype dispatch, ALIAS rewrite, yield-set admission) into one rule.</p>
 <p>Three discriminators layer on top when more than one alternative passes <code>accepts_first_edge</code>:</p>
 <ol>
 <li><strong>Token-set restriction.</strong> An alt’s FIELD body of shape <code>ALIAS{CHOICE[STRING_1, STRING_2, ...], value: V}</code> constrains the field child’s literal to that set. If the cursor’s field-named edge target carries a literal outside the set, the alt is rejected. This is what disambiguates Go <code>call_expression</code> (alt 0 has <code>function: ALIAS{CHOICE["new","make"], value:"identifier"}</code>, valid only when the function name is literally <code>new</code> or <code>make</code>).</li>
 <li><strong>Alias-source filter.</strong> An alt’s FIELD body of shape <code>ALIAS{SYMBOL X, named: true, value: _}</code> requires the cursor’s field-named edge target to carry a <code>pre-alias-symbol</code> constraint equal to <code>X</code>. The walker records <code>pre-alias-symbol</code> from <code>tree_sitter::Node::grammar_name()</code> whenever it differs from <code>kind()</code>; this is the only ALIAS-disambiguation signal tree-sitter 0.25 / 0.26 actually exposes.</li>
 <li><strong>Positional interstitial scoring.</strong> When the above filters leave more than one candidate, alts are scored against the slice of recorded interstitials from the current cursor position forward. The cursor’s consumed count gives the slice offset, so a trailing CHOICE-with-BLANK at position N sees only the interstitial at gap N, not the comma separators from earlier REPEAT iterations.</li>
 </ol>
-<p>On yield-set ties after every filter, tree-sitter precedence (<code>PREC</code> annotations on alternatives) breaks the tie. This honours the grammar author’s explicit disambiguation rule.</p>
+<p>On yield-set ties after every filter, tree-sitter precedence (<code>PREC</code> annotations on alternatives) breaks the tie. This honors the grammar author’s explicit disambiguation rule.</p>
 <h2 id="the-subtype-closure"><a class="header" href="#the-subtype-closure">The subtype closure</a></h2>
 <p><code>accepts_first_edge</code> consults a precomputed <em>subtype closure</em> <code>K ⊑ Y</code> (“a vertex of kind K can appear where the grammar says SYMBOL Y”). The closure is computed once at <code>Grammar::from_bytes</code> time:</p>
 <ol>
@@ -263,7 +263,7 @@
 </ol>
 <p>The cassette layer itself composes two parts:</p>
 <ul>
-<li><strong>Universal layer</strong> (<code>common_external_default</code>). A closed table of name-pattern → default-text mappings derived from a structural audit of every vendored grammar. Recognises layout markers (<code>_concat</code>, <code>_no_space</code>, <code>_brace_start</code>), immediate-position markers (<code>_immediate_*</code>), error sentinels (<code>_error_*</code>, <code>error_sentinel</code>), automatic-semicolon family (<code>_automatic_semicolon</code>, <code>_optional_semi</code>), generic string delimiters (<code>string_start</code>, <code>string_end</code>), heredoc / raw-string content (returns <code>""</code>; actual text comes from <code>literal-value</code>), and the descendant-operator family from CSS-like grammars.</li>
+<li><strong>Universal layer</strong> (<code>common_external_default</code>). A closed table of name-pattern → default-text mappings derived from a structural audit of every vendored grammar. Recognizes layout markers (<code>_concat</code>, <code>_no_space</code>, <code>_brace_start</code>), immediate-position markers (<code>_immediate_*</code>), error sentinels (<code>_error_*</code>, <code>error_sentinel</code>), automatic-semicolon family (<code>_automatic_semicolon</code>, <code>_optional_semi</code>), generic string delimiters (<code>string_start</code>, <code>string_end</code>), heredoc / raw-string content (returns <code>""</code>; actual text comes from <code>literal-value</code>), and the descendant-operator family from CSS-like grammars.</li>
 <li><strong>Per-grammar override</strong> (<code>GrammarCassette::external_token_default</code>). A small per-grammar implementation that overrides specific tokens. The lookup composes per-grammar first, universal fallback second, via <code>resolve_external_token</code>.</li>
 </ul>
 <p>The per-grammar overrides exist only where the language needs an override on top of the universal layer. The default empty cassette (used for ~230 of the 261 grammars) delegates entirely to the universal layer.</p>
@@ -295,17 +295,17 @@
 <p>Three classes of input fall outside what the structural pipeline can recover:</p>
 <ul>
 <li><strong>By-construction CHOICEs with no constraint signal.</strong> When a schema is built from scratch (no parse history) and a CHOICE is over multiple alternatives that all admit the same children (<code>CHOICE[STRING "model", STRING "data"]</code> for a BUGS block keyword), nothing in the abstract content picks. The universal cassette + per-grammar cassette provide deterministic defaults, but the choice is opinionated and may not match the source author’s intent. <a href="../how-to/decorate-schemas.html">Decorate an abstract schema</a> is the canonical workflow.</li>
-<li><strong>Heredoc / raw-string synthesis.</strong> The universal cassette returns <code>""</code> for heredoc / raw-string content because the actual text is parse-time-dependent. Synthesised vertices with such kinds but no captured <code>literal-value</code> will emit empty. Quivers and similar synthesis pipelines should populate <code>literal-value</code> explicitly.</li>
-<li><strong>Operator precedence in synthesised expressions.</strong> No precedence-driven parenthesisation pass exists. Parsed schemas preserve original parens via interstitial constraints, but synthesised <code>binary_expression</code> schemas may emit ambiguously and re-parse to a different tree. A precedence pass on the schema before emit would close this gap; deferred.</li>
+<li><strong>Heredoc / raw-string synthesis.</strong> The universal cassette returns <code>""</code> for heredoc / raw-string content because the actual text is parse-time-dependent. Synthesized vertices with such kinds but no captured <code>literal-value</code> will emit empty. Quivers and similar synthesis pipelines should populate <code>literal-value</code> explicitly.</li>
+<li><strong>Operator precedence in synthesized expressions.</strong> No precedence-driven parenthesisation pass exists. Parsed schemas preserve original parens via interstitial constraints, but synthesized <code>binary_expression</code> schemas may emit ambiguously and re-parse to a different tree. A precedence pass on the schema before emit would close this gap; deferred.</li>
 </ul>
 <p>The deeper limitation, structurally: tree-sitter’s parse-table state (the actual record of which CHOICE alternative the parser took at each step) is not exposed through the C API. The only ALIAS-disambiguation signal tree-sitter 0.25 / 0.26 surfaces is <code>grammar_name()</code> (the pre-alias SYMBOL name), which is consumed via <code>pre-alias-symbol</code>. A future upstream tree-sitter change exposing production / reduce IDs would let the emitter trace the parse exactly, eliminating the heuristic tiers entirely.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../how-to/decorate-schemas.html">Decorate an abstract schema</a> for the synthesise-then-render workflow.</li>
+<li><a href="../how-to/decorate-schemas.html">Decorate an abstract schema</a> for the synthesize-then-render workflow.</li>
 <li><a href="./layout-enrichment.html">Layout enrichment</a> for the categorical framing of the parse / emit relationship.</li>
 <li><a href="../how-to/format-preserving.html">Round-trip with format preservation</a> for the structured-data codec (JSON / YAML / TOML / XML / CSV), which is byte-exact and orthogonal to this system.</li>
 <li><a href="../how-to/parse-full-ast.html">Parse full ASTs</a> for the parser side.</li>
-<li><a href="../reference/protocols.html">Reference: protocol catalogue</a> for the list of supported languages.</li>
+<li><a href="../reference/protocols.html">Reference: protocol catalog</a> for the list of supported languages.</li>
 </ul>
 
                     </main>

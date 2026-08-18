@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="configuration-reference"><a class="header" href="#configuration-reference">Configuration reference</a></h1>
-<p>The project manifest is <code>panproto.toml</code> at the project root. It is read by <code>panproto-project::load_config</code> and consumed by every CLI subcommand that operates on a project rather than a single file.</p>
+<p>The project manifest is <code>panproto.toml</code> at the project root. <code>panproto_project::config::load_config</code> reads it; project-aware CLI paths use its exclusion patterns and per-package protocol overrides.</p>
 <h2 id="top-level-shape"><a class="header" href="#top-level-shape">Top-level shape</a></h2>
 <pre><code class="language-toml">[workspace]
 name = "my-project"
@@ -207,7 +207,7 @@ protocol = "avro"
 <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><code>name</code></td><td>string</td><td>yes</td><td>Workspace identifier; used for VCS commits and emitted artifacts.</td></tr>
+<tr><td><code>name</code></td><td>string</td><td>yes</td><td>Human-readable workspace name.</td></tr>
 <tr><td><code>exclude</code></td><td>list of glob patterns</td><td>no</td><td>Globs to exclude from project assembly. Evaluated relative to the manifest directory.</td></tr>
 </tbody>
 </table>
@@ -227,7 +227,7 @@ protocol = "avro"
 </table>
 </div>
 <h2 id="generating-a-manifest"><a class="header" href="#generating-a-manifest">Generating a manifest</a></h2>
-<p><code>schema init [PATH]</code> initialises a panproto repository in the given directory (default <code>.</code>). The repository’s bookkeeping lives in <code>.panproto/</code>; the user-authored manifest is <code>panproto.toml</code> and is created by hand.</p>
+<p><code>schema init [PATH]</code> initializes a panproto repository in the given directory (default <code>.</code>). The repository’s bookkeeping lives in <code>.panproto/</code>; the user-authored manifest is <code>panproto.toml</code> and is created by hand.</p>
 <p>For programmatic creation, the <code>panproto-project</code> crate exposes <code>generate_config</code> and <code>serialize_config</code>.</p>
 <h2 id="authoritative-source"><a class="header" href="#authoritative-source">Authoritative source</a></h2>
 <p>Manifest schema: <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-project/src/config.rs"><code>crates/panproto-project/src/config.rs</code></a>.</p>

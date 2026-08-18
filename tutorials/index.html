@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,22 +183,29 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="tutorials"><a class="header" href="#tutorials">Tutorials</a></h1>
-<p>Tutorials walk through a complete example end-to-end. They assume no prior knowledge of panproto and no category-theoretic background. Each one ends with a working artifact you can run and modify.</p>
-<p>If a tutorial mentions a concept by name without explaining it (a <em>lens</em>, a <em>protocol</em>, a <em>migration</em>), it links forward to the explanation page that defines it. You do not need to follow those links to finish the tutorial.</p>
+<p>The fastest way into panproto is a five-minute <a href="../glossary.html#structural-diff" title="A structural diff records added, removed, and modified schema elements without classifying compatibility.">structural diff</a>. Once that command succeeds, the remaining tutorials extend the same <code>User</code> example from a <a href="../glossary.html#schema" title="A schema is a model of a protocol&#39;s schema theory.">schema</a> to a <a href="../glossary.html#migration" title="A migration maps a source schema to a target schema and determines how instances move between them.">migration</a>, a version history, and a conversion between <a href="../glossary.html#protocol" title="A protocol identifies a schema language and the theories and structural rules that define it.">protocols</a>. No category theory is required.</p>
+<p>Follow the beginner path in order:</p>
+<ol>
+<li><a href="./your-first-diff.html">Your first diff</a> compares two ATProto Lexicon documents from the command line. This is the quick success path.</li>
+<li><a href="./your-first-schema.html">Your first schema</a> builds and validates the same model with the TypeScript SDK.</li>
+<li><a href="./your-first-migration.html">Your first migration</a> renames a field, converts a record, and checks the reverse trip.</li>
+</ol>
+<p>The next two tutorials branch from that foundation. <a href="./schema-vcs-basics.html">Schema version control basics</a> is the intermediate path for commits, branches, and structural merge. <a href="./cross-protocol-translation.html">Cross-protocol translation</a> is the advanced path for an explicit conversion between schemas registered under different protocols.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Tutorial</th><th>What you build</th><th>Time</th></tr>
+<tr><th>Tutorial</th><th>Result</th><th style="text-align: right">Typical time</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="./your-first-diff.html">Your first diff</a></td><td>Two schema files diffed, a migration generated between them, and a record converted (CLI only, no SDK)</td><td>~10 min</td></tr>
-<tr><td><a href="./your-first-schema.html">Your first schema</a></td><td>A typed schema for a small data model in TypeScript, validated against a protocol</td><td>~10 min</td></tr>
-<tr><td><a href="./your-first-migration.html">Your first migration</a></td><td>A migration that adds a field, renames another, and lifts existing data forward</td><td>~15 min</td></tr>
-<tr><td><a href="./schema-vcs-basics.html">Schema version control basics</a></td><td>A schema repository with branches and a merge</td><td>~20 min</td></tr>
-<tr><td><a href="./cross-protocol-translation.html">Cross-protocol translation</a></td><td>A JSON Schema converted into a Protobuf definition with data round-tripped through both</td><td>~20 min</td></tr>
+<tr><td><a href="./your-first-diff.html">Your first diff</a></td><td>One structural diff over two schema documents</td><td style="text-align: right">5 minutes</td></tr>
+<tr><td><a href="./your-first-schema.html">Your first schema</a></td><td>A schema plus valid and invalid records</td><td style="text-align: right">8 minutes</td></tr>
+<tr><td><a href="./your-first-migration.html">Your first migration</a></td><td>A checked rename with a round-trip assertion</td><td style="text-align: right">12 minutes</td></tr>
+<tr><td><a href="./schema-vcs-basics.html">Schema version control basics</a></td><td>A repository with a branch and fast-forward merge</td><td style="text-align: right">12 minutes</td></tr>
+<tr><td><a href="./cross-protocol-translation.html">Cross-protocol translation</a></td><td>A checked forward conversion from JSON Schema to an OpenAPI schema</td><td style="text-align: right">15 minutes</td></tr>
 </tbody>
 </table>
 </div>
+<p>Tutorials are learning-oriented: each leaves you with a runnable result and explains only the concepts needed to produce it. The <a href="../how-to/index.html">how-to guides</a> collect task-specific procedures, the <a href="../reference/index.html">reference</a> records the complete interfaces, and the <a href="../explanation/index.html">explanation chapters</a> develop the theory behind the commands.</p>
 
                     </main>
 

@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,15 +183,15 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="translate-across-protocols"><a class="header" href="#translate-across-protocols">Translate across protocols</a></h1>
-<p>Cross-protocol translation moves schemas between schema languages: JSON Schema to Protobuf, ATProto Lexicon to GraphQL SDL, and so on. Translation is a migration whose source and target theories belong to different protocols.</p>
+<p>Cross-protocol translation applies when the source and target schemas belong to different schema languages, such as JSON Schema and Protobuf. The procedure constructs a migration through a theory shared by the two protocols.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>Two protocols whose theories overlap on enough building-block theories that a colimit-mediated translation exists. The CLI or one of the SDKs.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
 <p>Cross-protocol translation runs through the colimit-of-theories construction in <code>panproto-protocols</code>. There is no single CLI subcommand that takes a source-protocol schema and emits a target-protocol schema directly; instead, the workflow is:</p>
 <ol>
-<li><strong>Compose the theory.</strong> Use the theory DSL to declare a composition theory whose colimit covers both protocols, or rely on the built-in compositions for the protocol pair you want.</li>
-<li><strong>Generate a lens between schemas in the composed theory.</strong> <code>schema lens generate</code> produces the chain; both schemas must be expressed against the composed theory.</li>
-<li><strong>Apply the lens to convert data.</strong></li>
+<li>Use the theory DSL to declare a composition theory whose colimit covers both protocols, or select a built-in composition for the protocol pair.</li>
+<li>Generate a lens between schemas in the composed theory with <code>schema lens generate</code>. Both schemas must be expressed against that theory.</li>
+<li>Apply the lens to convert the data.</li>
 </ol>
 <p>The theory DSL exposes a small library of named building-block theories via <code>builtin_resolver()</code>: <code>ThGraph</code>, <code>ThConstraint</code>, <code>ThMulti</code>, <code>ThWType</code>, <code>ThMeta</code>, <code>ThSimpleGraph</code>, <code>ThHypergraph</code>, <code>ThInterface</code>, <code>ThFunctor</code>, <code>ThFlat</code>, <code>ThGraphInstance</code>. Whole-protocol theories (the per-protocol GATs that JSON Schema, Protobuf, ATProto, etc. compile to) are constructed in Rust inside <code>panproto-protocols</code>, not through the DSL.</p>
 <p>The DSL composition shape is <code>compose = { result, bases, steps }</code>, with each step a <code>ColimitStepSpec { left, right, shared_sorts, shared_ops? }</code>. A toy composition over building blocks:</p>
@@ -239,7 +239,7 @@ schema lens apply --protocol &lt;protocol&gt; lenses/a-to-b.json data/user.json
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="./convert-data.html">Convert data between formats</a>.</li>
-<li><a href="../reference/protocols.html">Reference: protocol catalogue</a>.</li>
+<li><a href="../reference/protocols.html">Reference: protocol catalog</a>.</li>
 <li><a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a>.</li>
 </ul>
 

@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,49 +183,46 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="how-to-guides"><a class="header" href="#how-to-guides">How-to guides</a></h1>
-<p>How-to pages are recipes. Each one assumes you know what you are trying to do and need the steps to do it. Every page follows the same skeleton:</p>
-<ol>
-<li><strong>Prerequisites.</strong> What must be installed and what state your project must be in.</li>
-<li><strong>The task.</strong> The minimum sequence of commands or code to accomplish the goal.</li>
-<li><strong>Verification.</strong> How to confirm the task succeeded.</li>
-<li><strong>Common mistakes.</strong> Failure modes and how to recognise them.</li>
-<li><strong>See also.</strong> Adjacent how-tos, the relevant reference page, and the explanation page that covers the underlying model.</li>
-</ol>
-<p>If you want to understand <em>why</em> a step works, follow the link to the explanation quadrant. If you want a complete walk-through with no prior context, start with a <a href="../tutorials/index.html">tutorial</a>.</p>
-<h2 id="index"><a class="header" href="#index">Index</a></h2>
-<h3 id="setup"><a class="header" href="#setup">Setup</a></h3>
-<ul>
-<li><a href="./install/cli.html">Install the CLI</a>, <a href="./install/rust.html">Rust</a>, <a href="./install/typescript.html">TypeScript</a>, <a href="./install/python.html">Python</a></li>
-</ul>
-<h3 id="schemas-and-migrations"><a class="header" href="#schemas-and-migrations">Schemas and migrations</a></h3>
-<ul>
-<li><a href="./define-schema/index.html">Define a schema</a> (CLI, TypeScript, Python, Rust)</li>
-<li><a href="./build-migration.html">Build a migration</a></li>
-<li><a href="./field-transforms.html">Apply field transforms</a></li>
-<li><a href="./use-lenses.html">Use lenses</a>, <a href="./protolenses.html">protolenses</a>, <a href="./dependent-optics.html">dependent optics</a></li>
-<li><a href="./lens-dsl.html">Write lenses in the lens DSL</a></li>
-<li><a href="./build-protocol.html">Build a custom protocol</a></li>
-</ul>
-<h3 id="working-with-data"><a class="header" href="#working-with-data">Working with data</a></h3>
-<ul>
-<li><a href="./query-instances.html">Query instances</a></li>
-<li><a href="./convert-data.html">Convert data between formats</a></li>
-<li><a href="./format-preserving.html">Round-trip with format preservation</a></li>
-<li><a href="./parse-full-ast.html">Parse full ASTs</a></li>
-<li><a href="./decorate-schemas.html">Decorate an abstract schema</a></li>
-</ul>
-<h3 id="version-control"><a class="header" href="#version-control">Version control</a></h3>
-<ul>
-<li><a href="./schema-vcs/init-and-commit.html">Init and commit</a>, <a href="./schema-vcs/branch-and-merge.html">branch and merge</a>, <a href="./schema-vcs/data-versioning.html">data versioning</a>, <a href="./schema-vcs/git-bridge.html">git bridge</a></li>
-</ul>
-<h3 id="translation-and-integration"><a class="header" href="#translation-and-integration">Translation and integration</a></h3>
-<ul>
-<li><a href="./cross-protocol.html">Translate across protocols</a></li>
-</ul>
-<h3 id="ci"><a class="header" href="#ci">CI</a></h3>
-<ul>
-<li><a href="./ci/breaking-change-gate.html">Breaking-change gate</a>, <a href="./ci/github-actions.html">GitHub Actions</a>, <a href="./ci/pre-commit-hooks.html">pre-commit hooks</a></li>
-</ul>
+<p>How-to guides assume that the goal is settled and the missing piece is a procedure. A first encounter with panproto belongs in the <a href="../tutorials/index.html">tutorials</a>; an exact flag, signature, or grammar belongs in the <a href="../reference/index.html">reference</a>.</p>
+<h2 id="first-working-path"><a class="header" href="#first-working-path">First working path</a></h2>
+<p>A reader starting from an existing <a href="../glossary.html#schema" title="A schema is a model of a protocol&#39;s schema theory.">schema</a> file can follow one short sequence: <a href="./install/index.html">install a surface</a>, <a href="./define-schema/index.html">define or load a schema</a>, construct a <a href="../glossary.html#migration" title="A migration maps a source schema to a target schema and determines how instances move between them.">migration</a> with the <a href="./build-migration.html">migration guide</a>, and <a href="./convert-data.html">convert data</a>. Each guide includes a verification step before the next operation changes data or repository state.</p>
+<h2 id="intermediate-entry-points"><a class="header" href="#intermediate-entry-points">Intermediate entry points</a></h2>
+<p>These guides assume that you can already load and validate a schema.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Goal</th><th>Start here</th><th>Continue with</th></tr>
+</thead>
+<tbody>
+<tr><td>Control an inferred <a href="../glossary.html#span" title="A span states a partial correspondence through a common apex and one morphism into each schema.">span</a></td><td><a href="./spans.html">Find a span between two schemas</a></td><td><a href="./field-transforms.html">Apply field transforms</a></td></tr>
+<tr><td>Run a <a href="../glossary.html#lens" title="A lens pairs a forward conversion with a law-governed backward update.">lens</a> in both directions</td><td><a href="./use-lenses.html">Use lenses</a></td><td><a href="./lens-dsl.html">Write lenses in the lens DSL</a></td></tr>
+<tr><td>Inspect or select records</td><td><a href="./query-instances.html">Query instances</a></td><td><a href="../reference/expression-language.html">Expression-language reference</a></td></tr>
+<tr><td>Preserve source formatting</td><td><a href="./format-preserving.html">Round-trip with format preservation</a></td><td><a href="./decorate-schemas.html">Decorate an abstract schema</a></td></tr>
+<tr><td>Put schema changes under version control</td><td><a href="./schema-vcs/init-and-commit.html">Initialize and commit</a></td><td><a href="./schema-vcs/branch-and-merge.html">Branch and merge</a></td></tr>
+<tr><td>Reject incompatible changes automatically</td><td><a href="./ci/breaking-change-gate.html">Create a breaking-change gate</a></td><td><a href="./ci/github-actions.html">Run it in GitHub Actions</a></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="advanced-entry-points"><a class="header" href="#advanced-entry-points">Advanced entry points</a></h2>
+<p>These guides cover reusable transformations, language tooling, and protocol extension.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Goal</th><th>Start here</th><th>Related contract</th></tr>
+</thead>
+<tbody>
+<tr><td>Reuse one lens across a family of schemas</td><td><a href="./protolenses.html">Use protolenses</a></td><td><a href="../reference/lens-combinators.html">Lens combinators</a></td></tr>
+<tr><td>Select an optic from schema structure</td><td><a href="./dependent-optics.html">Use dependent optics</a></td><td><a href="../reference/lens-combinators.html#optic-kinds">Lens combinators</a></td></tr>
+<tr><td>Parse and migrate syntax trees</td><td><a href="./parse-full-ast.html">Parse full ASTs</a></td><td><a href="../reference/sdk-rust.html#feature-flags">Rust SDK</a></td></tr>
+<tr><td>Translate between schema languages</td><td><a href="./cross-protocol.html">Translate across protocols</a></td><td><a href="../reference/protocols.html">Protocol catalog</a></td></tr>
+<tr><td>Add a schema language</td><td><a href="./build-protocol.html">Build a custom protocol</a></td><td><a href="../reference/crate-map.html">Crate map</a></td></tr>
+<tr><td>Version data with its schema</td><td><a href="./schema-vcs/data-versioning.html">Version data alongside schemas</a></td><td><a href="../reference/cli.html#schema-data">CLI reference</a></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="tasks-by-area"><a class="header" href="#tasks-by-area">Tasks by area</a></h2>
+<p>Setup and schema creation are collected under <a href="./install/index.html">Install panproto</a> and <a href="./define-schema/index.html">Define a schema</a>. Migration work begins with <a href="./build-migration.html">Build a migration</a> and extends through <a href="./field-transforms.html">field transforms</a>, <a href="./use-lenses.html">lenses</a>, <a href="./protolenses.html">protolenses</a>, <a href="./dependent-optics.html">dependent optics</a>, and the <a href="./lens-dsl.html">lens DSL</a>.</p>
+<p>Data tasks cover <a href="./convert-data.html">conversion</a>, <a href="./query-instances.html">queries</a>, <a href="./format-preserving.html">format-preserving round trips</a>, <a href="./parse-full-ast.html">full-AST parsing</a>, and <a href="./decorate-schemas.html">schema decoration</a>. Repository tasks are grouped under <a href="./schema-vcs/index.html">Schema version control</a> and <a href="./ci/index.html">Continuous integration</a>; <a href="./cross-protocol.html">Translate across protocols</a> and <a href="./build-protocol.html">Build a custom protocol</a> cover extension across protocol boundaries.</p>
 
                     </main>
 

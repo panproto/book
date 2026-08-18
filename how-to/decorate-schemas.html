@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,8 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="decorate-an-abstract-schema"><a class="header" href="#decorate-an-abstract-schema">Decorate an abstract schema</a></h1>
-<p>When you parse source code into a schema, the parse walker attaches <em>layout data</em> to every vertex: byte spans, the whitespace between adjacent tokens, and a discriminator recording which CHOICE alternative tree-sitter took. The emitter consumes those constraints to render source bytes back. A schema you build by hand from <code>SchemaBuilder</code> has none of them, so <code>emit_pretty_with_protocol</code> falls back to a grammar walk that may pick the wrong alternative or render nothing at all.</p>
-<p><code>decorate</code> fills the gap. Given an abstract schema (vertex kinds, <code>child_of</code> edges, leaf <code>literal-value</code> constraints) and a registered grammar, it attaches the full layout fibre and returns a <code>DecoratedSchema</code> the emitter can render.</p>
+<p><code>decorate</code> prepares a hand-built schema for source-code emission. It attaches byte spans, inter-token text, and grammar-choice constraints to an abstract schema, producing a <code>DecoratedSchema</code> for the emitter; <a href="../explanation/layout-enrichment.html">Layout enrichment</a> develops the model behind this operation.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>The Rust SDK with the <code>full-parse</code> feature, or the CLI. Python bindings are forthcoming.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
@@ -202,7 +201,7 @@ let abstract_schema = SchemaBuilder::new(&amp;p)
     .constraint("$2", "literal-value", "hello")
     .build_abstract()?;
 <span class="boring">Ok(()) }</span></code></pre>
-<p><code>build_abstract</code> checks that no layout-fibre constraint was added during construction (no <code>start-byte</code>, no <code>interstitial-N</code>, no <code>chose-alt-*</code>) and returns an <code>AbstractSchema</code>. If a layout sort slipped in, you get <code>SchemaError::LayoutConstraintsOnAbstractBuild</code>; use <code>build_decorated</code> if a decorated schema was the intent.</p>
+<p><code>build_abstract</code> checks that no layout-fiber constraint was added during construction (no <code>start-byte</code>, no <code>interstitial-N</code>, no <code>chose-alt-*</code>) and returns an <code>AbstractSchema</code>. If a layout sort slipped in, you get <code>SchemaError::LayoutConstraintsOnAbstractBuild</code>; use <code>build_decorated</code> if a decorated schema was the intent.</p>
 <h3 id="decorate"><a class="header" href="#decorate">Decorate</a></h3>
 <pre class="playground"><code class="language-rust no_run">use panproto_core::parse::{LayoutPolicy, ParserRegistry};
 <span class="boring">use panproto_core::schema::{Protocol, SchemaBuilder};
@@ -215,7 +214,7 @@ let policy = LayoutPolicy::default();
 let decorated = reg.decorate("lilypond", &amp;abstract_schema, &amp;policy)?;
 <span class="boring">let _ = decorated;
 </span><span class="boring">Ok(()) }</span></code></pre>
-<p><code>decorate</code> runs <code>emit_pretty_with_policy</code> to render the abstract schema to canonical bytes under the policy, then re-parses those bytes. The re-parse attaches the complete layout fibre: every <code>start-byte</code>, every <code>end-byte</code>, every <code>interstitial-N</code>, plus the <code>chose-alt-fingerprint</code> and <code>chose-alt-child-kinds</code> discriminators that pin down which CHOICE alternative the parser took.</p>
+<p><code>decorate</code> runs <code>emit_pretty_with_policy</code> to render the abstract schema to canonical bytes under the policy, then re-parses those bytes. The re-parse attaches the complete layout fiber: every <code>start-byte</code>, every <code>end-byte</code>, every <code>interstitial-N</code>, plus the <code>chose-alt-fingerprint</code> and <code>chose-alt-child-kinds</code> discriminators that pin down which CHOICE alternative the parser took.</p>
 <h3 id="render-straight-to-bytes"><a class="header" href="#render-straight-to-bytes">Render straight to bytes</a></h3>
 <p>If all you want is the rendered source, skip the re-parse:</p>
 <pre class="playground"><code class="language-rust no_run"><span class="boring">use panproto_core::parse::{LayoutPolicy, ParserRegistry};
@@ -228,8 +227,8 @@ let decorated = reg.decorate("lilypond", &amp;abstract_schema, &amp;policy)?;
 </span>let bytes = reg.pretty_with_protocol("lilypond", &amp;abstract_schema, &amp;policy)?;
 <span class="boring">let _ = bytes;
 </span><span class="boring">Ok(()) }</span></code></pre>
-<p><code>pretty_with_protocol</code> honours every field of the policy in the output: <code>separator</code>, <code>newline</code>, <code>indent_width</code>, <code>line_break_after</code>, and the indent open/close token sets. Two different policies render the same abstract schema to different bytes.</p>
-<h3 id="customise-the-policy"><a class="header" href="#customise-the-policy">Customise the policy</a></h3>
+<p><code>pretty_with_protocol</code> honors every field of the policy in the output: <code>separator</code>, <code>newline</code>, <code>indent_width</code>, <code>line_break_after</code>, and the indent open/close token sets. Two different policies render the same abstract schema to different bytes.</p>
+<h3 id="customize-the-policy"><a class="header" href="#customize-the-policy">Customize the policy</a></h3>
 <pre class="playground"><code class="language-rust no_run">use panproto_core::parse::LayoutPolicy;
 <span class="boring">use panproto_core::parse::ParserRegistry;
 </span><span class="boring">use panproto_core::schema::{Protocol, SchemaBuilder};
@@ -259,10 +258,10 @@ let bytes = reg.pretty_with_protocol("lilypond", &amp;abstract_schema, &amp;poli
 </span>let stripped = decorated.forget_layout();   // -&gt; AbstractSchema
 <span class="boring">let _ = stripped;
 </span><span class="boring">Ok(()) }</span></code></pre>
-<p><code>forget_layout</code> is the schema-level forgetful U: it drops every constraint whose sort is in the layout fibre (per <code>panproto_gat::is_layout_sort</code>) and returns an <code>AbstractSchema</code>. The section law <code>forget_layout(decorate(a)) ≅ a</code> holds up to vertex-id renaming and kind/edge-multiset equivalence, which is the granularity panproto’s round-trip law machinery already uses.</p>
+<p><code>forget_layout</code> drops every constraint whose sort is in the layout fiber (per <code>panproto_gat::is_layout_sort</code>) and returns an <code>AbstractSchema</code>. Decorating an abstract schema and then forgetting its layout returns a schema isomorphic to the original up to vertex identifier renaming and kind/edge-multiset equivalence, which is the granularity panproto’s round-trip law machinery uses.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<p>The section-law smoke test in <code>crates/panproto-parse/tests/decorate_section_law.rs</code> walks a sample source through <code>parse → forget_layout → decorate → forget_layout</code> for every grammar with a parse fixture and asserts that both the vertex-kind multiset and the edge-shape multiset match before and after. Run it with:</p>
-<pre><code class="language-sh">cargo test -p panproto-parse --test decorate_section_law \
+<p>The section-law smoke test in <code>crates/panproto-parse/tests/decorate_section_law.rs</code> parses a sample, forgets its layout, decorates it, and forgets the new layout for every grammar with a parse fixture. It then compares the vertex-kind and edge-shape multisets. Run it with:</p>
+<pre><code class="language-sh">cargo nextest run -p panproto-parse --test decorate_section_law \
     --features lang-json,lang-lilypond
 </code></pre>
 <p>The matching test for policy fidelity (<code>pretty_with_protocol_honours_policy</code>) renders the same abstract schema under two distinct policies and asserts the output bytes differ in exactly the way the policy prescribes (CRLF vs LF newline, two-space vs single-space separator, four-space vs zero indent).</p>
@@ -270,7 +269,7 @@ let bytes = reg.pretty_with_protocol("lilypond", &amp;abstract_schema, &amp;poli
 <ul>
 <li>Wrapping a parsed schema as an <code>AbstractSchema</code> and expecting <code>decorate</code> to keep its vertex IDs. The parse walker invents fresh IDs; the section law holds up to multiset equivalence, not pointwise. If you need the parse-side IDs preserved, work with the <code>DecoratedSchema</code> directly.</li>
 <li>Passing an <code>AbstractSchema</code> built against one protocol into <code>decorate</code> for a different protocol. The protocol-match guard rejects the call with <code>ParseError::SchemaConstruction</code>; build the schema against the right protocol or look up the parser by the schema’s own <code>protocol()</code>.</li>
-<li>Reaching for <code>DecoratedSchema::wrap_unchecked</code> on a hand-built schema and expecting <code>emit_pretty_with_protocol</code> to round-trip through byte-position arithmetic. The wrapping is a type-level assertion the constructor cannot verify; an empty layout fibre means the emitter falls back to a grammar walk, which is well-defined but uses the default <code>FormatPolicy</code>, not whatever policy you’d have passed to <code>decorate</code>.</li>
+<li>Reaching for <code>DecoratedSchema::wrap_unchecked</code> on a hand-built schema and expecting <code>emit_pretty_with_protocol</code> to round-trip through byte-position arithmetic. The wrapping is a type-level assertion the constructor cannot verify; an empty layout fiber means the emitter falls back to a grammar walk, which is well-defined but uses the default <code>FormatPolicy</code>, not whatever policy you’d have passed to <code>decorate</code>.</li>
 <li>Calling <code>decorate</code> on a protocol that returns <code>EmitVerificationStatus::Generic</code>. <code>decorate</code> runs <code>emit_pretty</code> internally, so its output inherits whatever fidelity the emitter has on that grammar. Check <code>ParserRegistry::emit_verification_status(protocol)</code> first; if the result is <code>Generic</code>, the round-trip kind multiset still satisfies the section law, but byte-for-byte stability across re-emits is not guaranteed.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
@@ -278,8 +277,8 @@ let bytes = reg.pretty_with_protocol("lilypond", &amp;abstract_schema, &amp;poli
 <li><a href="../explanation/emit-pretty.html">Source-code emission</a> for what <code>emit_pretty</code> does internally during the decorate call.</li>
 <li><a href="./parse-full-ast.html">Parse full ASTs</a> for the get direction of the same lens.</li>
 <li><a href="./format-preserving.html">Round-trip with format preservation</a> for the parallel codec story at the byte-position level.</li>
-<li><a href="../reference/protocols.html">Reference: protocol catalogue</a> for the registered grammars.</li>
-<li><a href="../explanation/lenses-roundtrip.html">Lenses and round-trip laws</a> for the lens machinery the layout fibre rides on.</li>
+<li><a href="../reference/protocols.html">Reference: protocol catalog</a> for the registered grammars.</li>
+<li><a href="../explanation/lenses-roundtrip.html">Lenses and round-trip laws</a> for the lens machinery the layout fiber rides on.</li>
 </ul>
 
                     </main>

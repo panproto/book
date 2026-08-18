@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8259401e.js";
+            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-1b21fe02.js"></script>
+        <script src="../toc-adbb6774.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,9 +183,9 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="swift-sdk-reference"><a class="header" href="#swift-sdk-reference">Swift SDK reference</a></h1>
-<p>The Swift binding lives at <a href="https://github.com/panproto/panproto/tree/main/bindings/swift"><code>bindings/swift/</code></a> and is a <a href="https://www.swift.org/documentation/package-manager/">SwiftPM</a> package. It links <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>libpanproto_c</code></a>, the C ABI exposed by the <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>panproto-c</code></a> crate, and reaches every one of its 120 entry points: schemas, instances, migrations, lenses, the GAT layer, the expression language, compatibility checking, homomorphism search, graph fibers, datasets, I/O codecs, version control, and the feature-gated parse, project, and git tiers.</p>
+<p>The Swift binding lives at <a href="https://github.com/panproto/panproto/tree/main/bindings/swift"><code>bindings/swift/</code></a> and is a <a href="https://www.swift.org/documentation/package-manager/">SwiftPM</a> package. It links <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>libpanproto_c</code></a>, the C ABI exposed by the <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>panproto-c</code></a> crate, and reaches every one of its 122 entry points: schemas, instances, migrations, lenses, the GAT layer, the expression language, compatibility checking, homomorphism search, graph fibers, datasets, I/O codecs, version control, and the feature-gated parse, project, and git tiers.</p>
 <h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
-<p>The package is not yet on a registry; install from this repository. See <a href="../how-to/install/swift.html">Install the Swift SDK</a> for the bootstrap scripts, the XCFramework path, and the toolchain prerequisites.</p>
+<p>The package is not yet on a registry, so you need to install it from this repository. See <a href="../how-to/install/swift.html">Install the Swift SDK</a> for the bootstrap scripts, the XCFramework path, and the toolchain prerequisites.</p>
 <h2 id="products"><a class="header" href="#products">Products</a></h2>
 <p>The package splits along the line between values and the engine, and again along the line between what the default library exports and what it does not.</p>
 <div class="table-wrapper">
@@ -204,12 +204,12 @@
 </table>
 </div>
 <p><code>PanprotoStructural</code> imports no FFI module at all, which the package graph enforces: it depends on nothing but the standard library. Everything in it is a <code>Sendable</code>, <code>Hashable</code>, <code>Codable</code> value, including the CBOR codec that gives those values their wire form. A pipeline that only reads and rewrites schemas can link it alone and never start an engine.</p>
-<p>The three feature-gated products always exist in the package graph, so resolution does not depend on how the library was built. Each is selected by a package trait (<code>PANPROTO_PARSE</code>, <code>PANPROTO_PROJECT</code>, <code>PANPROTO_GIT</code>), and a trait defines a compilation condition of its own name, which is what the <code>#if</code> blocks in the gated sources read. Without its trait a module is empty, and the raw shims that would reference the absent symbols are compiled out. That matters because the default <code>libpanproto_c</code> exports 103 of the 120 entry points; referencing the other 17 unconditionally would make every default build fail to link.</p>
+<p>The three feature-gated products always exist in the package graph, so resolution does not depend on how the library was built. Each is selected by a package trait (<code>PANPROTO_PARSE</code>, <code>PANPROTO_PROJECT</code>, <code>PANPROTO_GIT</code>), and a trait defines a compilation condition of its own name, which is what the <code>#if</code> blocks in the gated sources read. Without its trait a module is empty, and the raw shims that would reference the absent symbols are compiled out. That matters because the default <code>libpanproto_c</code> exports 105 of the 122 entry points; referencing the other 17 unconditionally would make every default build fail to link.</p>
 <h2 id="the-engine-actor"><a class="header" href="#the-engine-actor">The engine actor</a></h2>
 <p><code>PanprotoEngine</code> is a global actor whose executor is pinned to one dedicated thread for the lifetime of the process. Everything that touches a handle is isolated to it.</p>
 <p>The reason is narrower than it looks. The slab that hands out handles is process-global and mutex-guarded, so a handle really is valid from any thread. What is thread-local is the <em>last-error slot</em>: a failing entry point stashes its <code>ErrorEnvelope</code> where only the calling thread can drain it, and <code>pp_last_error_take</code> on any other thread answers empty. Every error message the binding reports depends on the drain landing on the thread that failed.</p>
-<p>A serial <code>DispatchQueue</code> would give mutual exclusion but not thread identity, so that invariant would hold only as long as no call ever suspended between the failure and the drain. Pinning a thread makes it hold unconditionally, and costs one resident thread.</p>
-<pre><code class="language-swift">// Each call hops to the engine and back.
+<p>A serial <code>DispatchQueue</code> would give mutual exclusion but not thread identity, so that invariant would hold only as long as no call ever suspended between the failure and the drain. Pinning a thread makes it hold unconditionally, and costs one resident thread. This declaration shows the isolation shape; the body of <code>migrateEverything</code> is application-specific rather than runnable here.</p>
+<pre><code class="language-text">// Each call hops to the engine and back.
 let schema = try await SchemaHandle.parseAtprotoLexicon(lexicon)
 let messages = try await schema.violations(against: atproto)
 
@@ -264,6 +264,23 @@ func migrateEverything(_ records: [Data]) throws(PanprotoError) -&gt; [Data] { .
 <h2 id="the-structured-schema"><a class="header" href="#the-structured-schema">The structured schema</a></h2>
 <p><code>Schema</code> in <code>PanprotoStructural</code> is the primary schema type: a value carrying the semantic fields of <code>panproto_schema::Schema</code>, with vertices, edges, hyper-edges, constraints, variants, recursion points, spans, and the enrichment maps. <code>SchemaHandle</code> in <code>Panproto</code> is the engine-side resource, and the two convert in both directions.</p>
 <p>The Rust type stores three precomputed adjacency indices. The Swift value does not: they are derivable from the edge set, so the encoder recomputes them on the way out and the decoder ignores them on the way in, with <code>outgoingEdges(from:)</code>, <code>incomingEdges(to:)</code>, and <code>edges(between:and:)</code> as pure accessors. That keeps a decoded schema from carrying two representations of the same fact that could drift apart under mutation.</p>
+<h2 id="morphism-and-span-search"><a class="header" href="#morphism-and-span-search">Morphism and span search</a></h2>
+<p>The search splits across the two tiers the package is built on. <code>SchemaSpan</code>, <code>FoundMorphism</code>, <code>SchemaOverlap</code>, <code>MorphismSearchOptions</code>, <code>MorphismDomainConstraints</code>, and <code>MorphismCostWeights</code> are values in <code>PanprotoStructural</code>; the three methods that produce them hang off <code>SchemaHandle</code> in <code>Panproto</code> and are engine-isolated.</p>
+<p><code>findSpan(to:in:options:constraints:)</code> is the one to reach for. It never refuses for want of a match, since leaving every source vertex out of the apex is a feasible answer, so two schemas with nothing in common answer with an empty apex rather than throwing.</p>
+<pre><code class="language-swift">let span = try await post.findSpan(to: profile, in: atproto)
+
+span.apexCoverage           // 0.777... : 7 of the 9 source vertices
+span.qualityLo              // equals span.qualityHi when provenOptimal
+if span.isTotal {
+    let morphism = span.asTotalMorphism
+}
+</code></pre>
+<p>The protocol handle is a parameter because the apex is a schema, a schema is well formed only against a protocol, and inducing the apex re-validates it rather than assuming it. A schema carries its protocol’s name alone, so the protocol cannot be read back off the source handle.</p>
+<p><code>SchemaSpan</code> carries the span itself in <code>apex</code>, <code>left</code>, and <code>right</code>, then the measurements flat rather than nested: <code>quality</code>, <code>qualityLo</code>, <code>qualityHi</code>, <code>apexCoverage</code>, <code>provenOptimal</code>, <code>isTotal</code>, <code>apexDigest</code> and <code>legsAreFunctorial</code>. The last two are what identifying a span takes: the digest together with the two leg maps is the span’s identity, and there is no schema-digest entry point on the C ABI to recompute it from, so a Swift host that wants to dedupe or cache a span reads it here or not at all. Both carry defaults on the initializer, so a host encoding a span for <code>overlap()</code> without them still produces a payload the engine decodes. The two quality ends are equal exactly when <code>provenOptimal</code> holds, which is what separates a score nothing beats from a score the search ran out of budget before improving on. <code>quality</code> ranks spans over <em>one</em> source schema and nothing else, because every denominator of the objective is fixed by the source, so <code>apexCoverage</code> is read alongside it. <code>asTotalMorphism</code> is a computed property on the value and needs no engine; <code>overlap()</code> does, and gives the identification list a pushout takes.</p>
+<p><code>MorphismSearchOptions</code> fixes the shape asked for (<code>monic</code>, <code>epic</code>, <code>iso</code>, <code>maxResults</code>, <code>hardPins</code>), and every field has a default, so an empty payload is valid. <code>epic</code> is honored by the two morphism methods and refused by <code>findSpan</code>, since surjectivity is a property of a total morphism and a span’s right leg is deliberately partial. Where a vertex may land is a separate payload, <code>MorphismDomainConstraints</code>, which only <code>findSpan</code> takes.</p>
+<h3 id="what-findmorphisms-returns"><a class="header" href="#what-findmorphisms-returns">What <code>findMorphisms</code> returns</a></h3>
+<p><code>findMorphisms(to:options:)</code> returns the morphisms <strong>attaining the optimum</strong>, and nothing else. The engine’s cap of 1024 bounds every request rather than only <code>maxResults = 0</code>, so asking for more is answered with the cap and Swift has no flag saying so. Every element carries the same <code>quality</code>, so the first is what <code>findBestMorphism(to:options:)</code> answers with, and there is no second, worse tier to walk to.</p>
+<p>An empty array means that no total morphism exists, and only that: a search that could not be posed throws <code>PanprotoError.migration</code> instead, so the two are distinguishable. <code>findSpan(to:in:options:constraints:)</code> is the method that answers with what the two schemas do share. <a href="../how-to/spans.html">Find a span between two schemas</a> walks that task end to end, and <a href="../explanation/morphism-search.html">Searching for a morphism</a> sets out what the search is doing underneath.</p>
 <h2 id="cbor"><a class="header" href="#cbor">CBOR</a></h2>
 <p>Every payload crossing the ABI is CBOR produced by <a href="https://docs.rs/ciborium"><code>ciborium</code></a> driven by <a href="https://serde.rs/"><code>serde</code></a>, so <code>PanprotoStructural</code> ships a codec written against that data model rather than a general-purpose one. <code>CBOREncoder</code> and <code>CBORDecoder</code> conform to Swift’s <code>Encoder</code> and <code>Decoder</code>, so ordinary <code>Codable</code> conformances work.</p>
 <p>Encoding is deterministic: definite lengths everywhere, the shortest integer head that fits, the narrowest float width that reproduces the value exactly, and canonical key ordering for collections that carry no order of their own. Two encodes of the same Swift value agree byte for byte.</p>
@@ -271,7 +288,7 @@ func migrateEverything(_ records: [Data]) throws(PanprotoError) -&gt; [Data] { .
 <p>Decoding is tolerant in the ways a forward-compatible host has to be: indefinite lengths, unknown map keys, semantic tags, and every float width all decode.</p>
 <p><code>CBORValue</code> is the untyped escape hatch. It decodes any payload without a static type, and it is itself <code>Codable</code>, so a field typed <code>CBORValue</code> passes a fragment the Swift model does not describe through unchanged.</p>
 <h2 id="parity-with-the-other-sdks"><a class="header" href="#parity-with-the-other-sdks">Parity with the other SDKs</a></h2>
-<p>The Swift binding reaches every one of the C ABI’s 120 entry points, which is the same surface the Haskell binding consumes, so the two are at parity with each other and with the ABI.</p>
+<p>The Swift binding reaches every one of the C ABI’s 122 entry points, which is the same surface the Haskell binding consumes, so the two are at parity with each other and with the ABI.</p>
 <p>The Python SDK is a superset of both, and the reason is architectural rather than a shortfall in either binding: <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-py"><code>panproto-py</code></a> is a <a href="https://pyo3.rs/">PyO3</a> extension linking <code>panproto-core</code> directly, so it reaches engine surfaces the ABI never exposed. Fifty-two members of the Python surface have no <code>pp_*</code> entry point behind them, in five groups:</p>
 <div class="table-wrapper">
 <table>
