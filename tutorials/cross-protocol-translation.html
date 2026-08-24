@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,8 +183,8 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="cross-protocol-translation"><a class="header" href="#cross-protocol-translation">Cross-protocol translation</a></h1>
-<p>A migration can connect schemas registered under different protocols when their relevant structure agrees. This tutorial converts a <code>User</code> record from a <a href="https://json-schema.org/">JSON Schema</a> graph to an <a href="https://www.openapis.org/">OpenAPI</a> schema graph by mapping each object and property explicitly. It is the advanced continuation of <a href="./your-first-migration.html">Your first migration</a> and takes about fifteen minutes.</p>
-<p>The example is deliberately narrow. JSON Schema and OpenAPI use the same constrained-multigraph schema basis and W-type instance shape in panproto, so their object, scalar, and property structure can align directly. Protocol pairs with different bases require a composed theory or a hand-authored lens; the tutorial returns to that boundary after the working conversion.</p>
+<p>A migration can connect schemas registered under different protocols when their relevant structure agrees. This tutorial converts a <code>User</code> record from a <a href="https://json-schema.org/">JSON Schema</a> graph to an <a href="https://www.openapis.org/">OpenAPI</a> schema graph by mapping each object and property explicitly. It is the advanced continuation of <a href="./your-first-migration.html">Your first migration</a>.</p>
+<p>The example is deliberately narrow. JSON Schema and OpenAPI use compatible object, scalar, and property structure in this case. The TypeScript existence check selects the source schema’s registered protocol, so this example does not establish general cross-protocol checking. Protocol pairs with different structural rules require a repository-level bridge; <a href="../how-to/cross-protocol.html">Translate across protocols</a> records the current boundary.</p>
 <h2 id="build-both-endpoints"><a class="header" href="#build-both-endpoints">Build both endpoints</a></h2>
 <p>Continue in the <code>my-first-schema/</code> project, where <code>@panproto/core</code> and <code>tsx</code> are already installed. Create <code>src/cross.ts</code>:</p>
 <pre><code class="language-ts">import assert from 'node:assert/strict';
@@ -259,8 +259,8 @@ converted: { displayName: 'Alice', years: 30 }
 </code></pre>
 <h2 id="what-crossed-the-protocol-boundary"><a class="header" href="#what-crossed-the-protocol-boundary">What crossed the protocol boundary</a></h2>
 <p><code>parseSchemaDocument('json-schema', ...)</code> uses the JSON Schema document parser and produces a schema rooted at <code>root</code>. The target is built against the registered <code>openapi</code> protocol. The migration maps vertices and edges across those two schema handles, and <code>liftJson()</code> emits the target field names.</p>
-<p>The existence report checks whether the explicit mapping supplies the target structure. The <code>assert.deepEqual</code> call separately checks the forward result. This tutorial does not claim a cross-protocol round trip: reverse conversion must be exercised with a compatible composed theory and concrete sample data before it can be treated as a lens-law guarantee.</p>
-<p>The target is an OpenAPI schema graph, not a complete emitted OpenAPI document. Document emission, constraint translation, references, variants, and defaults add structure beyond this two-field example. Those are the points at which a composed theory or an explicit lens specification becomes necessary.</p>
+<p>The existence report checks the explicit mapping with the source schema’s registered protocol. The <code>assert.deepEqual</code> call separately checks this forward result. Neither check proves that arbitrary JSON Schema and OpenAPI documents can be translated, and the example does not establish a reverse trip.</p>
+<p>The target is an OpenAPI schema graph, not a complete emitted OpenAPI document. Document emission and constraint translation add structure beyond this two-field example.</p>
 <h2 id="continue-on-the-advanced-path"><a class="header" href="#continue-on-the-advanced-path">Continue on the advanced path</a></h2>
 <p><a href="../how-to/cross-protocol.html">Translate across protocols</a> covers the operational choices for larger pairs, and <a href="../how-to/lens-dsl.html">Write lenses in the lens DSL</a> covers hand-authored bridges. <a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a> explains how shared theories are constructed. For the formal account, continue to <a href="../explanation/semantics/theory-dsl.html">Theory DSL: denotational semantics</a>.</p>
 

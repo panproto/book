@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -199,12 +199,12 @@ b.edge("user", "user:age", "prop", "age")
 schema = b.build()
 </code></pre>
 <p><code>panproto.get_builtin_protocol(name)</code> returns the named protocol; <code>.vertex(id, kind, nsid=None)</code> and <code>.edge(src, tgt, kind, name=None)</code> each mutate the <code>SchemaBuilder</code> in place (returning <code>None</code>), and <code>.build()</code> validates and returns a <code>Schema</code>. The TypeScript SDK exposes the same operations as a chainable surface; the Python binding does not.</p>
-<p>Call <code>panproto.list_builtin_protocols()</code> to see every registered protocol name (atproto, openapi, cddl, geojson, …).</p>
+<p>Call <code>panproto.list_builtin_protocols()</code> to see the registered protocol names. Treat the returned list as the source of truth rather than hard-coding a catalog count.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <pre><code class="language-python">issues = schema.validate(proto)
 assert not issues, issues
 </code></pre>
-<p><code>Schema.validate(protocol)</code> returns a list of validation messages; an empty list means the schema is well-formed.</p>
+<p><code>Schema.validate(protocol)</code> returns protocol-level structural validation messages. An empty list means no vertex-kind, edge-rule, constraint-sort, required-edge, or recursion-reference error was found; it does not run equation checking.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Chaining the builder calls. The Python <code>SchemaBuilder.vertex(...)</code> / <code>edge(...)</code> / <code>constraint(...)</code> methods mutate in place and return <code>None</code>; hold the builder in a variable and mutate it statement-by-statement, then call <code>.build()</code>.</li>

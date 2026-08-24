@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,75 +183,69 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="build-a-migration"><a class="header" href="#build-a-migration">Build a migration</a></h1>
-<p>Derive or write a mapping between two schemas, add any value-level transforms, and check the result before moving data.</p>
+<p>A migration maps vertices and edges in a source schema to a target schema. Build or derive the mapping, check it, then apply it to representative data.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>Two schemas in the same protocol (or compatible protocols). The <code>schema</code> CLI installed, or one of the language SDKs.</p>
-<h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
-<h3 id="derive-the-mapping-from-a-span"><a class="header" href="#derive-the-mapping-from-a-span">Derive the mapping from a span</a></h3>
-<p>Most pairs do not arrive with a mapping file. <code>schema auto-migrate</code> writes one:</p>
-<pre><code class="language-sh">schema auto-migrate schemas/v1.json schemas/v2.json --json &gt; migrations/v1-to-v2.json
+<p>Two schemas using the same registered protocol and the <code>schema</code> CLI. Cross-protocol mappings require a separately constructed shared theory; see <a href="./cross-protocol.html">Translate across protocols</a>.</p>
+<h2 id="derive-a-mapping"><a class="header" href="#derive-a-mapping">Derive a mapping</a></h2>
+<p>Inspect the inferred span first:</p>
+<pre><code class="language-sh">schema auto-migrate schemas/v1.json schemas/v2.json
 </code></pre>
-<p>The file holds the span’s right leg, a migration out of the <em>apex</em> rather than out of <code>v1</code>. That distinction costs nothing here. The left leg is an inclusion, so apex vertex identifiers are source vertex identifiers, the file’s <code>vertex_map</code> keys are <code>v1</code> vertex names, and every <code>v1</code> vertex the search found no home for is simply absent from the map. <code>schema check</code> quantifies over the map’s own entries rather than over the source schema, so it checks a partial mapping instead of rejecting it.</p>
-<p><code>check</code> says nothing about how much of <code>v1</code> that mapping covers. Run <code>auto-migrate</code> once without <code>--json</code>, read the coverage line, and decide whether a partial mapping is the answer you wanted; <a href="./spans.html">Find a span between two schemas</a> covers reading that report, along with the <code>--total</code> and <code>--span</code> ladder, and the <code>--monic</code> flag that sits outside it.</p>
-<p>Then treat the file as a draft. The search returns the optimum of an objective whose component weights have never been calibrated against a labeled corpus of correct alignments, so what comes back encodes a judgment about what a good match looks like rather than a measurement of one. Read the vertex map, fix what is wrong, and add value-level transforms for the correspondences a vertex map cannot state: one source field becoming two target fields has no morphism to be, and <a href="./field-transforms.html">Apply field transforms</a> is where that case goes instead.</p>
-<p>Every SDK carries the same route. In Rust it is <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/fn.find_span.html"><code>find_span</code></a> followed by <code>span.right</code>, which is already a <a href="https://docs.rs/panproto-mig/latest/panproto_mig/migration/struct.Migration.html"><code>Migration</code></a> and needs no conversion; in Python <code>panproto.find_span(src, tgt, protocol).right</code>; in TypeScript <code>p.span(from, to)</code>; in Haskell <code>findSpan</code>; in Swift <code>findSpan(to:in:options:constraints:)</code>. Beside them sit <code>find_morphisms</code> and <code>find_best_morphism</code>, the total-morphism entry points. Both return the morphisms attaining the optimum rather than the whole hom-set ranked, under an engine cap of 1024 that applies to every request. Every element carries the same quality, so <code>results[0]</code> is the best answer there is and walking the list turns up only its ties.</p>
-<h3 id="from-the-cli"><a class="header" href="#from-the-cli">From the CLI</a></h3>
-<p>Given <code>schemas/v1.json</code> and <code>schemas/v2.json</code>, plus a mapping file <code>migrations/v1-to-v2.json</code>:</p>
-<pre><code class="language-sh">schema check --src schemas/v1.json --tgt schemas/v2.json --mapping migrations/v1-to-v2.json
+<p>Review its coverage and vertex map. Then save the right leg as a migration:</p>
+<pre><code class="language-sh">schema auto-migrate schemas/v1.json schemas/v2.json --monic --json \
+  &gt; migrations/v1-to-v2.json
 </code></pre>
-<p><code>check</code> runs the existence check: which fields in <code>v2</code> require which fields in <code>v1</code>, and is every required input present. Exits zero if the migration is well-defined.</p>
-<p>To also type-check at the GAT level (equivalent to a separate <code>schema typecheck</code>):</p>
-<pre><code class="language-sh">schema check --src schemas/v1.json --tgt schemas/v2.json --mapping migrations/v1-to-v2.json --typecheck
+<p><code>--monic</code> prevents two apex vertices from mapping to the same target vertex. Omit it only when the contraction is intentional and a separate value-level rule will combine the values.</p>
+<p>The generated file maps the matched apex into <code>v2</code>, not necessarily all of <code>v1</code>. Use <code>--total</code> if partial coverage is unacceptable:</p>
+<pre><code class="language-sh">schema auto-migrate schemas/v1.json schemas/v2.json --total --json \
+  &gt; migrations/v1-to-v2.json
 </code></pre>
-<p>For schema-level diff classification, run <code>schema compat</code>:</p>
-<pre><code class="language-sh">schema compat schemas/v1.json schemas/v2.json --protocol atproto
+<h2 id="check-the-mapping"><a class="header" href="#check-the-mapping">Check the mapping</a></h2>
+<pre><code class="language-sh">schema check \
+  --src schemas/v1.json \
+  --tgt schemas/v2.json \
+  --mapping migrations/v1-to-v2.json \
+  --typecheck
 </code></pre>
-<p>It prints the changes grouped by tier and exits 0 when the change is non-breaking, 1 when it is breaking. To inspect the generated lens chain as well, pair <code>schema lens generate</code> with <code>schema diff --lens</code>:</p>
-<pre><code class="language-sh">schema lens generate --protocol atproto schemas/v1.json schemas/v2.json --save lens.json
-schema diff schemas/v1.json schemas/v2.json --lens --save lens.json
+<p>The existence check validates the migration against the source, target, and protocol theories. <code>--typecheck</code> also validates the induced GAT morphism. The command exits non-zero when either enabled check reports an error.</p>
+<p>A passing check does not establish source-wide coverage. The mapping may omit unmatched source vertices, so retain the <code>auto-migrate</code> report or require <code>--total</code> when all source data must move.</p>
+<h2 id="apply-the-migration"><a class="header" href="#apply-the-migration">Apply the migration</a></h2>
+<pre><code class="language-sh">schema lift \
+  --migration migrations/v1-to-v2.json \
+  --src-schema schemas/v1.json \
+  --tgt-schema schemas/v2.json \
+  data/user.json &gt; data/user-v2.json
 </code></pre>
-<p>To migrate data, use the VCS-driven path: commit <code>v1</code> and <code>v2</code> to a panproto repository, then run <code>schema data migrate &lt;data-dir&gt;</code> against the working tree (see <a href="./schema-vcs/data-versioning.html">Schema VCS data versioning</a>).</p>
-<h3 id="from-the-sdks"><a class="header" href="#from-the-sdks">From the SDKs</a></h3>
-<pre><code class="language-ts">const mig = p
+<p>The default direction is <code>restrict</code> and the default instance type is <code>wtype</code>. The command infers the record root from the migration’s mapped vertices. A mapping with no vertex entries cannot be lifted.</p>
+<h2 id="build-a-mapping-in-typescript"><a class="header" href="#build-a-mapping-in-typescript">Build a mapping in TypeScript</a></h2>
+<pre><code class="language-ts">const builder = p
   .migration(srcSchema, tgtSchema)
   .map('user', 'user')
-  .compile();
+  .map('user:name', 'user:display_name');
 
-const { data: forward } = mig.lift(oldRecord);   // forward
-const { view, complement } = mig.get(oldRecord); // forward, retaining complement
-mig.put(view, complement);                       // backward
+const report = p.checkExistence(srcSchema, tgtSchema, builder);
+if (!report.valid) throw new Error(JSON.stringify(report.errors));
+
+using migration = builder.compile();
+const migrated = migration.liftJson(oldRecord, 'user');
 </code></pre>
-<p><code>p.checkExistence(src, tgt, builder)</code> runs the same existence check as the CLI. Python and Rust SDKs use the same shape with language-idiomatic naming.</p>
-<h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<p><code>schema check</code> exits zero if the migration is well-defined (existence conditions hold). For diff classification, use <code>panproto.diff_and_classify(old, new, protocol)</code> in Python, or <code>panproto_check::diff(old, new)</code> followed by <code>panproto_check::classify(&amp;diff, &amp;protocol)</code> in Rust. In TypeScript the equivalent is <code>Panproto.diffFull(old, new).classify(protocol)</code>. Each returns a <code>CompatReport</code> whose <code>classification</code> field records one of three tiers, alongside a list of breaking changes, a list of non-breaking changes, and a <code>compatible</code> boolean:</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th><code>classification</code></th><th>Meaning</th></tr>
-</thead>
-<tbody>
-<tr><td><code>fully-compatible</code></td><td>No breaking and no non-breaking changes; the two schemas agree in shape. Old data lifts unchanged.</td></tr>
-<tr><td><code>backward-compatible</code></td><td>Non-breaking changes only; old data lifts, either unchanged or via a value-level transform.</td></tr>
-<tr><td><code>breaking</code></td><td>At least one change cannot be lifted safely; CI should reject.</td></tr>
-</tbody>
-</table>
-</div>
-<p>For wiring this into CI, see <a href="./ci/breaking-change-gate.html">Breaking-change gate</a>.</p>
-<h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
+<p><code>MigrationBuilder</code> supports vertex maps, edge maps, and contraction resolvers. Per-field expressions are not part of this builder; use the <a href="./field-transforms.html">field-transform guide</a> for the supported TypeScript lens-document route.</p>
+<h2 id="classify-compatibility-separately"><a class="header" href="#classify-compatibility-separately">Classify compatibility separately</a></h2>
+<p>Migration validity and compatibility answer different questions. To classify the schema change for CI, run:</p>
+<pre><code class="language-sh">schema compat schemas/v1.json schemas/v2.json --protocol atproto
+</code></pre>
+<p>The command exits <code>0</code> when it finds no breaking change, <code>1</code> for a breaking change, and <code>2</code> for a usage or load error. Add <code>--format json</code> for machine-readable output.</p>
+<h2 id="limitations"><a class="header" href="#limitations">Limitations</a></h2>
 <ul>
-<li>Skipping <code>--typecheck</code> for non-trivial migrations. Existence checking does not catch GAT-level type errors; the <code>--typecheck</code> flag does.</li>
-<li>Treating a <code>breaking</code> classification as a warning. CI should reject by default; merging a breaking migration without an explicit acknowledgment is the most common cause of data corruption in production.</li>
-<li>Lifting data before the check passes. Lift can produce invalid output if the migration is not well-defined.</li>
-<li>Shipping an auto-derived mapping unreviewed. <code>proven_optimal</code> on the span says the search ruled out a better answer under the shipped weights. It says nothing about whether those weights rank alignments the way you would.</li>
-<li>Reading a passing <code>schema check</code> as a claim about coverage. The existence check quantifies over the entries the mapping holds, so a mapping covering one vertex out of twenty passes exactly as cleanly as a total one. Coverage comes from the span report.</li>
-<li>Ignoring the contracting-right-leg warning and lifting anyway. Two source vertices mapped to one target vertex give lift no rule for combining them; <code>schema auto-migrate</code> says so on stderr, and <a href="./spans.html">Find a span between two schemas</a> covers what to do about it.</li>
+<li><code>schema check</code> does not measure how much of the source schema is mapped.</li>
+<li>Automatic alignment ranks candidates; it does not certify that the selected correspondence matches domain intent. Review every generated map.</li>
+<li>A vertex map cannot split one value across several targets or compute a new value. Those operations require field transforms.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../reference/cli.html">Reference: CLI</a> for the full subcommand list.</li>
-<li><a href="./spans.html">Find a span between two schemas</a> for deriving the mapping and reading its certificate.</li>
-<li><a href="./field-transforms.html">Apply field transforms</a> for value-level transforms.</li>
+<li><a href="./spans.html">Find a span between two schemas</a> for coverage and search constraints.</li>
+<li><a href="./field-transforms.html">Apply field transforms</a> for value-level rewrites.</li>
 <li><a href="../explanation/migrations-as-morphisms.html">Migrations as morphisms</a> for the model.</li>
+<li><a href="../reference/cli.html">CLI reference</a> for all migration commands.</li>
 </ul>
 
                     </main>

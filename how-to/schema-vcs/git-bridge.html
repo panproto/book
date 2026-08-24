@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -192,25 +192,24 @@
 <pre><code class="language-sh">git add .panproto/
 git commit -m "snapshot panproto state"
 </code></pre>
-<p>panproto-vcs’s content-addressed objects are deterministic, so storing them in git works (no merge conflicts inside <code>.panproto/objects/</code>).</p>
+<p>The object names are content hashes, so unchanged objects deduplicate. Git can still report conflicts in refs or other mutable files under <code>.panproto/</code>; do not edit stored object contents by hand.</p>
 <h3 id="bidirectional-translation"><a class="header" href="#bidirectional-translation">Bidirectional translation</a></h3>
-<p><code>schema git import</code> reads a git repository’s history and produces a corresponding panproto-vcs DAG; <code>schema git export</code> does the reverse:</p>
-<pre><code class="language-sh">schema git import path/to/git-repo HEAD
-schema git export path/to/output-git-repo --repo .
+<p><code>schema git export</code> writes the current panproto history into a destination git repository:</p>
+<pre><code class="language-sh">schema git export path/to/output-git-repo --repo .
 </code></pre>
-<p>The import range can be any git revspec (<code>HEAD</code>, <code>main</code>, <code>HEAD~10..HEAD</code>). The export takes the current panproto repository and writes a git mirror.</p>
+<p><code>schema git import path/to/git-repo HEAD</code> currently imports into an in-memory store, prints the imported count and temporary panproto ID, then exits without updating <code>.panproto/</code>. Use it only as a diagnostic until the command accepts a persistent destination. Export opens <code>--repo</code>, creates or opens the destination, and writes the current <code>HEAD</code>.</p>
 <h3 id="git-remote-helper"><a class="header" href="#git-remote-helper">git-remote helper</a></h3>
-<p>The <code>panproto-git-remote</code> crate registers a custom git remote helper that exposes a panproto-vcs repository to git clients (so <code>git clone panproto://path/to/repo</code> works). The helper is separate from <code>schema git</code>; install the binary and configure git accordingly. See <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-git-remote"><code>crates/panproto-git-remote</code></a>.</p>
+<p>The <code>panproto-git-remote</code> crate ships <code>git-remote-panproto</code>, a remote helper for a panproto node reached over XRPC. After installing that binary, a node URL has the form <code>panproto://did:plc:abc123/repository-name</code>; a local filesystem path is not a valid substitute. See <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-git-remote"><code>crates/panproto-git-remote</code></a>.</p>
 <h3 id="merge-bridging"><a class="header" href="#merge-bridging">Merge bridging</a></h3>
-<p>A git merge that touches <code>.panproto/objects/</code> will not preserve panproto’s structural merge guarantees, since git merges the bytes. The supported pattern is to do schema-level work in panproto and then <code>schema git export</code> the result. There is no automatic git-merge-to-pushout translation in the CLI; the merge must originate in <code>schema merge</code> to get the universal-property-checked pushout.</p>
+<p>A git merge that touches <code>.panproto/</code> merges files, not schemas. Perform schema-level work with <code>schema merge</code>, then export the resulting history. The CLI has no automatic translation from a git merge to a structural schema merge.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <pre><code class="language-sh">schema status
 git status
 </code></pre>
-<p>Both should be clean. A clean panproto status with a dirty git status is normal (you may have untracked files git knows about that panproto does not). The reverse is not.</p>
+<p>Inspect both outputs independently. Panproto status concerns its current branch and staged schema; git status concerns files in the host repository. Either side can be dirty while the other is clean.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
-<li>Three-way text-merging <code>.panproto/objects/</code> files. The store is content-addressed; the bytes are correct or wrong, never partially. Resolve via <code>schema rebase</code> or by re-running the merge inside panproto with <code>schema merge</code>, then re-export to git with <code>schema git export</code>.</li>
+<li>Three-way text-merging <code>.panproto/objects/</code> files. Re-run the schema operation in panproto, then export the result.</li>
 <li>Mixing the two modes. Choose sidecar or remote-bridge per project; mixing creates ambiguity about which DAG is the source of truth.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>

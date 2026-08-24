@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -212,7 +212,7 @@ const recent = executeQuery(
 </code></pre>
 <p>To filter on edge presence, build a predicate with the instance-aware builtins (<code>Edge</code>, <code>Children</code>, <code>HasEdge</code>, <code>EdgeCount</code>) using <code>ExprBuilder</code> or <code>parseExpr</code>.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<p>Predicates are type-checked against the schema before evaluation; an ill-typed predicate raises before any data is touched.</p>
+<p><code>executeQuery</code> serializes the query and encoded instance directly to the WASM query engine. It does not accept a schema argument and does not perform a separate schema-level predicate type-check. Exercise each predicate against representative instances and treat a thrown <code>WasmError</code> as a failed query.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Using <code>Edge</code>, <code>Children</code>, etc. in the standard evaluator. They return <code>Null</code> outside an instance environment. The query API sets the environment correctly; reaching for the bare evaluator does not.</li>

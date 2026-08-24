@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,36 +183,25 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="schemas-as-theories"><a class="header" href="#schemas-as-theories">Schemas as theories</a></h1>
-<h2 id="in-plain-terms"><a class="header" href="#in-plain-terms">In plain terms</a></h2>
-<p>Suppose one user record appears as a JSON Schema object, a Protobuf message, and an ATProto Lexicon record. Their field declarations look different, but each document states which fields exist, which types they hold, and which combinations are allowed. To compare them, panproto needs a common account of those commitments. That account is the schema.</p>
-<p>panproto separates a protocol’s rulebook from a schema written under that rulebook. The rulebook is a <em>generalized algebraic theory</em> (GAT): it names sorts such as vertices and edges, operations such as source and target, and equations those operations must satisfy. A parsed JSON Schema or <code>.proto</code> document is then a model governed by the corresponding protocol theory.</p>
-<p>This separation gives schema translations a fixed structure. A schema morphism maps vertices and edges while respecting their endpoints and kinds; a theory morphism maps the sorts and operations that define a protocol. Migrations, cross-protocol translations, and merge use these related maps at different levels, which is why the distinction between theory and model must remain visible.</p>
-<p><a href="./decoder-ring.html">The vocabulary in plain terms</a> names the graph objects used below. The formal path also requires the distinction between a signature and one of its models.</p>
-<h2 id="the-model"><a class="header" href="#the-model">The model</a></h2>
-<p>A protocol theory is represented as a GAT presentation. Its implementation-level ingredients are:</p>
-<ul>
-<li><strong>Sorts.</strong> The basic kinds of thing the theory talks about: vertices, edges, types, constraints.</li>
-<li><strong>Operations.</strong> Structure maps such as <code>src : Edge -&gt; Vertex</code>, <code>tgt : Edge -&gt; Vertex</code>, and <code>target : Constraint -&gt; Vertex</code>.</li>
-<li><strong>Equations and directed equations.</strong> Equalities and executable rewrites declared by theories that need them. The five basic theories in <code>panproto-protocols</code> currently contain no equations of their own; protocol-specific theories may add them.</li>
-</ul>
-<p>Each registered protocol carries a schema theory and an instance theory together with its edge interpretation; parsers and emitters live in the I/O layers. Shared building blocks such as <code>ThGraph</code>, <code>ThConstraint</code>, <code>ThMulti</code>, and <code>ThWType</code> are composed into the theory groups used by protocol registrations. <a href="./protocol-colimits.html">Composing protocols by colimit</a> develops that construction.</p>
-<p>A <em>schema</em> supplies concrete vertices, edges, and constraint values under a protocol’s schema theory. An <em>instance</em> supplies nodes, arcs, and values anchored to that schema under the protocol’s instance theory.</p>
-<p>This schema-theory/instance-theory split runs through the system. Migrations carry schema-level maps and compile into operations over instances; lift takes source instances to target instances along the compiled migration.</p>
-<h2 id="what-is-not-modeled"><a class="header" href="#what-is-not-modeled">What is not modeled</a></h2>
-<ul>
-<li>Performance characteristics (a schema with 10,000 vertices is a valid model just like one with 5).</li>
-<li>Wire-format details beyond what the schema theory describes, such as whitespace and comments.</li>
-<li>Application-level semantic constraints not expressible in the protocol’s theory.</li>
-</ul>
-<p>Performance is an engineering property outside the model. Source layout can be retained by the format-preserving and layout-enrichment layers. Application constraints remain outside panproto unless a protocol theory or schema constraint expresses them.</p>
+<p>A JSON Schema object, a Protobuf message, and an ATProto Lexicon record use different surface syntax. Once parsed, however, each identifies types, directed fields between types, and constraints on those elements. panproto stores this information in a common <code>Schema</code> representation. Its principal tables record vertices, edges, hyperedges, constraints, required edges, variants, ordering and recursion information, source spans, and protocol-specific metadata. Derived adjacency indices support traversal, and validation rejects references to absent schema elements.</p>
+<p>This concrete representation permits a structural comparison between documents from different schema languages. It does not erase their differences. Each schema retains its protocol identifier, and the protocol determines which structures are meaningful and which validation rules apply.</p>
+<p><a href="./decoder-ring.html">The vocabulary in plain terms</a> introduces the graph terminology used below. The formal account distinguishes a specification from a structure that satisfies it.</p>
+<h2 id="protocol-theories-and-schema-models"><a class="header" href="#protocol-theories-and-schema-models">Protocol theories and schema models</a></h2>
+<p>A registered <code>Protocol</code> names a <strong>schema theory</strong> and an <strong>instance theory</strong>. The registry associates those names with generalized algebraic theory (GAT) presentations (<a href="../bibliography.html#cartmell1986generalised">Cartmell 1986</a>). A presentation may declare sorts, operations over those sorts, and equations or directed equations. The graph theory <code>ThGraph</code>, for instance, declares the sorts <code>Vertex</code> and <code>Edge</code> and the operations <code>src</code> and <code>tgt</code> from edges to vertices.</p>
+<p>The protocols crate defines five foundational theories without equations of their own. <code>ThGraph</code> describes directed graphs, and <code>ThConstraint</code> attaches constraints to vertices. <code>ThMulti</code> adds edge labels. For tree-shaped instances, <code>ThWType</code> describes nodes, arcs, and values, while <code>ThMeta</code> describes discriminator and extra-field metadata. Higher-level theories compose these foundations for particular groups of protocols. <a href="./protocol-colimits.html">Composing protocols by colimit</a> describes that composition.</p>
+<p>A parsed schema is a <strong>model</strong> of its protocol’s schema theory: its concrete vertices and edges interpret the corresponding sorts, while their endpoints interpret <code>src</code> and <code>tgt</code>. An instance similarly supplies concrete nodes, arcs, and values under the instance theory and a particular schema. This yields the <strong>theory-model distinction</strong>. A theory specifies a family of admissible structures; a model supplies one member of that family.</p>
+<p>The distinction also separates two kinds of map. A schema morphism maps the vertices and edges of one concrete schema to those of another while preserving endpoints and other required structure. A theory morphism maps the sorts and operations used to specify a family of structures. Migrations use the former. Cross-protocol theory composition uses the latter.</p>
+<h2 id="representational-limits"><a class="header" href="#representational-limits">Representational limits</a></h2>
+<p>The theory-model account describes structure that a protocol registration exposes. It does not describe the running time of operations over a large schema or application behavior absent from the schema. Whitespace, comments, and other source-layout details also lie outside the ordinary schema model. The layout-enrichment and format-preserving layers can retain such details when the parser supplies them.</p>
+<p>Validation establishes consistency with the registered structural rules. Application invariants remain unchecked when neither the protocol theory nor the concrete schema represents them.</p>
 <h2 id="related-work"><a class="header" href="#related-work">Related work</a></h2>
-<p>The schemas-as-theories framing belongs to a lineage that runs from Cartmell’s generalized algebraic theories through Spivak’s functorial data model and the algebraic-databases program of Schultz and Wisnesky to Patterson’s ACSets and Lu’s recent multi-model unification. panproto presents each protocol as its own GAT and takes a colimit in the category of GAT presentations; ACSets and the Spivak-Wisnesky tradition fix a single meta-theory and parameterize schemas inside it. See <a href="./related-work.html">Related work</a> for the full discussion.</p>
+<p>The schemas-as-theories account also draws on Spivak’s functorial data model (<a href="../bibliography.html#spivak2012functorial">Spivak 2012</a>), the algebraic-databases program [Schultz &amp; Wisnesky (<a href="../bibliography.html#schultzwisnesky2017algebraic">2017</a>); Schultz et al. (<a href="../bibliography.html#schultzspivakvasilakopoulouwisnesky2017algebraic">2017</a>)], attributed C-sets (<a href="../bibliography.html#pattersonlynchfairbanks2022categorical">Patterson et al. 2022</a>), and Lu’s work on multi-model unification (<a href="../bibliography.html#lu2025categorical">Lu 2025</a>). panproto assigns a GAT presentation to each protocol and can combine presentations by colimit. The attributed C-set and algebraic-database approaches instead fix a meta-theory and parameterize schemas within it. <a href="./related-work.html">Related work</a> develops the comparison.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="./protocol-colimits.html">Composing protocols by colimit</a> for how protocols are built from shared building-block theories.</li>
-<li><a href="./migrations-as-morphisms.html">Migrations as morphisms</a> for what <em>morphism between schemas</em> means concretely.</li>
+<li><a href="./protocol-colimits.html">Composing protocols by colimit</a> for composition of foundational theories.</li>
+<li><a href="./migrations-as-morphisms.html">Migrations as morphisms</a> for maps between concrete schemas.</li>
 <li><a href="./semantics/theory-dsl.html">Theory DSL: denotational semantics</a> for the formal model of a GAT presentation.</li>
-<li>The book’s bibliography references Cartmell (<a href="../bibliography.html#cartmell1986generalised">1986</a>) for the original GAT formulation and Spivak &amp; Wisnesky (<a href="../bibliography.html#spivakwisnesky2015relational">2015</a>) for the functorial-data-migration application.</li>
+<li>The bibliography entries Cartmell (<a href="../bibliography.html#cartmell1986generalised">1986</a>) and Spivak &amp; Wisnesky (<a href="../bibliography.html#spivakwisnesky2015relational">2015</a>) for the GAT and functorial-data-migration backgrounds.</li>
 </ul>
 
                     </main>

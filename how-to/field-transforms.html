@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,178 +183,88 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="apply-field-transforms"><a class="header" href="#apply-field-transforms">Apply field transforms</a></h1>
-<p>A field transform computes a target value that a vertex map alone cannot provide. Each transform is a value-level program in the <a href="../reference/expression-language.html">expression language</a>.</p>
+<p>A field transform computes or rewrites values during a lens operation. Use one when a vertex map cannot express the change, such as deriving a field from a sibling or changing a field’s representation.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>A migration mapping between two schemas. The expression language reference for available builtins.</p>
-<h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
-<h3 id="what-the-mapping-file-can-and-cannot-carry"><a class="header" href="#what-the-mapping-file-can-and-cannot-carry">What the mapping file can and cannot carry</a></h3>
-<p>The mapping JSON consumed by <code>schema check</code> is a serialized <a href="https://docs.rs/panproto-mig/latest/panproto_mig/struct.Migration.html"><code>Migration</code></a>, and what it states is where things go rather than how their values are computed:</p>
-<pre><code class="language-json">{
-  "vertex_map": {
-    "user": "user",
-    "user:first": "user:given_name"
-  },
-  "edge_map": [],
-  "hyper_edge_map": {},
-  "label_map": [],
-  "resolver": [],
-  "hyper_resolver": []
+<p>The TypeScript SDK and a source <code>BuiltSchema</code>. The current TypeScript lens-document path retains value transforms through compilation and instantiation.</p>
+<h2 id="transform-an-existing-field"><a class="header" href="#transform-an-existing-field">Transform an existing field</a></h2>
+<p>This document increments <code>count</code> on <code>get</code> and decrements it on <code>put</code>:</p>
+<pre><code class="language-ts">const document = {
+  id: 'dev.example.increment-count',
+  source: 'v1',
+  target: 'v2',
+  steps: [
+    {
+      apply_expr: {
+        field: 'count',
+        expr: 'add count 1',
+        inverse: 'sub count 1',
+        coercion: 'iso',
+      },
+    },
+  ],
+};
+
+using chain = p.compileLensDocument(document, 'record:body');
+using lens = chain.instantiate(sourceSchema);
+
+const { view, complement } = lens.getJson(
+  { count: 4 },
+  'record:body',
+);
+const restored = lens.putJson(view, complement, 'record:body');
+</code></pre>
+<p><code>apply_expr</code> evaluates its expression with the named field bound in the expression environment. An inverse is required only when edits must propagate backward through the transform. Declare <code>coercion: 'iso'</code> only when the forward and inverse expressions round-trip for every accepted value.</p>
+<h2 id="compute-a-field-from-its-parent-record"><a class="header" href="#compute-a-field-from-its-parent-record">Compute a field from its parent record</a></h2>
+<p><code>compute_field</code> evaluates an expression over the scalar fields in the parent fiber and writes the result under <code>target</code>:</p>
+<pre><code class="language-ts">const document = {
+  id: 'dev.example.double-count',
+  source: 'v1',
+  target: 'v2',
+  steps: [
+    {
+      compute_field: {
+        target: 'double_count',
+        expr: 'mul count 2',
+        coercion: 'projection',
+      },
+    },
+  ],
+};
+
+using chain = p.compileLensDocument(document, 'record:body');
+using lens = chain.instantiate(sourceSchema);
+const { view, complement } = lens.getJson(
+  { count: 4 },
+  'record:body',
+);
+</code></pre>
+<p>The computed field is derived data. With no inverse, <code>putJson</code> uses the complement to restore the original source fields; edits made only to <code>double_count</code> do not determine a new <code>count</code>.</p>
+<h2 id="verify-that-compilation-retained-the-transform"><a class="header" href="#verify-that-compilation-retained-the-transform">Verify that compilation retained the transform</a></h2>
+<pre><code class="language-ts">const transforms = chain.fieldTransforms();
+if ((transforms['record:body'] ?? []).length === 0) {
+  throw new Error('field transform was not compiled');
 }
+
+const laws = lens.checkLaws(instanceBytes);
+if (!laws.holds) throw new Error(laws.violation ?? 'lens law failed');
 </code></pre>
-<p><code>Migration</code> carries an <code>expr_resolvers</code> field keyed by the <code>(src_vertex, tgt_vertex)</code> pair a resolver bridges. Its values are serialized <a href="https://docs.rs/panproto-expr/latest/panproto_expr/enum.Expr.html"><code>Expr</code></a> syntax trees rather than expression source, so a JSON string in that position fails to deserialize and <code>schema check</code> rejects the file before examining the mapping. The field is carried rather than consumed: <a href="https://docs.rs/panproto-mig/latest/panproto_mig/fn.compose.html"><code>compose</code></a> composes two migrations’ resolvers and the version-control layer hashes them, while <code>compile</code> does not copy them onto the <a href="https://docs.rs/panproto-inst/latest/panproto_inst/wtype/struct.CompiledMigration.html"><code>CompiledMigration</code></a> that lift and restrict read. Nothing applies an expression resolver to a record.</p>
-<p>Value-level transforms that do run reach the engine as <a href="https://docs.rs/panproto-inst/latest/panproto_inst/wtype/enum.FieldTransform.html"><code>FieldTransform</code></a> entries on the compiled migration, which is the route the next section takes. Their backward direction comes from the lens and protolens layer rather than from the mapping file: pair an <code>ApplyExpr</code> field transform with its inverse on the corresponding <code>Protolens</code> step, or annotate a coercion on the schema and let the migration compiler emit both directions.</p>
-<h3 id="split-one-field-into-two"><a class="header" href="#split-one-field-into-two">Split one field into two</a></h3>
-<p>A <code>name</code> field that becomes <code>firstName</code> and <code>lastName</code> is the correspondence a vertex map cannot state. A vertex map is a function, so <code>user.name</code> has at most one image, and two target fields need two. panproto’s morphism class is narrower still. It is the length-1 fragment, where an edge goes to an edge and never to a path or a pair, as the chapter on <a href="../explanation/migrations-as-morphisms.html">migrations as morphisms</a> sets out. There is no schema-level object here for the search to find, so the correspondence lives at the value level instead.</p>
-<p>The mechanism is <a href="https://docs.rs/panproto-inst/latest/panproto_inst/wtype/enum.FieldTransform.html"><code>FieldTransform::ComputeField</code></a>, attached to the <em>parent</em> vertex rather than to either field, one entry per target key. Its environment binds the parent’s <code>extra_fields</code> together with the scalar values of the parent’s immediate children, so <code>name</code> resolves as a plain variable even though <code>user.name</code> is a schema-defined child vertex and not an extra field. That environment is built over the <em>source</em> instance, which is why the expression still reads <code>name</code> after <code>user.name</code> has been left out of <code>surviving_verts</code>: the vertex has no home in the target and does not survive, and the transform sees it anyway.</p>
-<pre class="playground"><code class="language-rust">use std::collections::{HashMap, HashSet};
-use std::sync::Arc;
-
-use panproto_core::expr::{BuiltinOp, Expr, Literal};
-use panproto_core::gat::{CoercionClass, Name};
-use panproto_core::inst::{CompiledMigration, FieldTransform, parse_json, to_json, wtype_restrict};
-use panproto_core::schema::{Protocol, SchemaBuilder};
-
-fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
-    let protocol = Protocol {
-        name: "demo".into(),
-        schema_theory: "ThTest".into(),
-        instance_theory: "ThWType".into(),
-        obj_kinds: vec!["object".into(), "string".into()],
-        ..Protocol::default()
-    };
-
-    let old = SchemaBuilder::new(&amp;protocol)
-        .vertex("user", "object", None::&lt;&amp;str&gt;)?
-        .vertex("user.name", "string", None::&lt;&amp;str&gt;)?
-        .edge("user", "user.name", "prop", Some("name"))?
-        .entry("user")
-        .build()?;
-
-    let new = SchemaBuilder::new(&amp;protocol)
-        .vertex("user", "object", None::&lt;&amp;str&gt;)?
-        .vertex("user.firstName", "string", None::&lt;&amp;str&gt;)?
-        .vertex("user.lastName", "string", None::&lt;&amp;str&gt;)?
-        .edge("user", "user.firstName", "prop", Some("firstName"))?
-        .edge("user", "user.lastName", "prop", Some("lastName"))?
-        .entry("user")
-        .build()?;
-
-    // `(split name " ")`, the subexpression both computed fields read.
-    let parts = || {
-        Expr::Builtin(
-            BuiltinOp::Split,
-            vec![
-                Expr::Var(Arc::from("name")),
-                Expr::Lit(Literal::Str(" ".into())),
-            ],
-        )
-    };
-
-    let mut field_transforms = HashMap::new();
-    field_transforms.insert(
-        Name::from("user"),
-        vec![
-            FieldTransform::ComputeField {
-                target_key: "firstName".into(),
-                expr: Expr::Builtin(BuiltinOp::Head, vec![parts()]),
-                inverse: None,
-                coercion_class: CoercionClass::Opaque,
-            },
-            FieldTransform::ComputeField {
-                target_key: "lastName".into(),
-                expr: Expr::Builtin(
-                    BuiltinOp::Join,
-                    vec![
-                        Expr::Builtin(BuiltinOp::Tail, vec![parts()]),
-                        Expr::Lit(Literal::Str(" ".into())),
-                    ],
-                ),
-                inverse: None,
-                coercion_class: CoercionClass::Opaque,
-            },
-        ],
-    );
-
-    // `user.name` is deliberately absent: it has no image in the target.
-    let mut surviving_verts = HashSet::new();
-    surviving_verts.insert(Name::from("user"));
-
-    let migration = CompiledMigration {
-        surviving_verts,
-        field_transforms,
-        ..CompiledMigration::default()
-    };
-
-    let record = serde_json::json!({ "name": "Ada Byron King" });
-    let instance = parse_json(&amp;old, "user", &amp;record)?;
-    let migrated = wtype_restrict(&amp;instance, &amp;old, &amp;new, &amp;migration)?;
-    let json = to_json(&amp;new, &amp;migrated);
-
-    assert_eq!(json["firstName"], "Ada");
-    assert_eq!(json["lastName"], "Byron King");
-
-    // The computed values live on the parent, so the migrated instance is a
-    // single node with no arcs: no child was materialized for either field.
-    assert_eq!(migrated.node_count(), 1);
-    assert!(migrated.arcs.is_empty());
-
-    // One token splits into one part, so `lastName` comes out empty and
-    // `concat(firstName, " ", lastName)` does not read back the input.
-    let single = parse_json(&amp;old, "user", &amp;serde_json::json!({ "name": "Cher" }))?;
-    let migrated = wtype_restrict(&amp;single, &amp;old, &amp;new, &amp;migration)?;
-    let json = to_json(&amp;new, &amp;migrated);
-
-    assert_eq!(json["firstName"], "Cher");
-    assert_eq!(json["lastName"], "");
-
-    Ok(())
-}</code></pre>
-<p><em>Listing 1: One source field becoming two target fields, at the value level.</em></p>
-<p>The listing builds its <code>CompiledMigration</code> by hand, which is not how one usually arrives. The supported route from a <code>Migration</code> to a <code>CompiledMigration</code> is <a href="https://docs.rs/panproto-mig/latest/panproto_mig/fn.compile.html"><code>compile</code></a>, which routes the value-level work it does know about through <code>op_term_assignments</code>, the coercions declared on the schema, and leaves <code>field_transforms</code> empty. So the two halves of this page do not join up: the mapping file cannot state the split, and the listing cannot be reached from the mapping file. Constructing the compiled form directly is what a caller does today to attach a transform, and <code>..CompiledMigration::default()</code> is the spelling to use so that a field added later does not break the call.</p>
-<p>Notice the two assertions on the shape of the result. <code>ComputeField</code> writes into the parent’s <code>extra_fields</code>, and <code>to_json</code> serializes <code>extra_fields</code> after children so that a computed key shadows any child of the same name. The target schema declares <code>user.firstName</code> and <code>user.lastName</code> as vertices; the migrated instance carries them as keys on the parent object and materializes no child node for either. For a consumer reading JSON, which is the usual case, that is the shape it wanted. For a consumer walking the instance tree looking for a child under the <code>firstName</code> edge, it is not there.</p>
-<h3 id="why-the-class-is-opaque"><a class="header" href="#why-the-class-is-opaque">Why the class is <code>Opaque</code></a></h3>
-<p>The second half of the listing is the reason. “Cher” splits into a single part, <code>lastName</code> comes out empty, and <code>concat(firstName, " ", lastName)</code> reads back <code>"Cher "</code> rather than <code>"Cher"</code>. Splitting on whitespace and joining back is not the identity on strings. A <a href="https://docs.rs/panproto-gat/latest/panproto_gat/sort/enum.CoercionClass.html"><code>CoercionClass</code></a> is a claim about the round trip and not about the forward direction, so a computation that runs perfectly well forward is still <code>Opaque</code> when nothing recovers the input from the output. Where an inverse does exist, supply it in <code>inverse</code> and classify <code>Iso</code>. Where the value is deterministically re-derivable from data that survives, <code>Projection</code> is the class, and the AT-URI decomposition (<code>repo</code> into its DID, collection and record key) is the case that fits it: the source field is still there, so the computed parts are derived rather than lost.</p>
-<h3 id="write-expressions-that-cannot-fail"><a class="header" href="#write-expressions-that-cannot-fail">Write expressions that cannot fail</a></h3>
-<p>“Take the second token” is the reading most people write first, and it aborts the migration rather than yielding an empty field:</p>
-<pre><code class="language-text">index(split(name, " "), 1)
-   -&gt;  field transform on `lastName` failed to evaluate:
-       index out of bounds: 1 for list of length 1
-</code></pre>
-<p>An expression that can fail on one record takes down the whole restrict for that record rather than just the one field, and <code>RestrictError::FieldTransformFailed</code> names the target key that raised. The listing uses <code>head</code> and <code>tail</code> for that reason. <code>split</code> in the expression language is Rust’s <code>str::split</code>, which yields at least one part for any string whatsoever, so <code>head</code> and <code>tail</code> cannot hit the empty-list case they would otherwise error on.</p>
-<p>Where a guard is genuinely needed, <code>length</code> reports how many parts a list has and an <code>if</code> on it keeps the index in range. <code>default</code> will not serve: it substitutes for a null, and an index past the end raises rather than evaluating to one. Note also that <code>len</code> is the <em>string</em> builtin and <code>length</code> the list one, which is the pairing to check first when an expression type-errors on a <code>split</code>.</p>
-<h3 id="from-the-sdks"><a class="header" href="#from-the-sdks">From the SDKs</a></h3>
-<p>The TypeScript and Python SDKs do not yet expose per-field transforms on the <code>MigrationBuilder</code>. To compose a migration with a value-level rewrite, build a <code>ProtolensChain</code> directly (<code>combinators::rename_field</code>, <code>elementary::apply_expr</code>, …) and call <code>compile_migration</code> on it:</p>
-<pre><code class="language-python">import panproto
-
-# `panproto.rename_field`, `add_field`, `remove_field`, `hoist_field`,
-# and `pipeline` each return a `ProtolensChain`. Serialize and apply via
-# `chain.to_json()` and the lens APIs.
-chain = panproto.rename_field("user", "full_name", "full_name", "name")
-print(chain.to_json())
-</code></pre>
-<p>Neither SDK reaches the <code>field_transforms</code> route either. <code>panproto.compile_migration(migration, src_schema, tgt_schema)</code> compiles a mapping into the form lift consumes, and what it can carry at the value level is what <code>compile</code> can carry: coercions declared on the schema, not per-field expressions supplied in the mapping.</p>
-<h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<pre><code class="language-sh">schema check --src schemas/v1.json --tgt schemas/v2.json --mapping migration.json --typecheck
-</code></pre>
-<p><code>check --typecheck</code> ensures the transforms type-check against the source and target schemas. Property tests in CI then verify the lens laws on sampled data.</p>
-<p>Type checking says nothing about what a computed field costs in the backward direction. The <a href="https://docs.rs/panproto-inst/latest/panproto_inst/complement/struct.Complement.html"><code>Complement</code></a> a <code>get</code> produces records <code>original_extra_fields</code>, the node’s fields as they stood <em>before</em> the transforms ran, so it never contains the computed key. <code>put</code> restores from that snapshot, and that is what makes <code>GetPut</code> hold: the computed field is discarded rather than inverted, and the source comes back as it was.</p>
-<p>The same mechanism explains why an edit to a computed field in the view does not survive the round trip. Backward propagation reads the view’s value at the forward target key and writes an inverted value only when the transform carries a usable <code>inverse</code>; with none, there is nothing to write and the snapshot stands. A lens is an isomorphism only when every transform in it classifies <code>Iso</code>, so a lens carrying this split reports <code>is_isomorphism() == false</code>, and <code>obstruction_to_isomorphism</code> names the reason.</p>
-<p>Read <code>firstName</code> and <code>lastName</code> as a view of <code>name</code> rather than as fields in their own right. Edit <code>name</code> and the split follows. Edit the split and the edit is dropped.</p>
-<h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
+<p><code>fieldTransforms()</code> reports transforms by parent vertex. <code>checkLaws</code> accepts an encoded instance, while <code>getJson</code> and <code>putJson</code> provide the record-oriented path shown above.</p>
+<h2 id="current-serialization-limitation"><a class="header" href="#current-serialization-limitation">Current serialization limitation</a></h2>
+<p>Value transforms are stored beside the structural <code>ProtolensChain</code>; they are not part of <code>chain.toJson()</code>. Reconstructing a handle with <code>ProtolensChainHandle.fromJson(chain.toJson(), wasm)</code> thus loses them.</p>
+<p>The same distinction affects other surfaces. <code>schema lens compile</code> reports only the number of field-transform vertices and writes the structural chain, and Python’s <code>ProtolensChain.from_dsl_*</code> constructors currently return only that structural chain. Use the TypeScript <code>compileLensDocument</code> handle or Rust’s <code>panproto_lens_dsl::CompiledLens</code>, whose <code>field_transforms</code> field retains the value-level programs.</p>
+<p>Migration mapping JSON has a separate <code>expr_resolvers</code> field, but <code>panproto_mig::compile</code> does not install those expressions as <code>FieldTransform</code> values. Do not place expression source in a migration mapping and expect <code>schema lift</code> to execute it.</p>
+<h2 id="common-failures"><a class="header" href="#common-failures">Common failures</a></h2>
 <ul>
-<li>Expecting <code>expr_resolvers</code> in a mapping file to move data. It deserializes only as an <code>Expr</code> syntax tree, and nothing on the lift path reads it whatever it holds. Attach a <code>FieldTransform</code> to the compiled migration, or declare a coercion on the schema and let <code>compile</code> emit both directions.</li>
-<li>Attaching a <code>ComputeField</code> to the field’s own vertex. The expression environment is the fiber over a node, so a transform that reads sibling fields belongs on the parent. A transform on <code>user.name</code> sees <code>user.name</code>’s own children, which for a string vertex is nothing.</li>
-<li>Classifying a lossy computation <code>Iso</code> because the forward direction is correct. The class is a claim about the round trip. An <code>Iso</code> that does not round-trip turns a lens-law failure into a silent data change.</li>
-<li>Indexing into a split without checking its length. The failure is per-record, and it takes the whole record’s migration down with it.</li>
-<li>Using IO or random functions in the expression. The language is bounded-pure; non-deterministic builtins are not exposed.</li>
-<li>Letting the budget exceed. Long string operations on large records can hit the step budget. Expressions that hit the budget raise <code>ExprError::StepLimitExceeded</code> at runtime.</li>
+<li>Attach a transform to the parent vertex whose fields it reads. A transform anchored at a scalar child cannot see its siblings.</li>
+<li>Keep expressions within the evaluator’s step, depth, and list-length budgets. Evaluation errors fail the transform for that record.</li>
+<li>Classify lossy computations as <code>projection</code> or <code>opaque</code>, not <code>iso</code>.</li>
+<li>Test boundary values for partial operations such as division, parsing, <code>head</code>, and indexing.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../reference/expression-language.html">Reference: expression language</a> for builtins and types.</li>
-<li><a href="./build-migration.html">Build a migration</a> for the surrounding workflow.</li>
-<li><a href="./spans.html">Find a span between two schemas</a> for what the search can and cannot state at the schema level.</li>
-<li><a href="../explanation/lenses-roundtrip.html">Lenses and round-trip laws</a> for why <code>backward</code> matters.</li>
+<li><a href="../reference/expression-language.html">Expression-language reference</a> for syntax, builtins, and evaluator limits.</li>
+<li><a href="./lens-dsl.html">Write lenses in the lens DSL</a> for the document structure.</li>
+<li><a href="./use-lenses.html">Use lenses</a> for <code>get</code>, <code>put</code>, and law checking.</li>
 </ul>
 
                     </main>

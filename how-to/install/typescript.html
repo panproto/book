@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -202,8 +202,8 @@ console.log(p.listProtocols());
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Forgetting to <code>await Panproto.init()</code>. The WASM load is asynchronous; using the handle before <code>init</code> resolves throws.</li>
-<li>Bundler that does not understand <code>.wasm</code> imports. Vite handles these imports directly; older webpack configurations may need a loader.</li>
-<li>Running under Node 18 or earlier. WebAssembly bigint coercion under those versions is incomplete; some integer operations will throw.</li>
+<li>Using a bundler without WebAssembly asset support. Configure the bundler to copy and load the package’s <code>.wasm</code> asset.</li>
+<li>Running under Node earlier than 20. The package metadata requires Node 20 or later.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

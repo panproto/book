@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="architecture"><a class="header" href="#architecture">Architecture</a></h1>
-<p>panproto is a Rust workspace with an acyclic Cargo dependency graph. We place the expression crate below the GAT engine because conflict policies and directed equations can contain expressions. Schema and instance code depends on both; most user-facing surfaces reach the higher operations through <code>panproto-core</code>.</p>
+<p>panproto is a Rust workspace with an acyclic Cargo dependency graph. <code>panproto-expr</code> sits below the GAT layer because directed equations and several policy types may contain expressions. The schema and instance crates depend on these foundations, while <code>panproto-core</code> provides a facade over the operations used by most language bindings and the CLI.</p>
 <p>Read this chapter after <a href="./schemas-as-theories.html">Schemas as theories</a> and <a href="./migrations-as-morphisms.html">Migrations as morphisms</a>. Use the graph as a boundary map and the <a href="../reference/crate-map.html">crate map</a> for the crate-by-crate inventory.</p>
 <h2 id="layering"><a class="header" href="#layering">Layering</a></h2>
 <pre class="mermaid">graph TD
@@ -257,12 +257,11 @@
     GITREMOTE --&gt; XRPC
     PROJ --&gt; SCHEMA
     CHECK --&gt; MIG
-    MIG --&gt; LENS
+    LENS --&gt; MIG
     MIG --&gt; SCHEMA
     LENS --&gt; SCHEMA
     LENSDSL --&gt; LENS
     IO --&gt; INST
-    PARSE --&gt; INST
     PARSE --&gt; LENS
     PARSE --&gt; GRAMMARS
 
@@ -288,19 +287,19 @@
 </pre>
 
 <p>An arrow points from a crate to one of its dependencies. The diagram omits many direct edges and feature-gated dependencies; each crate’s <code>Cargo.toml</code> is authoritative. The ten <code>panproto-grammars-*</code> pack crates are grouped together: each re-exports a subset of tree-sitter grammars under feature flags.</p>
-<p>One arrow worth pointing out: <code>panproto-parse</code> depends on <code>panproto-lens</code>, not the other way around. The two crates meet through the <code>enrichment_registry</code> module in <code>panproto-lens</code>, a thin trait-and-registry pair the lens crate exposes for downstream crates to populate. <code>panproto-parse</code> installs an adapter for every parser it accepts so that protolens machinery in <code>panproto-lens</code> can dispatch grammar-driven enrichment synthesis without depending on tree-sitter. The mechanism is documented in <a href="./layout-enrichment.html">Layout enrichment</a>; the registry pattern keeps the lens crate grammar-agnostic and the dependency direction acyclic.</p>
+<p><code>panproto-parse</code> depends on <code>panproto-lens</code>; the lens crate does not depend on the parser crate. They meet through the <code>enrichment_registry</code> module in <code>panproto-lens</code>, which defines traits and a registry that downstream parser implementations populate. <code>panproto-parse</code> installs adapters so that protolens interpretation can request grammar-driven enrichment without introducing a tree-sitter dependency into <code>panproto-lens</code>. <a href="./layout-enrichment.html">Layout enrichment</a> describes this boundary.</p>
 <h2 id="the-boundaries"><a class="header" href="#the-boundaries">The boundaries</a></h2>
-<p>Three places in the system are <em>boundary layers</em> in the sense that they convert between panproto’s internal representation and an external one. They are deliberately thin and concentrated in single crates so they can be audited independently.</p>
+<p>The language bindings translate between panproto’s Rust representation and external runtimes. Each boundary uses a different ownership and serialization strategy.</p>
 <h3 id="wasm-boundary"><a class="header" href="#wasm-boundary">WASM boundary</a></h3>
-<p>JavaScript reaches <code>panproto-core</code> through the <code>wasm-bindgen</code> boundary in <code>panproto-wasm</code>. Structured data crosses that boundary as MessagePack, while a slab of opaque integer handles keeps Rust resources alive. The TypeScript SDK (<a href="https://www.npmjs.com/package/@panproto/core"><code>@panproto/core</code></a>) adds initialization, handle management, types, and higher-level operations.</p>
+<p>JavaScript reaches <code>panproto-core</code> through <code>wasm-bindgen</code> in <code>panproto-wasm</code>. Structured data crosses the boundary as MessagePack, while a slab of opaque integer handles retains Rust-owned resources. The TypeScript SDK (<a href="https://www.npmjs.com/package/@panproto/core"><code>@panproto/core</code></a>) manages initialization and handles and provides typed wrappers.</p>
 <h3 id="python-boundary"><a class="header" href="#python-boundary">Python boundary</a></h3>
-<p>Python uses the native PyO3 bindings in <code>panproto-py</code> rather than WASM. Its default Rust feature is <code>group-core</code>, and the published wheel is built with default features, so it ships the eleven core tree-sitter grammars; the other 250 of the 261 the feature manifest declares live in the companion <code>panproto-grammars-*</code> packs.</p>
+<p>Python uses native PyO3 bindings in <code>panproto-py</code>. Its default Rust feature is <code>group-core</code>, and the wheel workflow builds with that default, which includes eleven core tree-sitter grammars. Companion <code>panproto-grammars-*</code> packs expose category-specific selections and a <code>group-all</code> selection containing all 261 declared grammars.</p>
 <h3 id="c-boundary"><a class="header" href="#c-boundary">C boundary</a></h3>
-<p><code>panproto-c</code> is the only crate that knows about C ABI. It exposes a stable C interface used by the Haskell and Swift bindings (and any other non-Rust language). CBOR is the over-the-boundary format here.</p>
+<p><code>panproto-c</code> defines the C ABI with <code>safer-ffi</code> and serializes structured payloads with CBOR. The Haskell and Swift bindings call this interface.</p>
 <h2 id="the-generated-cli-reference"><a class="header" href="#the-generated-cli-reference">The generated CLI reference</a></h2>
-<p>The <code>schema</code> binary’s <code>--help</code> text is the source of truth for the CLI surface. The <a href="../reference/cli.html">reference/cli</a> page is regenerated by an <code>xtask</code> (see <a href="https://github.com/panproto/panproto/blob/main/xtask/src/bin/gen-cli-docs.rs"><code>xtask/src/bin/gen-cli-docs.rs</code></a>) and CI fails if the page is out of date. This is the only generated file in the docs site.</p>
+<p>The CLI reference is generated from <code>schema --help</code> by <a href="https://github.com/panproto/panproto/blob/main/xtask/src/bin/gen-cli-docs.rs"><code>xtask/src/bin/gen-cli-docs.rs</code></a>. Publication regenerates the page and fails when the committed file differs.</p>
 <h2 id="versioning"><a class="header" href="#versioning">Versioning</a></h2>
-<p>All workspace crates read their version from <code>workspace.package.version</code> and are released in lockstep. The language SDKs follow the workspace release version. See the <a href="https://github.com/panproto/panproto/blob/main/CHANGELOG.md">changelog</a> for release history.</p>
+<p>The publishable <code>panproto-*</code> crates inherit the workspace package version and are released together. The <code>xtask</code> tooling package is an exception with its own <code>0.0.0</code> version. Release checks keep language-binding metadata aligned with the workspace release. See the <a href="https://github.com/panproto/panproto/blob/main/CHANGELOG.md">changelog</a> for release history.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="../reference/crate-map.html">Crate map</a> for one-line descriptions of every crate.</li>

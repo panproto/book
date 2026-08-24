@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -190,7 +190,7 @@
 [dependencies]
 panproto-core = "0.71"
 </code></pre>
-<p>For specific feature flags (<code>full-parse</code>, <code>project</code>, <code>git</code>, <code>tree-sitter</code>), see <a href="../../reference/sdk-rust.html">Reference: Rust SDK</a>.</p>
+<p>The facade has no default features. Enable <code>full-parse</code>, <code>project</code>, <code>git</code>, or <code>tree-sitter</code> only when the application uses that surface; <code>project</code> also enables <code>full-parse</code>, and <code>git</code> enables both.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <pre class="playground"><code class="language-rust">use panproto_core::protocols::atproto;
 use panproto_core::schema::SchemaBuilder;
@@ -207,7 +207,7 @@ fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
 <p><code>cargo run</code> builds and links against the panproto facade.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
-<li>Pinning a stale toolchain. <code>panproto-core</code> requires edition 2024.</li>
+<li>Pinning a stale toolchain. <code>panproto-core</code> requires Rust 1.85 or later.</li>
 <li>Depending on lower-level crates (<code>panproto-schema</code>, <code>panproto-mig</code>, …) directly without a strong reason. The facade re-exports the canonical surface; reach past it only when you need an internal API.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>

@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -189,11 +189,11 @@
 <h3 id="validate-an-existing-schema"><a class="header" href="#validate-an-existing-schema">Validate an existing schema</a></h3>
 <pre><code class="language-sh">schema validate --protocol atproto path/to/schema.json
 </code></pre>
-<p>Exits zero on success. On failure, prints the failing equation or constraint with the offending vertex and edge.</p>
+<p>The command loads panproto schema JSON, checks vertex kinds, edge rules, constraint sorts, required-edge references, and recursion references, then type-checks the registered protocol theories. It exits nonzero if either pass reports an error. It does not parse an ATProto Lexicon or another external schema document at this entry point.</p>
 <h3 id="scaffold-from-an-existing-schema"><a class="header" href="#scaffold-from-an-existing-schema">Scaffold from an existing schema</a></h3>
 <pre><code class="language-sh">schema scaffold --protocol atproto schemas/post.json
 </code></pre>
-<p><code>scaffold</code> runs free-model construction over the given schema and prints sample term assignments to stdout. Use <code>--json</code> for machine-readable output, <code>--depth</code> and <code>--max-terms</code> to bound the search. (To start from nothing, write a one-vertex schema by hand and scaffold against that.)</p>
+<p><code>scaffold</code> runs bounded free-model construction over panproto schema JSON and prints sample term assignments. Use <code>--json</code> for machine-readable output, and use <code>--depth</code> and <code>--max-terms</code> to set the bounds. A truncated run is a partial enumeration rather than proof that no other terms exist.</p>
 <h3 id="inspect"><a class="header" href="#inspect">Inspect</a></h3>
 <pre><code class="language-sh">schema diff schemas/post-v1.json schemas/post-v2.json
 </code></pre>
@@ -202,10 +202,10 @@
 <p>After validation, run:</p>
 <pre><code class="language-sh">schema verify --protocol atproto path/to/schema.json
 </code></pre>
-<p><code>verify</code> checks that the schema satisfies <em>every</em> equation in the protocol’s theory, not just the constraints you wrote. A pass guarantees the schema is well-formed in the categorical sense.</p>
+<p><code>verify</code> tests assignments for the equations in the registered protocol theories, up to <code>--max-assignments</code> per equation. The current command prints <code>Verification passed</code> even when a theory has type errors or an equation check is incomplete, so use <code>schema validate</code> as the CI gate and inspect the full <code>verify</code> output. A bounded pass is evidence from the checked assignments, not a proof over every possible assignment.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
-<li>Forgetting <code>--protocol</code>. Many subcommands require an explicit protocol; auto-detection happens only at the project level when a <code>panproto.toml</code> is present.</li>
+<li>Passing an external schema-language document to <code>validate</code>, <code>verify</code>, or <code>scaffold</code>. These commands deserialize panproto’s internal schema JSON. Parse or convert an external document first.</li>
 <li>Running <code>schema validate</code> when you mean <code>schema check</code> (the latter checks a <em>migration</em>, not a schema).</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>

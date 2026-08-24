@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,155 +183,116 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="swift-sdk-reference"><a class="header" href="#swift-sdk-reference">Swift SDK reference</a></h1>
-<p>The Swift binding lives at <a href="https://github.com/panproto/panproto/tree/main/bindings/swift"><code>bindings/swift/</code></a> and is a <a href="https://www.swift.org/documentation/package-manager/">SwiftPM</a> package. It links <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>libpanproto_c</code></a>, the C ABI exposed by the <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>panproto-c</code></a> crate, and reaches every one of its 122 entry points: schemas, instances, migrations, lenses, the GAT layer, the expression language, compatibility checking, homomorphism search, graph fibers, datasets, I/O codecs, version control, and the feature-gated parse, project, and git tiers.</p>
-<h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
-<p>The package is not yet on a registry, so you need to install it from this repository. See <a href="../how-to/install/swift.html">Install the Swift SDK</a> for the bootstrap scripts, the XCFramework path, and the toolchain prerequisites.</p>
+<p>The Swift package lives in <a href="https://github.com/panproto/panproto/tree/main/bindings/swift"><code>bindings/swift/</code></a>. It uses Swift 6 language mode and supports macOS 14 and iOS 17. The engine-backed products call <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>panproto-c</code></a>; <code>PanprotoStructural</code> has no FFI dependency.</p>
+<p>See <a href="../how-to/install/swift.html">Install the Swift SDK</a> for package and library setup.</p>
 <h2 id="products"><a class="header" href="#products">Products</a></h2>
-<p>The package splits along the line between values and the engine, and again along the line between what the default library exports and what it does not.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Product</th><th>Tier</th><th>Depends on the engine</th><th>Feature</th></tr>
+<tr><th>Product</th><th>Public surface</th><th>Engine required</th></tr>
 </thead>
 <tbody>
-<tr><td><code>PanprotoStructural</code></td><td>pure value layer</td><td>no</td><td></td></tr>
-<tr><td><code>Panproto</code></td><td>core runtime</td><td>yes</td><td></td></tr>
-<tr><td><code>PanprotoVcs</code></td><td>version control</td><td>yes</td><td></td></tr>
-<tr><td><code>PanprotoParse</code></td><td>full-AST parsing</td><td>yes</td><td><code>parse</code></td></tr>
-<tr><td><code>PanprotoProject</code></td><td>multi-file assembly</td><td>yes</td><td><code>project</code></td></tr>
-<tr><td><code>PanprotoGit</code></td><td>git bridge</td><td>yes</td><td><code>git</code></td></tr>
+<tr><td><code>PanprotoStructural</code></td><td>Codable value types, wire representations, and the CBOR codec</td><td>no</td></tr>
+<tr><td><code>Panproto</code></td><td>Protocols, schemas, instances, migrations, lenses, checks, theories, expressions, graph operations, I/O, and data sets</td><td>yes</td></tr>
+<tr><td><code>PanprotoVcs</code></td><td>In-memory schema version control</td><td>yes</td></tr>
+<tr><td><code>PanprotoParse</code></td><td>Full-AST parsing, behind <code>PANPROTO_PARSE</code></td><td>yes</td></tr>
+<tr><td><code>PanprotoProject</code></td><td>Multi-file project assembly, behind <code>PANPROTO_PROJECT</code></td><td>yes</td></tr>
+<tr><td><code>PanprotoGit</code></td><td>Git import, behind <code>PANPROTO_GIT</code></td><td>yes</td></tr>
 </tbody>
 </table>
 </div>
-<p><code>PanprotoStructural</code> imports no FFI module at all, which the package graph enforces: it depends on nothing but the standard library. Everything in it is a <code>Sendable</code>, <code>Hashable</code>, <code>Codable</code> value, including the CBOR codec that gives those values their wire form. A pipeline that only reads and rewrites schemas can link it alone and never start an engine.</p>
-<p>The three feature-gated products always exist in the package graph, so resolution does not depend on how the library was built. Each is selected by a package trait (<code>PANPROTO_PARSE</code>, <code>PANPROTO_PROJECT</code>, <code>PANPROTO_GIT</code>), and a trait defines a compilation condition of its own name, which is what the <code>#if</code> blocks in the gated sources read. Without its trait a module is empty, and the raw shims that would reference the absent symbols are compiled out. That matters because the default <code>libpanproto_c</code> exports 105 of the 122 entry points; referencing the other 17 unconditionally would make every default build fail to link.</p>
-<h2 id="the-engine-actor"><a class="header" href="#the-engine-actor">The engine actor</a></h2>
-<p><code>PanprotoEngine</code> is a global actor whose executor is pinned to one dedicated thread for the lifetime of the process. Everything that touches a handle is isolated to it.</p>
-<p>The reason is narrower than it looks. The slab that hands out handles is process-global and mutex-guarded, so a handle really is valid from any thread. What is thread-local is the <em>last-error slot</em>: a failing entry point stashes its <code>ErrorEnvelope</code> where only the calling thread can drain it, and <code>pp_last_error_take</code> on any other thread answers empty. Every error message the binding reports depends on the drain landing on the thread that failed.</p>
-<p>A serial <code>DispatchQueue</code> would give mutual exclusion but not thread identity, so that invariant would hold only as long as no call ever suspended between the failure and the drain. Pinning a thread makes it hold unconditionally, and costs one resident thread. This declaration shows the isolation shape; the body of <code>migrateEverything</code> is application-specific rather than runnable here.</p>
-<pre><code class="language-text">// Each call hops to the engine and back.
+<p>The three gated products remain present when their traits are disabled, but their gated declarations are not compiled. Each trait also requires a <code>libpanproto_c</code> built with the corresponding Rust feature.</p>
+<h2 id="values-and-handles"><a class="header" href="#values-and-handles">Values and handles</a></h2>
+<p><code>PanprotoStructural</code> contains Swift values such as <code>Schema</code>, <code>Instance</code>, <code>Migration</code>, <code>Complement</code>, <code>SchemaSpan</code>, and <code>FoundMorphism</code>. These values use ordinary Swift ownership and do not require release calls.</p>
+<p>Engine resources are subclasses of <code>PanprotoHandle</code>:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Handle</th><th>Resource</th></tr>
+</thead>
+<tbody>
+<tr><td><code>ProtocolHandle</code></td><td>A protocol specification loaded by the engine</td></tr>
+<tr><td><code>SchemaHandle</code></td><td>A schema stored in the engine</td></tr>
+<tr><td><code>MigrationHandle</code></td><td>An uncompiled migration</td></tr>
+<tr><td><code>CompiledMigrationHandle</code></td><td>A migration compiled against source and target schemas</td></tr>
+<tr><td><code>ProtolensChainHandle</code>, <code>SymmetricLensHandle</code></td><td>Engine-backed lens resources</td></tr>
+<tr><td><code>IoRegistryHandle</code></td><td>Protocol-specific instance parsers and emitters</td></tr>
+<tr><td><code>TheoryHandle</code>, <code>ModelHandle</code></td><td>Generalized algebraic theories and models</td></tr>
+<tr><td><code>DataSetHandle</code></td><td>Versioned data associated with schema commits</td></tr>
+<tr><td><code>RepositoryHandle</code></td><td>A <code>PanprotoVcs</code> repository</td></tr>
+<tr><td><code>AstRegistryHandle</code></td><td>A <code>PanprotoParse</code> parser registry</td></tr>
+<tr><td><code>ProjectBuilderHandle</code>, <code>ProjectSchemaHandle</code></td><td><code>PanprotoProject</code> resources</td></tr>
+</tbody>
+</table>
+</div>
+<p><code>SchemaBuilder</code> and <code>MigrationBuilder</code> are Swift structs. Their mutating methods update the builder value. <code>MigrationBuilder.build()</code> returns a <code>Migration</code>, which can then be compiled against two schema handles.</p>
+<h2 id="engine-isolation"><a class="header" href="#engine-isolation">Engine isolation</a></h2>
+<p>Every operation that consumes a handle is isolated to the <code>PanprotoEngine</code> global actor. The actor uses one pinned thread because the C ABI’s last-error slot is thread-local. Calls from outside the actor consequently use <code>await</code>:</p>
+<pre><code class="language-swift">let protocolHandle = try await ProtocolHandle.builtin("atproto")
 let schema = try await SchemaHandle.parseAtprotoLexicon(lexicon)
-let messages = try await schema.violations(against: atproto)
-
-// Or amortize the hops by isolating a region of your own code.
-@PanprotoEngine
-func migrateEverything(_ records: [Data]) throws(PanprotoError) -&gt; [Data] { ... }
 </code></pre>
-<p>Engine methods are synchronous CPU-bound work performed off the caller’s executor. Task cancellation is therefore observed <em>between</em> calls, never in the middle of one: the engine has no cancellation channel, and a partially executed migration is not a state the C ABI can express.</p>
-<h2 id="handle-taxonomy"><a class="header" href="#handle-taxonomy">Handle taxonomy</a></h2>
-<p>A handle owns one slab entry. <code>PanprotoHandle</code> is the base class; the fourteen slab variants are its final subclasses, so the variant is a compile-time fact and a <code>SchemaHandle</code> cannot be passed where the ABI wants a <code>ProtocolHandle</code>.</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Swift type</th><th>Slab variant</th><th>Tier</th></tr>
-</thead>
-<tbody>
-<tr><td><code>ProtocolHandle</code></td><td><code>Protocol</code></td><td>core</td></tr>
-<tr><td><code>SchemaHandle</code></td><td><code>Schema</code></td><td>core</td></tr>
-<tr><td><code>MigrationHandle</code></td><td><code>Migration</code></td><td>core</td></tr>
-<tr><td><code>CompiledMigrationHandle</code></td><td><code>MigrationWithSchemas</code></td><td>core</td></tr>
-<tr><td><code>IoRegistryHandle</code></td><td><code>IoRegistry</code></td><td>core</td></tr>
-<tr><td><code>TheoryHandle</code></td><td><code>Theory</code></td><td>core</td></tr>
-<tr><td><code>ModelHandle</code></td><td><code>Model</code></td><td>core</td></tr>
-<tr><td><code>ProtolensChainHandle</code></td><td><code>ProtolensChain</code></td><td>core</td></tr>
-<tr><td><code>SymmetricLensHandle</code></td><td><code>SymmetricLens</code></td><td>core</td></tr>
-<tr><td><code>DataSetHandle</code></td><td><code>DataSet</code></td><td>core</td></tr>
-<tr><td><code>RepositoryHandle</code></td><td><code>VcsRepo</code></td><td>vcs</td></tr>
-<tr><td><code>AstRegistryHandle</code></td><td><code>AstRegistry</code></td><td>parse</td></tr>
-<tr><td><code>ProjectBuilderHandle</code></td><td><code>ProjectBuilder</code></td><td>project</td></tr>
-<tr><td><code>ProjectSchemaHandle</code></td><td><code>ProjectSchema</code></td><td>project</td></tr>
-</tbody>
-</table>
-</div>
-<p><code>Model</code> is the one resource that cannot leave the engine as data: a model interprets each operation as a Rust closure, so what crosses the boundary is the result of evaluating in it, or its carrier read out sort by sort.</p>
-<p>Handles are engine-isolated classes, so they are safe to hold anywhere and usable only inside the engine. Deinitialization does not suspend, so it cannot hop onto the actor the way ordinary code does; a handle’s <code>deinit</code> appends its index to the executor’s release queue instead, and the engine thread frees it on its next pass. Call <code>release()</code> to return an entry earlier than that. It is idempotent, and safe to interleave with deinitialization.</p>
-<h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
-<p><code>PanprotoError</code> has twelve cases, one per family of operations: <code>parse</code>, <code>migration</code>, <code>lens</code>, <code>schemaValidation</code>, <code>check</code>, <code>existenceCheck</code>, <code>expr</code>, <code>gat</code>, <code>io</code>, <code>vcs</code>, <code>gitBridge</code>, <code>project</code>. Every method is declared <code>throws(PanprotoError)</code>, so the type is exact rather than existential.</p>
-<p>The C ABI collapses all engine failures into six status codes and a message, which is too coarse to branch on, so the binding restores the distinctions from two sources. The domain comes from the call site, which means it is exact: a lens failure and a VCS failure are never confusable, because different code raised them. The <code>Fault</code> comes from the envelope, where the engine’s message is specific enough to recognize: <code>complementFingerprintMismatch</code>, <code>complementConflict</code>, <code>invalidHandle</code>, <code>typeMismatch</code>, and <code>panic</code>. An unrecognized message leaves the fault absent rather than mis-classifying it.</p>
-<pre><code class="language-swift">do {
-    let record = try await lens.put(view: edited, complement: complement)
-} catch .lens(let detail) {
-    if case .complementFingerprintMismatch(let left, let right) = detail.fault {
-        // The two complements were captured against different source schemas.
-    }
+<p><code>PanprotoEngine.run</code> can group several synchronous engine calls in one actor-isolated closure:</p>
+<pre><code class="language-swift">let result = try await PanprotoEngine.run {
+    try schema.violations(against: protocolHandle)
 }
 </code></pre>
-<p>The two complement faults are the ones worth catching by name. <code>Complement.compose</code> is a <em>partial</em> monoid: composition is defined exactly when two complements agree on every shared key, and disagreement is the boundary of its domain of definition rather than a recoverable condition.</p>
-<h2 id="standard-protocol-integration"><a class="header" href="#standard-protocol-integration">Standard-protocol integration</a></h2>
-<p>Where a panproto structure already is a known algebra, the binding gives it the corresponding Swift conformance, and where it is not, the binding declines to pretend.</p>
-<p>A <code>ProtolensChain</code> is a monoid under step concatenation: <code>+</code> concatenates and <code>.empty</code> is a genuine two-sided unit. <code>OpticKind</code> is a monoid under the optics lattice, with <code>iso</code> the unit and <code>traversal</code> absorbing. A <code>Migration</code> composes, but composition is deliberately exposed as a method rather than an operator with an identity: the engine’s composition is drop-on-miss, so a vertex the right migration does not map is removed, and the only identity is the per-schema self-map, which has no schema-independent value. Calling that a monoid would be a lie the type system would then let you rely on.</p>
-<p>The value types conform to <code>Hashable</code> and <code>Sendable</code>, so they compare structurally and work as dictionary keys.</p>
-<h2 id="the-structured-schema"><a class="header" href="#the-structured-schema">The structured schema</a></h2>
-<p><code>Schema</code> in <code>PanprotoStructural</code> is the primary schema type: a value carrying the semantic fields of <code>panproto_schema::Schema</code>, with vertices, edges, hyper-edges, constraints, variants, recursion points, spans, and the enrichment maps. <code>SchemaHandle</code> in <code>Panproto</code> is the engine-side resource, and the two convert in both directions.</p>
-<p>The Rust type stores three precomputed adjacency indices. The Swift value does not: they are derivable from the edge set, so the encoder recomputes them on the way out and the decoder ignores them on the way in, with <code>outgoingEdges(from:)</code>, <code>incomingEdges(to:)</code>, and <code>edges(between:and:)</code> as pure accessors. That keeps a decoded schema from carrying two representations of the same fact that could drift apart under mutation.</p>
+<p>Engine calls perform synchronous work once scheduled. Task cancellation does not interrupt a call already executing in the C ABI.</p>
+<h2 id="migration-and-lens-operations"><a class="header" href="#migration-and-lens-operations">Migration and lens operations</a></h2>
+<p><code>CompiledMigrationHandle</code> supplies both migration and asymmetric-lens operations:</p>
+<pre><code class="language-swift">func lift(_ instance: Instance) throws(PanprotoError) -&gt; Instance
+func get(_ source: Instance) throws(PanprotoError) -&gt; LensProjection
+func put(view: Instance, complement: Complement) throws(PanprotoError) -&gt; Instance
+</code></pre>
+<p><code>LensProjection</code> carries the view and the complement captured during <code>get</code>. Pass that complement to <code>put</code>; complements are tied to the source schema and may conflict when composed.</p>
+<p>Law-checking methods return <code>LawCheckResult</code> rather than throwing when a law is false. They can still throw when the operation itself cannot be evaluated.</p>
 <h2 id="morphism-and-span-search"><a class="header" href="#morphism-and-span-search">Morphism and span search</a></h2>
-<p>The search splits across the two tiers the package is built on. <code>SchemaSpan</code>, <code>FoundMorphism</code>, <code>SchemaOverlap</code>, <code>MorphismSearchOptions</code>, <code>MorphismDomainConstraints</code>, and <code>MorphismCostWeights</code> are values in <code>PanprotoStructural</code>; the three methods that produce them hang off <code>SchemaHandle</code> in <code>Panproto</code> and are engine-isolated.</p>
-<p><code>findSpan(to:in:options:constraints:)</code> is the one to reach for. It never refuses for want of a match, since leaving every source vertex out of the apex is a feasible answer, so two schemas with nothing in common answer with an empty apex rather than throwing.</p>
-<pre><code class="language-swift">let span = try await post.findSpan(to: profile, in: atproto)
+<p>Search methods are defined on <code>SchemaHandle</code>:</p>
+<pre><code class="language-swift">func findMorphisms(
+    to target: SchemaHandle,
+    options: MorphismSearchOptions = MorphismSearchOptions()
+) throws(PanprotoError) -&gt; [FoundMorphism]
 
-span.apexCoverage           // 0.777... : 7 of the 9 source vertices
-span.qualityLo              // equals span.qualityHi when provenOptimal
-if span.isTotal {
-    let morphism = span.asTotalMorphism
-}
+func findBestMorphism(
+    to target: SchemaHandle,
+    options: MorphismSearchOptions = MorphismSearchOptions()
+) throws(PanprotoError) -&gt; FoundMorphism?
+
+func findSpan(
+    to target: SchemaHandle,
+    in protocolHandle: ProtocolHandle,
+    options: MorphismSearchOptions = MorphismSearchOptions(),
+    constraints: MorphismDomainConstraints = MorphismDomainConstraints()
+) throws(PanprotoError) -&gt; SchemaSpan
 </code></pre>
-<p>The protocol handle is a parameter because the apex is a schema, a schema is well formed only against a protocol, and inducing the apex re-validates it rather than assuming it. A schema carries its protocol’s name alone, so the protocol cannot be read back off the source handle.</p>
-<p><code>SchemaSpan</code> carries the span itself in <code>apex</code>, <code>left</code>, and <code>right</code>, then the measurements flat rather than nested: <code>quality</code>, <code>qualityLo</code>, <code>qualityHi</code>, <code>apexCoverage</code>, <code>provenOptimal</code>, <code>isTotal</code>, <code>apexDigest</code> and <code>legsAreFunctorial</code>. The last two are what identifying a span takes: the digest together with the two leg maps is the span’s identity, and there is no schema-digest entry point on the C ABI to recompute it from, so a Swift host that wants to dedupe or cache a span reads it here or not at all. Both carry defaults on the initializer, so a host encoding a span for <code>overlap()</code> without them still produces a payload the engine decodes. The two quality ends are equal exactly when <code>provenOptimal</code> holds, which is what separates a score nothing beats from a score the search ran out of budget before improving on. <code>quality</code> ranks spans over <em>one</em> source schema and nothing else, because every denominator of the objective is fixed by the source, so <code>apexCoverage</code> is read alongside it. <code>asTotalMorphism</code> is a computed property on the value and needs no engine; <code>overlap()</code> does, and gives the identification list a pushout takes.</p>
-<p><code>MorphismSearchOptions</code> fixes the shape asked for (<code>monic</code>, <code>epic</code>, <code>iso</code>, <code>maxResults</code>, <code>hardPins</code>), and every field has a default, so an empty payload is valid. <code>epic</code> is honored by the two morphism methods and refused by <code>findSpan</code>, since surjectivity is a property of a total morphism and a span’s right leg is deliberately partial. Where a vertex may land is a separate payload, <code>MorphismDomainConstraints</code>, which only <code>findSpan</code> takes.</p>
-<h3 id="what-findmorphisms-returns"><a class="header" href="#what-findmorphisms-returns">What <code>findMorphisms</code> returns</a></h3>
-<p><code>findMorphisms(to:options:)</code> returns the morphisms <strong>attaining the optimum</strong>, and nothing else. The engine’s cap of 1024 bounds every request rather than only <code>maxResults = 0</code>, so asking for more is answered with the cap and Swift has no flag saying so. Every element carries the same <code>quality</code>, so the first is what <code>findBestMorphism(to:options:)</code> answers with, and there is no second, worse tier to walk to.</p>
-<p>An empty array means that no total morphism exists, and only that: a search that could not be posed throws <code>PanprotoError.migration</code> instead, so the two are distinguishable. <code>findSpan(to:in:options:constraints:)</code> is the method that answers with what the two schemas do share. <a href="../how-to/spans.html">Find a span between two schemas</a> walks that task end to end, and <a href="../explanation/morphism-search.html">Searching for a morphism</a> sets out what the search is doing underneath.</p>
-<h2 id="cbor"><a class="header" href="#cbor">CBOR</a></h2>
-<p>Every payload crossing the ABI is CBOR produced by <a href="https://docs.rs/ciborium"><code>ciborium</code></a> driven by <a href="https://serde.rs/"><code>serde</code></a>, so <code>PanprotoStructural</code> ships a codec written against that data model rather than a general-purpose one. <code>CBOREncoder</code> and <code>CBORDecoder</code> conform to Swift’s <code>Encoder</code> and <code>Decoder</code>, so ordinary <code>Codable</code> conformances work.</p>
-<p>Encoding is deterministic: definite lengths everywhere, the shortest integer head that fits, the narrowest float width that reproduces the value exactly, and canonical key ordering for collections that carry no order of their own. Two encodes of the same Swift value agree byte for byte.</p>
-<p>The engine’s output does not have that property, and conformance is not defined in terms of it. Most schema and instance fields are Rust <code>HashMap</code>s, and <code>ciborium</code> writes a map in whatever order the map iterates, so two runs of the engine can emit the same schema as different bytes. Two other differences are structural rather than incidental: an <code>Option</code> field with no value encodes as an explicit null on the way out but decodes from an absent key as well, and Swift’s synthesized encoder omits it, which serde reads back as <code>None</code>. Conformance therefore means <em>the decoded value is equal</em>, checked by re-encoding a payload, handing it back to the engine, and reading it out again. Bytes the engine rejects are the failure this layer exists to catch; bytes that differ from a previous run are not a failure at all.</p>
-<p>Decoding is tolerant in the ways a forward-compatible host has to be: indefinite lengths, unknown map keys, semantic tags, and every float width all decode.</p>
-<p><code>CBORValue</code> is the untyped escape hatch. It decodes any payload without a static type, and it is itself <code>Codable</code>, so a field typed <code>CBORValue</code> passes a fragment the Swift model does not describe through unchanged.</p>
-<h2 id="parity-with-the-other-sdks"><a class="header" href="#parity-with-the-other-sdks">Parity with the other SDKs</a></h2>
-<p>The Swift binding reaches every one of the C ABI’s 122 entry points, which is the same surface the Haskell binding consumes, so the two are at parity with each other and with the ABI.</p>
-<p>The Python SDK is a superset of both, and the reason is architectural rather than a shortfall in either binding: <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-py"><code>panproto-py</code></a> is a <a href="https://pyo3.rs/">PyO3</a> extension linking <code>panproto-core</code> directly, so it reaches engine surfaces the ABI never exposed. Fifty-two members of the Python surface have no <code>pp_*</code> entry point behind them, in five groups:</p>
+<p><code>findMorphisms</code> returns total morphisms that attain the optimum. An empty array means that no total morphism exists. The Swift array does not expose the Rust <code>MorphismList.truncated</code> field, so callers cannot distinguish complete enumeration of tied optima from an answer stopped by the engine cap.</p>
+<p><code>findSpan</code> admits a partial match and may return an empty apex. The protocol handle is required because the induced apex is validated as a schema. The span result is a Swift value; call <code>SchemaSpan.overlap()</code> when the identification pairs for a pushout are needed.</p>
+<h2 id="ownership"><a class="header" href="#ownership">Ownership</a></h2>
+<p>Each <code>PanprotoHandle</code> owns one engine slab entry. <code>release()</code> returns that entry early and is idempotent. If a live handle reaches deinitialization, its release is queued onto the engine thread. Do not call engine operations on a handle after releasing it; the engine reports the slab index as invalid or may have reused it for another resource.</p>
+<h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
+<p>Public engine operations use typed throws with <code>PanprotoError</code>. Its cases identify the operation domain, including <code>parse</code>, <code>migration</code>, <code>lens</code>, <code>schemaValidation</code>, <code>check</code>, <code>existenceCheck</code>, <code>expr</code>, <code>gat</code>, <code>io</code>, <code>vcs</code>, <code>gitBridge</code>, and <code>project</code>. Each case carries a <code>Detail</code> containing the raw status, operation name, optional error envelope, and any recognized structured fault.</p>
+<h2 id="package-traits"><a class="header" href="#package-traits">Package traits</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Group</th><th>What Python reaches</th><th>Scale of the gap</th></tr>
+<tr><th>SwiftPM trait</th><th>Product declarations enabled</th><th>Required Rust feature</th></tr>
 </thead>
 <tbody>
-<tr><td>Schema-document and IDL parsing</td><td><code>parse_schema_document</code> over 106 JSON-document parsers and <code>parse_schema_source</code> over ten text and IDL parsers</td><td>the ABI carries only <code>pp_schema_parse_atproto_lexicon</code></td></tr>
-<tr><td>Version-control porcelain</td><td>tags, rebase, cherry-pick, reset, amend, bisect, reflog, the full stash stack, data versioning</td><td>the ABI carries 13 operations, all bound</td></tr>
-<tr><td>Theory construction</td><td><code>Theory.from_json</code> / <code>from_yaml</code> / <code>from_nickel</code> / <code>from_path</code>, and deriving a theory from a schema</td><td>the ABI takes a CBOR theory or two handles, with no loader and no schema-to-theory induction</td></tr>
-<tr><td>Steered lens generation</td><td><code>auto_generate_with_hints</code> and <code>auto_generate_with_hint_spec</code></td><td>the ABI takes a stringency string and nothing else</td></tr>
-<tr><td>Runtime grammars and lexicon bundles</td><td><code>AstParserRegistry(extra_grammars=...)</code>, <code>override_grammar</code>, <code>parse_schema_bundle_project</code></td><td>no entry point</td></tr>
+<tr><td><code>PANPROTO_PARSE</code></td><td><code>PanprotoParse</code></td><td><code>full-parse</code></td></tr>
+<tr><td><code>PANPROTO_PROJECT</code></td><td><code>PanprotoProject</code></td><td><code>project</code></td></tr>
+<tr><td><code>PANPROTO_GIT</code></td><td><code>PanprotoGit</code></td><td><code>git</code></td></tr>
 </tbody>
 </table>
 </div>
-<p>One of these is silent rather than merely absent, and is worth knowing about: the ABI’s lens entry points take no protocol handle, so a schema built against a protocol you defined yourself is aligned and instantiated against a synthesized default (three object kinds, no edge rules, no constraint sorts) rather than against your rules. That affects Haskell identically.</p>
-<p>Swift reaches seven surfaces Python does not, all of them ABI entry points <code>panproto-py</code> has no wrapper for: instance queries, the graph fiber calculus, schema enrichment, the dataset and staleness layer, symmetric lenses, evaluation in a model, and expression typechecking.</p>
-<h2 id="gates"><a class="header" href="#gates">Gates</a></h2>
-<p>Three gates run in CI, each closing a hole that a binding of this size grows on its own.</p>
-<p>The header-drift gate regenerates <code>panproto.h</code> from the crate and requires it to be byte-identical to the copy the Swift package compiles against. A silent ABI change is the failure this catches: the shims would still compile, and would call the wrong thing.</p>
-<p>The parity gate reads both headers, computes each entry point’s Swift name mechanically (drop <code>pp_</code>, snake_case to lowerCamelCase, no acronym special-casing), and requires a matching <code>Raw</code> method. It then requires every shim to be called from somewhere other than the raw layer, and every public method of the domain layer to be named by a test or an example. Parity holds by construction rather than by release notes.</p>
-<p>The lint gate runs <code>swift format lint --strict</code>, with <code>AllPublicDeclarationsHaveDocumentation</code> on.</p>
-<h2 id="native-backend"><a class="header" href="#native-backend">Native backend</a></h2>
-<p><code>PanprotoStructural</code> implements the capabilities that need no engine: decoding, re-encoding, and structural manipulation of schemas, protocols, protolens chains, and instances, plus the value algebra. Everything else, including validation, migration compilation, lens evaluation, and every law check, requires the engine, because the semantics live in Rust and the binding does not reimplement them.</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Capability</th><th><code>PanprotoStructural</code></th><th><code>Panproto</code></th></tr>
-</thead>
-<tbody>
-<tr><td>Schema and protocol round-trip</td><td>yes</td><td>yes</td></tr>
-<tr><td>Chain concatenation and optic-kind join</td><td>yes</td><td>yes</td></tr>
-<tr><td>Adjacency accessors</td><td>yes</td><td>yes</td></tr>
-<tr><td>Schema validation</td><td></td><td>yes</td></tr>
-<tr><td>Diff and classification</td><td></td><td>yes</td></tr>
-<tr><td>Migration compile, compose, invert, lift</td><td></td><td>yes</td></tr>
-<tr><td>Lens generation, instantiation, get, put, sync</td><td></td><td>yes</td></tr>
-<tr><td>Law checking</td><td></td><td>yes</td></tr>
-<tr><td>Theories, expressions, enrichment</td><td></td><td>yes</td></tr>
-<tr><td>Version control</td><td></td><td>yes</td></tr>
-</tbody>
-</table>
-</div>
+<p>The linked C library and selected package traits must agree. Enabling a trait while linking a library without the corresponding symbols fails at link time.</p>
+<h2 id="boundary-limits"><a class="header" href="#boundary-limits">Boundary limits</a></h2>
+<p><code>PanprotoStructural</code> can decode, encode, compare, and transform its value types without starting the engine. Validation, migration compilation, lens execution, search, law checks, and other semantic operations require an engine-backed product. The Swift API exposes only operations exported by <code>panproto-c</code>; Rust APIs with no C entry point are not available through this binding.</p>
+<h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
+<ul>
+<li><a href="../how-to/install/swift.html">Install the Swift SDK</a></li>
+<li><a href="../how-to/define-schema/swift.html">Define a schema from Swift</a></li>
+<li><a href="../how-to/spans.html">Find a span between two schemas</a></li>
+<li><a href="../explanation/architecture.html">Architecture</a></li>
+</ul>
 
                     </main>
 

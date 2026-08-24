@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,134 +183,75 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="haskell-sdk-reference"><a class="header" href="#haskell-sdk-reference">Haskell SDK reference</a></h1>
-<p>The Haskell binding lives at <a href="https://github.com/panproto/panproto/tree/main/bindings/haskell"><code>bindings/haskell/</code></a> and is published as the <code>panproto</code> package. It links <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>libpanproto_c</code></a>, the C ABI exposed by the <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>panproto-c</code></a> crate, and has full parity with the Python and TypeScript SDKs: schemas, instances, migrations, lenses, the GAT layer, the expression language, compatibility checking, homomorphism search, graph fibers, datasets, I/O codecs, and version control are all reachable from <a href="https://www.haskell.org/">Haskell</a>.</p>
-<h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
-<p>The package is not yet on a registry; install from this repository. See <a href="../how-to/install/haskell.html">Install the Haskell SDK</a> for the bootstrap scripts and the toolchain prerequisites.</p>
-<h2 id="two-backends-behind-capability-classes"><a class="header" href="#two-backends-behind-capability-classes">Two backends behind capability classes</a></h2>
-<p>Each domain is one typeclass parameterized by a backend tag, and every class method returns <code>IO</code>. There are two backends. <code>Rust</code> is FFI-backed and implements every class; it consumes the 122-entry C ABI documented in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-c/CONTRACT.md"><code>crates/panproto-c/CONTRACT.md</code></a>, of which 105 are present in a default build and 17 behind the <code>full-parse</code>, <code>project</code>, and <code>git</code> features. <code>Native</code> is pure Haskell and implements the protocol and schema round-trips plus the backend-independent value algebra, for pipelines that never start a Rust runtime.</p>
-<p>A call like <code>compile mig src tgt</code> resolves to whichever backend the representations carry. Capability methods take and return backend-specific representations (<code>ProtocolRep back</code>, <code>SchemaRep back</code>, <code>LensRep back</code>, and so on), which are associated data families on each class: the <code>Rust</code> representations wrap opaque <code>u32</code> slab handles, the <code>Native</code> representations wrap the canonical value. The <code>toCanonical</code> / <code>fromCanonical</code> bridge (and <code>toSchema</code> / <code>fromSchema</code> for the structured schema) moves a value between backends.</p>
+<p>The <a href="https://www.haskell.org/">Haskell</a> binding is the <code>panproto</code> package under <a href="https://github.com/panproto/panproto/tree/main/bindings/haskell"><code>bindings/haskell/</code></a>. Its Cabal manifest uses <code>GHC2024</code> and declares GHC 9.12.2 as the tested compiler.</p>
+<p>The package links <code>libpanproto_c</code> when the <code>rust</code> flag is active. The repository bootstrap scripts and required library paths are covered in <a href="../how-to/install/haskell.html">Install the Haskell SDK</a>.</p>
+<h2 id="imports-and-backends"><a class="header" href="#imports-and-backends">Imports and backends</a></h2>
+<pre><code class="language-haskell">import Panproto
+</code></pre>
+<p><code>Panproto</code> re-exports the structural value modules, capability classes, domain modules, and effect adapter. With the default <code>rust</code> flag, it also brings the Rust-backed capability instances into scope.</p>
+<p>Operations dispatch through associated representation families such as <code>ProtocolRep back</code>, <code>SchemaRep back</code>, <code>InstanceRep back</code>, and <code>LensRep back</code>. The backend tag is either <code>Rust</code> or <code>Native</code>.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Capability class</th><th>Module</th><th><code>Rust</code></th><th><code>Native</code></th><th>Flag</th></tr>
+<tr><th>Backend</th><th>Implemented capability instances</th><th>Representation</th></tr>
 </thead>
 <tbody>
-<tr><td><code>ProtocolBackend</code></td><td><code>Panproto.Class</code></td><td>yes</td><td>yes (round-trip)</td><td></td></tr>
-<tr><td><code>SchemaBackend</code></td><td><code>Panproto.Class</code></td><td>yes</td><td>yes (round-trip)</td><td></td></tr>
-<tr><td><code>SchemaValidate</code></td><td><code>Panproto.Class</code></td><td>yes</td><td></td><td></td></tr>
-<tr><td><code>SchemaEngine</code></td><td><code>Panproto.Enriched</code></td><td>yes</td><td></td><td></td></tr>
-<tr><td><code>InstanceBackend</code></td><td><code>Panproto.Instance</code></td><td>yes</td><td></td><td></td></tr>
-<tr><td><code>IoBackend</code></td><td><code>Panproto.Io</code></td><td>yes</td><td></td><td></td></tr>
-<tr><td><code>MigrationBackend</code></td><td><code>Panproto.Migration</code></td><td>yes</td><td></td><td></td></tr>
-<tr><td><code>CheckBackend</code></td><td><code>Panproto.Check</code></td><td>yes</td><td></td><td></td></tr>
-<tr><td><code>HomBackend</code></td><td><code>Panproto.Hom</code></td><td>yes</td><td></td><td></td></tr>
-<tr><td><code>LensBackend</code></td><td><code>Panproto.Lens</code></td><td>yes</td><td></td><td></td></tr>
-<tr><td><code>GatBackend</code></td><td><code>Panproto.Gat</code></td><td>yes</td><td></td><td></td></tr>
-<tr><td><code>ExprBackend</code></td><td><code>Panproto.Expr</code></td><td>yes</td><td></td><td></td></tr>
-<tr><td><code>VcsBackend</code></td><td><code>Panproto.Vcs</code></td><td>yes</td><td></td><td></td></tr>
-<tr><td><code>DataBackend</code></td><td><code>Panproto.Data</code></td><td>yes</td><td></td><td></td></tr>
-<tr><td><code>GraphBackend</code></td><td><code>Panproto.Graph</code></td><td>yes</td><td></td><td></td></tr>
-<tr><td><code>ParseBackend</code></td><td><code>Panproto.Parse</code></td><td>yes</td><td></td><td><code>parse</code></td></tr>
-<tr><td><code>ProjectBackend</code></td><td><code>Panproto.Project</code></td><td>yes</td><td></td><td><code>project</code></td></tr>
-<tr><td><code>GitBackend</code></td><td><code>Panproto.Git</code></td><td>yes</td><td></td><td><code>git</code></td></tr>
+<tr><td><code>Rust</code></td><td>Protocol, schema, validation, instances, I/O, migrations, checks, morphism search, lenses, GATs, expressions, VCS, data sets, graphs, and the enabled parse, project, or git tiers</td><td>Opaque handles and CBOR exchange values over <code>libpanproto_c</code></td></tr>
+<tr><td><code>Native</code></td><td><code>ProtocolBackend</code> and <code>SchemaBackend</code> only</td><td>Pure canonical protocol and schema values</td></tr>
 </tbody>
 </table>
 </div>
-<p>The backend is one dispatch axis; the monad the operation runs in is the other, and they are independent. The effect carrier is fixed by the <code>MonadPanproto</code> instance in scope, so the same operation text runs the <code>Rust</code> backend in bare <code>IO</code>, in <code>ReaderT AppEnv IO</code>, or in an <code>effectful</code> <code>Eff</code> monad.</p>
-<h2 id="standard-class-integration"><a class="header" href="#standard-class-integration">Standard-class integration</a></h2>
-<p>Where a panproto structure already is a known algebra, the binding gives it the corresponding Haskell class. A <code>Migration</code> is a <code>Semigroup</code> under structural composition: <code>(&lt;&gt;)</code> reads left to right as a data-flow pipeline. It is deliberately not a <code>Monoid</code>, because the composition is drop-on-miss (matching the engine <code>panproto_mig::compose</code>): a vertex the right migration does not map is removed, so the only identity is the per-schema self-map <code>identityMigrationOn</code>, which has no schema-independent value. A <code>ProtolensChain</code> is a <code>Monoid</code> by step concatenation (the empty chain is a genuine two-sided unit), with <code>LensArr</code> its <code>Category</code> wrapper, and <code>OpticKind</code> is a <code>Monoid</code> under the optics lattice (<code>Iso</code> the unit, <code>Traversal</code> absorbing). These are pure structural composites; the engine-validated counterparts (<code>composeMigrations</code>, chain instantiation at a schema) stay in <code>IO</code>.</p>
-<p>The value types (vertices, edges, constraints, optic kinds, object ids) derive <code>Eq</code>, <code>Ord</code>, <code>Show</code>, and <code>Hashable</code>, so they compare structurally and go into <code>HashMap</code> / <code>HashSet</code> keys. The builder DSLs (<code>SchemaBuilderM</code>, <code>MigrationBuilderM</code>, <code>TheoryBuilderM</code>, and the enriched build-op DSL) are <code>State</code>-monad computations that mirror the Python builders; run them with <code>buildSchema</code> / <code>buildMigration</code> / <code>buildTheory</code>.</p>
-<p><code>Panproto.Errors</code> mirrors the twelve Python error classes as an <code>Exception</code> hierarchy rooted at <code>SomePanprotoError</code>. Catching <code>SomePanprotoError</code> intercepts any panproto failure; catching a child (<code>ParseError</code>, <code>MigrationError</code>, <code>LensError</code>, <code>SchemaValidationError</code>, <code>CheckError</code>, <code>ExistenceCheckError</code>, <code>ExprError</code>, <code>GatError</code>, <code>IoError</code>, <code>VcsError</code>, <code>GitBridgeError</code>, <code>ProjectError</code>) narrows to one surface. Each carries the FFI <code>PpStatus</code> and a decoded <code>ErrorEnvelope</code> when one is available.</p>
-<h2 id="structured-schema"><a class="header" href="#structured-schema">Structured schema</a></h2>
-<p><code>Panproto.Schema</code> is the primary schema type: a structured ADT carrying the semantic fields of <code>panproto_schema::Schema</code>, with <code>Vertex</code>, <code>Edge</code>, <code>HyperEdge</code>, <code>Constraint</code>, <code>Variant</code>, recursion points, spans, and the enrichment maps. The byte form (<code>CanonicalSchema</code>) is retained only as the FFI wire shape. The CBOR codecs (<code>encodeSchema</code> / <code>decodeSchema</code>) and the aeson instances exchange the snake_case, unknown-field-tolerant shape the Rust side produces. The three precomputed adjacency indices on the Rust side are not stored: they are derivable from the edge set, so the module recomputes them and exposes <code>incomingEdges</code> / <code>outgoingEdges</code> as pure accessors.</p>
-<pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DuplicateRecordFields #-}
+<p><code>Native</code> has no <code>SchemaValidate</code>, migration, lens, instance, or search instance in the current source. The structural <code>Schema</code>, <code>Migration</code>, <code>ProtolensChain</code>, <code>Theory</code>, and <code>Instance</code> data types remain available as ordinary Haskell values, but a pure value type does not imply a runnable <code>Native</code> capability instance.</p>
+<p>The Haskell <code>Instance</code> exchange type mirrors the W-type instance used by the C boundary. It is not the Rust <code>panproto_inst::Instance</code> enum over W-type, relational, and graph representations.</p>
+<h2 id="capability-lookup"><a class="header" href="#capability-lookup">Capability lookup</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Module</th><th>Main class or values</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Panproto.Class</code></td><td><code>ProtocolBackend</code>, <code>SchemaBackend</code>, <code>SchemaValidate</code>, <code>Rust</code>, <code>Native</code></td></tr>
+<tr><td><code>Panproto.Schema</code></td><td>Structured schema values and <code>SchemaBuilderM</code></td></tr>
+<tr><td><code>Panproto.Instance</code></td><td>W-type instance, complement, codecs, and <code>InstanceBackend</code></td></tr>
+<tr><td><code>Panproto.Migration</code></td><td>Migration values, <code>MigrationBuilderM</code>, and <code>MigrationBackend</code></td></tr>
+<tr><td><code>Panproto.Lens</code></td><td>Protolens values and <code>LensBackend</code></td></tr>
+<tr><td><code>Panproto.Hom</code></td><td>Search options, result values, and <code>HomBackend</code></td></tr>
+<tr><td><code>Panproto.Gat</code>, <code>Panproto.Expr</code></td><td>Theory and expression values with their backend classes</td></tr>
+<tr><td><code>Panproto.Check</code>, <code>Panproto.Io</code></td><td>Diff, validation, parse, and emit capabilities</td></tr>
+<tr><td><code>Panproto.Vcs</code>, <code>Panproto.Data</code>, <code>Panproto.Graph</code></td><td>Repository, data-set, and graph capabilities</td></tr>
+<tr><td><code>Panproto.Effect</code></td><td><code>MonadPanproto</code> and the optional <code>effectful</code> adapter</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="morphism-search"><a class="header" href="#morphism-search">Morphism search</a></h2>
+<p><code>HomBackend</code> declares the following methods:</p>
+<pre><code class="language-haskell">findMorphisms
+    :: SchemaRep back
+    -&gt; SchemaRep back
+    -&gt; SearchOptions
+    -&gt; IO [FoundMorphism]
 
-import Panproto.Schema (Schema)
-import qualified Panproto.Schema as S
+findBestMorphism
+    :: SchemaRep back
+    -&gt; SchemaRep back
+    -&gt; SearchOptions
+    -&gt; IO (Maybe FoundMorphism)
 
-postSchema :: Schema
-postSchema = S.buildSchema "geojson" $ do
-    S.vertex S.Vertex {S.id = "post", S.kind = "record", S.nsid = Nothing}
-    S.vertex S.Vertex {S.id = "text", S.kind = "string", S.nsid = Nothing}
-    S.edge S.Edge {S.src = "post", S.tgt = "text", S.kind = "prop", S.name = Just "text"}
+findSpan
+    :: SchemaRep back
+    -&gt; SchemaRep back
+    -&gt; ProtocolRep back
+    -&gt; SearchOptions
+    -&gt; DomainConstraints
+    -&gt; IO FoundSpan
 </code></pre>
-<p><em>Listing R.1: Building a structured schema with <code>SchemaBuilderM</code>.</em> <code>Vertex</code>, <code>Edge</code>, <code>HyperEdge</code>, and <code>Constraint</code> share field names under <code>DuplicateRecordFields</code>, so the module imports <code>Panproto.Schema</code> qualified and writes the fields qualified (<code>S.id</code>, <code>S.kind</code>, …); the record constructor in <code>S.Vertex {...}</code> resolves which type each field belongs to.</p>
-<h2 id="the-effect-layer"><a class="header" href="#the-effect-layer">The effect layer</a></h2>
-<p><code>Panproto.Effect</code> provides <code>MonadPanproto</code>, an <code>mtl</code>-style class whose single primitive is <code>liftPanproto :: IO a -&gt; m a</code>. Instances cover <code>IO</code>, <code>ReaderT</code>, <code>StateT</code> (lazy and strict), and <code>ExceptT</code>, so a panproto call runs in a typical stack without a per-site <code>liftIO</code>. Under the <code>effectful</code> flag the module additionally exposes a first-class <a href="https://hackage.haskell.org/package/effectful"><code>effectful</code></a> <code>Panproto</code> effect, an <code>Eff</code> instance of <code>MonadPanproto</code>, and <code>runPanproto</code> to discharge it against the ambient <code>IOE</code>; with the flag off, the <code>effectful-core</code> dependency is never pulled in. Version control has its own session layer: <code>Panproto.Vcs</code> exposes <code>MonadGit</code> and its carrier <code>GitM</code> (a <code>ReaderT Repository IO</code>), so a sequence of <code>vcsAdd</code> / <code>vcsCommit</code> / <code>vcsLog</code> runs against an open repository without threading the handle by hand. A carrier monad can be an instance of both <code>MonadGit</code> and <code>MonadPanproto</code>.</p>
-<h2 id="lenses"><a class="header" href="#lenses">Lenses</a></h2>
-<p>panproto lenses are asymmetric delta lenses carrying an explicit complement. A lens between a source <code>s</code> and a view <code>a</code> is a pair <code>get : s -&gt; (a, c)</code> and <code>put : (a, c) -&gt; s</code>, where <code>c</code> is the complement: the data <code>get</code> discards that <code>put</code> needs to reconstruct the source. <code>Panproto.Lens</code> models this directly. The pure structural layer (<code>ProtolensChain</code>, <code>ProtolensStep</code>, <code>OpticKind</code>) composes without touching a schema or backend; running a lens (<code>lensGet</code> / <code>lensPut</code>), instantiating a chain at a schema, checking the round-trip laws, or auto-generating a lens between two schemas goes through <code>LensBackend</code> in <code>IO</code>.</p>
-<p>A complement-carrying delta lens is not a lawful van Laarhoven <code>Lens'</code>. A <code>Lens' s a</code> has <code>set :: a -&gt; s -&gt; s</code>, so the discarded information is recovered from the original <code>s</code>; a panproto <code>put</code> takes <code>(a, c)</code>, where the discarded information lives in a separate complement that the original <code>s</code> is not available to supply. Two sources with the same view can carry different complements, and <code>put</code> distinguishes them while <code>set</code> cannot. For the lossless subset the complement carries no information, <code>put</code> degenerates to a function of the view alone, and the delta lens coincides with a lawful van Laarhoven lens. <code>Panproto.Lens.Optics</code> therefore exposes only the structurally-lawful subset: read-only <code>Getter</code>s over the pure structural values, and lawful <code>Lens'</code>es onto the record fields of the structural types (where <code>put</code> is plain record update). It prefers <a href="https://hackage.haskell.org/package/optics-core"><code>optics-core</code></a> under the <code>optics-adaptors</code> flag and falls back to <a href="https://hackage.haskell.org/package/lens"><code>lens</code></a> under <code>lens-adaptors</code>.</p>
-<pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeApplications #-}
-
-import Control.Exception (bracket)
-import Panproto.Class (Rust, SchemaBackend (..))
-import Panproto.Instance (InstanceBackend (..), nodeCount)
-import Panproto.Lens (LensBackend (..), Stringency (..))
-import Panproto.Rust.Instance ()
-import Panproto.Rust.Lens ()
-
-getPutLaw :: SchemaRep Rust -&gt; IO Bool
-getPutLaw schema =
-    bracket (jsonToInstance schema "post" "{\"text\": \"hello\"}")
-            releaseInstance $ \inst -&gt; do
-        (lensRep, _score)  &lt;- autoGenerateLens schema schema Balanced
-        original           &lt;- reifyInstance inst
-        (view, complement) &lt;- lensGet lensRep inst              -- s -&gt; (a, c)
-        rebuilt            &lt;- lensPut lensRep view complement    -- (a, c) -&gt; s
-        recovered          &lt;- reifyInstance rebuilt
-        releaseInstance view
-        releaseInstance rebuilt
-        releaseLens lensRep
-        pure (nodeCount original == nodeCount recovered)
-</code></pre>
-<p><em>Listing R.2: Auto-generating a lens, then checking the <code>GetPut</code> law against a parsed instance on the <code>Rust</code> backend.</em></p>
-<h2 id="ingesting-into-the-rust-backend"><a class="header" href="#ingesting-into-the-rust-backend">Ingesting into the Rust backend</a></h2>
-<p>Schemas built with the <code>Native</code> value algebra reach the engine through <code>fromSchema (Proxy @Rust)</code>. A <code>Proxy @Rust</code> at ingestion fixes the backend for everything downstream; validation against a protocol then runs through <code>SchemaValidate</code>.</p>
-<pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeApplications #-}
-
-import Control.Exception (bracket)
-import Data.Proxy (Proxy (..))
-import Data.Text (Text)
-import Panproto.Class (Rust, ProtocolBackend (..), SchemaBackend (..), SchemaValidate (..))
-import Panproto.Canonical (CanonicalProtocol (..), defaultProtocol)
-import Panproto.Rust ()   -- brings the Rust instances into scope
-
-validate :: IO [Text]
-validate =
-    bracket (fromCanonical (Proxy @Rust) (defaultProtocol {name = "geojson"}))
-            releaseProtocol $ \proto -&gt;
-    bracket (fromSchema (Proxy @Rust) postSchema)
-            releaseSchema $ \schema -&gt;
-        validateSchema schema proto   -- [] means valid
-</code></pre>
-<p><em>Listing R.3: Ingesting a structured schema into the <code>Rust</code> backend and validating it against a protocol. It reuses <code>postSchema</code> from Listing R.1.</em></p>
-<h2 id="morphism-and-span-search"><a class="header" href="#morphism-and-span-search">Morphism and span search</a></h2>
-<p><code>HomBackend</code> carries the search. <code>findSpan</code> is the method to reach for, because it never refuses for want of a match: leaving every source vertex out of the apex is a feasible answer, so two schemas with nothing in common come back as a <code>FoundSpan</code> with an empty apex rather than as an exception.</p>
-<pre><code class="language-haskell">import Panproto.Class (ProtocolBackend (..), Rust, SchemaBackend (..))
-import Panproto.Hom
-    ( FoundSpan
-    , HomBackend (..)
-    , SearchOptions (..)
-    , defaultDomainConstraints
-    , defaultFindOpts
-    )
-import Panproto.Rust.Hom ()
-
-sharedPart :: SchemaRep Rust -&gt; SchemaRep Rust -&gt; ProtocolRep Rust -&gt; IO FoundSpan
-sharedPart old new proto =
-    findSpan old new proto
-        (defaultFindOpts {monic = True})
-        defaultDomainConstraints
-</code></pre>
-<p><em>Listing R.4: Asking what two schemas share, under an injective vertex map.</em> The protocol is an argument because the apex is a schema, a schema is well formed only against a protocol, and inducing the apex re-validates it; a schema carries its protocol’s name alone, so the protocol cannot be read back off <code>old</code>.</p>
-<p><code>FoundSpan</code> is a plain record, so it carries the span’s measurements flat rather than nesting the engine’s certificate: <code>apex</code>, <code>left</code> and <code>right</code> for the span itself, then <code>quality</code>, <code>qualityLo</code>, <code>qualityHi</code>, <code>apexCoverage</code>, <code>provenOptimal</code>, <code>isTotal</code>, <code>apexDigest</code> and <code>legsAreFunctorial</code>. The last two are what identifying a span takes: the digest together with the two leg maps is the span’s identity, and there is no schema-digest entry point on the C ABI to recompute it from, so a Haskell host that wants to dedupe or cache a span reads it here or not at all. The package is compiled with <code>NoFieldSelectors</code>, so those fields are read through <code>OverloadedRecordDot</code> (<code>found.apexCoverage</code>) rather than through selector functions, which never come into scope. The two quality ends are equal exactly when <code>provenOptimal</code> holds, which is what separates a score nothing beats from a score the search ran out of budget before improving on. <code>quality</code> ranks spans over <em>one</em> source schema and nothing else, since every denominator of the objective is fixed by the source, so <code>apexCoverage</code> is read alongside it. The pure <code>spanAsTotalMorphism</code> hands back the older <code>FoundMorphism</code> shape when <code>isTotal</code> holds, and <code>spanToOverlap</code> (which takes a <code>Proxy</code> for the backend the argument and result types do not mention) gives the identification list a pushout takes.</p>
-<p><code>SearchOptions</code> is shared with the two total-morphism methods: <code>monic</code>, <code>epic</code>, <code>iso</code>, <code>maxResults</code>, and <code>hardPins</code>, with <code>defaultFindOpts</code> the all-default record. <code>epic</code> is honored by <code>findMorphisms</code> and <code>findBestMorphism</code> and refused by <code>findSpan</code>, since surjectivity is a property of a total morphism and a span’s right leg is deliberately partial. Hard domain restrictions travel separately in <code>DomainConstraints</code> (<code>restrictedDomains</code>, <code>excludedTargets</code>, <code>excludedSources</code>, <code>scoringWeights</code>), which only <code>findSpan</code> takes.</p>
-<h3 id="what-findmorphisms-returns"><a class="header" href="#what-findmorphisms-returns">What <code>findMorphisms</code> returns</a></h3>
-<p><code>findMorphisms</code> returns the morphisms <strong>attaining the optimum</strong>, and nothing else. The engine’s cap of 1024 bounds every request rather than only <code>maxResults = 0</code>, so asking for more is answered with the cap and Haskell has no flag saying so. Every element carries the same <code>quality</code>, so the head of the list is what <code>findBestMorphism</code> answers with and there is no second, worse tier to walk to. The <code>ByQuality</code> wrapper orders results by score, which matters across separate searches rather than within one.</p>
-<p>An empty list means that no total morphism exists, and only that. A search that could not be posed throws instead: the <code>hom</code> methods go through the generic status check, so what arrives is a <code>PanprotoError</code> carrying the FFI <code>PpStatus</code> and its envelope rather than one of the twelve domain children. <code>findSpan</code> is the method that answers with what the two schemas do share.</p>
+<p><code>defaultFindOpts</code> sets <code>monic</code>, <code>epic</code>, and <code>iso</code> to <code>False</code>, <code>maxResults</code> to zero, and <code>hardPins</code> to the empty map. <code>defaultDomainConstraints</code> applies no domain restrictions or weight override.</p>
+<p><code>findMorphisms</code> returns total morphisms attaining the optimum, and <code>findBestMorphism</code> returns <code>Nothing</code> when no total morphism exists. The Haskell list omits the engine’s truncation field for tied optima. <code>findSpan</code> may return an empty apex; it rejects <code>epic = True</code> because a span’s right leg is partial.</p>
+<h2 id="handle-ownership"><a class="header" href="#handle-ownership">Handle ownership</a></h2>
+<p>Rust-backed representations that own slab entries have matching <code>release*</code> methods on their capability classes. Examples include <code>releaseProtocol</code>, <code>releaseSchema</code>, <code>releaseChain</code>, <code>releaseLens</code>, <code>releaseTheory</code>, <code>releaseModel</code>, <code>releaseRegistry</code>, <code>releaseRepo</code>, and <code>releaseDataSet</code>. Release is idempotent at the C slab boundary.</p>
+<p>Use a bracket helper where the binding provides one. Public helpers include <code>withRustProtocol</code>, <code>withRustSchema</code>, <code>withCompiled</code>, <code>withRustTheory</code>, <code>withRepo</code>, and <code>withDataSet</code>. Some exchange representations, including the Rust <code>InstanceRep</code>, carry no slab entry and have a no-op release method; the class method remains the ownership authority.</p>
+<h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
+<p>FFI failures are exceptions in <code>IO</code>. <code>SomePanprotoError</code> is the root wrapper, <code>PanprotoError</code> is the generic fallback, and the domain exception types include <code>MigrationError</code>, <code>LensError</code>, <code>SchemaValidationError</code>, <code>CheckError</code>, <code>ExistenceCheckError</code>, <code>ExprError</code>, <code>GatError</code>, <code>IoError</code>, <code>VcsError</code>, <code>ParseError</code>, <code>ProjectError</code>, and <code>GitBridgeError</code>. Each error carries a <code>PpStatus</code> and may carry a decoded <code>ErrorEnvelope</code>.</p>
 <h2 id="cabal-flags"><a class="header" href="#cabal-flags">Cabal flags</a></h2>
 <div class="table-wrapper">
 <table>
@@ -318,23 +259,24 @@ sharedPart old new proto =
 <tr><th>Flag</th><th>Default</th><th>Effect</th></tr>
 </thead>
 <tbody>
-<tr><td><code>rust</code></td><td>on</td><td>The FFI backend. Disabling drops the dependency on <code>libpanproto_c</code>.</td></tr>
-<tr><td><code>native-only</code></td><td>off</td><td>Excludes the FFI backend even when <code>rust</code> is on. Mutually exclusive with <code>rust</code>.</td></tr>
-<tr><td><code>parse</code></td><td>off</td><td>The <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a> parse surface (<code>ParseBackend</code>).</td></tr>
-<tr><td><code>project</code></td><td>off</td><td>The multi-file project surface (<code>ProjectBackend</code>).</td></tr>
-<tr><td><code>git</code></td><td>off</td><td>The <a href="https://git-scm.com/">git</a> import surface (<code>GitBackend</code>).</td></tr>
-<tr><td><code>optics-adaptors</code></td><td>off</td><td><code>optics-core</code> adaptors for the lawful lens subset (<code>Panproto.Lens.Optics</code>).</td></tr>
-<tr><td><code>lens-adaptors</code></td><td>off</td><td><code>lens</code> (van Laarhoven) adaptors for the lawful lens subset.</td></tr>
-<tr><td><code>effectful</code></td><td>off</td><td>The first-class <code>effectful</code> <code>Panproto</code> effect plus its <code>MonadPanproto</code> instance.</td></tr>
+<tr><td><code>rust</code></td><td>on</td><td>Builds the FFI backend and links <code>libpanproto_c</code></td></tr>
+<tr><td><code>native-only</code></td><td>off</td><td>Excludes Rust backend modules even if <code>rust</code> is enabled</td></tr>
+<tr><td><code>parse</code></td><td>off</td><td>Exposes <code>Panproto.Parse</code>; the Rust instance needs a library built with <code>full-parse</code></td></tr>
+<tr><td><code>project</code></td><td>off</td><td>Exposes <code>Panproto.Project</code>; the Rust instance needs a library built with <code>project</code></td></tr>
+<tr><td><code>git</code></td><td>off</td><td>Exposes <code>Panproto.Git</code>; the Rust instance needs a library built with <code>git</code></td></tr>
+<tr><td><code>optics-adaptors</code></td><td>off</td><td>Adds <code>optics-core</code> adaptors in <code>Panproto.Lens.Optics</code></td></tr>
+<tr><td><code>lens-adaptors</code></td><td>off</td><td>Adds <code>lens</code> adaptors when <code>optics-core</code> is not selected</td></tr>
+<tr><td><code>effectful</code></td><td>off</td><td>Adds the <code>Panproto</code> effect, <code>Eff</code> instance, and <code>runPanproto</code></td></tr>
 </tbody>
 </table>
 </div>
+<p>The parse, project, and git flags must match the features compiled into the linked C library. Enabling a Haskell module does not add missing symbols to <code>libpanproto_c</code>.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../how-to/install/haskell.html">Install the Haskell SDK</a> for setup and the bootstrap scripts.</li>
-<li><a href="./crate-map.html">Crate map</a> for <code>panproto-c</code> and the rest of the workspace.</li>
-<li><a href="../how-to/define-schema/haskell.html">Define a schema from Haskell</a> for the builder walkthrough.</li>
-<li><a href="../how-to/spans.html">Find a span between two schemas</a>, and <a href="../explanation/morphism-search.html">Searching for a morphism</a> for what the search is doing.</li>
+<li><a href="../how-to/install/haskell.html">Install the Haskell SDK</a></li>
+<li><a href="../how-to/define-schema/haskell.html">Define a schema from Haskell</a></li>
+<li><a href="../how-to/spans.html">Find a span between two schemas</a></li>
+<li><a href="https://github.com/panproto/panproto/blob/main/bindings/haskell/panproto.cabal">Haskell package manifest</a></li>
 </ul>
 
                     </main>

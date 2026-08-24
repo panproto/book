@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -204,7 +204,7 @@ fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
     println!("{} vertices, {} edges", schema.vertices.len(), schema.edges.len());
     Ok(())
 }</code></pre>
-<p><code>SchemaBuilder::new(&amp;protocol)</code> constructs the builder; each <code>vertex</code> and <code>edge</code> call validates against the protocol’s edge rules and obj-kind list. <code>entry</code> declares basepoint vertices for instance rooting. <code>build</code> returns a <code>Schema</code> (or a <code>SchemaError</code>).</p>
+<p><code>SchemaBuilder::new(&amp;protocol)</code> constructs the builder; each <code>vertex</code> and <code>edge</code> call validates against the protocol’s vertex kinds and edge rules. <code>entry</code> declares a vertex at which an instance may be rooted. <code>build</code> rejects an empty schema or an entry that names no vertex, computes adjacency indexes, and returns an owned <code>Schema</code>. Constraint-sort validation remains a separate pass.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <pre class="playground"><code class="language-rust no_run">use panproto_core::schema::{SchemaBuilder, validate};
 <span class="boring">fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
@@ -216,11 +216,11 @@ fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
 </span>let errors = validate(&amp;schema, &amp;proto);
 assert!(errors.is_empty(), "validation errors: {errors:?}");
 <span class="boring">Ok(()) }</span></code></pre>
-<p><code>validate</code> returns a <code>Vec&lt;ValidationError&gt;</code>. The error carries the failing equation and the offending vertex or edge as structured fields.</p>
+<p><code>validate</code> returns a <code>Vec&lt;ValidationError&gt;</code> for protocol-level structural failures such as an unknown vertex kind, invalid edge, unknown constraint sort, or dangling required edge. It does not evaluate theory equations.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Reaching past <code>panproto-core</code> to lower-level crates without a reason. The facade re-exports the canonical surface; do not depend on <code>panproto-schema</code> directly unless you need an internal API.</li>
-<li>Holding <code>Schema</code> across an <code>await</code>. Handles are not <code>Send</code> by default; clone them or restructure the call.</li>
+<li>Assuming <code>build()</code> validates constraints. The builder records constraints without checking their sorts; call <code>validate(&amp;schema, &amp;proto)</code> before using an externally supplied constraint.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

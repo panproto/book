@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -185,10 +185,10 @@
 <h1 id="install-the-cli"><a class="header" href="#install-the-cli">Install the CLI</a></h1>
 <p>The CLI is a single binary called <code>schema</code>. It is the entry point for the <a href="https://crates.io/crates/panproto-cli"><code>panproto-cli</code></a> crate.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>A POSIX shell on macOS or Linux, or PowerShell on Windows. No language toolchain is required; pre-built binaries are published with every release.</p>
+<p>A POSIX shell on macOS or Linux, or PowerShell on Windows. The binary releases cover the targets listed in the repository’s cargo-dist configuration. Other targets require a Rust toolchain.</p>
 <h2 id="install"><a class="header" href="#install">Install</a></h2>
 <h3 id="homebrew-macos-linux"><a class="header" href="#homebrew-macos-linux">Homebrew (macOS, Linux)</a></h3>
-<pre><code class="language-sh">brew install panproto/tap/panproto-cli
+<pre><code class="language-sh">brew install panproto/tap/schema
 </code></pre>
 <h3 id="shell-installer-macos-linux-wsl"><a class="header" href="#shell-installer-macos-linux-wsl">Shell installer (macOS, Linux, WSL)</a></h3>
 <pre><code class="language-sh">curl --proto '=https' -LsSf https://github.com/panproto/panproto/releases/latest/download/panproto-cli-installer.sh | sh
@@ -206,7 +206,7 @@
 <p>prints the installed version. The full subcommand list is at <a href="../../reference/cli.html">Reference: CLI</a>, or <code>schema --help</code>.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
-<li>Installing through <code>cargo install</code> without an up-to-date toolchain. panproto requires Rust 1.85+.</li>
+<li>Installing through <code>cargo install</code> without an up-to-date toolchain. panproto requires Rust 1.85 or later.</li>
 <li>Mixing the Homebrew install with a from-source install on the same machine: only one <code>schema</code> ends up first on <code>PATH</code>.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>

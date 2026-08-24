@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,108 +183,102 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="python-sdk-reference"><a class="header" href="#python-sdk-reference">Python SDK reference</a></h1>
-<p>The Python SDK is published as <a href="https://pypi.org/project/panproto/"><code>panproto</code></a> on PyPI. It uses native PyO3 bindings, not WASM.</p>
-<h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
-<pre><code class="language-sh">pip install panproto
+<p>The <a href="https://www.python.org/">Python</a> package is <a href="https://pypi.org/project/panproto/"><code>panproto</code></a>. It requires Python 3.13 or later and contains a native <a href="https://pyo3.rs/">PyO3</a> extension.</p>
+<pre><code class="language-sh">python -m pip install panproto
 </code></pre>
-<p>Python 3.13 or newer is required. The wheel ships with eleven core tree-sitter grammars (Python, JavaScript, TypeScript, Java, C#, C++, PHP, Bash, C, Go, Rust). Additional grammar packs are available as separately-installable companions:</p>
+<h2 id="module-surface"><a class="header" href="#module-surface">Module surface</a></h2>
+<p>Public names are re-exported from <code>panproto</code>; there is no umbrella engine class. The package source lists those names in <a href="https://github.com/panproto/panproto/blob/main/bindings/python/src/panproto/__init__.py"><code>panproto.__all__</code></a>, and the shipped <code>_native.pyi</code> file is the signature authority for the extension.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Pack</th><th>Languages</th></tr>
+<tr><th>Domain</th><th>Principal names</th></tr>
 </thead>
 <tbody>
-<tr><td><code>panproto-grammars-functional</code></td><td>Haskell, OCaml, Elm, Gleam, Erlang, Elixir, PureScript, F#, Clojure, Scheme, Racket</td></tr>
-<tr><td><code>panproto-grammars-web</code></td><td>HTML, CSS, SCSS, Vue, Svelte, Astro, …</td></tr>
-<tr><td><code>panproto-grammars-systems</code></td><td>Zig, Nim, V, Crystal, …</td></tr>
-<tr><td><code>panproto-grammars-jvm</code></td><td>Scala, Kotlin, Groovy, …</td></tr>
-<tr><td><code>panproto-grammars-scripting</code></td><td>Lua, Perl, R, Julia, …</td></tr>
-<tr><td><code>panproto-grammars-data</code></td><td>SQL dialects, GraphQL, JSON variants, …</td></tr>
-<tr><td><code>panproto-grammars-devops</code></td><td>Terraform, Dockerfile, Helm, …</td></tr>
-<tr><td><code>panproto-grammars-mobile</code></td><td>Swift, Objective-C, Dart, …</td></tr>
-<tr><td><code>panproto-grammars-music</code></td><td>SuperCollider, LilyPond, ABC, Csound, ChucK, Glicol, Tidal, Strudel</td></tr>
-<tr><td><code>panproto-grammars-all</code></td><td>Umbrella package containing every pack above.</td></tr>
+<tr><td>Protocols and schemas</td><td><code>get_builtin_protocol</code>, <code>list_builtin_protocols</code>, <code>define_protocol</code>, <code>Protocol</code>, <code>SchemaBuilder</code>, <code>Schema</code></td></tr>
+<tr><td>Schema parsing</td><td><code>parse_atproto_lexicon</code>, <code>parse_schema_document</code>, <code>parse_schema_bundle</code>, <code>parse_schema_source</code></td></tr>
+<tr><td>Migrations</td><td><code>MigrationBuilder</code>, <code>compile_migration</code>, <code>compose_migrations</code>, <code>invert_migration</code>, <code>CompiledMigration</code></td></tr>
+<tr><td>Morphism search</td><td><code>find_span</code>, <code>find_morphisms</code>, <code>find_best_morphism</code>, <code>SchemaSpan</code>, <code>FoundMorphism</code></td></tr>
+<tr><td>Checking</td><td><code>diff_schemas</code>, <code>diff_and_classify</code>, <code>check_existence</code>, <code>check_coverage</code></td></tr>
+<tr><td>Lenses</td><td><code>Lens</code>, <code>ProtolensChain</code>, <code>auto_generate_lens</code>, <code>auto_generate_lens_candidates</code></td></tr>
+<tr><td>Instances and I/O</td><td><code>Instance</code>, <code>IoRegistry</code></td></tr>
+<tr><td>GATs</td><td><code>Theory</code>, <code>TheoryBuilder</code>, <code>TheoryMorphism</code>, <code>Model</code>, <code>colimit_theories</code></td></tr>
+<tr><td>Expressions</td><td><code>Expr</code>, <code>parse_expr</code>, <code>pretty_print_expr</code></td></tr>
+<tr><td>Version control</td><td><code>Repository</code>, <code>VcsRepository</code>, <code>BisectState</code></td></tr>
+<tr><td>Full-AST parsing</td><td><code>AstParserRegistry</code>, <code>ParseEmitLens</code>, <code>parse_source_file</code>, <code>available_grammars</code></td></tr>
+<tr><td>Projects and git</td><td><code>ProjectBuilder</code>, <code>ProjectSchema</code>, <code>parse_project</code>, <code>build_project</code>, <code>git_import</code></td></tr>
 </tbody>
 </table>
 </div>
-<p>Each pack auto-registers its grammars with <code>panproto.AstParserRegistry()</code> on import.</p>
-<h2 id="top-level-surface"><a class="header" href="#top-level-surface">Top-level surface</a></h2>
-<pre><code class="language-python">import panproto
+<h2 id="builder-contracts"><a class="header" href="#builder-contracts">Builder contracts</a></h2>
+<p>Python builders mutate in place. Their mutation methods return <code>None</code>, except where <code>_native.pyi</code> declares a fluent return type.</p>
+<pre><code class="language-python">class SchemaBuilder:
+    def vertex(self, id: str, kind: str, nsid: str | None = ..., /) -&gt; None: ...
+    def edge(
+        self,
+        src: str,
+        tgt: str,
+        kind: str,
+        name: str | None = ...,
+    ) -&gt; None: ...
+    def constraint(self, vertex_id: str, sort: str, value: str) -&gt; None: ...
+    def build(self) -&gt; Schema: ...
+</code></pre>
+<p><code>TheoryBuilder.sort</code>, <code>TheoryBuilder.op</code>, and <code>TheoryBuilder.eq</code> return the builder and may be chained. Check <code>_native.pyi</code> before assuming that a builder follows either convention.</p>
+<h2 id="morphism-search"><a class="header" href="#morphism-search">Morphism search</a></h2>
+<pre><code class="language-python">find_span(
+    src: Schema,
+    tgt: Schema,
+    protocol: Protocol,
+    anchors: dict[str, str] | None = None,
+    monic: bool = False,
+    epic: bool = False,
+    iso: bool = False,
+) -&gt; SchemaSpan
 
-proto = panproto.get_builtin_protocol("atproto")
-b = proto.schema()
-b.vertex("post", "record", "app.bsky.feed.post")
-b.vertex("post:body", "object")
-b.edge("post", "post:body", "record-schema")
-schema = b.build()
+find_morphisms(
+    src: Schema,
+    tgt: Schema,
+    anchors: dict[str, str] | None = None,
+    monic: bool = False,
+    epic: bool = False,
+    iso: bool = False,
+    max_results: int = 0,
+) -&gt; list[FoundMorphism]
 </code></pre>
-<p>There is no <code>Panproto</code> umbrella class; the entry points are free functions on the <code>panproto</code> module. The full re-export list (errors, schema types, protocol registry, migration, check, instance, I/O, lens, GAT, expression-language, VCS, parse, project, git bridge) is in <a href="https://github.com/panproto/panproto/blob/main/bindings/python/src/panproto/__init__.py"><code>bindings/python/src/panproto/__init__.py</code></a>. Selected entry points:</p>
+<p><code>find_span</code> returns an empty apex when the schemas share no vertices. It requires a protocol because the induced apex is validated before it is returned. <code>epic=True</code> raises <code>MigrationError</code> for span search; surjectivity is defined for the total-morphism functions.</p>
+<p><code>find_morphisms</code> returns total morphisms attaining the optimum. An empty list means that no total morphism exists, whereas a search failure raises <code>MigrationError</code>. The Python list does not carry the Rust <code>MorphismList.truncated</code> field, so this binding cannot report whether the engine stopped enumerating tied optima at its cap.</p>
+<h2 id="grammar-packs"><a class="header" href="#grammar-packs">Grammar packs</a></h2>
+<p><code>AstParserRegistry()</code> constructs a native registry and adds grammars advertised through installed <code>panproto.grammars</code> entry points. Discovery occurs when the factory is called; importing a companion package is not required.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Surface</th><th>Entry point</th></tr>
+<tr><th>Package</th><th>Group</th></tr>
 </thead>
 <tbody>
-<tr><td>Protocol registry</td><td><code>get_builtin_protocol(name)</code>, <code>list_builtin_protocols()</code>, <code>define_protocol(...)</code></td></tr>
-<tr><td>Schema construction</td><td><code>Protocol.schema()</code> returns a <code>SchemaBuilder</code>. Each <code>.vertex(id, kind)</code> / <code>.edge(src, tgt, kind, name=None)</code> / <code>.constraint(vid, sort, value)</code> mutates the builder in place and returns <code>None</code>; call <code>.build()</code> on the final builder. Chain syntax is a TypeScript-only convenience; Python is statement-by-statement.</td></tr>
-<tr><td>Migration</td><td><code>MigrationBuilder</code>, <code>compile_migration</code>, <code>compose_migrations</code>, <code>invert_migration</code>, <code>pipeline</code></td></tr>
-<tr><td>Morphism and span search</td><td><code>find_span</code>, <code>find_morphisms</code>, <code>find_best_morphism</code>, and the <code>SchemaSpan</code> / <code>FoundMorphism</code> result classes</td></tr>
-<tr><td>Check</td><td><code>diff_and_classify</code>, <code>diff_schemas</code>, <code>check_existence</code>, <code>check_coverage</code></td></tr>
-<tr><td>Lens</td><td><code>Lens</code>, <code>ProtolensChain</code> (with <code>from_dsl_json</code> / <code>from_dsl_yaml</code> / <code>from_dsl_nickel</code> / <code>from_dsl_path</code> loaders), <code>auto_generate_lens</code>, <code>auto_generate_lens_candidates</code></td></tr>
-<tr><td>GAT</td><td><code>Theory</code> (with <code>from_json</code> / <code>from_yaml</code> / <code>from_nickel</code> / <code>from_path</code> DSL loaders and <code>to_yaml</code> / <code>from_dict_yaml</code> for the flat-shape round-trip), <code>TheoryBuilder</code>, <code>Model</code>, <code>colimit_theories</code>, <code>free_model</code>, <code>migrate_model</code>, <code>check_model</code>, <code>check_morphism</code></td></tr>
-<tr><td>Schema</td><td><code>Schema.constraints_for(vertex_id)</code> lists every constraint; <code>Schema.field_text(vertex_id, field_name)</code> reads the text of a tree-sitter <code>field('&lt;name&gt;', anonymous-token)</code> child</td></tr>
-<tr><td>Expression language</td><td><code>Expr</code>, <code>parse_expr</code>, <code>pretty_print_expr</code></td></tr>
-<tr><td>VCS</td><td><code>Repository</code>, <code>VcsRepository</code>, <code>BisectState</code></td></tr>
-<tr><td>Parse</td><td><code>parse_source_file</code>, <code>available_grammars</code>, <code>ParseEmitLens</code>, <code>AstParserRegistry()</code> (with <code>.override_grammar(name, extensions, language_ptr, node_types, ...)</code> for dev-time grammar swapping)</td></tr>
-<tr><td>Project</td><td><code>ProjectBuilder</code>, <code>parse_project</code>, <code>build_project</code></td></tr>
+<tr><td><code>panproto-grammars-functional</code></td><td>Functional languages</td></tr>
+<tr><td><code>panproto-grammars-web</code></td><td>Web languages</td></tr>
+<tr><td><code>panproto-grammars-systems</code></td><td>Systems languages</td></tr>
+<tr><td><code>panproto-grammars-jvm</code></td><td>JVM languages</td></tr>
+<tr><td><code>panproto-grammars-scripting</code></td><td>Scripting languages</td></tr>
+<tr><td><code>panproto-grammars-data</code></td><td>Data and schema languages</td></tr>
+<tr><td><code>panproto-grammars-devops</code></td><td>Build and operations languages</td></tr>
+<tr><td><code>panproto-grammars-mobile</code></td><td>Mobile languages</td></tr>
+<tr><td><code>panproto-grammars-music</code></td><td>Music languages</td></tr>
+<tr><td><code>panproto-grammars-all</code></td><td>Aggregate pack</td></tr>
 </tbody>
 </table>
 </div>
-<p>Full API reference, including every method signature, lives at the dedicated mkdocs site:</p>
-<ul>
-<li><a href="https://panproto.dev/python/">Python SDK reference</a> (mkdocs)</li>
-</ul>
-<p>The package source is at <a href="https://github.com/panproto/panproto/tree/main/bindings/python"><code>bindings/python/</code></a>.</p>
-<h2 id="morphism-and-span-search"><a class="header" href="#morphism-and-span-search">Morphism and span search</a></h2>
-<p><code>find_span</code> returns a <code>SchemaSpan</code> of the form <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord"><span class="mord mathit">src</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">←</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8095em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathit">tgt</span></span></span></span></span>, where the apex <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span> is the sub-schema of <code>src</code> induced on the vertices assigned a target. It does not return <code>None</code> or raise an exception merely because the schemas have nothing in common; that case produces an empty apex.</p>
-<pre><code class="language-python">span = panproto.find_span(old, new, proto, anchors={"post": "post"}, monic=True)
-
-print(span.apex_coverage)      # 0.777... : 7 of the 9 source vertices
-print(span.quality_bounds)     # (0.812, 0.812) when proven_optimal
-if span.is_total:
-    morphism = span.as_total_morphism()
-</code></pre>
-<p><code>protocol</code> is a positional argument because the apex is a schema, and a schema is well formed only against a protocol; inducing the apex re-validates it rather than assuming it, and a <code>Schema</code> carries its protocol’s name alone. <code>anchors</code> are mappings the caller <em>knows</em>, which the search may not reconsider. Setting <code>epic=True</code> raises <code>MigrationError</code>, since surjectivity is a property of a total morphism and a span’s right leg is deliberately partial.</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Attribute of <code>SchemaSpan</code></th><th>What it holds</th></tr>
-</thead>
-<tbody>
-<tr><td><code>apex: Schema</code></td><td>The sub-schema of <code>src</code> the search covered.</td></tr>
-<tr><td><code>left: Migration</code></td><td>Inclusion from the apex into <code>src</code>.</td></tr>
-<tr><td><code>right: Migration</code></td><td>Assignment from the apex into <code>tgt</code>; this field carries the identification.</td></tr>
-<tr><td><code>quality: float</code></td><td>How well the covered part matches, in <code>[0, 1]</code>, with the drop count excluded.</td></tr>
-<tr><td><code>quality_bounds: tuple[float, float]</code></td><td>The interval bracketing <code>quality</code>. Its ends are equal exactly when <code>proven_optimal</code> holds.</td></tr>
-<tr><td><code>apex_coverage: float</code></td><td>The share of the source’s vertices the apex covers, or one on an empty source.</td></tr>
-<tr><td><code>proven_optimal: bool</code></td><td>Whether the search proved its answer optimal.</td></tr>
-<tr><td><code>is_total: bool</code></td><td>Whether the apex is the whole source, which makes the span a total morphism.</td></tr>
-<tr><td><code>legs_are_functorial: bool</code></td><td>Whether both legs passed the functoriality check.</td></tr>
-<tr><td><code>apex_digest: str</code></td><td>The apex’s content digest, lower-case hexadecimal.</td></tr>
-</tbody>
-</table>
-</div>
-<p><code>as_total_morphism()</code> returns a <code>FoundMorphism</code> when <code>is_total</code> holds and <code>None</code> otherwise, <code>to_overlap()</code> gives the sorted pair lists a pushout takes, and <code>to_dict()</code> flattens the whole span. <code>quality</code> ranks spans over <em>one</em> source schema and nothing else, because every denominator of the objective is fixed by <code>src</code>; read <code>apex_coverage</code> alongside it.</p>
-<h3 id="what-find_morphisms-returns"><a class="header" href="#what-find_morphisms-returns">What <code>find_morphisms</code> returns</a></h3>
-<p><code>find_morphisms</code> returns the morphisms <strong>attaining the optimum</strong>, and nothing else. Every element carries the same quality, so <code>results[0]</code> is the best answer there is and iterating further for a suboptimal alternative will not find one. The engine’s cap of 1024 bounds every request rather than only <code>max_results=0</code>, so asking for more is answered with the cap. Python receives a plain list, so the flag the engine sets when the cap cut the answer short does not cross this surface; a caller that needs to tell a cut list from an exhausted one compares <code>len(results)</code> against 1024.</p>
-<p>An empty list means that no total morphism exists, and only that. A search that could not be posed raises <code>MigrationError</code> instead, so the two are distinguishable; <code>find_span</code> is the function that answers with what the two schemas do share.</p>
-<h2 id="type-stubs"><a class="header" href="#type-stubs">Type stubs</a></h2>
-<p>The package ships <code>_native.pyi</code> so that signatures are visible to type checkers (mypy, pyright). Stub signatures are kept in lockstep with the PyO3 runtime by CI.</p>
+<p><code>panproto._native.AstParserRegistry</code> bypasses companion discovery and constructs the registry supplied by the core extension alone.</p>
+<h2 id="ownership-errors-and-typing"><a class="header" href="#ownership-errors-and-typing">Ownership, errors, and typing</a></h2>
+<p>PyO3 objects follow Python reference ownership. The public stub exposes no <code>dispose</code>, <code>release</code>, or <code>close</code> method for schema, migration, lens, theory, repository, parser, or project objects.</p>
+<p><code>PanprotoError</code> is the common exception base. Domain subclasses include <code>SchemaValidationError</code>, <code>MigrationError</code>, <code>LensError</code>, <code>CheckError</code>, <code>ExistenceCheckError</code>, <code>ExprError</code>, <code>GatError</code>, <code>IoError</code>, <code>VcsError</code>, <code>ParseError</code>, <code>ProjectError</code>, and <code>GitBridgeError</code>.</p>
+<p>The wheel includes <code>py.typed</code> and <code>_native.pyi</code>. Repository tests compare the stub’s public declarations with the loaded extension and check callable signatures, so generated documentation should follow the stub rather than infer signatures from Rust names.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../how-to/install/python.html">Install the Python SDK</a>.</li>
-<li><a href="../how-to/define-schema/python.html">Define a schema from Python</a>.</li>
-<li><a href="../how-to/spans.html">Find a span between two schemas</a>, and <a href="../explanation/morphism-search.html">Searching for a morphism</a> for what the search is doing.</li>
+<li><a href="../how-to/install/python.html">Install the Python SDK</a></li>
+<li><a href="../how-to/define-schema/python.html">Define a schema from Python</a></li>
+<li><a href="../how-to/spans.html">Find a span between two schemas</a></li>
+<li><a href="https://github.com/panproto/panproto/tree/main/bindings/python">Python binding source</a></li>
 </ul>
 
                     </main>

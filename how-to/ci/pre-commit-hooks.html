@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="pre-commit-hooks"><a class="header" href="#pre-commit-hooks">Pre-commit hooks</a></h1>
-<p>A pre-commit hook rejects malformed staged schemas before they enter the history. The optional second check warns about breaking changes.</p>
+<p>A pre-commit hook rejects malformed staged schemas before they enter the history. This example validates the bytes in the index, so an unstaged working-tree edit cannot change the result.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>The <code>schema</code> CLI installed. A git repository.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
@@ -194,21 +194,20 @@ set -euo pipefail
 
 changed=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^schemas/.*\.json$' || true)
 [ -z "$changed" ] &amp;&amp; exit 0
+staged_file=$(mktemp)
+base_file=$(mktemp)
+trap 'rm -f "$staged_file" "$base_file"' EXIT
 
-for f in $changed; do
-  schema validate --protocol atproto "$f"
-done
+while IFS= read -r f; do
+  git show ":$f" &gt; "$staged_file"
+  schema validate --protocol atproto "$staged_file"
 
-# Optional breaking-change warning: try to auto-generate a chain
-# between the staged version and the upstream copy. Failure suggests
-# the change is breaking.
-for f in $changed; do
-  base_blob=$(git show "@{u}:$f" 2&gt;/dev/null) || continue
-  echo "$base_blob" &gt; /tmp/base.json
-  if ! schema lens generate --protocol atproto /tmp/base.json "$f" --save /tmp/chain.json 2&gt;/dev/null; then
-    echo "warning: $f introduces a breaking change (commit anyway? Ctrl-C to abort)"
+  # Optional warning against the tracked upstream copy.
+  if git show "@{u}:$f" &gt; "$base_file" 2&gt;/dev/null &amp;&amp; \
+     ! schema compat "$base_file" "$staged_file" --protocol atproto; then
+    echo "warning: compatibility check failed for $f" &gt;&amp;2
   fi
-done
+done &lt;&lt;&lt; "$changed"
 </code></pre>
 <p><code>chmod +x .git/hooks/pre-commit</code> installs it.</p>
 <h3 id="with-pre-commit-framework"><a class="header" href="#with-pre-commit-framework">With pre-commit framework</a></h3>
@@ -225,10 +224,10 @@ repos:
 <p>The hook receives the staged file paths as positional arguments; the <code>--protocol</code> flag is required.</p>
 <p><code>pre-commit install</code> activates it.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<p>Stage a malformed schema and try to commit; the hook rejects. Fix the schema and commit again; the hook passes.</p>
+<p>Stage a malformed schema and try to commit. The hook rejects it. After the schema is fixed, the next commit passes.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
-<li>Hook stalls on missing <code>schema</code> binary. Wrap the invocation in a <code>command -v schema || exit 0</code> to fall back gracefully on machines without the CLI.</li>
+<li>Silently skipping a missing <code>schema</code> binary. Prefer a failing hook with an installation message; CI remains the authoritative gate when contributors may bypass hooks.</li>
 <li>Validating every file on every commit. The script above scopes to staged <code>schemas/*.json</code> only; broader scopes are noisy.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>

@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -199,7 +199,7 @@ const schema = proto.schema()
   .edge('post:body', 'post:body.text', 'prop', { name: 'text' })
   .build();
 </code></pre>
-<p><code>p.protocol(name)</code> loads the named protocol’s theory. <code>proto.schema()</code> returns a <code>SchemaBuilder</code>. Each <code>.vertex()</code> call adds a vertex (record kind) with optional constraints; each <code>.edge()</code> call adds an edge (field, item, or variant) between vertices. <code>.build()</code> validates the constructed schema against the protocol’s theory and returns a <code>Schema</code> handle.</p>
+<p><code>p.protocol(name)</code> loads the named protocol. <code>proto.schema()</code> returns an immutable <code>SchemaBuilder</code>: each operation returns a new builder containing the added structure. <code>.build()</code> sends those operations to WebAssembly, where vertex and edge rules are checked, and returns a <code>BuiltSchema</code> handle. Run the separate validation pass below to check constraint sorts and other finished-schema conditions.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <pre><code class="language-ts">const result = schema.validate(proto);
 if (!result.isValid) throw new Error(JSON.stringify(result.issues));
@@ -207,8 +207,8 @@ if (!result.isValid) throw new Error(JSON.stringify(result.issues));
 <p><code>validate(protocol)</code> returns a <code>ValidationResult</code> containing any issues. An empty issue list confirms the schema satisfies the protocol’s edge rules and obj-kinds.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
-<li>Calling <code>.build()</code> before all required edges are added. The validation runs eagerly; missing required structure raises immediately.</li>
-<li>Re-using a builder after <code>.build()</code>. Builders are single-shot; create a new one for each schema.</li>
+<li>Ignoring the builder returned by <code>.vertex()</code> or <code>.edge()</code>. Builders are immutable, so the original value does not acquire the operation.</li>
+<li>Treating <code>.build()</code> as equation verification. It constructs a schema and enforces builder-level checks; <code>schema.validate(proto)</code> is the finished-schema structural validation pass.</li>
 <li>Treating the returned <code>Schema</code> handle as a plain object. It is an opaque handle into the WASM heap; pass it to subsequent SDK calls, do not introspect it directly.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>

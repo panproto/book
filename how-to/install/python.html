@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -188,7 +188,7 @@
 <h2 id="install"><a class="header" href="#install">Install</a></h2>
 <pre><code class="language-sh">pip install panproto
 </code></pre>
-<p>The wheel includes native PyO3 bindings (no WASM) and eleven core tree-sitter grammars. Additional grammar packs are installed separately:</p>
+<p>The wheel includes native <a href="https://pyo3.rs/">PyO3</a> bindings and the core <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a> grammar group. Additional grammar packs are installed separately:</p>
 <pre><code class="language-sh">pip install panproto-grammars-functional   # Haskell, OCaml, Elm, Erlang, Elixir, ...
 pip install panproto-grammars-web          # HTML, CSS, Vue, Svelte, ...
 pip install panproto-grammars-all          # umbrella package
@@ -202,9 +202,8 @@ print(panproto.list_builtin_protocols()[:3])
 <p>The native module loads at import time (no async wrapper, unlike the TypeScript SDK). Listing a few of the built-in protocols confirms the linkage. The full top-level surface is in <a href="../../reference/sdk-python.html">Reference: Python SDK</a>.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
-<li>Running under Python &lt; 3.13. The wheel uses 3.13-only typing constructs in its public API.</li>
-<li>Installing the deprecated pure-Python WASM SDK in parallel. The native PyO3 wheel supersedes it; remove the older package.</li>
-<li>Importing companion grammar packs before <code>panproto</code>. The packs auto-register on import; the order matters only when both packs and <code>panproto</code> are imported in the same module.</li>
+<li>Running under Python earlier than 3.13. The package metadata requires Python 3.13 or later.</li>
+<li>Importing each grammar pack manually. <code>AstParserRegistry</code> discovers installed packs through their <code>panproto.grammars</code> entry points.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,72 +183,88 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="typescript-sdk-reference"><a class="header" href="#typescript-sdk-reference">TypeScript SDK reference</a></h1>
-<p>The TypeScript SDK is published as <a href="https://www.npmjs.com/package/@panproto/core"><code>@panproto/core</code></a>. It wraps the WASM build of panproto with a fluent, handle-based API.</p>
-<h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
+<p>The <a href="https://www.typescriptlang.org/">TypeScript</a> package is <a href="https://www.npmjs.com/package/@panproto/core"><code>@panproto/core</code></a>. It requires Node.js 20 or later when run under Node and loads the engine through WebAssembly.</p>
 <pre><code class="language-sh">npm install @panproto/core
-# or
-pnpm add @panproto/core
-# or
-yarn add @panproto/core
 </code></pre>
-<p>Node 20+ is required. Browser builds are supported via the same package; a bundler with WASM support is needed.</p>
 <h2 id="initialization"><a class="header" href="#initialization">Initialization</a></h2>
 <pre><code class="language-ts">import { Panproto } from '@panproto/core';
 
-const p = await Panproto.init();
+const panproto = await Panproto.init();
 </code></pre>
-<p><code>Panproto.init()</code> loads the WASM module, sets up the slab allocator behind the boundary, and returns the top-level handle. All subsequent calls go through it.</p>
-<h2 id="surface"><a class="header" href="#surface">Surface</a></h2>
-<p>The SDK exposes (selected; see <a href="https://github.com/panproto/panproto/tree/main/bindings/typescript/src/index.ts"><code>bindings/typescript/src/index.ts</code></a> for the full list):</p>
+<p>The initialization signature is:</p>
+<pre><code class="language-ts">static init(input?: string | URL | WasmGlueModule): Promise&lt;Panproto&gt;
+</code></pre>
+<p>With no argument, <code>init</code> loads the glue and WASM binary bundled with the package. A URL identifies the wasm-bindgen JavaScript glue module, rather than the <code>.wasm</code> file itself. Bundlers may instead pass a pre-imported <code>WasmGlueModule</code>.</p>
+<h2 id="principal-exports"><a class="header" href="#principal-exports">Principal exports</a></h2>
+<p>The generated declaration file in the package is the signature authority. The table below is an index into that surface.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Object / function</th><th>Purpose</th></tr>
+<tr><th>Export</th><th>Contract</th></tr>
 </thead>
 <tbody>
-<tr><td><code>Panproto</code></td><td>Top-level handle. <code>init()</code>, <code>protocol(name)</code>, <code>migration(src, tgt)</code>, <code>parseJson(schema, json)</code>, <code>toJson(schema, instance)</code>, <code>convert(data, { from, to, defaults? })</code>, <code>compose(m1, m2)</code>, <code>composeLenses(l1, l2)</code>, <code>checkExistence(src, tgt, builder)</code>, <code>diffFull(old, new)</code>, <code>span(from, to, hints?)</code>.</td></tr>
-<tr><td><code>Protocol</code></td><td>A loaded protocol. <code>.name</code>, <code>.schema()</code> returns a <code>SchemaBuilder</code>.</td></tr>
-<tr><td><code>SchemaBuilder</code></td><td>Fluent builder. <code>.vertex(name, kind)</code>, <code>.edge(src, tgt, kind, opts)</code>, <code>.build()</code> returns <code>BuiltSchema</code>.</td></tr>
-<tr><td><code>BuiltSchema</code></td><td>A built schema. <code>.vertices</code>, <code>.edges</code>, <code>.protocol</code>.</td></tr>
-<tr><td><code>Instance</code></td><td>A parsed data record. <code>.toJson()</code>, <code>.validate()</code>.</td></tr>
-<tr><td><code>MigrationBuilder</code></td><td>Builder. <code>.map(srcVertex, tgtVertex)</code>, <code>.mapEdge(srcEdge, tgtEdge)</code>, <code>.resolve(...)</code>, <code>.compile()</code> returns <code>CompiledMigration</code>.</td></tr>
-<tr><td><code>CompiledMigration</code></td><td>A migration that <em>is</em> a lens. <code>.lift(record)</code> returns <code>LiftResult { data, _rawBytes? }</code>; <code>.get(record)</code> returns <code>GetResult { view, complement }</code>; <code>.put(view, complement)</code> returns <code>LiftResult</code>.</td></tr>
-<tr><td><code>LensHandle</code></td><td>A free-standing protolens chain. <code>.get(bytes)</code>, <code>.put(view, complement)</code>, <code>.checkLaws(instance)</code> returns <code>LawCheckResult { holds, violation }</code>; <code>.checkGetPut</code>, <code>.checkPutGet</code> for individual laws; <code>.toJson()</code>.</td></tr>
-<tr><td><code>SpanResponse</code></td><td>Returned by <code>Panproto.span(from, to, hints?)</code>. Plain data, not a handle: <code>apex_vertices</code>, <code>apex_edges</code>, <code>vertex_map</code>, <code>quality</code>, <code>quality_bounds</code>, <code>apex_coverage</code>, <code>proven_optimal</code>, <code>is_total</code>, <code>apex_digest</code>.</td></tr>
-<tr><td><code>FullDiffReport</code> / <code>CompatReport</code></td><td>Returned by <code>Panproto.diffFull(old, new)</code>. Call <code>.classify(protocol)</code> on the diff to get a <code>CompatReport</code> with a <code>classification</code> field (the kebab-case string <code>"fully-compatible"</code>, <code>"backward-compatible"</code>, or <code>"breaking"</code>) alongside a <code>breaking</code> list, a <code>non_breaking</code> list, and a <code>compatible</code> boolean.</td></tr>
-<tr><td><code>executeQuery(query, instance, wasm)</code></td><td>Standalone query function. The <code>query</code> is <code>InstanceQuery { anchor, predicate?, projection?, path?, groupBy?, limit? }</code>; the <code>predicate</code> is an <code>Expr</code> object, not a source string.</td></tr>
-<tr><td><code>parseExpr</code>, <code>evalExpr</code>, <code>formatExpr</code>, <code>ExprBuilder</code></td><td>Expression-language entry points.</td></tr>
-<tr><td><code>IoRegistry</code></td><td>Multi-protocol parse/emit registry.</td></tr>
-<tr><td><code>Repository</code></td><td><code>panproto-vcs</code> repository handle.</td></tr>
-<tr><td><code>DataSetHandle</code></td><td>Data-versioning handle.</td></tr>
+<tr><td><code>Panproto</code></td><td>Engine initialization and convenience methods for protocols, parsing, diffs, migrations, lenses, instance I/O, VCS, and data sets</td></tr>
+<tr><td><code>Protocol</code></td><td>Protocol specification and <code>schema(): SchemaBuilder</code></td></tr>
+<tr><td><code>SchemaBuilder</code></td><td>Immutable builder; each mutation returns a new builder and <code>build()</code> returns <code>BuiltSchema</code></td></tr>
+<tr><td><code>BuiltSchema</code></td><td>Engine-backed schema with structural metadata, normalization, and validation</td></tr>
+<tr><td><code>MigrationBuilder</code></td><td>Immutable vertex, edge, and resolver mapping builder</td></tr>
+<tr><td><code>CompiledMigration</code></td><td><code>lift</code>, complement-carrying <code>get</code> and <code>put</code>, plus JSON convenience methods</td></tr>
+<tr><td><code>ProtolensChainHandle</code>, <code>LensHandle</code>, <code>SymmetricLensHandle</code></td><td>Chain construction, lens execution, composition, and law checks</td></tr>
+<tr><td><code>Instance</code>, <code>IoRegistry</code></td><td>Instance values and protocol-specific parse or emit operations</td></tr>
+<tr><td><code>FullDiffReport</code>, <code>CompatReport</code>, <code>ValidationResult</code></td><td>Diff, compatibility, and validation results</td></tr>
+<tr><td><code>TheoryHandle</code>, <code>TheoryBuilder</code></td><td>GAT construction, colimits, and morphism operations</td></tr>
+<tr><td><code>Repository</code>, <code>DataSetHandle</code></td><td>In-memory VCS and data-versioning resources</td></tr>
+<tr><td><code>parseExpr</code>, <code>evalExpr</code>, <code>formatExpr</code>, <code>ExprBuilder</code></td><td>Expression parsing, evaluation, formatting, and construction</td></tr>
+<tr><td><code>executeQuery</code>, <code>fiberAt</code>, <code>fiberDecomposition</code>, <code>polyHom</code></td><td>Instance-query and structural operations</td></tr>
 </tbody>
 </table>
 </div>
-<p>Full API documentation, including every method signature and parameter, lives in the TypeDoc output:</p>
-<ul>
-<li><a href="https://panproto.dev/typedoc/">TypeDoc reference for <code>@panproto/core</code></a> (link to be wired up at publish time)</li>
-</ul>
-<p>The package source is at <a href="https://github.com/panproto/panproto/tree/main/bindings/typescript"><code>bindings/typescript/</code></a>.</p>
-<h2 id="span-search"><a class="header" href="#span-search">Span search</a></h2>
-<p><code>Panproto.span</code> asks what two schemas share and always answers. Where <code>Panproto.lens</code> and <code>Panproto.protolensChain</code> throw when no alignment is found, the span search returns a <code>SpanResponse</code> with an empty <code>apex_vertices</code> and an <code>apex_coverage</code> of zero: leaving every source vertex out of the apex is a feasible answer, so two schemas with nothing in common are reported rather than refused.</p>
-<pre><code class="language-ts">const span = p.span(oldSchema, newSchema, { post: 'post' });
+<p>The source export list is <a href="https://github.com/panproto/panproto/blob/main/bindings/typescript/src/index.ts"><code>bindings/typescript/src/index.ts</code></a>. Package consumers should import from <code>@panproto/core</code>, since files under <code>src</code> are not package subpath exports.</p>
+<h2 id="selected-signatures"><a class="header" href="#selected-signatures">Selected signatures</a></h2>
+<pre><code class="language-ts">class SchemaBuilder {
+  vertex(id: string, kind: string, options?: VertexOptions): SchemaBuilder;
+  edge(src: string, tgt: string, kind: string, options?: EdgeOptions): SchemaBuilder;
+  constraint(vertexId: string, sort: string, value: string): SchemaBuilder;
+  build(): BuiltSchema;
+}
 
-span.apex_coverage;   // 0.777... : 7 of the 9 source vertices
-span.quality_bounds;  // [0.812, 0.812] when proven_optimal
-span.is_total;        // true when the apex is the whole source
+class MigrationBuilder {
+  map(srcVertex: string, tgtVertex: string): MigrationBuilder;
+  mapEdge(srcEdge: Edge, tgtEdge: Edge): MigrationBuilder;
+  resolve(srcKind: string, tgtKind: string, resolvedEdge: Edge): MigrationBuilder;
+  compile(): CompiledMigration;
+}
+
+class CompiledMigration {
+  lift(record: unknown): LiftResult;
+  get(record: unknown): GetResult;
+  put(view: unknown, complement: Uint8Array): LiftResult;
+}
 </code></pre>
-<p>The third argument is source-to-target vertex mappings the caller <em>knows</em>, which the search may not reconsider. The response is plain data rather than a handle, so there is nothing to dispose: the apex arrives as <code>apex_vertices</code> and <code>apex_edges</code>, and because the apex is the sub-schema of the source <em>induced</em> on those vertices, the two lists determine it against a source the caller already holds. <code>vertex_map</code> is the right leg, source vertex identifier to target vertex identifier.</p>
-<p><code>quality</code> ranks spans over <em>one</em> source schema and nothing else, because every denominator of the objective is fixed by the source. <code>quality_bounds</code> brackets it, and its two ends are equal exactly when <code>proven_optimal</code> holds, which is what separates a score nothing beats from a score the search ran out of budget before improving on.</p>
-<h3 id="where-the-total-morphism-search-is-and-is-not"><a class="header" href="#where-the-total-morphism-search-is-and-is-not">Where the total-morphism search is, and is not</a></h3>
-<p>The total-morphism search has no WASM analog, so this SDK does not expose it: <code>Panproto.span</code> is the only entry into the search from TypeScript, and it answers with a span rather than with a list of total morphisms. The Rust, Python, Haskell and Swift surfaces do expose it, under an engine cap of 1024 that applies to every request. Code reaching the search through the <code>schema auto-migrate</code> CLI, or through a sibling SDK in the same pipeline, meets that surface in the ordinary way.</p>
-<h2 id="boundary-characteristics"><a class="header" href="#boundary-characteristics">Boundary characteristics</a></h2>
-<p>The SDK is a thin layer over <code>panproto-wasm</code>. Data crossing the boundary is encoded with MessagePack, and live values on the Rust side are referenced from JavaScript through opaque integer handles allocated from a slab. Object identity is preserved across calls, so storing handles in JavaScript data structures is safe.</p>
+<p><code>LiftResult.data</code> is <code>unknown</code>. <code>GetResult</code> contains <code>view: unknown</code> and <code>complement: Uint8Array</code>; the complement must be passed back unchanged unless an operation explicitly returns a replacement.</p>
+<h2 id="resource-ownership"><a class="header" href="#resource-ownership">Resource ownership</a></h2>
+<p>Engine-backed wrappers implement <code>Disposable</code>. This includes <code>Protocol</code>, <code>BuiltSchema</code>, <code>CompiledMigration</code>, the three lens-handle classes, <code>IoRegistry</code>, <code>TheoryHandle</code>, <code>Repository</code>, and <code>DataSetHandle</code>. Dispose each owned wrapper after its last use, preferably with an explicit resource-management scope:</p>
+<pre><code class="language-ts">using schema = protocol.schema().vertex('root', 'object').build();
+</code></pre>
+<p>Disposal is idempotent. Accessing a disposed handle raises <code>WasmError</code>. A <code>FinalizationRegistry</code> frees a leaked handle as a fallback, but collection time is nondeterministic. Disposing <code>Panproto</code> releases its cached <code>Protocol</code> objects; it does not own every schema, migration, lens, registry, repository, or data-set wrapper created from it.</p>
+<p><code>Instance</code>, result objects, and <code>SpanResponse</code> are plain JavaScript data and do not implement <code>Disposable</code>.</p>
+<h2 id="span-search"><a class="header" href="#span-search">Span search</a></h2>
+<pre><code class="language-ts">span(
+  from: BuiltSchema,
+  to: BuiltSchema,
+  hints?: Readonly&lt;Record&lt;string, string&gt;&gt;,
+): SpanResponse
+</code></pre>
+<p>The optional hints are fixed source-to-target vertex mappings. <code>SpanResponse</code> contains <code>apex_vertices</code>, <code>apex_edges</code>, <code>vertex_map</code>, <code>quality</code>, <code>quality_bounds</code>, <code>apex_coverage</code>, <code>proven_optimal</code>, <code>is_total</code>, and <code>apex_digest</code>. It contains no engine handle.</p>
+<p>The WASM surface exposes span search but not the Rust total-morphism functions <code>find_morphisms</code> and <code>find_best_morphism</code>. Use <code>span.is_total</code> when a caller needs to know whether the returned apex covers the complete source.</p>
+<h2 id="boundary-limits"><a class="header" href="#boundary-limits">Boundary limits</a></h2>
+<p>The SDK passes structured payloads through the WASM layer and stores live engine resources behind integer handles. The package does not expose the Rust <code>panproto-parse</code> full-AST registry, multi-file <code>panproto-project</code> builder, or <code>panproto-git</code> bridge. Schema-document and schema-source parsers available through <code>Panproto.parseSchemaDocument</code> and <code>Panproto.parseSchemaSource</code> are separate from that full-AST surface.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../how-to/install/typescript.html">Install the TypeScript SDK</a>.</li>
-<li><a href="../how-to/define-schema/typescript.html">Define a schema from TypeScript</a>.</li>
-<li><a href="../explanation/architecture.html#wasm-boundary">Architecture: WASM boundary</a>.</li>
-<li><a href="../how-to/spans.html">Find a span between two schemas</a>, and <a href="../explanation/morphism-search.html">Searching for a morphism</a> for what the search is doing.</li>
+<li><a href="../how-to/install/typescript.html">Install the TypeScript SDK</a></li>
+<li><a href="../how-to/define-schema/typescript.html">Define a schema from TypeScript</a></li>
+<li><a href="../explanation/architecture.html#wasm-boundary">WASM boundary</a></li>
+<li><a href="../how-to/spans.html">Find a span between two schemas</a></li>
 </ul>
 
                     </main>

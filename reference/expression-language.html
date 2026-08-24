@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,84 +183,92 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="expression-language-reference"><a class="header" href="#expression-language-reference">Expression-language reference</a></h1>
-<p>The <code>panproto-expr</code> language is pure, total, and bounded: every well-typed expression terminates within a fixed step budget, no IO is permitted, and evaluation is deterministic. It is used inside migrations to describe field-level transforms, and inside queries to describe predicates and projections.</p>
-<p>For the model behind the language, see <a href="../explanation/semantics/expression-language.html">Expression language: denotational semantics</a>.</p>
-<h2 id="surface-syntax"><a class="header" href="#surface-syntax">Surface syntax</a></h2>
-<p>The Haskell-style surface syntax supports literals, variables, lambdas, application, <code>let</code>, pattern matching, and list comprehensions. The full grammar lives in <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-expr-parser"><code>panproto-expr-parser</code></a>. Inside JSON or YAML migration files, expressions appear as strings; the parser is invoked on read.</p>
-<h2 id="types"><a class="header" href="#types">Types</a></h2>
+<p><code>panproto-expr</code> evaluates a call-by-value expression AST with no I/O operations. Evaluation is bounded and fallible: the default limits are 100,000 reduction steps, recursion depth 256, and 10,000 elements in list literals and selected list-producing paths. Reaching a limit returns an <code>ExprError</code>; it does not establish that every expression terminates before the limit.</p>
+<p>The language is used for field transforms and instance queries. <a href="../explanation/semantics/expression-language.html">Expression language: denotational semantics</a> gives the model behind the evaluator.</p>
+<h2 id="surface-grammar"><a class="header" href="#surface-grammar">Surface grammar</a></h2>
+<p><a href="https://docs.rs/panproto-expr-parser/latest/panproto_expr_parser/"><code>panproto-expr-parser</code></a> accepts a Haskell-style syntax and lowers it to <a href="https://docs.rs/panproto-expr/latest/panproto_expr/enum.Expr.html"><code>Expr</code></a>.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Type</th><th>Description</th></tr>
+<tr><th>Form</th><th>Syntax</th></tr>
 </thead>
 <tbody>
-<tr><td><code>Int</code></td><td>64-bit signed integer with checked arithmetic. Overflow is an error, not a wrap.</td></tr>
-<tr><td><code>Float</code></td><td>IEEE 754 64-bit float.</td></tr>
-<tr><td><code>Str</code></td><td>UTF-8 string.</td></tr>
-<tr><td><code>Bool</code></td><td>Boolean.</td></tr>
-<tr><td><code>List a</code></td><td>Heterogeneous list (the type parameter is the element constraint when known).</td></tr>
-<tr><td><code>Record</code></td><td>Map from string keys to values.</td></tr>
-<tr><td><code>Null</code></td><td>Singleton type for the absence of a value.</td></tr>
-<tr><td><code>Any</code></td><td>Top type used in builtins that accept any input.</td></tr>
+<tr><td>Literals</td><td><code>42</code>, <code>3.5</code>, <code>"text"</code>, <code>True</code>, <code>False</code>, <code>Nothing</code></td></tr>
+<tr><td>Lambda and application</td><td><code>\x -&gt; body</code>, <code>f x</code></td></tr>
+<tr><td>Binding</td><td><code>let x = value in body</code>; layout or braces permit several bindings</td></tr>
+<tr><td>Conditional and match</td><td><code>if p then a else b</code>; <code>case value of { pattern -&gt; body }</code></td></tr>
+<tr><td>Records</td><td><code>{ name = value, count }</code>; the second field uses record punning</td></tr>
+<tr><td>Lists</td><td><code>[a, b]</code>, inclusive range <code>[a..b]</code>, comprehension `[f x</td></tr>
+<tr><td>Access</td><td><code>record.field</code>, <code>list[index]</code>, <code>node-&gt;edge_name</code></td></tr>
+<tr><td>Sequencing</td><td>list-oriented <code>do</code> notation and postfix <code>where</code> bindings</td></tr>
 </tbody>
 </table>
 </div>
+<p>Open-ended ranges such as <code>[a..]</code> are parse errors. The parser lowers <code>map f xs</code>, <code>filter p xs</code>, and <code>flat_map f xs</code> to an AST with the list first and function last. It lowers <code>fold f z xs</code> to <code>[xs, z, f]</code>. This AST argument order is the serialized compatibility contract.</p>
+<h3 id="operators"><a class="header" href="#operators">Operators</a></h3>
+<p>From lower to higher precedence, the infix operators are pipe <code>&amp;</code>, <code>||</code>, <code>&amp;&amp;</code>, comparisons (<code>==</code>, <code>/=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>), string concatenation <code>++</code>, addition and subtraction, then multiplication, division, and remainder (<code>*</code>, <code>/</code>, <code>%</code>, <code>div</code>, <code>mod</code>). Unary <code>-</code> and <code>not</code> bind more tightly. <code>And</code> and <code>Or</code> evaluate both AST arguments before applying the builtin; they do not short-circuit.</p>
+<h2 id="values-and-type-tags"><a class="header" href="#values-and-type-tags">Values and type tags</a></h2>
+<p>Runtime <a href="https://docs.rs/panproto-expr/latest/panproto_expr/enum.Literal.html"><code>Literal</code></a> values include booleans, 64-bit integers and floats, UTF-8 strings, bytes, null, records, lists, and closures. Lists can contain values of different kinds. The lightweight <a href="https://docs.rs/panproto-expr/latest/panproto_expr/enum.ExprType.html"><code>ExprType</code></a> inference API has fewer tags:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th><code>ExprType</code></th><th>Meaning</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Int</code>, <code>Float</code>, <code>Str</code>, <code>Bool</code></td><td>Scalar tags.</td></tr>
+<tr><td><code>List</code></td><td>List with no element-type parameter.</td></tr>
+<tr><td><code>Record</code></td><td>Ordered string-keyed fields.</td></tr>
+<tr><td><code>Any</code></td><td>Unknown or polymorphic; inference also uses it for null, bytes, and closures.</td></tr>
+</tbody>
+</table>
+</div>
+<p>Type inference is best effort. Application, field access, and indexing generally infer as <code>Any</code>, while evaluation still performs runtime type and arity checks.</p>
 <h2 id="builtins"><a class="header" href="#builtins">Builtins</a></h2>
-<p>The 60 built-in operations are in <code>panproto_expr::BuiltinOp</code>, grouped by family in <code>crates/panproto-expr/src/builtin.rs</code>.</p>
-<h3 id="arithmetic"><a class="header" href="#arithmetic">Arithmetic</a></h3>
-<p><code>Add</code>, <code>Sub</code>, <code>Mul</code>, <code>Div</code>, <code>Mod</code>, <code>Neg</code>, <code>Abs</code>, <code>Floor</code>, <code>Ceil</code>, <code>Round</code>. <code>Div</code> and <code>Mod</code> raise <code>DivisionByZero</code> on a zero divisor. Integer arithmetic uses checked operations; overflow raises <code>Overflow</code>.</p>
-<h3 id="comparison"><a class="header" href="#comparison">Comparison</a></h3>
-<p><code>Eq</code>, <code>Neq</code>, <code>Lt</code>, <code>Lte</code>, <code>Gt</code>, <code>Gte</code>. Returns <code>Bool</code>.</p>
-<h3 id="boolean"><a class="header" href="#boolean">Boolean</a></h3>
-<p><code>And</code>, <code>Or</code>, <code>Not</code>. Short-circuit evaluation.</p>
-<h3 id="string"><a class="header" href="#string">String</a></h3>
-<p><code>Concat</code>, <code>Len</code>, <code>Slice</code>, <code>Upper</code>, <code>Lower</code>, <code>Trim</code>, <code>Split</code>, <code>Join</code>, <code>Replace</code>, <code>Contains</code>. <code>Contains</code> is overloaded on its first argument: substring containment on a string, element membership on a list.</p>
-<h3 id="list"><a class="header" href="#list">List</a></h3>
-<p><code>Map</code>, <code>Filter</code>, <code>Fold</code>, <code>FlatMap</code>, <code>Append</code>, <code>Head</code>, <code>Tail</code>, <code>Reverse</code>, <code>Length</code>, <code>Range</code>. <code>Head</code> and <code>Tail</code> raise on the empty list.</p>
-<p><code>Map</code>, <code>Filter</code>, <code>Fold</code>, and <code>FlatMap</code> take the list first and the function last in the abstract syntax, while the surface syntax names the function first (<code>map f xs</code>, <code>fold f z xs</code>); the parser permutes between the two. <code>Expr</code> is serialized into stored lens documents, so the abstract order is the compatibility-bearing one.</p>
-<p><code>Range</code> constructs <code>[start, ..., stop]</code> with both bounds inclusive, yielding the empty list when <code>stop &lt; start</code>. The surface syntax <code>[a..b]</code> lowers to it. Its length is checked against <code>max_list_len</code> before allocating, since it is the only builtin that turns a constant-size expression into an arbitrarily long list. Open-ended <code>[a..]</code> is rejected: there are no lazy lists to lower it to.</p>
-<h3 id="record"><a class="header" href="#record">Record</a></h3>
-<p><code>MergeRecords</code>, <code>Keys</code>, <code>Values</code>, <code>HasField</code>.</p>
-<h3 id="utility"><a class="header" href="#utility">Utility</a></h3>
-<p><code>DefaultVal</code>, <code>Clamp</code>, <code>TruncateStr</code>.</p>
-<h3 id="type-coercion"><a class="header" href="#type-coercion">Type coercion</a></h3>
-<p><code>IntToFloat</code>, <code>FloatToInt</code>, <code>IntToStr</code>, <code>FloatToStr</code>, <code>StrToInt</code>, <code>StrToFloat</code>. The <code>*ToInt</code> and <code>*ToFloat</code> parses raise <code>ParseError</code> on invalid input.</p>
-<h3 id="type-inspection"><a class="header" href="#type-inspection">Type inspection</a></h3>
-<p><code>TypeOf</code>, <code>IsNull</code>, <code>IsList</code>.</p>
-<h3 id="graph-traversal-instance-aware"><a class="header" href="#graph-traversal-instance-aware">Graph traversal (instance-aware)</a></h3>
-<p><code>Edge</code>, <code>Children</code>, <code>HasEdge</code>, <code>EdgeCount</code>, <code>Anchor</code>. These return <code>Null</code> in the standard evaluator. To use them, evaluate in an instance environment via <code>panproto_inst::instance_env</code>.</p>
-<h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
-<p>The full list of <code>ExprError</code> variants is in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/error.rs"><code>crates/panproto-expr/src/error.rs</code></a>.</p>
+<p><a href="https://docs.rs/panproto-expr/latest/panproto_expr/enum.BuiltinOp.html"><code>BuiltinOp</code></a> currently has 60 variants.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Family</th><th>Operations</th><th>Contract notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Arithmetic and rounding</td><td><code>Add</code>, <code>Sub</code>, <code>Mul</code>, <code>Div</code>, <code>Mod</code>, <code>Neg</code>, <code>Abs</code>, <code>Floor</code>, <code>Ceil</code>, <code>Round</code></td><td>Integer arithmetic is checked. Division and remainder reject zero divisors. Float-to-integer rounding rejects NaN, infinity, and out-of-range results.</td></tr>
+<tr><td>Comparison</td><td><code>Eq</code>, <code>Neq</code>, <code>Lt</code>, <code>Lte</code>, <code>Gt</code>, <code>Gte</code></td><td>Ordering accepts integer and float pairs, including mixed numeric pairs, or two strings.</td></tr>
+<tr><td>Boolean</td><td><code>And</code>, <code>Or</code>, <code>Not</code></td><td>Arguments are eager.</td></tr>
+<tr><td>String</td><td><code>Concat</code>, <code>Len</code>, <code>Slice</code>, <code>Upper</code>, <code>Lower</code>, <code>Trim</code>, <code>Split</code>, <code>Join</code>, <code>Replace</code>, <code>Contains</code></td><td><code>Len</code> counts UTF-8 bytes; <code>Slice</code> indexes Unicode scalar values. <code>Contains</code> also tests list membership.</td></tr>
+<tr><td>List</td><td><code>Map</code>, <code>Filter</code>, <code>Fold</code>, <code>FlatMap</code>, <code>Append</code>, <code>Head</code>, <code>Tail</code>, <code>Reverse</code>, <code>Length</code>, <code>Range</code></td><td><code>Range</code> includes both bounds and returns an empty list when <code>stop &lt; start</code>. The evaluator enforces <code>max_list_len</code> for list literals, <code>Map</code>, <code>FlatMap</code>, and <code>Range</code>; the generic builtin handler does not apply that limit to every list-returning operation.</td></tr>
+<tr><td>Record</td><td><code>MergeRecords</code>, <code>Keys</code>, <code>Values</code>, <code>HasField</code></td><td>In a merge, fields from the second record replace equal keys from the first.</td></tr>
+<tr><td>Utility</td><td><code>DefaultVal</code>, <code>Clamp</code>, <code>TruncateStr</code></td><td><code>DefaultVal</code> substitutes only for null.</td></tr>
+<tr><td>Coercion</td><td><code>IntToFloat</code>, <code>FloatToInt</code>, <code>IntToStr</code>, <code>FloatToStr</code>, <code>StrToInt</code>, <code>StrToFloat</code></td><td>String parses can return <code>ParseError</code>; <code>FloatToInt</code> can return <code>FloatNotRepresentable</code>.</td></tr>
+<tr><td>Inspection</td><td><code>TypeOf</code>, <code>IsNull</code>, <code>IsList</code></td><td>Inspect runtime values.</td></tr>
+<tr><td>Instance traversal</td><td><code>Edge</code>, <code>Children</code>, <code>HasEdge</code>, <code>EdgeCount</code>, <code>Anchor</code></td><td>The standard evaluator returns <code>Null</code>. Use <code>panproto_inst::instance_env::eval_with_instance</code> for instance-aware behavior.</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="evaluation-errors"><a class="header" href="#evaluation-errors">Evaluation errors</a></h2>
+<p><a href="https://docs.rs/panproto-expr/latest/panproto_expr/enum.ExprError.html"><code>ExprError</code></a> is non-exhaustive.</p>
 <div class="table-wrapper">
 <table>
 <thead>
 <tr><th>Variant</th><th>Cause</th></tr>
 </thead>
 <tbody>
-<tr><td><code>StepLimitExceeded(u64)</code></td><td>Evaluation exceeded the configured step budget (<code>EvalConfig::max_steps</code>, default 100,000).</td></tr>
-<tr><td><code>DepthExceeded(u32)</code></td><td>Evaluation exceeded the configured recursion depth.</td></tr>
-<tr><td><code>UnboundVariable(String)</code></td><td>Referenced a variable not bound in the environment.</td></tr>
-<tr><td><code>TypeError { expected, got }</code></td><td>Operand had an incompatible type.</td></tr>
-<tr><td><code>ArityMismatch { op, expected, got }</code></td><td>Builtin called with the wrong number of arguments.</td></tr>
-<tr><td><code>IndexOutOfBounds { index, len }</code></td><td>List index out of range.</td></tr>
-<tr><td><code>FieldNotFound(String)</code></td><td>Record field missing.</td></tr>
-<tr><td><code>NonExhaustiveMatch</code></td><td>No pattern arm matched the scrutinee.</td></tr>
-<tr><td><code>DivisionByZero</code></td><td><code>Div</code> or <code>Mod</code> with a zero divisor.</td></tr>
-<tr><td><code>ListLengthExceeded(usize)</code></td><td>List operation exceeded the configured maximum length.</td></tr>
-<tr><td><code>ParseError { value, target_type }</code></td><td>A <code>*ToInt</code> / <code>*ToFloat</code> coercion failed to parse its input.</td></tr>
-<tr><td><code>NotAFunction</code></td><td>Application of a non-function value.</td></tr>
-<tr><td><code>Overflow</code></td><td>Checked integer arithmetic overflowed.</td></tr>
-<tr><td><code>FloatNotRepresentable(String)</code></td><td>Float value (NaN, infinity, out-of-range) cannot be represented as an integer.</td></tr>
+<tr><td><code>StepLimitExceeded</code></td><td>The reduction budget was exhausted.</td></tr>
+<tr><td><code>DepthExceeded</code></td><td>Recursive evaluation exceeded <code>max_depth</code>.</td></tr>
+<tr><td><code>ListLengthExceeded</code></td><td>A list constructor or a budgeted list-producing path exceeded <code>max_list_len</code>.</td></tr>
+<tr><td><code>UnboundVariable</code></td><td>The environment has no binding for a variable.</td></tr>
+<tr><td><code>TypeError</code>, <code>ArityMismatch</code>, <code>NotAFunction</code></td><td>A value or call has the wrong runtime shape.</td></tr>
+<tr><td><code>IndexOutOfBounds</code>, <code>FieldNotFound</code>, <code>NonExhaustiveMatch</code></td><td>Lookup or pattern matching failed.</td></tr>
+<tr><td><code>DivisionByZero</code>, <code>Overflow</code>, <code>FloatNotRepresentable</code>, <code>ParseError</code></td><td>A numeric operation or coercion failed.</td></tr>
+<tr><td><code>InternalDispatch</code></td><td>A builtin reached the wrong internal family handler.</td></tr>
 </tbody>
 </table>
 </div>
-<h2 id="authoritative-source"><a class="header" href="#authoritative-source">Authoritative source</a></h2>
-<p>Builtin enum: <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/expr.rs"><code>crates/panproto-expr/src/expr.rs</code></a>. Implementation: <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/builtin.rs"><code>crates/panproto-expr/src/builtin.rs</code></a>. Evaluator: <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/eval.rs"><code>crates/panproto-expr/src/eval.rs</code></a>.</p>
+<h2 id="source"><a class="header" href="#source">Source</a></h2>
+<p>The AST and builtin enum live in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/expr.rs"><code>expr.rs</code></a>, builtin implementations in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/builtin.rs"><code>builtin.rs</code></a>, evaluation and defaults in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/eval.rs"><code>eval.rs</code></a>, and the surface grammar in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr-parser/src/parser.rs"><code>parser.rs</code></a>.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../how-to/field-transforms.html">Apply field transforms</a> for using the language inside migrations.</li>
-<li><a href="../how-to/query-instances.html">Query instances</a> for using it inside queries.</li>
-<li><a href="../explanation/semantics/expression-language.html">Expression language: denotational semantics</a> for the formal model.</li>
+<li><a href="../how-to/field-transforms.html">Apply field transforms</a></li>
+<li><a href="../how-to/query-instances.html">Query instances</a></li>
 </ul>
 
                     </main>

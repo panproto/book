@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -193,16 +193,17 @@ schema add user.json
 schema commit -m "initial user schema"
 schema log                  # show history
 </code></pre>
-<p><code>init</code> creates a <code>.panproto/</code> directory analogous to <code>.git/</code>. <code>add</code> stages a schema; <code>commit</code> creates a content-addressed snapshot. The behavior matches git for the parts that overlap.</p>
+<p><code>init</code> creates a <code>.panproto/</code> object store and a <code>main</code> branch. It may also generate <code>panproto.toml</code> when package detection finds source packages. <code>add</code> parses or loads the supplied path and stages the resulting schema; <code>commit</code> records the staged schema.</p>
 <p>To inspect the current state:</p>
 <pre><code class="language-sh">schema status
-schema diff               # diff working tree vs HEAD
+schema diff --staged      # diff the staged schema against HEAD
 schema show &lt;commit-hash&gt;
 </code></pre>
+<p><code>schema diff</code> without <code>--staged</code> requires two file paths. A staged diff also requires an existing commit, so use it after the first commit.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <pre><code class="language-sh">schema log --oneline
 </code></pre>
-<p>prints the commit history. Each commit shows its blake3 hash, schema hash, message, and author.</p>
+<p>prints one line per commit. The default long format includes the commit ID, schema ID, author, timestamp, and message.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Forgetting to <code>schema add</code> before <code>schema commit</code>. Like git, the staging area is explicit; commits only include staged changes.</li>

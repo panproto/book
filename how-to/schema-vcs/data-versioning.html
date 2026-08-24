@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="version-data-alongside-schemas"><a class="header" href="#version-data-alongside-schemas">Version data alongside schemas</a></h1>
-<p>Stage data with its schema when repository operations must migrate both together. A later schema migration lifts the committed data through the associated lens.</p>
+<p>Stage data with its schema when a commit must retain both. Data migration is a separate operation over a commit range.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>A panproto repository with at least one schema and a corresponding data instance.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
@@ -195,30 +195,30 @@ schema commit -m "v1 schema and seed data"
 schema add user-v2.json --data records/
 schema commit -m "v2 schema"
 
-# Sync the working data directory to the latest schema via the auto-derived chain.
+# Sync the working directory across parent..HEAD.
 schema data sync records/
 </code></pre>
-<p><code>schema add --data &lt;DATA&gt;</code> stages a data directory alongside the schema. <code>schema data sync</code> lifts the on-disk data forward through any schema migrations between the recorded commit and the target ref (default <code>HEAD</code>). To preview without writing:</p>
-<pre><code class="language-sh">schema data migrate records/ --dry-run
+<p><code>schema add --data &lt;DATA&gt;</code> stages each immediate JSON file in the directory. Staging is all or nothing for the data files. <code>schema data sync</code> compares a target commit with its first parent, generates a lens, and rewrites records it can migrate; failed records are reported as skipped.</p>
+<p>Preview the default <code>parent..HEAD</code> range and run coverage without writing:</p>
+<pre><code class="language-sh">schema data migrate records/ --dry-run --coverage
 </code></pre>
-<p><code>schema data migrate</code> runs the migration between two specific commits (default <code>parent..HEAD</code>); add <code>--coverage</code> to print statistics. Inspect data status:</p>
+<p><code>--dry-run</code> prints the selected plan without attempting the conversions. The coverage pass then tries each immediate JSON file and reports successes and failures. Use <code>--range old..new</code> to select another pair.</p>
 <pre><code class="language-sh">schema status --data records/
 schema data status records/
 </code></pre>
-<p>To extract historical data, check out the commit:</p>
-<pre><code class="language-sh">schema checkout &lt;commit&gt;
-# read records/
+<p>Checkout changes only the repository ref. Pass <code>--migrate</code> to request a corresponding on-disk data migration:</p>
+<pre><code class="language-sh">schema checkout &lt;commit&gt; --migrate records/
 </code></pre>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <pre><code class="language-sh">schema data status records/
 </code></pre>
-<p>reports staleness relative to the current schema. A clean status means the data conforms.</p>
-<p><code>schema data migrate --coverage records/</code> prints how much of the data was actually transformed by the lift, surfacing partial migrations.</p>
+<p>prints the number of immediate JSON files, the <code>HEAD</code> schema ID, and the number of data sets tracked by that commit. It does not parse the files or prove conformance.</p>
+<p><code>schema data migrate records/ --dry-run --coverage</code> is the non-writing per-record check.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Editing data inside the store directly. Like schemas, data objects are content-addressed.</li>
 <li>Skipping data when committing schema changes. If you commit a v2 schema without ever staging v1 data, there is nothing for the lens to lift; this is fine, but the v2 commit will have no data even though v1 might.</li>
-<li>History rewrites (rebase, amend) on a branch carrying data. The rewrite must lift the data through the new history; this is automatic, but re-run <code>schema data status records/</code> afterwards to confirm the on-disk data is in sync.</li>
+<li>Assuming rebase or amend migrates working data. Those commands take no data-directory option. Run an explicit data migration after rewriting history.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

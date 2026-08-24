@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-adbb6774.js"></script>
@@ -183,38 +183,38 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="panproto"><a class="header" href="#panproto">panproto</a></h1>
-<p>panproto compares <a href="./glossary.html#schema" title="A schema is a model of a protocol&#39;s schema theory.">schema</a> versions, constructs <a href="./glossary.html#migration" title="A migration maps a source schema to a target schema and determines how instances move between them.">migrations</a>, and applies those migrations to data. The shortest useful introduction is <a href="./tutorials/your-first-diff.html">Your first diff</a>: two ordinary ATProto Lexicon documents go in, and a <a href="./glossary.html#structural-diff" title="A structural diff records added, removed, and modified schema elements without classifying compatibility.">structural diff</a> with a possible field rename comes out. It takes about five minutes and assumes no category theory.</p>
+<p>panproto compares <a href="./glossary.html#schema" title="A schema is a model of a protocol&#39;s schema theory.">schema</a> versions, constructs <a href="./glossary.html#migration" title="A migration maps a source schema to a target schema and determines how instances move between them.">migrations</a>, and applies those migrations to data. <a href="./tutorials/your-first-diff.html">Your first diff</a> introduces that workflow with two ATProto Lexicon documents and the <a href="./glossary.html#structural-diff" title="A structural diff records added, removed, and modified schema elements without classifying compatibility.">structural diff</a> between them.</p>
 <h2 id="choose-a-path"><a class="header" href="#choose-a-path">Choose a path</a></h2>
-<p>The book has three reading paths. Each path moves among tutorials, how-to guides, reference pages, and explanation without collapsing their different jobs.</p>
+<p>Choose a path based on the work you need to do:</p>
 <div class="table-wrapper">
 <table>
 <thead>
 <tr><th>Experience</th><th>Start here</th><th>Continue with</th></tr>
 </thead>
 <tbody>
-<tr><td><strong>New to panproto</strong></td><td><a href="./tutorials/your-first-diff.html">Your first diff</a></td><td><a href="./tutorials/your-first-schema.html">Your first schema</a>, then <a href="./tutorials/your-first-migration.html">Your first migration</a></td></tr>
-<tr><td><strong>Adding panproto to a project</strong></td><td><a href="./how-to/install/index.html">Install</a></td><td><a href="./how-to/define-schema/index.html">Define a schema</a>, <a href="./how-to/build-migration.html">build a migration</a>, then add a <a href="./how-to/ci/breaking-change-gate.html">breaking-change gate</a></td></tr>
-<tr><td><strong>Designing protocols or extending the system</strong></td><td><a href="./how-to/build-protocol.html">Build a custom protocol</a></td><td><a href="./how-to/spans.html">Find schema spans</a>, study the <a href="./explanation/architecture.html">architecture</a>, then use the <a href="./explanation/semantics/index.html">denotational semantics</a> as the mathematical specification</td></tr>
+<tr><td>New to panproto</td><td><a href="./tutorials/your-first-diff.html">Your first diff</a></td><td><a href="./tutorials/your-first-schema.html">Your first schema</a>, then <a href="./tutorials/your-first-migration.html">Your first migration</a></td></tr>
+<tr><td>Adding panproto to a project</td><td><a href="./how-to/install/index.html">Install</a></td><td><a href="./how-to/define-schema/index.html">Define a schema</a>, <a href="./how-to/build-migration.html">build a migration</a>, then add a <a href="./how-to/ci/breaking-change-gate.html">breaking-change gate</a></td></tr>
+<tr><td>Designing protocols or extending the system</td><td><a href="./how-to/build-protocol.html">Build a custom protocol</a></td><td><a href="./how-to/spans.html">Find schema spans</a>, study the <a href="./explanation/architecture.html">architecture</a>, then consult the <a href="./explanation/semantics/index.html">denotational semantics</a></td></tr>
 </tbody>
 </table>
 </div>
-<p>The <a href="./explanation/decoder-ring.html">vocabulary in plain terms</a> is a short decoder for unfamiliar terms, and the <a href="./glossary.html">glossary</a> gives their precise definitions. Keep either page open beside these paths when a term gets in the way.</p>
+<p>The <a href="./explanation/decoder-ring.html">vocabulary in plain terms</a> introduces unfamiliar terms. The <a href="./glossary.html">glossary</a> records their reference definitions.</p>
 <h2 id="find-the-kind-of-answer-you-need"><a class="header" href="#find-the-kind-of-answer-you-need">Find the kind of answer you need</a></h2>
-<p>The book retains the four-part <a href="https://diataxis.fr/">Diátaxis</a> structure. The distinction concerns the kind of help a page provides, rather than the reader’s level.</p>
+<p>The book follows the four-part <a href="https://diataxis.fr/">Diátaxis</a> structure:</p>
 <div class="table-wrapper">
 <table>
 <thead>
 <tr><th>Section</th><th>Use it when</th><th>What you will find</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="./tutorials/index.html">Tutorials</a></td><td>You are learning by doing</td><td>Guided sequences that end with a working artifact</td></tr>
-<tr><td><a href="./how-to/index.html">How-to guides</a></td><td>You have a specific task</td><td>Focused procedures, verification steps, and common failures</td></tr>
-<tr><td><a href="./reference/index.html">Reference</a></td><td>You need an exact contract</td><td>Commands, signatures, grammars, configuration fields, and protocol support</td></tr>
-<tr><td><a href="./explanation/index.html">Explanation</a></td><td>You need the reason or the model</td><td>Design arguments, categorical constructions, architecture, and formal semantics</td></tr>
+<tr><td><a href="./tutorials/index.html">Tutorials</a></td><td>You are learning by doing</td><td>Guided sequences</td></tr>
+<tr><td><a href="./how-to/index.html">How-to guides</a></td><td>You have a specific task</td><td>Procedures, verification steps, and common failures</td></tr>
+<tr><td><a href="./reference/index.html">Reference</a></td><td>You need an exact contract</td><td>Commands, signatures, configuration fields, and supported surfaces</td></tr>
+<tr><td><a href="./explanation/index.html">Explanation</a></td><td>You need the reason or the model</td><td>Design arguments, categorical constructions, architecture, and semantics</td></tr>
 </tbody>
 </table>
 </div>
-<p>If you are unsure which mode you need, begin with a tutorial. A tutorial supplies the context that how-to and reference pages deliberately leave out.</p>
+<p>Begin with a tutorial if you need both context and a worked sequence. Use reference pages when you already know the operation and need its exact contract.</p>
 
                     </main>
 

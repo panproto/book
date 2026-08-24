@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -185,7 +185,7 @@
 <h1 id="github-actions"><a class="header" href="#github-actions">GitHub Actions</a></h1>
 <p>Add this workflow to validate schemas and classify compatibility on every pull request.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>A panproto repository on GitHub. The <code>panproto-cli</code> Homebrew tap, shell installer, or <code>cargo install</code> available on Linux runners.</p>
+<p>A panproto repository on GitHub. This example assumes <code>schemas/*.json</code> contains panproto’s serialized schema format rather than external schema-language documents.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
 <pre><code class="language-yaml"># .github/workflows/panproto.yml
 name: panproto
@@ -194,6 +194,7 @@ on:
   pull_request:
     paths:
       - 'schemas/**'
+      - 'migrations/**'
       - 'panproto.toml'
 
 jobs:
@@ -205,10 +206,7 @@ jobs:
           fetch-depth: 0           # need history for the diff base
 
       - name: Install schema
-        run: |
-          curl --proto '=https' -LsSf \
-            https://github.com/panproto/panproto/releases/latest/download/panproto-cli-installer.sh | sh
-          echo "$HOME/.cargo/bin" &gt;&gt; "$GITHUB_PATH"
+        run: cargo install panproto-cli --version 0.71.0 --locked
 
       - name: Validate
         run: |
@@ -224,14 +222,14 @@ jobs:
           schema check --src /tmp/base.json --tgt schemas/user.json \
             --mapping migrations/user.json --typecheck
 </code></pre>
-<p>The <code>--protocol</code> flag is required for every per-file <code>schema validate</code>. There is no <code>--project</code> flag; per-file iteration is the supported pattern.</p>
+<p>The <code>--protocol</code> flag is required for every per-file <code>schema validate</code>. There is no <code>--project</code> flag. For an external document such as a Lexicon, use the appropriate parse path before this validation step.</p>
 <p>The job has separate validation and breaking-change steps. Validation fails on a malformed schema; <code>schema compat</code> gives the gate its compatibility exit code, and <code>schema check --typecheck</code> rejects an invalid migration mapping.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <p>Push a PR and watch the workflow run. The validation step exits zero on a clean schema; the gate prints the classification and exits non-zero on breaking.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Omitting <code>fetch-depth: 0</code>. Shallow clones make the merge-base lookup fail; the gate then runs against the wrong base.</li>
-<li>Pinning <code>panproto-cli</code> to a stale version. Use the latest installer; the protocol catalog and existence-check rules evolve.</li>
+<li>Leaving the CLI version unpinned. Update the pinned version deliberately and review any compatibility-classifier changes with the update.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

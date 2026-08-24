@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -200,12 +200,13 @@ cabal test
 <p><code>bootstrap/fetch-bindist.sh [version]</code> downloads the prebuilt <code>libpanproto_c</code> for the host platform from the corresponding GitHub Release (it detects <code>aarch64-apple-darwin</code>, <code>x86_64-apple-darwin</code>, <code>x86_64-unknown-linux-gnu</code>, and <code>aarch64-unknown-linux-gnu</code>), rebuilds the C glue against the fetched header, and writes the same <code>cabal.project.local</code>. No Rust toolchain is needed on this path.</p>
 <pre><code class="language-sh">git clone https://github.com/panproto/panproto.git
 cd panproto/bindings/haskell
-./bootstrap/fetch-bindist.sh v0.71.0   # downloads + stages the platform tarball
+./bootstrap/fetch-bindist.sh v0.71.0   # pass the release tag that matches this checkout
 cabal build
 cabal test
 </code></pre>
+<p>Pass the release tag explicitly. The script’s fallback tag can lag the package version in a development checkout.</p>
 <h3 id="native-only-no-ffi"><a class="header" href="#native-only-no-ffi">Native-only (no FFI)</a></h3>
-<p>For the pure-Haskell subset (the protocol and schema round-trip and the value algebra), disable the FFI backend. This build needs no <code>libpanproto_c</code> and no Rust toolchain:</p>
+<p>For the pure-Haskell subset, disable the foreign-function interface (FFI) backend. This build needs no <code>libpanproto_c</code> and no Rust toolchain:</p>
 <pre><code class="language-sh">cabal build -f-rust
 </code></pre>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
@@ -220,7 +221,7 @@ main = do
                 S.vertex S.Vertex {S.id = "post", S.kind = "record", S.nsid = Nothing}
     print (S.vertexCount s)
 </code></pre>
-<p><code>cabal run</code> builds and links against the staged libraries. Building a one-vertex structured schema and printing its vertex count exercises the pure value algebra without touching the engine, so it succeeds under every flag configuration, the <code>native-only</code> build included.</p>
+<p>Place the example in an executable component or load it in <code>cabal repl</code>. Building a one-vertex structured schema and printing its vertex count exercises the pure value algebra without touching the engine, so the example also works with the FFI backend disabled.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>A shadowed <code>ld</code> on PATH. <a href="https://www.anaconda.com/">Anaconda</a> and some other Python distributions ship their own <code>ld</code>, which is too old to recognize the response-file syntax GHC’s merge-objects pass uses; the symptom is a <code>ld: file not found: @&lt;tmp&gt;/ghc_tmp_*.rsp</code> error during <code>cabal build</code> on macOS arm64. <code>dev-link.sh</code> warns when <code>ld</code> resolves to something other than the system linker. Prepend <code>/usr/bin</code> to PATH and retry.</li>

@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,73 +183,83 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="lens-combinator-reference"><a class="header" href="#lens-combinator-reference">Lens combinator reference</a></h1>
-<p>A lens in panproto is a triple of functions over a source <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>, a view <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span>, and a complement <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span>:</p>
-<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:4.5em;vertical-align:-2em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.5em;"><span style="top:-4.66em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">get</span></span></span></span><span style="top:-3.16em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">put</span></span></span></span><span style="top:-1.66em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">complement</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.5em;"><span style="top:-4.66em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span><span style="top:-3.16em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span><span style="top:-1.66em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
-<p>Every constructor in <code>panproto-lens</code> produces a lens whose round-trip laws (<code>GetPut</code>, <code>PutGet</code>, <code>PutPut</code>) are verified by the property tests in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-lens/src/laws.rs"><code>panproto-lens/src/laws.rs</code></a>. The complement carries the data discarded by <code>get</code> so that <code>put</code> can restore it.</p>
-<p>For the model behind these combinators, see <a href="../explanation/lenses-roundtrip.html">Lenses and round-trip laws</a> and <a href="../explanation/semantics/lens-dsl.html">Lens DSL: denotational semantics</a>.</p>
+<p>panproto implements asymmetric lenses (<a href="../bibliography.html#foster2007combinators">Foster et al. 2007</a>) with an explicit complement in the complementary-view tradition (<a href="../bibliography.html#bancilhonspyratos1981update">Bancilhon and Spyratos 1981</a>). For a fixed <a href="https://docs.rs/panproto-lens/latest/panproto_lens/struct.Lens.html"><code>Lens</code></a>, the data-level operations have the shapes</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8095em;vertical-align:-0.1944em;"></span><span class="mop"><span class="mord mathrm">get</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm">put</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mord">.</span></span></span></span></span></p>
+<p>Both Rust functions return <code>Result</code>. <code>get(&amp;Lens, &amp;WInstance)</code> returns the view and its <code>Complement</code>; <code>put(&amp;Lens, &amp;WInstance, &amp;Complement)</code> reconstructs a source or returns <code>LensError</code>.</p>
+<h2 id="law-checking-api"><a class="header" href="#law-checking-api">Law-checking API</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Function</th><th>Check performed</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/fn.check_get_put.html"><code>check_get_put</code></a></td><td>On one supplied source, <code>put(get(s))</code> reconstructs the complete instance.</td></tr>
+<tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/fn.check_put_get.html"><code>check_put_get</code></a></td><td>Checks the original view and one deterministic scalar mutation. Comparison ignores fields marked as derived.</td></tr>
+<tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/fn.check_laws.html"><code>check_laws</code></a></td><td>Runs the two checks above. It does not run PutPut.</td></tr>
+<tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/laws/fn.check_put_put.html"><code>check_put_put</code></a></td><td>Compares a chained put with a direct put for one supplied source and second view.</td></tr>
+<tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/optic/fn.check_optic_laws.html"><code>check_optic_laws</code></a></td><td>Runs the checks selected for one <code>OpticKind</code>, lens, and concrete instance.</td></tr>
+</tbody>
+</table>
+</div>
+<p>These functions are on-demand checks over their supplied values. Property tests exercise generated lenses, instances, and views, but a passing test run is not a proof for every constructor input. <a href="../explanation/what-is-verified.html#lenses-coercions-and-expressions">What panproto verifies</a> records the corresponding limits.</p>
 <h2 id="optic-kinds"><a class="header" href="#optic-kinds">Optic kinds</a></h2>
-<p>Each protolens or protolens chain is classified into an <a href="https://docs.rs/panproto-lens/latest/panproto_lens/optic/enum.OpticKind.html"><code>OpticKind</code></a>. The classification is structural: it follows from the shape of the underlying <a href="https://docs.rs/panproto-gat/latest/panproto_gat/enum.TheoryTransform.html"><code>TheoryTransform</code></a>, which in turn reflects the schema edge a combinator is applied at.</p>
+<p><a href="https://docs.rs/panproto-lens/latest/panproto_lens/optic/enum.OpticKind.html"><code>OpticKind</code></a> is a structural classification derived from <code>TheoryTransform</code>; classification itself does not run an optic-law checker.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th><code>OpticKind</code></th><th>Typical schema edge</th><th>Complement</th></tr>
+<tr><th>Kind</th><th>Classified shape</th><th>Recorded complement</th></tr>
 </thead>
 <tbody>
-<tr><td><code>Iso</code></td><td>bijective relabeling (e.g. edge rename)</td><td><code>Unit</code></td></tr>
-<tr><td><code>Lens</code></td><td><code>prop</code> (single-value projection)</td><td>dropped data</td></tr>
-<tr><td><code>Prism</code></td><td>sum / variant injection</td><td>variant tag</td></tr>
-<tr><td><code>Affine</code></td><td><code>Lens</code> composed with <code>Prism</code></td><td><code>(variant tag, dropped data)</code></td></tr>
-<tr><td><code>Traversal</code></td><td><code>item</code> (collection, multi-focus)</td><td>per-position complements</td></tr>
+<tr><td><code>Iso</code></td><td>identity or rename</td><td>empty</td></tr>
+<tr><td><code>Lens</code></td><td>add, drop, pullback, coercion, or enrichment transform</td><td>data needed for reconstruction</td></tr>
+<tr><td><code>Prism</code></td><td>scoped focus through a <code>variant</code> edge</td><td>variant choice</td></tr>
+<tr><td><code>Affine</code></td><td>composition mixing <code>Lens</code> and <code>Prism</code></td><td>both components</td></tr>
+<tr><td><code>Traversal</code></td><td>scoped focus through <code>item</code> or <code>items</code></td><td>per-position data</td></tr>
 </tbody>
 </table>
 </div>
-<p>Composition follows the standard optics lattice: <code>Iso</code> is the identity, <code>Traversal</code> is absorbing, <code>Lens + Prism</code> collapses to <code>Affine</code>. The constructor functions for these kinds live in <a href="https://docs.rs/panproto-lens/latest/panproto_lens/protolens/elementary/"><code>protolens::elementary</code></a> (atomic steps: <code>add_edge</code>, <code>drop_edge</code>, <code>rename_edge_name</code>, …) and <a href="https://docs.rs/panproto-lens/latest/panproto_lens/protolens/combinators/"><code>protolens::combinators</code></a> (composite builders: <code>pipeline</code>, <code>map_items</code>, …). Browse the <a href="https://docs.rs/panproto-lens"><code>panproto_lens</code></a> module index for full signatures.</p>
-<h2 id="combinator-families"><a class="header" href="#combinator-families">Combinator families</a></h2>
+<p><code>OpticKind::compose</code> uses <code>Iso</code> as the identity and <code>Traversal</code> as an absorbing element. <code>Lens</code> composed with <code>Prism</code>, or either composed with <code>Affine</code>, yields <code>Affine</code>. This table describes the enum’s implementation; it does not certify the full laws of profunctor optics (<a href="../bibliography.html#pickeringgibbonswu2017profunctor">Pickering et al. 2017</a>).</p>
+<h2 id="constructor-modules"><a class="header" href="#constructor-modules">Constructor modules</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Family</th><th>Module</th><th>Purpose</th></tr>
+<tr><th>Module</th><th>Main return types</th><th>Contents</th></tr>
 </thead>
 <tbody>
-<tr><td>Asymmetric lenses</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/asymmetric/"><code>asymmetric</code></a></td><td>Source-to-view transforms with <code>put</code>.</td></tr>
-<tr><td>Symmetric lenses</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/symmetric/"><code>symmetric</code></a></td><td>Bidirectional transforms with a shared complement.</td></tr>
-<tr><td>Composition</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/compose/"><code>compose</code></a></td><td>Sequential and parallel composition of lenses.</td></tr>
-<tr><td>Optics</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/optic/"><code>optic</code></a></td><td><code>OpticKind</code> enum (Iso, Lens, Prism, Affine, Traversal) and the composition lattice.</td></tr>
-<tr><td>Fibration</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/fibration/"><code>fibration</code></a></td><td>The Grothendieck fibration of lenses over schemas.</td></tr>
-<tr><td>Protolens</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/protolens/"><code>protolens</code></a></td><td>Schema-parameterized lens families with vertical and sequential composition.</td></tr>
-<tr><td>Enrichment registry</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/enrichment_registry/"><code>enrichment_registry</code></a></td><td>Cross-crate <code>LayoutEnricher</code> trait and registry for schema-level enrichment fibers (e.g. the parse / decorate / emit lens; see <a href="../explanation/layout-enrichment.html">Layout enrichment</a>).</td></tr>
-<tr><td>Laws</td><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/laws/"><code>laws</code></a></td><td>Property-test harness for the three lens laws.</td></tr>
+<tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/protolens/elementary/"><code>protolens::elementary</code></a></td><td><code>Protolens</code></td><td><code>add_sort</code>, <code>drop_sort</code>, sort and operation renames, edge operations, equations, pullback, coercion, and scoped transforms.</td></tr>
+<tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/protolens/combinators/"><code>protolens::combinators</code></a></td><td><code>ProtolensChain</code> or <code>Protolens</code></td><td><code>rename_field</code>, <code>remove_field</code>, <code>add_field</code>, <code>hoist_field</code>, <code>nest_field</code>, <code>pipeline</code>, and <code>map_items</code>.</td></tr>
+<tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/compose/"><code>compose</code></a></td><td><code>Result&lt;Lens, LensError&gt;</code></td><td>Sequential composition of two concrete lenses.</td></tr>
+<tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/symmetric/"><code>symmetric</code></a></td><td><code>SymmetricLens</code></td><td>Bidirectional transforms with a shared complement.</td></tr>
+<tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/fibration/"><code>fibration</code></a></td><td>checker results</td><td>Cartesian-lift and factorization checks over supplied data.</td></tr>
+<tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/enrichment_registry/"><code>enrichment_registry</code></a></td><td>registered trait objects</td><td>Cross-crate lookup for schema-enrichment synthesis, including layout.</td></tr>
 </tbody>
 </table>
 </div>
+<p>The full parameter types are the public Rust signatures in those module indexes. Several elementary constructors accept <code>impl Into&lt;Name&gt;</code>; checked coercion constructors additionally return <code>Result</code> when their finite honesty samples fail.</p>
 <h2 id="complement-composition"><a class="header" href="#complement-composition">Complement composition</a></h2>
-<p><code>Complement::compose</code> is a partial commutative monoid:</p>
-<ul>
-<li>It returns <code>Result&lt;Complement, LensError&gt;</code>.</li>
-<li>It refuses to merge complements whose source-schema fingerprints disagree (<code>ComplementFingerprintMismatch</code>).</li>
-<li>It refuses to merge complements that disagree on a key (<code>ComplementConflict</code>).</li>
-</ul>
-<p>A pre-flight check is available as <code>Complement::is_compatible</code>. The full discussion is in <a href="../explanation/lenses-roundtrip.html">Lenses and round-trip laws</a>.</p>
-<h2 id="protolens-composition"><a class="header" href="#protolens-composition">Protolens composition</a></h2>
-<p>Protolenses are natural transformations between schema endofunctors. <code>protolens_composable</code> requires structural equality of the intermediate endofunctor (same precondition, same transform) before <code>vertical_compose</code> will run; otherwise <code>CompositionMismatch</code>. Two instantiation modes are available:</p>
+<p><code>ComplementCompose::compose(&amp;left, &amp;right)</code> returns <code>Result&lt;Complement, LensError&gt;</code>. It rejects distinct nonzero source fingerprints with <code>ComplementFingerprintMismatch</code> and conflicting values under a shared key with <code>ComplementConflict</code>. <code>ComplementCompose::is_compatible</code> runs the same predicate without returning the merged value. The trait must be in scope because <code>Complement</code> is defined in <code>panproto-inst</code>.</p>
+<h2 id="protolens-composition-and-instantiation"><a class="header" href="#protolens-composition-and-instantiation">Protolens composition and instantiation</a></h2>
+<p>A <code>Protolens</code> stores source and target theory endofunctors, a schema precondition, and a complement constructor. The intended natural-transformation structure uses the standard categorical definition (<a href="../bibliography.html#eilenbergmaclane1945general">Eilenberg and Mac Lane 1945</a>); constructing a value does not verify naturality over every schema.</p>
+<p><code>protolens_composable(eta, theta)</code> accepts either structurally equal intermediate endofunctors or an identity transform on <code>theta.source</code>. The identity-source case retains <code>theta</code>’s source precondition in the composite. <code>vertical_compose</code> rejects other pairs with <code>CompositionMismatch</code>; <code>horizontal_compose</code> currently returns <code>Ok</code> without an additional compatibility check.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Mode</th><th>Function</th><th>Use</th></tr>
+<tr><th>Chain operation</th><th>Behavior</th></tr>
 </thead>
 <tbody>
-<tr><td>Fused</td><td><code>instantiate</code></td><td>Single morphism preserving migration metadata. Default for production.</td></tr>
-<tr><td>Sequential</td><td><code>instantiate_sequential</code></td><td>Step-by-step folding through intermediate schemas. Used by property tests to inspect each step.</td></tr>
+<tr><td><code>check_applicability_with</code></td><td>Threads the running schema through every step and checks each precondition.</td></tr>
+<tr><td><code>instantiate</code></td><td>Fuses the chain and computes one migration. It does not call the applicability check automatically.</td></tr>
+<tr><td><code>instantiate_sequential</code></td><td>Checks each step against the running schema, instantiates it, and composes the concrete lenses.</td></tr>
 </tbody>
 </table>
 </div>
-<p>Both satisfy the lens laws.</p>
+<p>Call <code>check_applicability_with</code> before fused instantiation when preconditions must be enforced. Fused and sequential instantiation are compared in property tests; neither return value is a proof of the lens laws for all instances.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../how-to/use-lenses.html">Use lenses</a>, <a href="../how-to/protolenses.html">Use protolenses</a>, <a href="../how-to/dependent-optics.html">Use dependent optics</a>.</li>
-<li><a href="../how-to/lens-dsl.html">Write lenses in the lens DSL</a>.</li>
-<li><a href="../explanation/semantics/lens-dsl.html">Lens DSL: denotational semantics</a>.</li>
-<li><a href="../explanation/semantics/protolens-composition.html">Protolens composition</a>.</li>
+<li><a href="../how-to/use-lenses.html">Use lenses</a></li>
+<li><a href="../how-to/protolenses.html">Use protolenses</a></li>
+<li><a href="../how-to/dependent-optics.html">Use dependent optics</a></li>
+<li><a href="../explanation/semantics/lens-dsl.html">Lens DSL: denotational semantics</a></li>
 </ul>
 
                     </main>

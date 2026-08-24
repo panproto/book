@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,94 +183,81 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="rust-sdk-reference"><a class="header" href="#rust-sdk-reference">Rust SDK reference</a></h1>
-<p>The Rust surface of panproto is the <code>panproto-core</code> facade. Add it to your <code>Cargo.toml</code>:</p>
+<p>The <a href="https://www.rust-lang.org/">Rust</a> entry point is the <a href="https://docs.rs/panproto-core/latest/panproto_core/"><code>panproto-core</code></a> facade. Version 0.71 requires Rust 1.85 or later.</p>
 <pre><code class="language-toml">[dependencies]
 panproto-core = "0.71"
 </code></pre>
-<p>Full type signatures, constructors, and method documentation live on docs.rs:</p>
-<ul>
-<li><a href="https://docs.rs/panproto-core"><code>panproto-core</code> on docs.rs</a></li>
-</ul>
+<p>The facade re-exports each component crate as a module. For instance, <code>panproto_core::schema::Schema</code> is the <code>Schema</code> type from <code>panproto-schema</code>; depending on <code>panproto-schema</code> directly exposes the same type without the facade.</p>
+<h2 id="modules"><a class="header" href="#modules">Modules</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Module</th><th>Re-exported crate</th><th>Principal surface</th></tr>
+</thead>
+<tbody>
+<tr><td><code>check</code></td><td><code>panproto-check</code></td><td>Structural diffs, compatibility classification, and validation</td></tr>
+<tr><td><code>gat</code></td><td><code>panproto-gat</code></td><td>Theories, models, theory morphisms, and colimits</td></tr>
+<tr><td><code>schema</code></td><td><code>panproto-schema</code></td><td>Protocols, schemas, builders, morphisms, and pushouts</td></tr>
+<tr><td><code>inst</code></td><td><code>panproto-inst</code></td><td>Tree, relational, and graph instance representations</td></tr>
+<tr><td><code>mig</code></td><td><code>panproto-mig</code></td><td>Migration compilation, lifting, composition, and morphism search</td></tr>
+<tr><td><code>lens</code></td><td><code>panproto-lens</code></td><td>Lenses, protolenses, complements, and law checks</td></tr>
+<tr><td><code>protocols</code></td><td><code>panproto-protocols</code></td><td>Built-in protocol definitions</td></tr>
+<tr><td><code>io</code></td><td><code>panproto-io</code></td><td>Instance parsing and emission</td></tr>
+<tr><td><code>vcs</code></td><td><code>panproto-vcs</code></td><td>Schema and data version control</td></tr>
+<tr><td><code>expr</code>, <code>expr_parser</code></td><td><code>panproto-expr</code>, <code>panproto-expr-parser</code></td><td>Expression values, evaluation, parsing, and formatting</td></tr>
+<tr><td><code>lens_dsl</code>, <code>theory_dsl</code></td><td><code>panproto-lens-dsl</code>, <code>panproto-theory-dsl</code></td><td>Declarative lens and theory front ends</td></tr>
+</tbody>
+</table>
+</div>
+<p>The <a href="./crate-map.html">crate map</a> lists lower-level workspace crates that are not re-exported from <code>panproto-core</code>.</p>
 <h2 id="feature-flags"><a class="header" href="#feature-flags">Feature flags</a></h2>
+<p><code>panproto-core</code> has no default features.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Feature</th><th>Effect</th></tr>
+<tr><th>Feature</th><th>Additional module or behavior</th><th>Implied features</th></tr>
 </thead>
 <tbody>
-<tr><td><code>full-parse</code></td><td>Pulls in <code>panproto-parse</code> and tree-sitter-based AST parsing.</td></tr>
-<tr><td><code>project</code></td><td>Pulls in <code>panproto-project</code> for multi-file project assembly.</td></tr>
-<tr><td><code>git</code></td><td>Pulls in <code>panproto-git</code> for the git bridge.</td></tr>
-<tr><td><code>tree-sitter</code></td><td>Enables tree-sitter-based format-preserving parsing for built-in protocols (forwards to <code>panproto-io/tree-sitter</code>).</td></tr>
+<tr><td><code>full-parse</code></td><td>Re-exports <code>panproto-parse</code> as <code>parse</code></td><td>none</td></tr>
+<tr><td><code>project</code></td><td>Re-exports <code>panproto-project</code> as <code>project</code></td><td><code>full-parse</code></td></tr>
+<tr><td><code>git</code></td><td>Re-exports <code>panproto-git</code> as <code>git</code></td><td><code>project</code>, hence <code>full-parse</code></td></tr>
+<tr><td><code>tree-sitter</code></td><td>Enables the <code>panproto-io/tree-sitter</code> implementation</td><td>none</td></tr>
 </tbody>
 </table>
 </div>
-<p>The default feature set re-exports thirteen always-on crates: <code>panproto-gat</code>, <code>panproto-schema</code>, <code>panproto-inst</code>, <code>panproto-mig</code>, <code>panproto-lens</code>, <code>panproto-check</code>, <code>panproto-protocols</code>, <code>panproto-io</code>, <code>panproto-vcs</code>, <code>panproto-expr</code>, <code>panproto-expr-parser</code>, <code>panproto-lens-dsl</code>, and <code>panproto-theory-dsl</code>. The feature flags above add the optional crates.</p>
-<h2 id="sub-crate-lookup"><a class="header" href="#sub-crate-lookup">Sub-crate lookup</a></h2>
-<p>For lower-level work, depend on individual crates rather than the facade. The <a href="./crate-map.html">crate map</a> lists every workspace member with a one-line description and a link to its docs.rs page.</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Task</th><th>Crate</th></tr>
-</thead>
-<tbody>
-<tr><td>Define a GAT in Rust</td><td><code>panproto-gat</code>, <code>panproto-gat-macros</code></td></tr>
-<tr><td>Validate a schema against a protocol</td><td><code>panproto-schema</code>, <code>panproto-protocols</code></td></tr>
-<tr><td>Parse data and produce an instance</td><td><code>panproto-io</code>, <code>panproto-inst</code></td></tr>
-<tr><td>Build and apply a migration</td><td><code>panproto-mig</code></td></tr>
-<tr><td>Construct or compose lenses</td><td><code>panproto-lens</code></td></tr>
-<tr><td>Write lenses in the lens DSL</td><td><code>panproto-lens-dsl</code></td></tr>
-<tr><td>Use the expression language</td><td><code>panproto-expr</code>, <code>panproto-expr-parser</code></td></tr>
-<tr><td>Version-control schemas and data</td><td><code>panproto-vcs</code>, <code>panproto-git</code></td></tr>
-<tr><td>Parse full ASTs across 261 languages</td><td><code>panproto-parse</code></td></tr>
-<tr><td>Decorate an abstract schema with a layout fiber</td><td><code>panproto-parse</code> (<code>ParserRegistry::decorate</code>, <code>ParserRegistry::pretty_with_protocol</code>)</td></tr>
-<tr><td>Distinguish abstract and decorated schemas at the type level</td><td><code>panproto-schema</code> (<code>AbstractSchema</code>, <code>DecoratedSchema</code>, <code>LayoutWitness</code>)</td></tr>
-<tr><td>Search for a morphism or a span between two schemas</td><td><code>panproto-mig</code> (<code>hom_search</code>, <code>span</code>, <code>solve</code>)</td></tr>
-<tr><td>Cut a well-formed sub-schema out of a schema</td><td><code>panproto-schema</code> (<code>induce</code>, <code>induce_on_vertices</code>)</td></tr>
-<tr><td>Take a schema’s content identity</td><td><code>panproto-schema</code> (<code>canonical_bytes</code>, <code>canonical_digest</code>)</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="morphism-and-span-search"><a class="header" href="#morphism-and-span-search">Morphism and span search</a></h2>
-<p>Searching for a map between two schemas goes through <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/"><code>panproto_mig::hom_search</code></a>. The primary entry point is <code>find_span</code>, which returns a <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/struct.SchemaSpan.html"><code>SchemaSpan</code></a> of the form <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord"><span class="mord mathit">src</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">←</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8095em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathit">tgt</span></span></span></span></span>. The apex <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span> is the sub-schema of <code>src</code> induced on the vertices the search assigned a target. Its signature is:</p>
-<pre><code class="language-text">pub fn find_span(
+<p><code>full-parse</code> adds the tree-sitter grammar build dependencies described in the crate manifest. It is separate from the <code>tree-sitter</code> feature on <code>panproto-io</code>.</p>
+<h2 id="morphism-search"><a class="header" href="#morphism-search">Morphism search</a></h2>
+<p>The <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/"><code>panproto_core::mig::hom_search</code></a> module distinguishes partial overlap from total morphisms.</p>
+<pre><code class="language-text">find_span(
     src: &amp;Schema,
     tgt: &amp;Schema,
     protocol: &amp;Protocol,
     opts: &amp;SearchOptions,
 ) -&gt; Result&lt;SchemaSpan, SpanError&gt;
+
+find_morphisms(
+    src: &amp;Schema,
+    tgt: &amp;Schema,
+    opts: &amp;SearchOptions,
+) -&gt; Result&lt;MorphismList, SpanError&gt;
+
+find_best_morphism(
+    src: &amp;Schema,
+    tgt: &amp;Schema,
+    opts: &amp;SearchOptions,
+) -&gt; Result&lt;Option&lt;FoundMorphism&gt;, SpanError&gt;
 </code></pre>
-<p>The protocol is an argument because the apex is a schema, and a schema is well formed only against a protocol; inducing the apex re-validates it rather than assuming it, and a <code>Schema</code> stores its protocol’s name alone. <code>find_span</code> never refuses for want of a match, since leaving every source vertex out of the apex is always feasible, so a pair with nothing in common returns an empty apex. An <code>Err</code> therefore says that the search could not be posed or that the induced apex did not validate. It never says that no morphism exists.</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Field of <code>SchemaSpan</code></th><th>What it holds</th></tr>
-</thead>
-<tbody>
-<tr><td><code>apex: Schema</code></td><td>The sub-schema of <code>src</code> the search covered, cut with <code>panproto_schema::induce</code> and re-validated against <code>protocol</code>.</td></tr>
-<tr><td><code>left: Migration</code></td><td>Inclusion from the apex into <code>src</code>; both maps are the identity on the apex.</td></tr>
-<tr><td><code>right: Migration</code></td><td>Assignment from the apex into <code>tgt</code>, with each apex edge sent to the target edge between the images of its endpoints.</td></tr>
-<tr><td><code>quality: f64</code></td><td>How well the covered part matches, in <code>[0, 1]</code>, with the drop count excluded.</td></tr>
-<tr><td><code>quality_bounds: (f64, f64)</code></td><td>The interval bracketing <code>quality</code>. Its ends are equal exactly when <code>certificate.proven_optimal</code> holds.</td></tr>
-<tr><td><code>apex_coverage: f64</code></td><td><code>apex.vertices.len()</code> over <code>src.vertices.len()</code>, or one when the source has no vertices.</td></tr>
-<tr><td><code>certificate: SpanCertificate</code></td><td>What the construction measured rather than assumed: <code>proven_optimal</code>, the <code>LegShape</code> of the two legs, functoriality of both, an <code>ExistenceReport</code> for each, whether the apex is pointed, the apex’s <code>canonical_digest</code>, which <code>SolverPath</code> ran, the tie-break order, and any <code>LimitKind</code> that stopped the search.</td></tr>
-</tbody>
-</table>
-</div>
-<p><code>quality</code> ranks spans over <em>one</em> source schema and nothing else, because every denominator of the objective is fixed by <code>src</code>. An empty apex charges the full penalty on each component the source gives mass to, and the source decides which components those are: name and degree are per source vertex and always charge, while the edge and Jaccard components are per source edge and per source vertex with a named outgoing edge. So an empty apex scores <code>0.0</code> over a source with at least one named edge, <code>0.30</code> over a source whose edges are all unnamed, <code>0.55</code> over an edgeless source, and <code>1.0</code> over an empty source. All four say that the schemas share nothing, on four different scales, which is why a caller ranking pairs reads <code>apex_coverage</code> alongside the score.</p>
-<p><code>SchemaSpan::is_total</code> holds when the left leg is onto, and <code>as_total_morphism</code> then converts the span to the <code>FoundMorphism</code> shape. <code>to_overlap</code> yields the pair lists <code>panproto_schema::schema_pushout</code> takes, and <code>pushout</code> merges the two schemas along the apex. For anything beyond the four arguments above, <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/struct.SpanSearch.html"><code>SpanSearch</code></a> is the builder: <code>with_constraints</code> states hard domain restrictions, <code>with_evidence</code> supplies the alignment anchors the objective’s anchor term reads, <code>with_weights</code> sets the five component weights, <code>with_budget</code> moves what the search may spend, and <code>with_theories</code> gives the existence check something to run its conditional obligations against.</p>
-<h3 id="what-find_morphisms-returns"><a class="header" href="#what-find_morphisms-returns">What <code>find_morphisms</code> returns</a></h3>
-<p><code>find_morphisms</code> returns the morphisms <strong>attaining the optimum</strong>, and nothing else. Every element carries the same quality, which is the maximum over all total morphisms, so the list is trivially in non-increasing quality order and <code>results[0]</code> is the best answer there is. A caller walking further down the list for a suboptimal alternative will not find one, because there is no k-best over distinct quality levels.</p>
-<p>The return type is <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/struct.MorphismList.html"><code>MorphismList</code></a> rather than a bare <code>Vec</code>, and the second field is why. <code>DEFAULT_OPTIMA_CAP</code>, which is 1024, bounds <strong>every</strong> request rather than only the unbounded-sounding <code>max_results = 0</code>: a larger figure is answered with the cap and <code>MorphismList::truncated</code> says so. It has to, because the enumeration materializes one <code>FoundMorphism</code> per optimum and the count of optima is a property of the pair rather than of its size. Two eight-vertex schemas with no edges and no shared name characters tie the whole hom-set at the optimum, which is <code>8^8</code> morphisms: 4.6 GB and 164 seconds uncapped against 4.6 MB and 11 ms capped. <code>truncated</code> is the only way to tell a list the cap cut from a list the pair exhausted, and it does not cross any other SDK.</p>
-<p><code>Ok(MorphismList { morphisms: vec![], .. })</code> means that no total morphism exists, and only that. A search that could not be posed reports <code>SpanError::Build</code>, and one that spent its budget before reaching any complete assignment reports <code>SpanError::Stopped</code> carrying the <code>LimitKind</code> that ran out, so an empty answer is always a statement about the pair rather than about the budget. <code>find_span</code> is the entry point that answers with what the two schemas do share.</p>
-<p>The four ordinary entry points spend <code>SearchBudget::default</code>. <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/fn.find_morphisms_budgeted.html"><code>find_morphisms_budgeted</code></a> and <code>find_best_morphism_budgeted</code> take the budget as an argument instead, which is what a host that has to bound the search needs and what <code>SpanSearch::with_budget</code> already is for the span search. Shrinking a budget turns answers into refusals and never into wrong answers.</p>
-<p>Three things a caller might reach for are deliberately absent. There is no preferred-mapping setting, because a preference can only change which optimum is found first while a unary cost changes which assignment is optimal, and evidence enters as a cost. There is no edge-name domain pruner, because edge-name agreement already enters the objective and a soft signal used as a hard filter removes correct answers. There is no name-similarity threshold, for the same reason applied to full path-like identifiers. A caller wanting a hard restriction states it in <code>DomainConstraints::restricted_domains</code>, and a node budget lives on <code>SearchBudget</code>, where exhausting it is reported through <code>SpanCertificate::limit_hit</code> rather than absorbed.</p>
+<p><code>find_span</code> may return an empty apex when the schemas share no vertices. The protocol argument is used to validate the induced apex. Setting <code>SearchOptions::epic</code> is invalid for this partial search and returns <code>SpanError::EpicIsNotASpanProperty</code>.</p>
+<p><code>find_morphisms</code> returns total morphisms that attain the optimum, rather than every morphism or a sequence of lower-quality alternatives. <code>MorphismList::truncated</code> records whether enumeration of tied optima stopped at the engine cap. An empty <code>morphisms</code> vector means that no total morphism exists; a search that could not run returns <code>Err</code>.</p>
+<p><code>SearchOptions::default()</code> leaves <code>monic</code>, <code>epic</code>, and <code>iso</code> false, uses no hard pins, and sets <code>max_results</code> to zero. Here zero requests all optima the implementation will enumerate, subject to its safety cap. Use <code>find_morphisms_budgeted</code> or <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/struct.SpanSearch.html"><code>SpanSearch</code></a> when the caller must supply a <code>SearchBudget</code>.</p>
+<h2 id="ownership-and-errors"><a class="header" href="#ownership-and-errors">Ownership and errors</a></h2>
+<p>Rust values follow ordinary ownership and drop semantics; the Rust API does not expose the opaque-handle lifecycle used by foreign-language bindings. Fallible operations return the error type declared by their component crate. <code>panproto-core</code> does not replace those errors with a facade-wide error enum.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../how-to/install/rust.html">Install the Rust SDK</a> for setup.</li>
-<li><a href="../how-to/define-schema/rust.html">Define a schema from Rust</a> for the canonical entry point.</li>
-<li><a href="./crate-map.html">Crate map</a> for the complete workspace.</li>
-<li><a href="../how-to/spans.html">Find a span between two schemas</a> for the task, and <a href="../explanation/morphism-search.html">Searching for a morphism</a> for what the search is doing.</li>
+<li><a href="../how-to/install/rust.html">Install the Rust SDK</a></li>
+<li><a href="../how-to/define-schema/rust.html">Define a schema from Rust</a></li>
+<li><a href="../how-to/spans.html">Find a span between two schemas</a></li>
+<li><a href="../explanation/morphism-search.html">Searching for a morphism</a></li>
 </ul>
 
                     </main>

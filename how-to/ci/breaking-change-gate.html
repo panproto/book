@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -187,7 +187,7 @@
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>A panproto repository under git. A CI system that can run shell commands.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
-<p><code>schema compat</code> classifies the diff between two schema versions and sets its exit code by tier: 0 for a non-breaking change (fully compatible or backward compatible), 1 for a breaking one, 2 for a usage or load error. That exit code is the gate. Pair it with <code>schema check --typecheck</code>, which catches GAT-level type errors the structural classification does not:</p>
+<p><code>schema compat</code> classifies the diff between two schema versions and sets its exit code by tier: 0 for a non-breaking change, 1 for a breaking change, and 2 for a usage or load error. Pair it with <code>schema check --typecheck</code> when the repository also stores an explicit migration mapping; that second command checks the mapping’s existence conditions and theory-level types.</p>
 <pre><code class="language-sh"># In your CI script.
 git fetch origin main
 base_commit=$(git merge-base HEAD origin/main)
@@ -196,7 +196,7 @@ git show "$base_commit:schemas/user.json" &gt; /tmp/user-base.json
 # Classify the change; exit 1 means breaking, exit 2 a usage or load error.
 schema compat /tmp/user-base.json schemas/user.json --protocol atproto
 
-# GAT-level type check.
+# Check the explicit mapping and its theory-level types.
 schema check \
   --src /tmp/user-base.json \
   --tgt schemas/user.json \
@@ -220,12 +220,12 @@ else
     --typecheck
 fi
 </code></pre>
-<p>For richer reporting, add <code>--format json</code> to <code>schema compat</code>, or use the SDK: in Python, <code>panproto.diff_and_classify(old, new, protocol)</code> returns a <code>CompatReport</code>; in Rust, call <code>panproto_check::diff(...)</code> followed by <code>panproto_check::classify(&amp;diff, &amp;protocol)</code>; in TypeScript, <code>panproto.diffFull(old, new).classify(protocol)</code> returns the same report. Each <code>CompatReport</code> carries a <code>classification</code> tier (<code>fully-compatible</code>, <code>backward-compatible</code>, or <code>breaking</code>) alongside a <code>breaking</code> list, a <code>non_breaking</code> list, and a <code>compatible</code> boolean, along with the offending elements.</p>
+<p>For machine-readable output, add <code>--format json</code> to <code>schema compat</code>. The CLI JSON and the Rust and Python reports include a three-way <code>classification</code> field, breaking and non-breaking lists, and a <code>compatible</code> boolean. The TypeScript <code>CompatReport</code> exposes <code>isCompatible</code>, <code>isBreaking</code>, <code>breakingChanges</code>, and <code>nonBreakingChanges</code>; call <code>toJson()</code> when the three-way classification string is needed.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<p>Open a PR that adds a backward-compatible field; the gate passes. Open a PR that drops a required field; the gate fails. Add <code>[breaking-change-acknowledged]</code> to the commit message; the gate passes with a warning.</p>
+<p>Open a PR that adds a backward-compatible field, and the gate passes. A PR that drops a required field fails. Adding <code>[breaking-change-acknowledged]</code> to the commit message lets the gate pass with a warning.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
-<li>Skipping <code>--typecheck</code>. Without it, the gate misses GAT-level type errors that are also breaking changes.</li>
+<li>Running <code>schema check</code> without a maintained mapping file. Compatibility classification needs only the two schemas; mapping checks are an additional gate for repositories that version migrations.</li>
 <li>Comparing against the wrong base. The gate must compare against the merge base of the PR and <code>main</code>, not against <code>main</code>’s tip; otherwise force-pushes to <code>main</code> make every PR look breaking.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>

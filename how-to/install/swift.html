@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -184,10 +184,10 @@
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="install-the-swift-sdk"><a class="header" href="#install-the-swift-sdk">Install the Swift SDK</a></h1>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p><a href="https://www.swift.org/">Swift</a> 6.0 or later, which on Apple platforms means Xcode 16 or later. The package builds in Swift 6 language mode with strict concurrency, so an older toolchain will not compile it.</p>
+<p><a href="https://www.swift.org/">Swift</a> 6.1 or later. The package manifest uses Swift tools 6.1 and Swift 6 language mode.</p>
 <p>Building <code>libpanproto_c</code> from source additionally needs a <a href="https://www.rust-lang.org/">Rust</a> toolchain; <code>rustup</code> is recommended. The prebuilt path below needs neither Rust nor a workspace checkout.</p>
 <h2 id="install"><a class="header" href="#install">Install</a></h2>
-<p>The package is not yet on a registry; it lives at <a href="https://github.com/panproto/panproto/tree/main/bindings/swift"><code>bindings/swift/</code></a> in the repository. Every product links <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>libpanproto_c</code></a>, the C ABI exposed by the <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>panproto-c</code></a> crate, so the library has to be staged before <code>swift build</code> will link. There are three ways to get it.</p>
+<p>The package is not yet on a registry; it lives at <a href="https://github.com/panproto/panproto/tree/main/bindings/swift"><code>bindings/swift/</code></a> in the repository. Engine-backed products link <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>libpanproto_c</code></a>, the C application binary interface exposed by the <code>panproto-c</code> crate. Stage that library before building an engine-backed target. <code>PanprotoStructural</code> is a pure Swift product and does not call the engine.</p>
 <h3 id="build-from-source"><a class="header" href="#build-from-source">Build from source</a></h3>
 <p><code>bootstrap/dev-link.sh</code> runs <code>cargo build -p panproto-c --release</code>, stages the resulting library and header under <code>bindings/swift/.panproto-c/</code>, and syncs the vendored copy of <code>panproto.h</code> that the package compiles against. <code>Package.swift</code> looks in <code>.panproto-c/lib</code> by default, so nothing else needs configuring.</p>
 <pre><code class="language-sh">git clone https://github.com/panproto/panproto.git
@@ -227,7 +227,7 @@ PANPROTO_SWIFT_XCFRAMEWORK=.panproto-c/panproto_c.xcframework swift build
 </table>
 </div>
 <h2 id="feature-gated-tiers"><a class="header" href="#feature-gated-tiers">Feature-gated tiers</a></h2>
-<p>The default <code>libpanproto_c</code> exports 105 entry points. The <code>parse</code>, <code>project</code>, and <code>git</code> tiers add 17 more that are absent from that build, so reaching them takes a library built with the matching cargo features and a Swift build told to compile the gated shims in:</p>
+<p>The default <code>libpanproto_c</code> omits the <code>parse</code>, <code>project</code>, and <code>git</code> tiers. Using one of those tiers requires a library built with the matching Cargo features and a Swift build that compiles the gated shims:</p>
 <pre><code class="language-sh">PANPROTO_C_FEATURES=full ./bootstrap/dev-link.sh
 swift build --traits PANPROTO_PARSE,PANPROTO_PROJECT,PANPROTO_GIT
 </code></pre>
@@ -253,7 +253,7 @@ print(value.protocolName, value.vertexCount, "vertices")
 let messages = try await schema.violations(against: atproto)
 print(messages.isEmpty ? "valid" : messages.joined(separator: "\n"))
 </code></pre>
-<p>Every call is <code>await</code>: engine work runs on the <code>@PanprotoEngine</code> global actor, which is pinned to a single thread. See the <a href="../../reference/sdk-swift.html">Swift SDK reference</a> for why, and for what that means when you hold a handle.</p>
+<p>Engine calls run on the <code>@PanprotoEngine</code> global actor, which is pinned to one thread. Release long-lived handles explicitly when their work is complete.</p>
 
                     </main>
 

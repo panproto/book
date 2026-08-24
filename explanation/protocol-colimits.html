@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,58 +183,39 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="composing-protocols-by-colimit"><a class="header" href="#composing-protocols-by-colimit">Composing protocols by colimit</a></h1>
-<h2 id="in-plain-terms"><a class="header" href="#in-plain-terms">In plain terms</a></h2>
-<p>Schema languages have a lot in common with each other. They all have records, fields, references between records, ways to constrain what values a field can take, and ways to express that something is one of a fixed set of alternatives. Building each protocol’s schema model from scratch would mean reimplementing those shared pieces dozens of times.</p>
-<p>panproto solves this by defining each shared piece as a small theory, then combining them. The theory of <em>graphs</em> (vertices and edges) is one piece. The theory of <em>constraints</em> (predicates on edge values) is another. The theory of <em>multigraphs</em> (graphs that allow multiple parallel edges between the same pair of vertices) is a third. Each protocol is built by gluing these pieces together at the points where they share structure.</p>
-<p>The gluing operation is called a <em>colimit</em>. Conceptually, it takes several theories plus a description of how their shared parts identify, and produces a single combined theory whose vertices and edges are the union of the inputs, with the shared parts collapsed. The result is a new theory that has all the structure of the inputs and respects all their equations.</p>
-<p>Protocol registration uses these colimits to assemble reusable theory groups. A new protocol still needs an edge interpretation and its parser/emitter integration, so theory composition is one part of registration rather than the whole implementation.</p>
-<p><a href="./schemas-as-theories.html">Schemas as theories</a> treats morphisms as maps that preserve named structure. Colimits use that preservation to combine protocols; their universal property is the first substantial abstraction jump on the advanced path.</p>
-<h2 id="the-construction"><a class="header" href="#the-construction">The construction</a></h2>
-<p>A protocol’s schema theory is built as the colimit of a diagram of building-block theories. The diagram is a small category whose objects are theories and whose morphisms are theory inclusions describing the shared structure.</p>
-<p>For instance, the constrained-multigraph/W-type group used by several structured-data protocols is registered in two parts. Its schema theory is</p>
-<pre><code class="language-text">ThGraph + ThConstraint + ThMulti
-</code></pre>
-<p>where the first pushout identifies the shared <code>Vertex</code> sort and the second identifies both <code>Vertex</code> and <code>Edge</code>. Its separate instance theory is <code>ThWType</code>. Together they provide:</p>
-<ul>
-<li>The vertices, edges, and source/target operations from <code>ThGraph</code>.</li>
-<li>The constraint sort and predicate operations from <code>ThConstraint</code>.</li>
-<li>The multi-edge labeling from <code>ThMulti</code>.</li>
-<li>The instance-level node, arc, anchor, and value structure from <code>ThWType</code>.</li>
-</ul>
-<p>If a colimit step fails, registration panics with a message naming the failing intermediate step (<code>colimit ThGraph + ThConstraint over ThVertex failed: ...</code>). This is intentional: a failed registration is a build-time bug in the theory composition, not user input.</p>
-<h2 id="why-colimits-specifically"><a class="header" href="#why-colimits-specifically">Why colimits, specifically</a></h2>
-<p>The colimit construction has three properties that matter for panproto:</p>
-<ol>
-<li><strong>Universality.</strong> Any compatible pair of maps out of the input theories factors through the colimit. This property states the sense in which the result contains no unconstrained choice beyond the identifications requested by the span.</li>
-<li><strong>Checked construction.</strong> <code>pushout_by_name</code> builds each inclusion with <code>identity_inclusion</code>, which requires every shared sort and operation to be present in the target, and then checks that the two legs agree on what they share. Either failure returns a <code>GatError</code>, which protocol registration turns into a named panic because built-in registration failure is a programming error. Validating the inclusions as morphisms is a separate, opt-in check.</li>
-<li><strong>Reusable composition.</strong> The same pushout implementation builds protocol theory groups and supplies the GAT-level construction used by later merge machinery.</li>
-</ol>
-<p>The merge operation in <a href="./vcs-semantics.html">schema version control</a> is also a colimit (specifically a pushout); the same machinery powers both.</p>
-<h2 id="reusable-building-blocks"><a class="header" href="#reusable-building-blocks">Reusable building blocks</a></h2>
-<p>The shared theory library lives in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-protocols/src/theories.rs"><code>crates/panproto-protocols/src/theories.rs</code></a>. The major pieces:</p>
+<p>Several protocol registrations use the same small theories. <code>ThGraph</code> supplies <code>Vertex</code>, <code>Edge</code>, <code>src</code>, and <code>tgt</code>. <code>ThConstraint</code> supplies a dependent constraint sort and its target vertex. <code>ThMulti</code> adds edge labels to distinguish parallel edges. Separate instance theories, including <code>ThWType</code>, describe nodes, arcs, and values.</p>
+<p>Rather than duplicate these declarations, panproto combines theory presentations over explicitly shared sorts and operations. The relevant construction is a <strong>colimit</strong>. Using colimits to assemble specifications from component theories follows the Clear structured-specification work [Burstall &amp; Goguen (<a href="../bibliography.html#burstallgoguen1977putting">1977</a>); Burstall &amp; Goguen (<a href="../bibliography.html#burstallgoguen1980semantics">1980</a>)]. Given a diagram of theories and structure-preserving maps, its colimit identifies the specified common structure and retains the remaining declarations and equations.</p>
+<h2 id="the-registered-construction"><a class="header" href="#the-registered-construction">The registered construction</a></h2>
+<p>The constrained-multigraph group illustrates the process. Its first pushout combines <code>ThGraph</code> with <code>ThConstraint</code> by identifying <code>Vertex</code>. A second pushout combines that result with <code>ThMulti</code> by identifying both <code>Vertex</code> and <code>Edge</code>. <code>ThWType</code> is registered separately as the group’s instance theory. Schema structure and instance structure thus remain distinct even when a protocol registration names both.</p>
+<p>The helper <code>pushout_by_name</code> constructs identity-by-name inclusions for the shared sorts and operations. It first requires every requested name to exist on both sides, then invokes the GAT colimit construction. Construction checks that the resulting cocone commutes. The returned <code>ColimitResult</code> also exposes <code>verify_universal</code> for checking factorization against a supplied alternative cocone; that stronger check is not implicit in every call to <code>pushout_by_name</code>.</p>
+<p>The shared registration helpers treat a failed built-in composition as a programming error and panic with a message naming the failed step. This behavior should not be generalized to every protocol-specific registration path, some of which handle composition errors locally.</p>
+<h2 id="universal-characterization"><a class="header" href="#universal-characterization">Universal characterization</a></h2>
+<p>Suppose compatible maps send each input theory into another theory <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span></span></span></span>. The universal property states that these maps factor uniquely through the colimit. This property characterizes which identifications the construction introduces: the mediating map is determined by the compatible input maps, rather than by an additional choice made during composition.</p>
+<p>Runtime construction and universal characterization have different scopes. <code>pushout_by_name</code> validates names and constructs a commuting cocone. <code>verify_universal</code> evaluates the additional mediator condition for an alternative cocone supplied to it. <a href="./semantics/pushouts-and-merge.html">Pushouts and merge</a> states the formal condition and the scope of the implementation checks.</p>
+<h2 id="reusable-theories"><a class="header" href="#reusable-theories">Reusable theories</a></h2>
+<p>The shared library is defined in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-protocols/src/theories.rs"><code>crates/panproto-protocols/src/theories.rs</code></a>.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Theory</th><th>Purpose</th></tr>
+<tr><th>Theory</th><th>Declared structure</th></tr>
 </thead>
 <tbody>
-<tr><td><code>ThGraph</code></td><td>Vertices and edges, with source and target operations.</td></tr>
-<tr><td><code>ThConstraint</code></td><td>Vertex-attached constraints (a dependent <code>Constraint(v: Vertex)</code> sort).</td></tr>
-<tr><td><code>ThMulti</code></td><td>Parallel edges distinguished by edge labels.</td></tr>
-<tr><td><code>ThWType</code></td><td>Nodes, arcs, values, and their links back to schema vertices and edges.</td></tr>
-<tr><td><code>ThMeta</code></td><td>Discriminators and extra fields attached to instance nodes.</td></tr>
+<tr><td><code>ThGraph</code></td><td>Vertices and directed edges with source and target.</td></tr>
+<tr><td><code>ThConstraint</code></td><td>Vertex-indexed constraints and their targets.</td></tr>
+<tr><td><code>ThMulti</code></td><td>Edge labels for parallel edges.</td></tr>
+<tr><td><code>ThWType</code></td><td>Instance nodes, arcs, and values linked to schema structure.</td></tr>
+<tr><td><code>ThMeta</code></td><td>Discriminators, extra fields, and values attached to nodes.</td></tr>
 </tbody>
 </table>
 </div>
-<p>The library also exposes higher-level pieces built by composing these (<code>ThSimpleGraph</code>, <code>ThHypergraph</code>, <code>ThInterface</code>, <code>ThFunctor</code>, <code>ThFlat</code>, <code>ThGraphInstance</code>) for protocols that want to start from a richer base.</p>
-<p>A protocol’s registration function is a recipe for combining these. To define a new protocol, see <a href="../how-to/build-protocol.html">Build a custom protocol</a>.</p>
+<p>These five foundations declare no equations of their own. The library also defines composed or higher-level theories including <code>ThSimpleGraph</code>, <code>ThHypergraph</code>, <code>ThInterface</code>, <code>ThFunctor</code>, <code>ThFlat</code>, and <code>ThGraphInstance</code>. A protocol registration selects the theory group appropriate to its structures and separately supplies parsing, emission, and protocol-specific rules. <a href="../how-to/build-protocol.html">Build a custom protocol</a> describes that registration process.</p>
 <h2 id="related-work"><a class="header" href="#related-work">Related work</a></h2>
-<p>Cross-protocol translation has two mature precedents. Fagin and colleagues supply universal solutions, the chase, and the second-order extension needed for composition [Fagin et al. (<a href="../bibliography.html#faginkolaitispopa2005data">2005</a>); Fagin et al. (<a href="../bibliography.html#faginkolaitispopatan2005composing">2005</a>)]. CQL treats schemas as algebraic theories or categories, schema morphisms as functorial mappings, and data integration as a pushout [Schultz &amp; Wisnesky (<a href="../bibliography.html#schultzwisnesky2017algebraic">2017</a>); Schultz et al. (<a href="../bibliography.html#schultzspivakvasilakopoulouwisnesky2017algebraic">2017</a>)]. <a href="https://calcite.apache.org/">Apache Calcite</a> (<a href="../bibliography.html#begolicamachorodriguezhydemiorlemire2018calcite">Begoli et al. 2018</a>), <a href="https://substrait.io/">Substrait</a>, <a href="https://arrow.apache.org/">Apache Arrow</a>, and <a href="https://mlir.llvm.org/">MLIR</a> motivate the hub-and-spoke engineering pattern. panproto’s <code>colimit</code> and <code>pushout_by_name</code> apply these ideas to GAT-presented wire-format schemas. See <a href="./related-work.html#cross-protocol-translation-and-data-exchange">Related work</a> for the full discussion.</p>
+<p>Data exchange supplies universal solutions and chase-based composition [Fagin et al. (<a href="../bibliography.html#faginkolaitispopa2005data">2005</a>); Fagin et al. (<a href="../bibliography.html#faginkolaitispopatan2005composing">2005</a>)]. CQL treats schemas as algebraic theories or categories and uses pushouts for data integration [Schultz &amp; Wisnesky (<a href="../bibliography.html#schultzwisnesky2017algebraic">2017</a>); Schultz et al. (<a href="../bibliography.html#schultzspivakvasilakopoulouwisnesky2017algebraic">2017</a>)]. <a href="https://calcite.apache.org/">Apache Calcite</a> (<a href="../bibliography.html#begolicamachorodriguezhydemiorlemire2018calcite">Begoli et al. 2018</a>), <a href="https://substrait.io/">Substrait</a>, <a href="https://arrow.apache.org/">Apache Arrow</a>, and <a href="https://mlir.llvm.org/">MLIR</a> provide related engineering precedents for intermediate representations. panproto applies GAT colimits to reusable descriptions of wire-format schemas. <a href="./related-work.html#cross-protocol-translation-and-data-exchange">Related work</a> develops these comparisons.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="./schemas-as-theories.html">Schemas as theories</a> for what a single theory is.</li>
-<li><a href="./semantics/pushouts-and-merge.html">Pushouts and merge</a> for the formal pushout construction and the universal property panproto verifies.</li>
-<li><a href="./vcs-semantics.html">Schema version control semantics</a> for the use of pushouts in merge.</li>
+<li><a href="./schemas-as-theories.html">Schemas as theories</a> for theory presentations and their models.</li>
+<li><a href="./semantics/pushouts-and-merge.html">Pushouts and merge</a> for the universal property and its checks.</li>
+<li><a href="./vcs-semantics.html">Schema version control semantics</a> for structural merge of concrete schemas.</li>
 </ul>
 
                     </main>

@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -201,7 +201,7 @@ postSchema = S.buildSchema "geojson" $ do
     S.edge S.Edge {S.src = "post", S.tgt = "title", S.kind = "prop", S.name = Just "title"}
     S.constraint "title" S.Constraint {S.sort = "maxLength", S.value = "120"}
 </code></pre>
-<p><code>buildSchema name</code> runs a <code>SchemaBuilderM</code> (a <code>State Schema</code> computation) against an empty schema attached to the protocol <code>name</code>, here the <a href="https://geojson.org/">GeoJSON</a> codec; <code>vertex</code>, <code>edge</code>, <code>hyperEdge</code>, and <code>constraint</code> each mutate the schema in the <code>do</code>-block, and <code>buildSchema</code> returns the assembled <code>Schema</code>. Every value is a plain record: a <code>Vertex</code> carries an <code>id</code>, a <code>kind</code> drawn from the protocol’s vertex kinds, and an optional <code>nsid</code>; an <code>Edge</code> carries its <code>src</code>, <code>tgt</code>, structural <code>kind</code> (<code>prop</code>, <code>item</code>, <code>variant</code>), and an optional <code>name</code>; <code>constraint vid</code> attaches a <code>Constraint</code> to the vertex <code>vid</code>. This is the pure <code>Native</code> value algebra, so it never starts a Rust runtime; what it produces is a structured ADT you ingest into the engine for validation.</p>
+<p><code>buildSchema name</code> runs the builder actions in the <code>do</code> block and returns an immutable <code>Schema</code> value. <code>vertex</code>, <code>edge</code>, and <code>constraint</code> add plain Haskell records; no Rust runtime starts during this construction. The protocol name is metadata at this stage, so validation still needs a separate protocol value.</p>
 <p>A <code>Schema</code> built this way carries no protocol object of its own. To validate it you pair it with a protocol, which you can take straight from the canonical default with its name set:</p>
 <pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
 
@@ -210,9 +210,9 @@ import Panproto.Canonical (CanonicalProtocol (..), defaultProtocol)
 geoProtocol :: CanonicalProtocol
 geoProtocol = defaultProtocol {name = "geojson"}
 </code></pre>
-<p><code>fromTheories</code> builds a protocol from its schema theory, instance theory, and the structural and enrichment feature flags when you need to spell out a full GAT configuration; <code>defaultProtocol {name = ...}</code> is enough whenever you only need a registered codec by name.</p>
+<p><code>fromTheories</code> builds a protocol from explicit schema and instance theories. Use it only when defining a new protocol. Renaming <code>defaultProtocol</code> is enough for this value-level example, but it does not load the GeoJSON rules from the Rust registry.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<p>Validation runs on the <code>Rust</code> backend, so the schema and the protocol both pass through <code>fromSchema (Proxy @Rust)</code> and <code>fromCanonical (Proxy @Rust)</code> on the way in. The <code>Proxy @Rust</code> at ingestion fixes the backend for everything downstream; <code>validateSchema</code> then returns the protocol’s complaints, and an empty list means the schema is well-formed.</p>
+<p>Validation runs through the foreign-function interface backend. <code>fromSchema (Proxy @Rust)</code> and <code>fromCanonical (Proxy @Rust)</code> create engine handles; <code>validateSchema</code> returns the protocol-level complaints. An empty list reports that this pass found no structural violations.</p>
 <pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeApplications #-}
 
@@ -235,7 +235,7 @@ validate =
 <ul>
 <li>Chaining the builder operations as if they returned the schema. <code>vertex</code>, <code>edge</code>, and <code>constraint</code> are <code>SchemaBuilderM ()</code> actions sequenced in a <code>do</code>-block; <code>buildSchema</code> returns the <code>Schema</code>, not the individual calls.</li>
 <li>Holding a <code>SchemaRep Rust</code> past its <code>bracket</code>. The <code>Rust</code> representations are <code>u32</code> slab handles into a thread-local arena; use them inside the <code>bracket</code> and let <code>releaseSchema</code> reclaim them, and do not share a handle across threads.</li>
-<li>Reaching for <code>optics-core</code> or <code>lens</code> to mutate a schema. The lawful-optics adaptors in <code>Panproto.Lens.Optics</code> cover only the lossless read-and-record-update subset; building structure goes through <code>SchemaBuilderM</code>.</li>
+<li>Using optional lens-adaptor packages to build structure. Schema construction goes through <code>SchemaBuilderM</code>.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

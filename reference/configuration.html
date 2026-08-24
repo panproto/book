@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,11 +183,11 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="configuration-reference"><a class="header" href="#configuration-reference">Configuration reference</a></h1>
-<p>The project manifest is <code>panproto.toml</code> at the project root. <code>panproto_project::config::load_config</code> reads it; project-aware CLI paths use its exclusion patterns and per-package protocol overrides.</p>
-<h2 id="top-level-shape"><a class="header" href="#top-level-shape">Top-level shape</a></h2>
+<p>The project manifest is <code>panproto.toml</code> in the project root. <a href="https://docs.rs/panproto-project/latest/panproto_project/config/fn.load_config.html"><code>load_config</code></a> returns <code>Ok(None)</code> when the file is absent and rejects malformed TOML as <code>ProjectError::InvalidManifest</code>.</p>
+<h2 id="manifest-shape"><a class="header" href="#manifest-shape">Manifest shape</a></h2>
 <pre><code class="language-toml">[workspace]
 name = "my-project"
-exclude = ["build/**", "**/.cache"]
+exclude = ["target", "build", "**/*.log"]
 
 [[package]]
 name = "user-api"
@@ -197,44 +197,45 @@ protocol = "json-schema"
 [[package]]
 name = "user-events"
 path = "schemas/events"
-protocol = "avro"
 </code></pre>
-<h2 id="sections"><a class="header" href="#sections">Sections</a></h2>
 <h3 id="workspace"><a class="header" href="#workspace"><code>[workspace]</code></a></h3>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><th>Field</th><th>Rust type</th><th>Required</th><th>Default</th><th>Meaning</th></tr>
 </thead>
 <tbody>
-<tr><td><code>name</code></td><td>string</td><td>yes</td><td>Human-readable workspace name.</td></tr>
-<tr><td><code>exclude</code></td><td>list of glob patterns</td><td>no</td><td>Globs to exclude from project assembly. Evaluated relative to the manifest directory.</td></tr>
+<tr><td><code>name</code></td><td><code>String</code></td><td>yes</td><td>none</td><td>Workspace name.</td></tr>
+<tr><td><code>exclude</code></td><td><code>Vec&lt;String&gt;</code></td><td>no</td><td>empty</td><td>Glob patterns compiled relative to the manifest directory. Invalid patterns return <code>ProjectError::InvalidPattern</code>.</td></tr>
 </tbody>
 </table>
 </div>
 <h3 id="package"><a class="header" href="#package"><code>[[package]]</code></a></h3>
-<p>One entry per schema package. Packages are assembled into a single project by schema coproduct.</p>
+<p>The top-level <code>package</code> array may be omitted and then defaults to empty.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+<tr><th>Field</th><th>Rust type</th><th>Required</th><th>Default</th><th>Meaning</th></tr>
 </thead>
 <tbody>
-<tr><td><code>name</code></td><td>string</td><td>yes</td><td>Package identifier, unique within the workspace.</td></tr>
-<tr><td><code>path</code></td><td>path</td><td>yes</td><td>Directory containing the package’s schemas, relative to the manifest.</td></tr>
-<tr><td><code>protocol</code></td><td>string</td><td>no</td><td>Protocol name (<code>json-schema</code>, <code>atproto</code>, <code>protobuf</code>, …). When omitted, the protocol is inferred from file extensions and contents.</td></tr>
+<tr><td><code>name</code></td><td><code>String</code></td><td>yes</td><td>none</td><td>Package label. The loader does not enforce uniqueness.</td></tr>
+<tr><td><code>path</code></td><td><code>PathBuf</code></td><td>yes</td><td>none</td><td>Package root relative to the manifest directory.</td></tr>
+<tr><td><code>protocol</code></td><td><code>Option&lt;String&gt;</code></td><td>no</td><td><code>None</code></td><td>Parser override for files below <code>path</code>. Without an override, detection uses the file path and parser registry.</td></tr>
 </tbody>
 </table>
 </div>
-<h2 id="generating-a-manifest"><a class="header" href="#generating-a-manifest">Generating a manifest</a></h2>
-<p><code>schema init [PATH]</code> initializes a panproto repository in the given directory (default <code>.</code>). The repository’s bookkeeping lives in <code>.panproto/</code>; the user-authored manifest is <code>panproto.toml</code> and is created by hand.</p>
-<p>For programmatic creation, the <code>panproto-project</code> crate exposes <code>generate_config</code> and <code>serialize_config</code>.</p>
-<h2 id="authoritative-source"><a class="header" href="#authoritative-source">Authoritative source</a></h2>
-<p>Manifest schema: <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-project/src/config.rs"><code>crates/panproto-project/src/config.rs</code></a>.</p>
+<p>If an overridden parser rejects a file, project assembly falls back to <code>raw_file</code>; it does not retry ordinary language detection. Package paths supply protocol-prefix overrides, but do not restrict the directory walk to the declared packages.</p>
+<h2 id="generated-defaults"><a class="header" href="#generated-defaults">Generated defaults</a></h2>
+<p><code>schema init [PATH]</code> always initializes <code>.panproto/</code>. When package scanning finds at least one recognized package, it also writes <code>panproto.toml</code> with detected package entries and these exclusions:</p>
+<pre><code class="language-toml">exclude = ["target", "node_modules", "__pycache__", "build", "dist", ".git"]
+</code></pre>
+<p>When scanning finds no package markers, <code>schema init</code> does not create a manifest. The package scanner recognizes Cargo, npm, Go, Python, Gradle, Elixir, and CMake project markers. Programmatic callers can use <a href="https://docs.rs/panproto-project/latest/panproto_project/config/fn.generate_config.html"><code>generate_config</code></a> and <a href="https://docs.rs/panproto-project/latest/panproto_project/config/fn.serialize_config.html"><code>serialize_config</code></a>.</p>
+<h2 id="source"><a class="header" href="#source">Source</a></h2>
+<p>The manifest structs and defaults live in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-project/src/config.rs"><code>crates/panproto-project/src/config.rs</code></a>. Project assembly applies them in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-project/src/lib.rs"><code>crates/panproto-project/src/lib.rs</code></a>.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../how-to/define-schema/cli.html">Define a schema from the CLI</a> for the project-level workflow.</li>
-<li><a href="../how-to/schema-vcs/init-and-commit.html">Schema version control: init and commit</a>.</li>
+<li><a href="../how-to/define-schema/cli.html">Define a schema from the CLI</a></li>
+<li><a href="../how-to/schema-vcs/init-and-commit.html">Schema version control: init and commit</a></li>
 </ul>
 
                     </main>

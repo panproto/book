@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -182,27 +182,26 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
-<h1 id="denotational-semantics"><a class="header" href="#denotational-semantics">Denotational semantics</a></h1>
-<p>This cluster gives formal and operational models for panproto’s DSLs and structural constructions. Because a denotational model may be broader than the executable fragment, each page labels implemented behavior, checked properties, and explanatory interpretation separately.</p>
-<p>Read <a href="./shared-notation.html">Shared notation</a> first. The remaining pages assume comfort with typed abstract syntax and elementary category theory; <a href="../decoder-ring.html">The vocabulary in plain terms</a> and <a href="../schemas-as-theories.html">Schemas as theories</a> provide the intermediate bridge.</p>
-<p>The pages in turn:</p>
+<h1 id="language-and-construction-semantics"><a class="header" href="#language-and-construction-semantics">Language and construction semantics</a></h1>
+<p>These chapters specify the behavior of panproto’s expression language, DSL compilers, lens composition, pushout construction, and theory REPL. Formal notation is used where it makes an implemented rule more precise. A displayed equation is not, by itself, a claim that the implementation has been formally verified.</p>
+<p><a href="./shared-notation.html">Shared notation</a> introduces the symbols used in the other chapters. <a href="../decoder-ring.html">The vocabulary in plain terms</a> and <a href="../schemas-as-theories.html">Schemas as theories</a> introduce the mathematical vocabulary.</p>
 <div class="table-wrapper">
 <table>
 <thead>
 <tr><th>Page</th><th>What it pins down</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="./shared-notation.html">Shared notation</a></td><td>The judgment forms, environments, and meta-notation used across the others. Read this first.</td></tr>
+<tr><td><a href="./shared-notation.html">Shared notation</a></td><td>Judgment forms, environments, semantic functions, errors, and equality.</td></tr>
 <tr><td><a href="./expression-language.html">Expression language</a></td><td><code>panproto-expr</code>: abstract syntax, best-effort type classification, and resource-bounded evaluation.</td></tr>
 <tr><td><a href="./lens-dsl.html">Lens DSL</a></td><td><code>panproto-lens-dsl</code>: the lens triple <code>(get, put, complement)</code>, the three round-trip laws, complement composition as a partial commutative monoid.</td></tr>
 <tr><td><a href="./theory-dsl.html">Theory DSL</a></td><td><code>panproto-theory-dsl</code>: GAT presentations, compilation, typechecking, and the boundary of the CwF interpretation.</td></tr>
-<tr><td><a href="./pushouts-and-merge.html">Pushouts and merge</a></td><td>The pushout construction in the category of GATs, the universal property, and what the implementation verifies.</td></tr>
+<tr><td><a href="./pushouts-and-merge.html">Pushouts and merge</a></td><td>The GAT colimit construction, its on-demand universal-property check, and the narrower checks run by schema merge.</td></tr>
 <tr><td><a href="./protolens-composition.html">Protolens composition</a></td><td>Protolenses as natural transformations between schema endofunctors, the structural-equality criterion for composition, sequential vs fused instantiation.</td></tr>
 <tr><td><a href="./repl-commands.html">REPL command language</a></td><td>The REPL (<code>schema theory repl</code>, part of <code>panproto-cli</code>): state model, command interpretation, and the bare-term typecheck path.</td></tr>
 </tbody>
 </table>
 </div>
-<p>The <a href="../what-is-verified.html">What panproto verifies</a> chapter remains the guarantee catalog. These pages supply the definitions needed to interpret that catalog.</p>
+<p><a href="../what-is-verified.html">What panproto verifies</a> records where each runtime check or test is applied and distinguishes exhaustive checks from sampled tests.</p>
 
                     </main>
 

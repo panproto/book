@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,101 +183,119 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="crate-map"><a class="header" href="#crate-map">Crate map</a></h1>
-<p>The <code>panproto-*</code> crates in the workspace, with one-line descriptions and dependency direction. The full dependency graph appears in <a href="../explanation/architecture.html">explanation/architecture</a>. Source for any crate lives at <code>crates/&lt;name&gt;/</code> in the <a href="https://github.com/panproto/panproto/tree/main/crates">repository</a>.</p>
-<h2 id="core"><a class="header" href="#core">Core</a></h2>
+<p>The workspace contains 36 <code>panproto-*</code> crates. This page groups them by dependency role; the repository <a href="https://github.com/panproto/panproto/blob/main/Cargo.toml"><code>Cargo.toml</code></a> is authoritative for membership, and each crate’s manifest is authoritative for features.</p>
+<h2 id="theory-schemas-and-migration"><a class="header" href="#theory-schemas-and-migration">Theory, schemas, and migration</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Crate</th><th>Description</th></tr>
+<tr><th>Crate</th><th>Role</th></tr>
 </thead>
 <tbody>
-<tr><td><code>panproto-gat</code></td><td>Generalized algebraic theories: sorts, operations, equations, and the colimit machinery that composes them.</td></tr>
-<tr><td><code>panproto-gat-macros</code></td><td><code>class!</code> and <code>inductive!</code> macros for declaring GATs in Rust source.</td></tr>
-<tr><td><code>panproto-schema</code></td><td>Schema representation: vertices, edges, the schema graph, validation. Hosts the <code>AbstractSchema</code> / <code>DecoratedSchema</code> typed-newtype distinction, the layout-fiber forgetful U (<code>Schema::forget_layout</code>), <code>induce</code> (the one supported way to cut a well-formed sub-schema, accounting for all twenty-one <code>Schema</code> fields), and <code>canonical_digest</code>.</td></tr>
-<tr><td><code>panproto-inst</code></td><td>Instances: data records over a schema, including <code>Value::List</code> and the typed value lattice.</td></tr>
-<tr><td><code>panproto-mig</code></td><td>Migration engine: morphisms between schema theories, restrict and lift, plus the <code>solve</code> / <code>span</code> / <code>hom_search</code> subsystem that <em>finds</em> those morphisms by minimizing a cost function network.</td></tr>
-<tr><td><code>panproto-lens</code></td><td>Bidirectional lenses: get/put/complement, the three round-trip laws, fibration over schemas, optic kinds, protolenses, the cross-crate <code>enrichment_registry</code> for layout and other schema-level fibers.</td></tr>
-<tr><td><code>panproto-dsl-eval</code></td><td>Shared Nickel, JSON, and YAML evaluation for the lens and theory DSL crates.</td></tr>
-<tr><td><code>panproto-lens-dsl</code></td><td>Declarative lens DSL with Nickel, JSON, and YAML surfaces.</td></tr>
-<tr><td><code>panproto-theory-dsl</code></td><td>Declarative theory DSL for defining custom protocols.</td></tr>
-<tr><td><code>panproto-check</code></td><td>Breaking-change detection: classifies a schema diff as fully compatible, backward compatible, or breaking via the <code>Classification</code> enum, alongside the <code>breaking</code>/<code>non_breaking</code> lists and <code>compatible</code> boolean on <code>CompatReport</code>.</td></tr>
-<tr><td><code>panproto-protocols</code></td><td>Built-in protocol definitions composed via theory colimits.</td></tr>
-<tr><td><code>panproto-expr</code></td><td>Pure, total expression language: terms, types, environment evaluation.</td></tr>
-<tr><td><code>panproto-expr-parser</code></td><td>Haskell-style surface syntax parser for <code>panproto-expr</code>.</td></tr>
+<tr><td><code>panproto-gat</code></td><td>Generalized algebraic theory data, checking, morphisms, transforms, colimits, and finite-model evaluation (<a href="../bibliography.html#cartmell1986generalised">Cartmell 1986</a>).</td></tr>
+<tr><td><code>panproto-gat-macros</code></td><td><code>class!</code> and <code>inductive!</code> procedural macros targeting <code>panproto-gat</code>.</td></tr>
+<tr><td><code>panproto-schema</code></td><td>Schema graph, protocol rules, validation, induction, layout erasure, and canonical digests.</td></tr>
+<tr><td><code>panproto-inst</code></td><td>W-type instances, values, migration compilation output, restrict/lift, complements, and instance-aware expression environments.</td></tr>
+<tr><td><code>panproto-mig</code></td><td>Migration existence and compilation, schema correspondence search, spans, and homomorphism search.</td></tr>
+<tr><td><code>panproto-check</code></td><td>Breaking-change classification and compatibility reports.</td></tr>
+<tr><td><code>panproto-protocols</code></td><td>Built-in semantic protocol definitions, parsers, emitters, and theory registration.</td></tr>
 </tbody>
 </table>
 </div>
-<p>One line does not locate the morphism search, which is the largest subsystem inside <code>panproto-mig</code>. <a href="https://docs.rs/panproto-mig/latest/panproto_mig/solve/"><code>panproto_mig::solve</code></a> poses the search for a schema morphism as a <strong>cost function network</strong> (CFN): one variable per source vertex, one value per kind-compatible target vertex, and a distinguished bottom value meaning that the vertex is left out of the result. Minimizing the total cost over that network is the search. Because bottom is an ordinary value rather than a failure, the maximum common sub-schema falls out as the network’s optimum and no separate subgraph search is needed. <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/"><code>panproto_mig::span</code></a> assembles the winning assignment into a span, re-inducing and re-validating its apex, and <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/"><code>panproto_mig::hom_search</code></a> is the surface a caller reaches for. Four algorithms sit behind that surface: exact bucket elimination (<a href="../bibliography.html#dechter1999bucket">Dechter 1999</a>) on the primary path, hybrid best-first search (<a href="../bibliography.html#allouchedegivrykatsirelosschiexzytnicki2015anytime">Allouche et al. 2015</a>) over branch and bound maintaining existential directional arc consistency (<a href="../bibliography.html#degivryheraszytnickilarrosa2005existential">Givry et al. 2005</a>) when the network is too wide to eliminate, that same search with a counting-based all-different propagator (<a href="../bibliography.html#mccreeshprosser2015backjumping">McCreesh and Prosser 2015</a>) added for an injective request, and McSplit (<a href="../bibliography.html#mccreeshprossertrimble2017partitioning">McCreesh et al. 2017</a>) for an isomorphism request.</p>
-<h2 id="io-and-parsing"><a class="header" href="#io-and-parsing">I/O and parsing</a></h2>
+<p><code>panproto-mig::solve</code> uses bucket elimination (<a href="../bibliography.html#dechter1999bucket">Dechter 1999</a>), hybrid best-first search (<a href="../bibliography.html#allouchedegivrykatsirelosschiexzytnicki2015anytime">Allouche et al. 2015</a>) over branch and bound with soft consistency through EDAC* [Larrosa &amp; Schiex (<a href="../bibliography.html#larrosaschiex2004solving">2004</a>); de et al. (<a href="../bibliography.html#degivryheraszytnickilarrosa2005existential">2005</a>)], a counting all-different path (<a href="../bibliography.html#mccreeshprosser2015backjumping">McCreesh and Prosser 2015</a>), and McSplit for isomorphism requests (<a href="../bibliography.html#mccreeshprossertrimble2017partitioning">McCreesh et al. 2017</a>). <a href="../explanation/what-is-verified.html#search-results">What panproto verifies</a> states what their returned certificates establish.</p>
+<h2 id="lenses-expressions-and-dsls"><a class="header" href="#lenses-expressions-and-dsls">Lenses, expressions, and DSLs</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Crate</th><th>Description</th></tr>
+<tr><th>Crate</th><th>Role</th></tr>
 </thead>
 <tbody>
-<tr><td><code>panproto-io</code></td><td>Parse/emit codecs that bridge native formats (JSON, Avro, Protobuf, …) to <code>panproto-inst</code>.</td></tr>
-<tr><td><code>panproto-parse</code></td><td>Tree-sitter full-AST parsing across 261 languages, with interstitial preservation. Hosts the put-direction (<code>decorate</code>) of the parse / emit lens and the <code>LayoutEnricher</code> adapter installed in <code>panproto-lens</code>’s enrichment registry.</td></tr>
-<tr><td><code>panproto-grammars</code></td><td>Pre-compiled tree-sitter grammars used by <code>panproto-parse</code>.</td></tr>
-<tr><td><code>panproto-grammars-all</code></td><td>Umbrella grammar companion pack for the Python wheel.</td></tr>
-<tr><td><code>panproto-grammars-functional</code></td><td>Functional-language grammar pack.</td></tr>
-<tr><td><code>panproto-grammars-web</code></td><td>Web-language grammar pack.</td></tr>
-<tr><td><code>panproto-grammars-systems</code></td><td>Systems-language grammar pack.</td></tr>
-<tr><td><code>panproto-grammars-jvm</code></td><td>JVM-language grammar pack.</td></tr>
-<tr><td><code>panproto-grammars-scripting</code></td><td>Scripting-language grammar pack.</td></tr>
-<tr><td><code>panproto-grammars-data</code></td><td>Data-language grammar pack.</td></tr>
-<tr><td><code>panproto-grammars-devops</code></td><td>DevOps-language grammar pack.</td></tr>
-<tr><td><code>panproto-grammars-mobile</code></td><td>Mobile-language grammar pack.</td></tr>
-<tr><td><code>panproto-grammars-music</code></td><td>Music-language grammar pack (SuperCollider, LilyPond, ABC, Csound, ChucK, Glicol, Tidal, Strudel).</td></tr>
-<tr><td><code>panproto-project</code></td><td>Multi-file project assembly via schema coproduct, manifest loading.</td></tr>
+<tr><td><code>panproto-lens</code></td><td>Concrete lenses, complements, composition, law checkers, protolenses, optics, and enrichment registration.</td></tr>
+<tr><td><code>panproto-expr</code></td><td>Bounded functional expression AST, evaluator, builtins, values, and lightweight type inference.</td></tr>
+<tr><td><code>panproto-expr-parser</code></td><td>Haskell-style lexer, parser, desugaring, and pretty printer for <code>panproto-expr</code>.</td></tr>
+<tr><td><code>panproto-dsl-eval</code></td><td>Shared Nickel, JSON, and YAML document evaluation for declarative DSLs.</td></tr>
+<tr><td><code>panproto-lens-dsl</code></td><td>Declarative lens compilation from Nickel, JSON, or YAML.</td></tr>
+<tr><td><code>panproto-theory-dsl</code></td><td>Declarative theories, morphisms, protocols, and composition from Nickel, JSON, or YAML.</td></tr>
 </tbody>
 </table>
 </div>
-<h2 id="version-control"><a class="header" href="#version-control">Version control</a></h2>
+<h2 id="parsing-io-and-projects"><a class="header" href="#parsing-io-and-projects">Parsing, I/O, and projects</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Crate</th><th>Description</th></tr>
+<tr><th>Crate</th><th>Role</th></tr>
 </thead>
 <tbody>
-<tr><td><code>panproto-vcs</code></td><td>Schematic version control: DAG, refs, commit/branch/merge, pushout-based merge with a merge-time cocone check, data versioning.</td></tr>
-<tr><td><code>panproto-git</code></td><td>Bidirectional bridge between <code>panproto-vcs</code> and git.</td></tr>
-<tr><td><code>panproto-git-remote</code></td><td>Custom git remote helper for cloning panproto repositories over git.</td></tr>
-<tr><td><code>panproto-xrpc</code></td><td>XRPC client for cospan-node VCS operations.</td></tr>
+<tr><td><code>panproto-io</code></td><td>Instance-level codecs for native data formats; tree-sitter integration is optional.</td></tr>
+<tr><td><code>panproto-parse</code></td><td>Feature-selected tree-sitter full-AST parsing, layout preservation, source emission, and parser registry.</td></tr>
+<tr><td><code>panproto-grammars</code></td><td>Vendored tree-sitter grammar build and <code>group-*</code> / <code>lang-*</code> Cargo features. <code>group-all</code> currently names 261 grammars.</td></tr>
+<tr><td><code>panproto-project</code></td><td>Directory walking, package detection, manifest configuration, parsing cache, import resolution, and schema coproduct assembly.</td></tr>
+<tr><td><code>panproto-grammars-all</code></td><td>Python companion extension containing <code>group-all</code>.</td></tr>
+<tr><td><code>panproto-grammars-functional</code></td><td>Python companion extension for <code>group-functional</code>.</td></tr>
+<tr><td><code>panproto-grammars-web</code></td><td>Python companion extension for <code>group-web</code>.</td></tr>
+<tr><td><code>panproto-grammars-systems</code></td><td>Python companion extension for <code>group-systems</code>.</td></tr>
+<tr><td><code>panproto-grammars-jvm</code></td><td>Python companion extension for <code>group-jvm</code>.</td></tr>
+<tr><td><code>panproto-grammars-scripting</code></td><td>Python companion extension for <code>group-scripting</code>.</td></tr>
+<tr><td><code>panproto-grammars-data</code></td><td>Python companion extension for <code>group-data</code>.</td></tr>
+<tr><td><code>panproto-grammars-devops</code></td><td>Python companion extension for <code>group-devops</code>.</td></tr>
+<tr><td><code>panproto-grammars-mobile</code></td><td>Python companion extension for <code>group-mobile</code>.</td></tr>
+<tr><td><code>panproto-grammars-music</code></td><td>Python companion extension for <code>group-music</code>.</td></tr>
 </tbody>
 </table>
 </div>
-<h2 id="bindings-and-surfaces"><a class="header" href="#bindings-and-surfaces">Bindings and surfaces</a></h2>
+<h2 id="version-control-and-transport"><a class="header" href="#version-control-and-transport">Version control and transport</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Crate</th><th>Description</th></tr>
+<tr><th>Crate</th><th>Role</th></tr>
 </thead>
 <tbody>
-<tr><td><code>panproto-core</code></td><td>Public facade over thirteen always-on library crates: the nine core schema and migration crates plus <code>panproto-expr</code>, <code>panproto-expr-parser</code>, <code>panproto-lens-dsl</code>, and <code>panproto-theory-dsl</code>.</td></tr>
-<tr><td><code>panproto-cli</code></td><td>The <code>schema</code> binary.</td></tr>
-<tr><td><code>panproto-wasm</code></td><td>WebAssembly bindings; consumed by the TypeScript SDK.</td></tr>
-<tr><td><code>panproto-py</code></td><td>Native Python bindings via PyO3.</td></tr>
-<tr><td><code>panproto-c</code></td><td>C ABI for non-Rust language bindings; the Haskell and Swift bindings consume it. 105 entry points by default, 122 with the <code>full-parse</code>, <code>project</code>, and <code>git</code> features.</td></tr>
+<tr><td><code>panproto-vcs</code></td><td>Content-addressed schema history, refs, staging, commits, merge, verification status, and data versioning.</td></tr>
+<tr><td><code>panproto-git</code></td><td>Bidirectional translation between git and <code>panproto-vcs</code>.</td></tr>
+<tr><td><code>panproto-git-remote</code></td><td>Git remote helper for <code>panproto://</code> push, pull, and clone.</td></tr>
+<tr><td><code>panproto-xrpc</code></td><td>XRPC client for panproto-node VCS operations.</td></tr>
 </tbody>
 </table>
 </div>
-<p>The interactive REPL for theories, terms, and morphisms is part of <code>panproto-cli</code>, reachable as <code>schema theory repl</code>; it is not a separate crate.</p>
-<h2 id="repository-tasks"><a class="header" href="#repository-tasks">Repository tasks</a></h2>
+<h2 id="facades-and-bindings"><a class="header" href="#facades-and-bindings">Facades and bindings</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Crate</th><th>Description</th></tr>
+<tr><th>Crate</th><th>Role</th></tr>
 </thead>
 <tbody>
-<tr><td><code>xtask</code></td><td>Repository tasks (not published). Includes <code>gen-cli-docs</code>.</td></tr>
+<tr><td><code>panproto-core</code></td><td>Rust facade re-exporting 13 always-on libraries and three optional support crates.</td></tr>
+<tr><td><code>panproto-cli</code></td><td>The <code>schema</code> executable, including the theory REPL.</td></tr>
+<tr><td><code>panproto-wasm</code></td><td>Handle-based WebAssembly API used by the TypeScript SDK.</td></tr>
+<tr><td><code>panproto-py</code></td><td>Native Python extension built with PyO3.</td></tr>
+<tr><td><code>panproto-c</code></td><td>C ABI consumed by the Haskell and Swift bindings.</td></tr>
 </tbody>
 </table>
 </div>
+<h2 id="feature-gated-dependency-edges"><a class="header" href="#feature-gated-dependency-edges">Feature-gated dependency edges</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Crate</th><th>Feature</th><th>Effect</th></tr>
+</thead>
+<tbody>
+<tr><td><code>panproto-core</code></td><td><code>full-parse</code></td><td>Adds and re-exports <code>panproto-parse</code> with its default grammar group.</td></tr>
+<tr><td><code>panproto-core</code></td><td><code>project</code></td><td>Adds <code>panproto-project</code> and implies <code>full-parse</code>.</td></tr>
+<tr><td><code>panproto-core</code></td><td><code>git</code></td><td>Adds <code>panproto-git</code> and implies <code>project</code>.</td></tr>
+<tr><td><code>panproto-core</code></td><td><code>tree-sitter</code></td><td>Enables <code>panproto-io/tree-sitter</code> for format-preserving codecs.</td></tr>
+<tr><td><code>panproto-parse</code>, <code>panproto-grammars</code></td><td><code>group-*</code>, <code>lang-*</code></td><td>Select grammar groups or individual grammars; both default to <code>group-core</code>.</td></tr>
+<tr><td><code>panproto-py</code></td><td><code>group-*</code>, <code>lang-*</code></td><td>Mirrors grammar selection into the Python extension; default is <code>group-core</code>.</td></tr>
+<tr><td><code>panproto-c</code></td><td><code>full-parse</code>, <code>project</code>, <code>git</code>, <code>format-preserving</code>, <code>full</code></td><td>Adds the corresponding optional <code>panproto-core</code> surfaces; <code>full</code> enables all four.</td></tr>
+<tr><td><code>panproto-wasm</code></td><td><code>format-preserving</code></td><td>Enables <code>panproto-core/tree-sitter</code>.</td></tr>
+<tr><td><code>panproto-io</code></td><td><code>tree-sitter</code></td><td>Adds <code>panproto-parse</code>, selected data grammars, and tree-sitter support.</td></tr>
+</tbody>
+</table>
+</div>
+<p><code>xtask</code> is a workspace member but not a <code>panproto-*</code> library. It contains repository maintenance commands, including CLI-document generation.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../explanation/architecture.html">Architecture</a> for the dependency direction and layering.</li>
-<li><a href="../explanation/morphism-search.html">Searching for a morphism</a> for the cost function network the <code>panproto-mig</code> search subsystem is posed over, and <a href="../explanation/alignment-evidence.html">Alignment evidence</a> for what feeds its anchor term.</li>
-<li>The repository <a href="https://github.com/panproto/panproto/blob/main/Cargo.toml"><code>Cargo.toml</code></a> for authoritative workspace membership.</li>
+<li><a href="../explanation/architecture.html">Architecture</a></li>
+<li><a href="./sdk-rust.html">Rust SDK</a></li>
+<li><a href="./protocols.html">Protocol catalog</a></li>
 </ul>
 
                     </main>

@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,147 +183,71 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="find-a-span-between-two-schemas"><a class="header" href="#find-a-span-between-two-schemas">Find a span between two schemas</a></h1>
-<p>Choose a span search when two schemas overlap but no total morphism embeds one in the other. A <em>span</em> is a pair of schema morphisms from a shared middle, written <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord"><span class="mord mathit">src</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">←</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8095em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathit">tgt</span></span></span></span></span>; its <strong>apex</strong> <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span> is the part of the source that found a target. This is the common case in the measured corpus: 5117 of 5852 ordered lexicon pairs admit no total morphism. <a href="../explanation/migrations-as-morphisms.html#spans-and-why-partiality-is-the-ordinary-case">Migrations as morphisms</a> gives the test and breakdown.</p>
+<p>Use a span search when a source schema may have only a partial correspondence in a target schema. The result contains an apex, which is the matched part of the source, and a migration from that apex into the target.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>The Rust SDK (<a href="https://docs.rs/panproto-mig/latest/panproto_mig/"><code>panproto-mig</code></a>) or the <code>schema</code> CLI. A protocol, because the apex is itself a schema and a schema is well formed only against a protocol.</p>
-<h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
-<h3 id="from-the-cli"><a class="header" href="#from-the-cli">From the CLI</a></h3>
+<p>The <code>schema</code> CLI or the Rust <a href="https://docs.rs/panproto-mig/latest/panproto_mig/"><code>panproto-mig</code></a> crate. Both schemas must name a registered protocol.</p>
+<h2 id="search-from-the-cli"><a class="header" href="#search-from-the-cli">Search from the CLI</a></h2>
 <pre><code class="language-sh">schema auto-migrate schemas/v1.json schemas/v2.json
 </code></pre>
-<p>The output reports the apex size, what fraction of the source it covers, the quality, and the interval the search proved the quality lies in. Running it on the pair the Rust listing below builds, a <code>post</code> record that renamed <code>text</code> to <code>body</code> and dropped a <code>likes</code> counter:</p>
-<pre><code class="language-text">Found span (quality: 0.230, bounds: [0.230, 0.230]):
-
-Apex: 2 of 3 vertices (66.7% coverage), 1 edge
-
-Vertex map:
-  post -&gt; post
-  post.text -&gt; post.body
-
-Edge map:
-  post-&gt;post.text (prop) text -&gt; post-&gt;post.body (prop) body
+<p>The report includes the apex size, vertex coverage, quality, quality bounds, and the right-leg vertex and edge maps. The default command fails when the apex is empty. Add <code>--span</code> when an empty overlap is a useful answer:</p>
+<pre><code class="language-sh">schema auto-migrate schemas/v1.json schemas/v2.json --span
 </code></pre>
-<p>The bounds collapse to a point exactly when the search proved optimality, and the edge map appears only when the apex has an arc to carry.</p>
-<p>Two flags and their absence select how much of an answer counts as one. They form a <strong>strictness ladder</strong> over a single search rather than selecting between searches:</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Flag</th><th>Accepts</th></tr>
-</thead>
-<tbody>
-<tr><td><code>--total</code></td><td>Only a span whose left leg is onto, which is to say a total morphism. Totality needs the edges as well as the vertices, so this is a stricter test than full vertex coverage. Exits non-zero otherwise.</td></tr>
-<tr><td>(none)</td><td>Any span covering at least one vertex.</td></tr>
-<tr><td><code>--span</code></td><td>Any span, including an empty apex, which reports that the two schemas share nothing.</td></tr>
-</tbody>
-</table>
-</div>
-<p>The two flags name opposite ends of the ladder, so passing both is rejected before either search runs. <code>--monic</code> sits outside the ladder and constrains the search rather than the acceptance: it requires the vertex map to be injective, and composes with either end. <code>--json</code> writes the span’s right leg, a <a href="https://docs.rs/panproto-mig/latest/panproto_mig/migration/struct.Migration.html"><code>Migration</code></a> out of the apex.</p>
-<h3 id="when-to-ask-for-a-total-morphism"><a class="header" href="#when-to-ask-for-a-total-morphism">When to ask for a total morphism</a></h3>
-<p>Use <code>--total</code> when a partial answer is not worth having: a release gate that will migrate every record or none, a compiled lens whose source schema must be covered, a CI check that should fail loudly when a field has nowhere to go. Leave it off when the question is descriptive, and in particular when you are ranking candidate targets or reporting how far apart two versions have drifted.</p>
-<p>The flag does not filter the default answer. The span objective is lexicographic in <code>(quality, drops)</code> and the reported quality excludes the drop count, so a span that drops a vertex can score strictly better than a total morphism that keeps it. An optimal span that turns out to be partial is thus no evidence about whether a total morphism exists. This is why <code>--total</code> runs a second search, on <strong>the bail path</strong>, that is, the branch taken only when the optimal span comes back partial: a pair whose optimal span is already total pays nothing extra, and a pair whose optimal span is partial gets the question it actually asked. In Rust the same distinction is the choice between <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/fn.find_span.html"><code>find_span</code></a> and <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/fn.find_best_morphism.html"><code>find_best_morphism</code></a>.</p>
-<p>An answer recovered on the bail path prints without an apex, a coverage figure or a certificate. A total morphism carries none of those, so what you get is a report with fewer headings rather than one with empty ones.</p>
-<h3 id="from-rust"><a class="header" href="#from-rust">From Rust</a></h3>
-<p><a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/fn.find_span.html"><code>find_span</code></a> is total: it never refuses for want of a match, because leaving every source vertex out of the apex is always a feasible answer. A pair with nothing in common gets an empty apex rather than an error.</p>
-<pre class="playground"><code class="language-rust">use panproto_mig::hom_search::{SearchOptions, find_span};
-use panproto_schema::{Protocol, SchemaBuilder};
+<p>Use <code>--total</code> when every source vertex and every mappable source edge must be covered:</p>
+<pre><code class="language-sh">schema auto-migrate schemas/v1.json schemas/v2.json --total
+</code></pre>
+<p><code>--total</code> and <code>--span</code> conflict. A partial optimal span does not show that no total morphism exists, so <code>--total</code> runs the total-morphism search when the first result is partial. It exits non-zero only when that search finds no total morphism or cannot run.</p>
+<p>Add <code>--monic</code> when distinct apex vertices must map to distinct target vertices. This constrains vertex injectivity only; it does not promise an injective edge map.</p>
+<h3 id="save-the-mapping"><a class="header" href="#save-the-mapping">Save the mapping</a></h3>
+<pre><code class="language-sh">schema auto-migrate schemas/v1.json schemas/v2.json --json \
+  &gt; migrations/v1-to-v2.json
+</code></pre>
+<p>JSON output is the span’s right leg, serialized as a <code>Migration</code>. Its source is the apex. Since apex vertices reuse source identifiers, the map keys are still names from <code>v1</code>; unmatched source vertices are absent. The JSON does not include coverage, quality, or the certificate, so review the human report before saving the mapping.</p>
+<p>If the mapping will be lifted directly, combine <code>--json</code> with <code>--monic</code> to avoid a vertex contraction that has no built-in rule for combining two source values:</p>
+<pre><code class="language-sh">schema auto-migrate schemas/v1.json schemas/v2.json --monic --json \
+  &gt; migrations/v1-to-v2.json
+</code></pre>
+<h2 id="search-from-rust"><a class="header" href="#search-from-rust">Search from Rust</a></h2>
+<p><a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/fn.find_span.html"><code>find_span</code></a> always returns a span when the search runs. Schemas with no common vertex produce an empty apex.</p>
+<pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use panproto_mig::{SearchOptions, find_span};
+use panproto_schema::{Protocol, Schema};
 
-fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
-    let protocol = Protocol {
-        name: "demo".into(),
-        schema_theory: "ThTest".into(),
-        instance_theory: "ThWType".into(),
-        obj_kinds: vec!["object".into(), "string".into(), "integer".into()],
-        ..Protocol::default()
+fn search(
+    source: &amp;Schema,
+    target: &amp;Schema,
+    protocol: &amp;Protocol,
+) -&gt; Result&lt;(), panproto_mig::SpanError&gt; {
+    let options = SearchOptions {
+        monic: true,
+        ..SearchOptions::default()
     };
+    let span = find_span(source, target, protocol, &amp;options)?;
 
-    let old = SchemaBuilder::new(&amp;protocol)
-        .vertex("post", "object", None::&lt;&amp;str&gt;)?
-        .vertex("post.text", "string", None::&lt;&amp;str&gt;)?
-        .vertex("post.likes", "integer", None::&lt;&amp;str&gt;)?
-        .edge("post", "post.text", "prop", Some("text"))?
-        .edge("post", "post.likes", "prop", Some("likes"))?
-        .entry("post")
-        .build()?;
-
-    // The new schema renamed one field and dropped the counter, so no
-    // total morphism out of `old` exists.
-    let new = SchemaBuilder::new(&amp;protocol)
-        .vertex("post", "object", None::&lt;&amp;str&gt;)?
-        .vertex("post.body", "string", None::&lt;&amp;str&gt;)?
-        .edge("post", "post.body", "prop", Some("body"))?
-        .entry("post")
-        .build()?;
-
-    let span = find_span(&amp;old, &amp;new, &amp;protocol, &amp;SearchOptions::default())?;
-
-    assert!(!span.is_total(), "the counter has nowhere to go");
-    assert_eq!(span.apex.vertices.len(), 2);
-    assert!((span.apex_coverage - 2.0 / 3.0).abs() &lt; 1e-12);
-    assert!(span.certificate.proven_optimal);
-
-    // The left leg is an inclusion, so the apex reuses source identifiers
-    // and the right leg carries the renaming.
-    assert_eq!(
-        span.right.vertex_map.get("post.text").map(|n| n.as_str()),
-        Some("post.body"),
-    );
+    println!("coverage: {:.1}%", span.apex_coverage * 100.0);
+    println!("quality bounds: {:?}", span.quality_bounds);
+    println!("total: {}", span.is_total());
+    println!("vertex map: {:?}", span.right.vertex_map);
     Ok(())
-}</code></pre>
-<p><em>Listing 1: Searching for a span between two schemas, one of which dropped a field.</em></p>
-<p>The left leg is an inclusion: apex vertex identifiers <em>are</em> source vertex identifiers. That is what makes it a mono by construction and what makes two spans comparable without a graph-isomorphism test.</p>
-<p>Every SDK carries the search. Python spells it <code>panproto.find_span(src, tgt, protocol)</code>, TypeScript <code>p.span(from, to, hints?)</code>, Haskell <code>findSpan</code>, and Swift <code>findSpan(to:in:options:constraints:)</code>. What comes back over the wire is narrower than the Rust type, and narrower in two different ways. Swift and Haskell decode the whole <code>SchemaSpan</code>: the apex, both legs, the quality and its bounds, the coverage, <code>proven_optimal</code> and <code>is_total</code>. TypeScript’s <code>SpanResponse</code> decodes the apex as a vertex list and an edge list, the right leg as <code>vertex_map</code>, and the same scalars, with no apex schema and no left leg, on the reasoning that the caller already holds the source and can induce the rest.</p>
-<p>None of them carries the leg shape. A host that needs to know whether the right leg embeds should ask for injectivity up front rather than infer it after the fact. Where that is not possible, comparing the number of distinct values in the right leg’s vertex map against its number of keys settles the vertex half of the question, and nothing on the wire settles the edge half.</p>
-<h3 id="pinning-what-you-already-know"><a class="header" href="#pinning-what-you-already-know">Pinning what you already know</a></h3>
-<p>A correspondence you <em>know</em> goes in <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/struct.SearchOptions.html"><code>SearchOptions::hard_pins</code></a>, which restricts a source vertex to exactly that target. A correspondence something <em>inferred</em> belongs in the evidence table <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/struct.SpanSearch.html"><code>SpanSearch::with_evidence</code></a> reads, where it changes which assignment is optimal without removing any other from the search. The distinction is load-bearing: two individually plausible pins can be jointly infeasible, and a pin that turns out to be wrong costs a solution rather than a rank.</p>
-<p>Evidence never removes a value from a domain, which has a consequence you can rely on when tuning: adding a strategy, or raising the confidence of one already firing, cannot make a pair that previously answered stop answering. The feasible set is the same whichever strategies ran; only which member of it is optimal changes.</p>
-<h3 id="merging-along-the-apex"><a class="header" href="#merging-along-the-apex">Merging along the apex</a></h3>
-<p>A span is the input a pushout wants. <code>SchemaSpan::to_overlap</code> produces the pair list <code>schema_pushout</code> expects, and <code>SchemaSpan::pushout</code> performs the merge, returning <code>src ⊔_A tgt</code> together with the two injections. The pushout is the integrated schema; the CLI reaches it through <code>schema integrate --auto-overlap</code>.</p>
-<p>The merge has a precondition: the right leg must not identify two apex vertices. A merge along the apex has to commute, and a right leg that sends two apex vertices to one target vertex makes that impossible, since the merge identifies elements by a map keyed on the target element and a repeated key names only one preimage. A contracting right leg is an ordinary answer from the default search, so <code>SchemaSpan::pushout</code> reports <code>SpanError::ContractingRightLeg</code> rather than returning a square that does not commute. Search with <code>SearchOptions::iso</code> for a span that embeds; <code>discover_overlap</code> does exactly that, which is why the CLI path is safe.</p>
-<h3 id="when-the-right-leg-contracts"><a class="header" href="#when-the-right-leg-contracts">When the right leg contracts</a></h3>
-<p>A source with four string fields and a target with one produces a right leg that sends all four to the same place. Nothing is wrong with that as a span. It costs you every operation downstream that assumes a preimage is unique.</p>
-<p>It shows up in three places. First, the CLI prints a warning on stderr, which keeps stdout pipeable under <code>--json</code>:</p>
-<pre><code class="language-text">warning: the right leg is not injective on vertices, so this migration
-identifies two source vertices. Lifting it has no well-defined answer
-without a rule for combining them; pass --monic to search for a leg
-that embeds.
-</code></pre>
-<p>Second, in Rust, <code>span.certificate.shape.right_is_mono</code> is false, and <code>span.certificate.shape.right_edge_images</code> reports <code>EdgeImages::Shared</code> when two apex arcs also share an image. The two come apart: an injective vertex map may still send two parallel apex arcs to one target arc, so a caller merging along the span reads both. Third, and loudest, <code>SchemaSpan::pushout</code> refuses outright, which is likely the symptom you meet first.</p>
-<p>There are three responses, in increasing order of effort. First, ask for injectivity up front: <code>--monic</code> on the CLI, <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/struct.SearchOptions.html"><code>SearchOptions::monic</code></a> in Rust. The search then optimizes over the injective assignments, so what you get back is the best embedding rather than the best map filtered after the fact, and a source vertex with no free target drops out of the apex instead of colliding. Second, ask for <code>SearchOptions::iso</code> when the span has to feed a pushout or a symmetric lens, since only that path promises an injective edge map as well. Third, keep the contraction and decide the collision yourself, by excluding the losing source vertices through <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/struct.DomainConstraints.html"><code>DomainConstraints::excluded_sources</code></a> so that they leave the apex, and then recovering their data at the value level with a <a href="./field-transforms.html">field transform</a> that reads the whole record. That third route is the one to take when the collision is genuine, that is, when two source fields do belong in one target field and you know how they combine.</p>
-<h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<h3 id="coverage-and-quality"><a class="header" href="#coverage-and-quality">Coverage and quality</a></h3>
-<p><code>apex_coverage</code> is <code>|apex.vertices| / |src.vertices|</code>, or one when the source has no vertices. It answers <em>how much</em> of the source was covered. <code>quality</code> answers <em>how well the covered part matches</em>, and it excludes the drop count for exactly that reason. Read them together. A coverage of 0.2 with a quality of 0.95 says the search found a small, confident overlap; a coverage of 0.95 with a quality of 0.2 says it found a large, doubtful one. Those two ask for different responses from you, and neither number alone distinguishes them.</p>
-<p>Coverage counts vertices only. <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/struct.SchemaSpan.html"><code>SchemaSpan::is_total</code></a> additionally requires that every mappable source edge survive, so a span can report a coverage of 1.0 and still not be a total morphism: every vertex found a home and some arc between two of them did not. When you need the total-morphism answer, test <code>is_total</code> rather than comparing the coverage against one.</p>
-<p>Quality ranks spans over one source schema and nothing else. Every denominator in the objective is fixed by the source, so two spans out of the same schema are comparable and two spans out of different schemas are not.</p>
-<h3 id="the-certificate"><a class="header" href="#the-certificate">The certificate</a></h3>
-<p>Every span carries a <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/struct.SpanCertificate.html"><code>SpanCertificate</code></a> recording what the construction proved rather than what it assumed. Read it alongside <code>span.quality_bounds</code>, which sits on the span itself rather than on the certificate:</p>
+}
+<span class="boring">}</span></code></pre>
+<p>Set <code>SearchOptions::hard_pins</code> only for correspondences the search may not reconsider. An incompatible pin can force that source vertex out of the apex. Soft evidence belongs in <code>SpanSearch::with_evidence</code> instead.</p>
+<h2 id="read-the-result"><a class="header" href="#read-the-result">Read the result</a></h2>
+<p><code>apex_coverage</code> counts matched source vertices. <code>SchemaSpan::is_total()</code> also checks the relevant source edges, so coverage of <code>1.0</code> does not by itself establish totality.</p>
+<p><code>quality</code> ranks alternatives for one fixed source schema. Do not compare it across different source schemas. Equal lower and upper quality bounds mean that the search proved the returned score optimal; otherwise, the interval records the unresolved range.</p>
+<p>Before accepting a result, inspect the vertex map and confirm that the coverage matches the intended task. A saved mapping can pass <code>schema check</code> while remaining partial because the existence check validates the entries present in the mapping rather than requiring source-wide coverage.</p>
+<h2 id="limitations"><a class="header" href="#limitations">Limitations</a></h2>
 <ul>
-<li><code>proven_optimal</code> says whether the search ruled out a better span, or merely ran out of budget. When it is false, <code>span.quality_bounds</code> is the interval that separates “0.4, and nothing better exists” from “0.4, and the search stopped before it could tell”. The two ends are equal exactly when <code>proven_optimal</code> holds.</li>
-<li><code>limit_hit</code> names what stopped it: <a href="https://docs.rs/panproto-mig/latest/panproto_mig/solve/enum.LimitKind.html"><code>LimitKind::Nodes</code></a> for the node budget, <code>LimitKind::Time</code> for a wall-clock budget the caller set. There is no default wall-clock budget, so a <code>Time</code> reading means the caller asked for one and accepted a non-deterministic result.</li>
-<li><code>path</code> records which algorithm answered. <a href="https://docs.rs/panproto-mig/latest/panproto_mig/solve/enum.SolverPath.html"><code>SolverPath::Eliminate { width }</code></a> is exact bucket elimination, which never prunes and always proves optimality; <code>BranchAndBound { width }</code> is the fallback taken when the message tables would not fit the budget; <code>Monic</code> and <code>Iso</code> are the injective and maximum-common-sub-schema paths, neither of which eliminates. The <code>width</code> on the first two is the induced width of the order actually used, and it has been 1 or 2 throughout both committed corpus snapshots: across the 861 record-typed lexicon pairs whose answers are recorded, and across all 5852 ordered pairs whose networks are, 5168 at width 1 and 684 at width 2.</li>
-<li><code>shape</code> reports what the two legs are, as a <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/struct.LegShape.html"><code>LegShape</code></a>. <code>left_is_mono</code> is true by construction, since an inclusion is a mono. <code>right_is_mono</code> and <code>right_edge_images</code> are the two halves of “does the right leg embed”, reported separately because an injective vertex map can still collapse parallel arcs. <code>left_is_iso</code> is what <code>is_total</code> reads.</li>
-<li><code>legs_are_functorial</code> records that both legs passed the schema-morphism check: every mapped edge lands between the images of its own endpoints.</li>
-<li><code>left_existence</code> and <code>right_existence</code> report the existence check on each leg separately, because the two legs have different codomains and can fail different obligations. The left leg is an inclusion and so cannot fail functoriality, but it can fail reachability: an apex whose every vertex sits on a cycle has no root, and the check reports that. It is a finding about the apex rather than a defect in the leg.</li>
-<li><code>apex_pointed</code> says whether the apex has an entry point. <a href="https://docs.rs/panproto-schema/latest/panproto_schema/induce/fn.induce.html"><code>induce</code></a> never synthesizes one, so an apex with no entries is recorded rather than repaired.</li>
-<li><code>tie_break_order</code> is the sequence the tie among equally good assignments was settled in, when exact inference produced the answer. It is the <em>reverse</em> of the elimination order, so reading the rule against the elimination order names the wrong sequence. <code>SpanSearch::optima</code> enumerates the rest of the tie for a caller wanting a different canonical choice.</li>
-<li><code>apex_digest</code> plus the two leg maps is the span’s identity, which is how a caller checks that a span was not assembled from parts.</li>
-</ul>
-<h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
-<ul>
-<li><strong>Comparing <code>quality</code> across source schemas.</strong> There is no absolute reading of the number, and no threshold on it is meaningful across pairs. Read <code>apex_coverage</code> alongside it.</li>
-<li><strong>Reading an empty apex as a verdict.</strong> An empty apex charges the full penalty on each component the source gives mass to, and a component has mass only when the source has something for it to measure. Name and degree are per source vertex and always charge; the edge component is per source edge and the Jaccard component per source vertex with a named outgoing edge, so an edgeless source charges neither. Under the default weights an empty apex therefore reads <code>0.0</code> over a source with at least one named edge, <code>0.30</code> over a source whose edges are all unnamed, <code>0.55</code> over an edgeless source, and <code>1.0</code> over an empty source. All four say “these two share nothing” on four different scales, which is what makes each a floor rather than a verdict.</li>
-<li><strong>Reading an empty morphism list as proof that no total morphism exists, without checking the return.</strong> It is that, and only when the call succeeded. A search that could not be posed reports <code>SpanError::Build</code>, and one that spent its budget before reaching any complete assignment reports <code>SpanError::Stopped</code> naming the limit that ran out, so the empty answer is a statement about the pair and a refusal is a statement about the budget.</li>
-<li><strong>Reading a partial optimal span as proof that no total morphism exists.</strong> It is not. The two searches answer different questions, and <code>--total</code> runs the second one for you; in Rust, call <code>find_best_morphism</code> rather than inferring from <code>is_total</code>.</li>
-<li><strong>Treating a coverage of 1.0 as totality.</strong> Totality needs the edges too. Test <code>is_total</code>.</li>
-<li><strong>Confusing the apex with a symmetric lens’s apex.</strong> The two are different objects related by pushout and then <code>Mod</code>. <code>SchemaSpan::pushout</code> gates on <code>right_is_mono</code> alone, which <code>--monic</code> already delivers; what the iso path adds on top is an injective <em>edge</em> map, and that is why <code>auto_symmetric</code> runs iso rather than monic.</li>
-<li><strong>Routing inferred correspondences through <code>hard_pins</code>.</strong> See <a href="#pinning-what-you-already-know">Pinning what you already know</a>: a pin collapses a domain, and a collapsed domain cannot be recovered by the objective.</li>
-<li><strong>Expecting <code>find_morphisms</code> to hand back the whole hom-set.</strong> It returns the morphisms attaining the optimum, bounded by an engine cap of 1024 that applies to every request rather than only to <code>max_results = 0</code>. Walking the list for a second-best alternative finds nothing, because there is no k-best over distinct quality levels: every element is a tie for first.</li>
+<li>A schema morphism maps one source vertex to at most one target vertex. Splits, joins, and other value computations require a <a href="./field-transforms.html">field transform</a>.</li>
+<li><code>--monic</code> prevents vertex collisions but does not establish edge injectivity. The overlap discovery used by <code>schema integrate --auto-overlap</code> performs the stronger search required for a pushout.</li>
+<li><code>--json</code> omits the apex and certificate. Keep the human report if later review needs the coverage or proof status.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="./build-migration.html">Build a migration</a> for turning a span into a checked mapping, or for the case where a mapping file already exists.</li>
-<li><a href="./field-transforms.html">Apply field transforms</a> for the correspondences a vertex map cannot state.</li>
-<li><a href="./use-lenses.html">Use lenses</a> for the bidirectional layer built on top of an alignment.</li>
-<li><a href="../explanation/migrations-as-morphisms.html">Migrations as morphisms</a> for the model the span sits in.</li>
-<li><a href="../reference/cli.html">CLI reference</a> for the full <code>schema auto-migrate</code> help text.</li>
+<li><a href="./build-migration.html">Build a migration</a> for checking and applying the saved mapping.</li>
+<li><a href="./field-transforms.html">Apply field transforms</a> for value-level computations.</li>
+<li><a href="../explanation/migrations-as-morphisms.html">Migrations as morphisms</a> for the underlying model.</li>
+<li><a href="../reference/cli.html">CLI reference</a> for the complete option list.</li>
 </ul>
 
                     </main>

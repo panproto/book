@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-e0e3e7c3.js";
+            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,86 +183,72 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="write-lenses-in-the-lens-dsl"><a class="header" href="#write-lenses-in-the-lens-dsl">Write lenses in the lens DSL</a></h1>
-<p>The lens DSL stores a lens specification outside application code. Nickel, JSON, and YAML specifications compile to the same lens combinator algebra.</p>
-<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>A pair of schemas to bridge. The <code>schema</code> CLI or <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-lens-dsl"><code>panproto-lens-dsl</code></a> crate.</p>
-<h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
-<h3 id="write-the-spec-nickel"><a class="header" href="#write-the-spec-nickel">Write the spec (Nickel)</a></h3>
-<pre><code class="language-nickel"># lenses/user-v1-to-v2.ncl
-let L = import "panproto/lens.ncl" in
-{
-  id = "user.v1-to-v2",
-  description = "Rename name fields and add display_name",
-  source = "dev.example.user.v1",
-  target = "dev.example.user.v2",
-  steps = [
-    { rename_field = { old = "first_name", new = "given_name" } },
-    { rename_field = { old = "last_name",  new = "family_name" } },
-    { add_field = {
-        name = "display_name",
-        kind = "string",
-        fallback = "",
-        expr = "self.given_name ++ \" \" ++ self.family_name",
-      } },
-  ],
-} | L.Lens
+<p>The lens DSL describes schema-level steps and value-level field transforms in Nickel, JSON, or YAML. Exactly one body variant, such as <code>steps</code>, <code>rules</code>, <code>compose</code>, <code>auto</code>, <code>from_diff</code>, or <code>symmetric</code>, may be present.</p>
+<h2 id="write-a-document"><a class="header" href="#write-a-document">Write a document</a></h2>
+<p>This JSON document renames one property key:</p>
+<pre><code class="language-json">{
+  "id": "dev.example.user-v1-to-v2",
+  "description": "Rename the user name property",
+  "source": "dev.example.user.v1",
+  "target": "dev.example.user.v2",
+  "steps": [
+    {
+      "rename_field": {
+        "old": "name",
+        "new": "display_name"
+      }
+    }
+  ]
+}
 </code></pre>
-<p>Each step is a single-key object. The key picks the variant; the value carries its parameters. The DSL applies steps left-to-right against the source schema, producing a target schema and a <code>CompiledLens</code> between them. Full step grammar: <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-lens-dsl/src/document.rs"><code>crates/panproto-lens-dsl/src/document.rs</code></a>.</p>
-<h3 id="compile-a-chain"><a class="header" href="#compile-a-chain">Compile a chain</a></h3>
-<p><code>schema lens compile</code> loads a lens DSL document and compiles it to a <code>ProtolensChain</code>, writing the chain JSON to stdout or to <code>--out</code>:</p>
-<pre><code class="language-sh">schema lens compile lenses/user-v1-to-v2.ncl \
+<p>Each step is a single-key object. <code>--body-vertex</code> supplies the parent vertex for field-level steps; its default is <code>record:body</code>.</p>
+<h2 id="compile-and-apply-in-typescript"><a class="header" href="#compile-and-apply-in-typescript">Compile and apply in TypeScript</a></h2>
+<p>The TypeScript handle retains both the structural chain and any value transforms:</p>
+<pre><code class="language-ts">using chain = p.compileLensDocument(
+  document,
+  'record:body',
+  'json',
+);
+using lens = chain.instantiate(sourceSchema);
+
+const { view, complement } = lens.getJson(
+  inputRecord,
+  'record:body',
+);
+const restored = lens.putJson(view, complement, 'record:body');
+</code></pre>
+<p><code>compileLensDocument</code> accepts a JavaScript object, text, or UTF-8 bytes. JSON is the default format; pass <code>'yaml'</code> for YAML. Nickel is not accepted by this WASM entry point because its imports require filesystem resolution.</p>
+<p>Use <code>chain.fieldTransforms()</code> to confirm that <code>apply_expr</code> or <code>compute_field</code> steps survived compilation. Those transforms are stored beside the chain and do not appear in <code>chain.toJson()</code>.</p>
+<h2 id="compile-nickel-or-files-in-rust"><a class="header" href="#compile-nickel-or-files-in-rust">Compile Nickel or files in Rust</a></h2>
+<p><a href="https://github.com/panproto/panproto/tree/main/crates/panproto-lens-dsl"><code>panproto-lens-dsl</code></a> resolves the bundled Nickel contract and filesystem imports:</p>
+<pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::path::Path;
+
+let compiled = panproto_core::lens_dsl::load_and_compile(
+    Path::new("lenses/user-v1-to-v2.ncl"),
+    "record:body",
+)?;
+
+println!("{} structural steps", compiled.chain.steps.len());
+println!("{} transform anchors", compiled.field_transforms.len());
+<span class="boring">Ok::&lt;(), panproto_core::lens_dsl::LensDslError&gt;(())
+</span><span class="boring">}</span></code></pre>
+<p><code>load_and_compile</code> supports <code>.ncl</code>, <code>.json</code>, <code>.yaml</code>, and <code>.yml</code>. Named references in a <code>compose</code> body resolve against sibling documents in the same directory. <code>auto</code> and <code>from_diff</code> require the schema-aware <code>compile_with_schemas</code> entry point.</p>
+<h2 id="current-cli-limitation"><a class="header" href="#current-cli-limitation">Current CLI limitation</a></h2>
+<pre><code class="language-sh">schema lens compile lenses/user-v1-to-v2.json \
   --body-vertex record:body \
-  --out lenses/user-v1-to-v2.json
+  --out compiled.json
 </code></pre>
-<p><code>--body-vertex</code> names the parent vertex under which field-level steps attach (default <code>record:body</code>). The command compiles the schema-parametric bodies (<code>steps</code>, <code>rules</code>, <code>compose</code>, <code>symmetric</code>) and resolves <code>compose</code> references by lens <code>id</code> against sibling documents in the same directory. The <code>auto</code> and <code>from_diff</code> bodies need a concrete source and target schema, so they compile through the library entry point <code>compile_with_schemas</code> or the SDK bindings rather than this command.</p>
-<p>To auto-derive a chain from a pair of schemas instead of authoring a document, use <code>schema lens generate</code>:</p>
-<pre><code class="language-sh">schema lens generate \
-  --protocol atproto \
-  schemas/user-v1.json \
-  schemas/user-v2.json \
-  --save lenses/user-v1-to-v2.json
-</code></pre>
-<h3 id="apply"><a class="header" href="#apply">Apply</a></h3>
-<pre><code class="language-sh">schema lens apply --protocol atproto lenses/user-v1-to-v2.json data/users.json
-</code></pre>
-<h3 id="inspect"><a class="header" href="#inspect">Inspect</a></h3>
-<pre><code class="language-sh">schema lens inspect --protocol atproto lenses/user-v1-to-v2.json
-</code></pre>
-<p>Prints the combinator chain. <code>--protocol</code> is required.</p>
-<h3 id="compile-from-python"><a class="header" href="#compile-from-python">Compile from Python</a></h3>
-<p><code>ProtolensChain</code> exposes loaders that consume a lens-DSL document and compile it directly to a chain anchored at the named body vertex of the source schema:</p>
-<pre><code class="language-python">import panproto
-
-chain = panproto.ProtolensChain.from_dsl_path(
-    "lenses/user-v1-to-v2.ncl",
-    body_vertex="record:body",
-)
-
-# Or from a string:
-chain = panproto.ProtolensChain.from_dsl_json(json_source, "record:body")
-chain = panproto.ProtolensChain.from_dsl_yaml(yaml_source, "record:body")
-chain = panproto.ProtolensChain.from_dsl_nickel(nickel_source, "record:body")
-</code></pre>
-<p><code>from_dsl_path</code> dispatches on file extension (<code>.ncl</code> / <code>.json</code> / <code>.yaml</code> / <code>.yml</code>). For Nickel, an optional <code>import_paths</code> argument extends the import-resolution lookup so user-defined modules can be referenced.</p>
+<p>This command validates and compiles the document, but <code>compiled.json</code> is a metadata wrapper. Its <code>chain</code> member is the structural chain, while value transforms are represented only by a count. <code>schema lens apply</code> expects a directly serialized <code>ProtolensChain</code> and does not unwrap this output. Do not treat the file from <code>schema lens compile --out</code> as an immediately applicable lens artifact.</p>
+<p>The CLI <code>lens generate --save</code> path also writes a human-oriented chain summary rather than the round-trippable serialization accepted by <code>ProtolensChain::from_json</code>. Use the Rust or TypeScript handle paths above for an operational lens.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<pre><code class="language-sh"># Check the chain is applicable to every schema in a directory.
-schema lens check --protocol atproto lenses/user-v1-to-v2.json schemas/
-
-# Verify the lens laws on test data.
-schema lens verify --protocol atproto data/users.json schemas/user-v2.json
-</code></pre>
-<p><code>lens check</code> reports applicability without instantiating; <code>lens verify</code> checks the round-trip laws on actual data.</p>
-<h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
-<ul>
-<li>Step ordering. The DSL deliberately exposes ordering; some sequences commute and produce the same result, others do not. When in doubt, run <code>schema lens check</code> with high sample counts.</li>
-<li>Forgetting <code>backward</code> on a <code>field_transform</code> step. Without it, the step is half a lens; compilation rejects.</li>
-<li>Writing schemas inline. The DSL expects path references; embedding a schema as a literal works for small examples but loses VCS tracking.</li>
-</ul>
+<p>Instantiate the document against the intended source schema, run <code>get</code> and <code>put</code> on representative instances, and use <code>LensHandle.checkLaws</code> or <code>panproto_lens::laws::check_laws</code>. Compilation validates document shape and expression syntax; it does not show that a value transform is total on production data.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../reference/lens-combinators.html">Reference: lens combinators</a>.</li>
-<li><a href="../explanation/semantics/lens-dsl.html">Lens DSL: denotational semantics</a>.</li>
-<li><a href="./use-lenses.html">Use lenses</a>.</li>
+<li><a href="./field-transforms.html">Apply field transforms</a> for <code>apply_expr</code> and <code>compute_field</code>.</li>
+<li><a href="./use-lenses.html">Use lenses</a> for runtime operations.</li>
+<li><a href="../explanation/semantics/lens-dsl.html">Lens DSL: denotational semantics</a> for the document model.</li>
 </ul>
 
                     </main>
