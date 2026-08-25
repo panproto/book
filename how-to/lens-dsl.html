@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -235,13 +235,17 @@ println!("{} transform anchors", compiled.field_transforms.len());
 <span class="boring">Ok::&lt;(), panproto_core::lens_dsl::LensDslError&gt;(())
 </span><span class="boring">}</span></code></pre>
 <p><code>load_and_compile</code> supports <code>.ncl</code>, <code>.json</code>, <code>.yaml</code>, and <code>.yml</code>. Named references in a <code>compose</code> body resolve against sibling documents in the same directory. <code>auto</code> and <code>from_diff</code> require the schema-aware <code>compile_with_schemas</code> entry point.</p>
-<h2 id="current-cli-limitation"><a class="header" href="#current-cli-limitation">Current CLI limitation</a></h2>
+<h2 id="compile-and-apply-with-the-cli"><a class="header" href="#compile-and-apply-with-the-cli">Compile and apply with the CLI</a></h2>
 <pre><code class="language-sh">schema lens compile lenses/user-v1-to-v2.json \
   --body-vertex record:body \
   --out compiled.json
+
+schema lens apply compiled.json user-v1.json \
+  --protocol atproto \
+  --schema user-v1.schema.json
 </code></pre>
-<p>This command validates and compiles the document, but <code>compiled.json</code> is a metadata wrapper. Its <code>chain</code> member is the structural chain, while value transforms are represented only by a count. <code>schema lens apply</code> expects a directly serialized <code>ProtolensChain</code> and does not unwrap this output. Do not treat the file from <code>schema lens compile --out</code> as an immediately applicable lens artifact.</p>
-<p>The CLI <code>lens generate --save</code> path also writes a human-oriented chain summary rather than the round-trippable serialization accepted by <code>ProtolensChain::from_json</code>. Use the Rust or TypeScript handle paths above for an operational lens.</p>
+<p><code>schema lens compile</code> writes a <code>panproto-compiled-lens-v1</code> artifact. The file contains the structural chain, the value transforms, and an ordered <code>stages</code> array. The stages determine whether a value expression runs before or after a structural rename. <code>schema lens apply</code> reads this artifact directly and instantiates each stage against the schema produced by the preceding stage.</p>
+<p>Raw <code>ProtolensChain</code> JSON remains accepted by <code>schema lens apply</code>, as does a target schema used for automatic lens generation. A file written by <code>schema lens generate --save</code> is a raw structural chain rather than a compiled-lens artifact. It can be applied, but it does not store value transforms derived during automatic generation.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <p>Instantiate the document against the intended source schema, run <code>get</code> and <code>put</code> on representative instances, and use <code>LensHandle.checkLaws</code> or <code>panproto_lens::laws::check_laws</code>. Compilation validates document shape and expression syntax; it does not show that a value transform is total on production data.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>

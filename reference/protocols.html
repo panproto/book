@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -185,7 +185,7 @@
 <h1 id="protocol-catalog"><a class="header" href="#protocol-catalog">Protocol catalog</a></h1>
 <p>A <a href="../glossary.html#protocol">protocol</a> names a schema language together with its schema and instance theories, structural rules, parser, and emitter. The semantic protocols in <code>panproto-protocols</code> compose reusable generalized algebraic theories (GATs) (<a href="../bibliography.html#cartmell1986generalised">Cartmell 1986</a>). Source-code languages use the separate tree-sitter registry described below.</p>
 <h2 id="semantic-protocols"><a class="header" href="#semantic-protocols">Semantic protocols</a></h2>
-<p>The generic dispatch functions accept 54 semantic protocols. Names in this table are the canonical hyphenated strings accepted by <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/fn.parse_schema_document.html"><code>parse_schema_document</code></a> or <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/fn.parse_schema_source.html"><code>parse_schema_source</code></a>; underscore spellings are normalized before dispatch.</p>
+<p>The generic dispatch functions accept 54 semantic protocols. Names in this table are the canonical hyphenated strings accepted by <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/fn.parse_schema_document.html"><code>parse_schema_document</code></a> or <a href="https://docs.rs/panproto-protocols/latest/panproto_protocols/fn.parse_schema_source.html"><code>parse_schema_source</code></a>. Underscore spellings are normalized before dispatch.</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -220,9 +220,10 @@
 </table>
 </div>
 <p>The exported <code>document_parser_protocols</code>, <code>source_parser_protocols</code>, <code>bundle_parser_protocols</code>, and <code>bundle_project_protocols</code> arrays are the lookup sources for these sets.</p>
-<p>Protocol availability also depends on the surface. The current <code>schema</code> CLI resolves protocol theories only for <code>atproto</code>. The C and WebAssembly theory-registry helpers recognize <code>atproto</code>, <code>json-schema</code>, <code>graphql</code>, <code>sql</code>, and <code>protobuf</code>, while their protocol lookup tables expose the 54 names above. Callers should distinguish parser lookup from theory-registry support.</p>
+<p>Protocol availability also depends on the surface. The current <code>schema</code> CLI resolves protocol theories only for <code>atproto</code>. The C and WebAssembly theory-registry helpers recognize <code>atproto</code>, <code>json-schema</code>, <code>graphql</code>, <code>sql</code>, and <code>protobuf</code>, while their protocol lookup tables expose the 54 names above.</p>
 <h2 id="registration-behavior"><a class="header" href="#registration-behavior">Registration behavior</a></h2>
-<p>Each semantic protocol module exposes <code>protocol()</code> and <code>register_theories()</code>. A registrar builds named schema and instance theories from reusable components through <code>pushout_by_name</code>. A failed named pushout panics when the registrar is called. Rewrite-system validation in the shared registration helpers is advisory and prints to stderr rather than blocking registration; <a href="../explanation/what-is-verified.html#schemas-theories-and-migrations">What panproto verifies</a> gives the precise boundary.</p>
+<p>Each semantic protocol module exposes <code>protocol()</code> and <code>register_theories()</code>. Most registrars call shared theory-group constructors. Those constructors panic if a named pushout fails, rewrite analysis cannot complete, two rewrite paths fail to rejoin (a non-joining critical pair), or the lexicographic-path-order termination check fails. Registration thus treats these outcomes as internal theory-definition defects, not recoverable input errors.</p>
+<p>The ATProto registrar is different. It inserts its five component theories first, then inserts each composed schema or instance theory only when the corresponding <code>pushout_by_name</code> call succeeds. Its <code>register_theories()</code> function has no <code>Result</code>, so a failed composition is omitted rather than returned to the caller. <a href="../explanation/what-is-verified.html#schemas-theories-and-migrations">What panproto verifies</a> gives the boundary between these construction-time gates and checks on user schemas.</p>
 <p>The source tree is the catalog authority:</p>
 <div class="table-wrapper">
 <table>
@@ -237,7 +238,7 @@
 </table>
 </div>
 <h2 id="source-code-grammars"><a class="header" href="#source-code-grammars">Source-code grammars</a></h2>
-<p><code>panproto-grammars</code> defines 261 individual <code>lang-*</code> features under <code>group-all</code>. A selected feature contributes a tree-sitter <code>Language</code> and its vendored AST metadata to <a href="https://docs.rs/panproto-parse/latest/panproto_parse/struct.ParserRegistry.html"><code>ParserRegistry</code></a>. The default <code>group-core</code> is a subset; callers do not receive all grammars unless their selected feature set includes them.</p>
+<p><code>panproto-grammars</code> defines 261 individual <code>lang-*</code> features under <code>group-all</code>. A selected feature contributes a tree-sitter <code>Language</code> and its vendored AST metadata to <a href="https://docs.rs/panproto-parse/latest/panproto_parse/struct.ParserRegistry.html"><code>ParserRegistry</code></a>. The default <code>group-core</code> is a subset. Callers do not receive all grammars unless their selected feature set includes them.</p>
 <p><a href="https://docs.rs/panproto-parse/latest/panproto_parse/struct.ParserRegistry.html#method.emit_verification_status"><code>emit_verification_status</code></a> reports test coverage for the registered parser, not a proof about all inputs:</p>
 <div class="table-wrapper">
 <table>
@@ -253,7 +254,7 @@
 </div>
 <p>The verified set currently contains 255 names. <a href="../explanation/emit-pretty.html#the-verification-tier-api">Source-code emission</a> identifies the seven backend cases and the six grammars outside the set.</p>
 <h2 id="defining-a-protocol"><a class="header" href="#defining-a-protocol">Defining a protocol</a></h2>
-<p><a href="../how-to/build-protocol.html">Build a custom protocol</a> covers theory declaration, registration, parsing, and emission. Adding a Rust module to <code>panproto-protocols</code> does not automatically extend the CLI, C, or WebAssembly lookup matches; each exposed surface needs its own dispatch arm.</p>
+<p><a href="../how-to/build-protocol.html">Build a custom protocol</a> covers theory declaration, registration, parsing, and emission. Adding a Rust module to <code>panproto-protocols</code> does not automatically extend the CLI, C, or WebAssembly lookup matches. Each exposed surface needs its own dispatch arm.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="../explanation/schemas-as-theories.html">Schemas as theories</a></li>

@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -214,7 +214,7 @@ fn classify_scoped(schema: &amp;Schema, scoped: &amp;Protolens) -&gt; OpticKind 
     refine_scoped_optic(incoming.kind.as_ref(), scoped.optic_kind())
 }
 <span class="boring">}</span></code></pre>
-<p>The result is <code>Lens</code> for one required focus, <code>Traversal</code> for zero or more item foci, and <code>Prism</code> for one optional variant focus.</p>
+<p>The result is <code>Lens</code> for a <code>prop</code> carrier, <code>Traversal</code> for an <code>item</code> or <code>items</code> carrier, and <code>Prism</code> for a <code>variant</code> carrier. The classifier does not inspect whether a property edge is required.</p>
 <p><code>refine_scoped_optic</code> uses <code>Lens</code> for <code>prop</code> and unrecognized edge kinds, <code>Traversal</code> for <code>item</code> and <code>items</code>, and <code>Prism</code> for <code>variant</code>. It composes that carrier with the inner kind.</p>
 <h3 id="field-level-combinators"><a class="header" href="#field-level-combinators">Field-level combinators</a></h3>
 <p>The <code>panproto_lens::protolens::combinators</code> module exposes higher-level chains assembled from elementary steps. For instance, <code>combinators::rename_field(parent, field, old_name, new_name)</code> returns a <code>ProtolensChain</code> that renames a JSON property key. Use <code>elementary::scoped</code> or <code>combinators::map_items</code> to apply an inner transform to an array element vertex.</p>
@@ -224,7 +224,7 @@ fn classify_scoped(schema: &amp;Schema, scoped: &amp;Protolens) -&gt; OpticKind 
 <ul>
 <li>Treating <code>Protolens::optic_kind()</code> as schema dependent. It classifies the stored theory transform only. Call <code>refine_scoped_optic</code> with the concrete edge kind for a scoped transform.</li>
 <li>Assuming every non-<code>prop</code> spelling is rejected. The refinement function treats unknown kinds as <code>Lens</code>; validate the schema against its protocol before relying on the classification.</li>
-<li>Treating the classified kind as proof of the laws. Run <code>check_optic_laws</code> on representative instances and handle <code>LawViolation</code>.</li>
+<li>Treating the classified kind as proof of the laws. Run <code>check_optic_laws</code> on representative instances and handle <code>OpticLawViolation</code>.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

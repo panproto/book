@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -251,7 +251,7 @@ if (!laws.holds) throw new Error(laws.violation ?? 'lens law failed');
 <p><code>fieldTransforms()</code> reports transforms by parent vertex. <code>checkLaws</code> accepts an encoded instance, while <code>getJson</code> and <code>putJson</code> provide the record-oriented path shown above.</p>
 <h2 id="current-serialization-limitation"><a class="header" href="#current-serialization-limitation">Current serialization limitation</a></h2>
 <p>Value transforms are stored beside the structural <code>ProtolensChain</code>; they are not part of <code>chain.toJson()</code>. Reconstructing a handle with <code>ProtolensChainHandle.fromJson(chain.toJson(), wasm)</code> thus loses them.</p>
-<p>The same distinction affects other surfaces. <code>schema lens compile</code> reports only the number of field-transform vertices and writes the structural chain, and Python’s <code>ProtolensChain.from_dsl_*</code> constructors currently return only that structural chain. Use the TypeScript <code>compileLensDocument</code> handle or Rust’s <code>panproto_lens_dsl::CompiledLens</code>, whose <code>field_transforms</code> field retains the value-level programs.</p>
+<p>The same distinction affects other surfaces. <code>schema lens compile</code> reports only the number of field-transform vertices and writes the structural chain. Python’s <code>ProtolensChain.from_dsl_*</code> constructors, the TypeScript <code>compileLensDocument</code> handle, and Rust’s <code>panproto_lens_dsl::CompiledLens</code> retain the value-level programs and their order relative to structural steps.</p>
 <p>Migration mapping JSON has a separate <code>expr_resolvers</code> field, but <code>panproto_mig::compile</code> does not install those expressions as <code>FieldTransform</code> values. Do not place expression source in a migration mapping and expect <code>schema lift</code> to execute it.</p>
 <h2 id="common-failures"><a class="header" href="#common-failures">Common failures</a></h2>
 <ul>

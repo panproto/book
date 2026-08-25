@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -201,7 +201,7 @@ legs have the shape</p>
 <p>The apex is the sub-schema of <code>old</code> whose vertices found a target in <code>new</code>. That
 search never refuses for want of a match: leaving every source vertex out of the
 apex is always feasible, so two schemas with nothing in common come back with an
-empty apex rather than with an error. Two of the three flags below therefore
+empty apex rather than with an error. Two of the three flags below thus
 select which of its answers counts as an answer, and the search underneath is the
 same one either way; the third constrains the search itself.</p>
 <p><code>--span</code> accepts every answer, the empty apex included. Without it the command
@@ -216,8 +216,9 @@ drops a vertex is no evidence about whether a total morphism exists, because spa
 quality excludes the drop count while the objective is lexicographic in quality
 first and drops second, so a span that drops a vertex can score strictly better
 than a total morphism that keeps it. When the optimal span is not total, the
-command runs the total-morphism search before giving up, and it fails only when
-that second search comes back empty, quoting the coverage the span did reach.
+command runs the total-morphism search before giving up. The command fails only
+when that second search returns no total morphism. Its error includes the
+coverage reached by the span.
 <code>--total</code> and <code>--span</code> conflict, and the pair is rejected before either search
 runs.</p>
 <p><code>--monic</code> constrains the search rather than the acceptance, so it composes with
@@ -478,7 +479,7 @@ Options:
   -v, --verbose          Enable verbose output
       --oneline          Show each commit on a single line
       --graph            Show an ASCII graph of the branch structure
-      --all              Show all branches, not just the current one
+      --all              Show all branches
       --format &lt;FORMAT&gt;  Pretty-print commits using a format string
       --author &lt;AUTHOR&gt;  Filter commits by author
       --grep &lt;GREP&gt;      Filter commits whose message matches a pattern
@@ -780,7 +781,7 @@ Options:
   -v, --verbose                        Enable verbose output
       --src-schema &lt;SRC_SCHEMA&gt;        Path to the source schema JSON file
       --tgt-schema &lt;TGT_SCHEMA&gt;        Path to the target schema JSON file
-      --direction &lt;DIRECTION&gt;          Migration direction: restrict (default, `Delta_F`), sigma (`Sigma_F`), or pi (`Pi_F`) [default: restrict]
+      --direction &lt;DIRECTION&gt;          Migration direction: restrict (default, filtered source-to-target), sigma (source-to-target `Sigma_F`), or pi (source-to-target; W-type `pi` only relabels vertex-injective mappings) [default: restrict]
       --instance-type &lt;INSTANCE_TYPE&gt;  Instance type: wtype (default) or functor [default: wtype]
   -h, --help                           Print help
 </code></pre>
@@ -1166,7 +1167,7 @@ Options:
   -v, --verbose                Enable verbose output
       --to &lt;TO&gt;                Target schema
       --protocol &lt;PROTOCOL&gt;    Protocol name
-      --chain &lt;CHAIN&gt;          Pre-built protolens chain JSON (alternative to --from/--to)
+      --chain &lt;CHAIN&gt;          Pre-built protolens chain JSON to instantiate with --from and --to
   -o, --output &lt;OUTPUT&gt;        Output file or directory
       --direction &lt;DIRECTION&gt;  Direction: "forward" or "backward" [default: forward]
       --defaults &lt;DEFAULTS&gt;    Default values as key=value pairs
@@ -1370,13 +1371,13 @@ Options:
           
           Accepted case-insensitively for parity with the Python and WASM bindings, both of which trim and lowercase their input.
           
-          `strict`: only kind-exact name equality. `balanced`: alias dictionary + tight token similarity (default). `lenient`: span-search and structural priors. `exploratory`: lossy retraction witnesses.
+          strict: `Exact`, `ExactSuffix`, and `EdgeLabel`; total morphism only. balanced: adds `Alias`, `TokenSimilarity`, and `DescriptionSimilarity`; total morphism only (default). lenient: adds `WrapUnwrap`, `TypeSignature`, `WlRefinement`, and `Neighborhood`; spans allowed. exploratory: adds `Structural` and `Coerce` proposals; spans allowed.
 
           Possible values:
-          - strict:      Kind-exact, edge-name-pruned CSP search; total morphism only
-          - balanced:    Adds alias dictionary and tight token-similarity priors (default)
-          - lenient:     Adds span-search and structural priors
-          - exploratory: Adds lossy retraction witnesses
+          - strict:      `Exact`, `ExactSuffix`, and `EdgeLabel`; total morphism only
+          - balanced:    Adds `Alias`, `TokenSimilarity`, and `DescriptionSimilarity` (default)
+          - lenient:     Adds `WrapUnwrap`, `TypeSignature`, `WlRefinement`, and `Neighborhood`; spans allowed
+          - exploratory: Adds `Structural` and `Coerce` proposals; spans allowed
 
       --top-n &lt;N&gt;
           Emit up to N ranked candidate lenses instead of the single best one. Output format switches to a JSON array when combined with `--json` or `--chain`
@@ -1439,11 +1440,11 @@ Options:
 <h4 id="schema-lens-verify"><a class="header" href="#schema-lens-verify"><code>schema lens verify</code></a></h4>
 <pre><code class="language-text">Verify lens laws on test data
 
-Usage: schema lens verify [OPTIONS] --protocol &lt;PROTOCOL&gt; &lt;DATA&gt; [SCHEMA]
+Usage: schema lens verify [OPTIONS] --protocol &lt;PROTOCOL&gt; &lt;DATA&gt; &lt;SCHEMA&gt;
 
 Arguments:
   &lt;DATA&gt;    Path to test data file
-  [SCHEMA]  Schema file (second schema is optional)
+  &lt;SCHEMA&gt;  Schema used to parse the test data
 
 Options:
       --protocol &lt;PROTOCOL&gt;  Protocol name

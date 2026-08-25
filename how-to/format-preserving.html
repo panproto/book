@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -195,19 +195,19 @@
 </span><span class="boring">fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
 </span><span class="boring">let proto = panproto_core::protocols::atproto::protocol();
 </span><span class="boring">let schema: Schema = SchemaBuilder::new(&amp;proto).vertex("root", "object", None)?.entry("root").build()?;
-</span><span class="boring">let bytes: &amp;[u8] = b"";
+</span><span class="boring">let bytes: &amp;[u8] = b"{}\n";
 </span>let codec = UnifiedCodec::yaml("atproto")?;
 let (instance, complement) = codec.parse_wtype_preserving(&amp;schema, bytes)?;
 let out = codec.emit_wtype_preserving(&amp;schema, &amp;instance, &amp;complement)?;
 assert_eq!(out, bytes);
 <span class="boring">Ok(()) }</span></code></pre>
 <p>The complement carries the CST data that the schema does not see. <code>emit_wtype_preserving</code> reconstructs the byte-for-byte original from <code>(instance, complement)</code>. Constructors exist for JSON, XML, YAML, TOML, and CSV. <code>UnifiedCodec::tsv</code> additionally requires the table-vertex name.</p>
-<p>Without the <code>tree-sitter</code> feature these constructors are compiled out. For code that must run in either build, <code>ProtocolRegistry</code> exposes <code>parse_wtype_preserving_or_canonical</code> and <code>emit_wtype_preserving_or_canonical</code>. They delegate to preserving codecs when the feature is present and otherwise return canonical output; the fallback parse prints a notice, while fallback emit prints one only when a complement was supplied.</p>
+<p>Without the <code>tree-sitter</code> feature these constructors are compiled out. For code that must run in either build, <code>ProtocolRegistry</code> exposes <code>parse_wtype_preserving_or_canonical</code> and <code>emit_wtype_preserving_or_canonical</code>. With <code>tree-sitter</code>, these methods delegate to the preserving codecs. Without it, they return canonical output. Fallback parsing always prints a notice; fallback emission prints one only when a complement was supplied.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
 <p>The byte equality is the verification. Property tests in CI check <code>emit(parse(b)) == b</code> against a corpus of JSON, YAML, TOML, XML, and CSV files.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
-<li>Modifying the instance without modifying the complement. If you edit a value in the instance, the complement still records the <em>old</em> whitespace around the <em>old</em> value; the round-trip will preserve the old layout around the new value.</li>
+<li>Discarding the complement after modifying the instance. The complement contains layout rather than the authoritative field value. Reusing it preserves the original whitespace and ordering around values supplied by the modified instance.</li>
 <li>Mixing <code>format-preserving</code> codec output with non-preserving codec input. The two pipelines are separate; choose one consistently.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>

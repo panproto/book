@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="your-first-schema"><a class="header" href="#your-first-schema">Your first schema</a></h1>
-<p>The first diff showed that panproto can inspect an existing source file. This tutorial builds a small <code>User</code> schema, parses two records, and catches a missing required field.</p>
+<p>This tutorial builds a small <code>User</code> schema, parses two records, and reports a missing required field.</p>
 <p>The walkthrough uses the <a href="https://www.typescriptlang.org/">TypeScript</a> SDK. The <a href="../how-to/define-schema/python.html">Python</a> and <a href="../how-to/define-schema/rust.html">Rust</a> how-to guides present the same construction through their native APIs.</p>
 <h2 id="set-up-the-project"><a class="header" href="#set-up-the-project">Set up the project</a></h2>
 <p><a href="https://nodejs.org/">Node.js</a> 20 or later is required by <code>@panproto/core</code>. Create a project and install the SDK plus <a href="https://tsx.is/">tsx</a>, which runs the TypeScript file directly:</p>
@@ -217,8 +217,6 @@ console.log('Alice:', alice.validate());
 console.log('Missing name:', missingName.validate());
 console.log('JSON:', new TextDecoder().decode(alice.toJson()));
 
-alice[Symbol.dispose]();
-missingName[Symbol.dispose]();
 schema[Symbol.dispose]();
 p[Symbol.dispose]();
 </code></pre>
@@ -233,7 +231,7 @@ JSON: {"age":30,"name":"Alice"}
 </code></pre>
 <h2 id="read-the-program-from-the-outside-in"><a class="header" href="#read-the-program-from-the-outside-in">Read the program from the outside in</a></h2>
 <p>The <code>atproto</code> <strong>protocol</strong> supplies the permitted vertex kinds and edge rules. From those rules, the program builds a <strong>schema</strong> with one object vertex, two value vertices, and two property edges, then parses two <strong>instances</strong> against it. <code>validate()</code> checks those records, including the required-edge condition used here.</p>
-<p><code>SchemaBuilder</code> is immutable in the TypeScript SDK: every call to <code>vertex</code>, <code>edge</code>, or <code>required</code> returns a new builder. <code>build()</code> sends the accumulated operations to the <a href="https://webassembly.org/">WebAssembly</a> engine and returns a <code>BuiltSchema</code>. Both the SDK root and the built schema own WebAssembly resources, which is why the program disposes them explicitly.</p>
+<p><code>SchemaBuilder</code> is immutable in the TypeScript SDK: every call to <code>vertex</code>, <code>edge</code>, or <code>required</code> returns a new builder. <code>build()</code> sends the accumulated operations to the <a href="https://webassembly.org/">WebAssembly</a> engine and returns a <code>BuiltSchema</code>. The SDK root and the built schema own WebAssembly handles, which is why the program disposes them explicitly. <code>Instance</code> stores encoded bytes rather than a WebAssembly handle and has no <code>Symbol.dispose</code> method.</p>
 <h2 id="next"><a class="header" href="#next">Next</a></h2>
 <p><a href="./your-first-migration.html">Your first migration</a> evolves this schema by renaming <code>age</code> to <code>years</code> and moves Alice forward without losing the original record. <a href="../how-to/define-schema/typescript.html">Define a schema from TypeScript</a> covers additional builder operations, while <a href="../explanation/schemas-as-theories.html">Schemas as theories</a> explains why panproto represents a schema as a graph.</p>
 

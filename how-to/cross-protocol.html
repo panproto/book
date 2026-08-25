@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,9 +183,10 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="translate-across-protocols"><a class="header" href="#translate-across-protocols">Translate across protocols</a></h1>
-<p>panproto does not currently expose an end-to-end CLI or SDK operation that parses a schema in one built-in protocol, constructs a shared theory with another built-in protocol, and emits the target protocol’s schema or data. The CLI’s <code>--protocol</code> arguments select one registered protocol for both schemas.</p>
+<p>panproto has two different cross-protocol cases. The TypeScript SDK can apply an explicit vertex-and-edge mapping between two protocol-tagged schema handles. It does not construct a shared theory or emit a complete target-language document. The CLI does not expose that limited two-protocol path: each <code>--protocol</code> argument selects one protocol for both schemas, and the current CLI resolver accepts only <code>atproto</code>.</p>
 <h2 id="decide-whether-the-task-is-supported"><a class="header" href="#decide-whether-the-task-is-supported">Decide whether the task is supported</a></h2>
-<p>Use <a href="./convert-data.html">Convert data between schemas</a> when both schemas already name the same protocol. For different protocol names, a bridge requires repository-level implementation: a shared protocol theory, source and target schema translations into that theory, and format-specific parsing and emission at the boundaries.</p>
+<p>Use <a href="./convert-data.html">Convert data between schemas</a> when both schemas use <code>atproto</code> and are already stored as panproto schema JSON. For a small explicit map in TypeScript, build both schema handles, map every relevant vertex and edge, and compile the migration as shown in <a href="../tutorials/cross-protocol-translation.html">Cross-protocol translation</a>. <code>checkExistence</code> selects the source schema’s registered protocol, so that report does not establish validity under both protocols. The result of <code>liftJson</code> is target-shaped JSON, not a complete OpenAPI, Protobuf, or other target document.</p>
+<p>A general bridge requires repository-level implementation: a shared protocol theory, explicit source and target translations into that theory, and format-specific parsing and emission at the boundaries.</p>
 <p>The theory DSL can compile a colimit of building-block theories, but compilation alone does not register a runtime protocol or translate existing JSON Schema, Protobuf, ATProto, or other built-in schemas into the result. Thus a DSL <code>compose</code> document is only one component of a cross-protocol bridge.</p>
 <h2 id="implement-a-bridge-in-rust"><a class="header" href="#implement-a-bridge-in-rust">Implement a bridge in Rust</a></h2>
 <p>The supported building blocks are available in Rust:</p>
@@ -199,11 +200,11 @@
 <p>Each translation in steps 3 and 5 is format-specific code. panproto does not infer those boundary translations from the fact that two protocol theories share sorts with names such as <code>Vertex</code> or <code>Edge</code>.</p>
 <h2 id="verify-the-bridge"><a class="header" href="#verify-the-bridge">Verify the bridge</a></h2>
 <p>Test the three boundaries separately: source parsing into the shared schema, migration or lens laws over representative instances, and target emission followed by the target protocol’s parser. Constraints with no representation in the shared theory must be reported or handled explicitly; no current generic command detects and reports every such loss.</p>
-<h2 id="unsupported-commands"><a class="header" href="#unsupported-commands">Unsupported commands</a></h2>
+<h2 id="cli-boundaries"><a class="header" href="#cli-boundaries">CLI boundaries</a></h2>
 <p>The following patterns do not provide cross-protocol translation:</p>
 <ul>
-<li><code>schema data convert --protocol &lt;name&gt;</code> accepts one protocol name and loads both schemas under it.</li>
-<li><code>schema lens generate --protocol &lt;name&gt;</code> likewise resolves one protocol for the entire lens.</li>
+<li><code>schema data convert --protocol &lt;name&gt;</code> accepts one protocol name and loads both schemas under it. The current resolver accepts only <code>atproto</code>.</li>
+<li><code>schema lens generate --protocol &lt;name&gt;</code> likewise resolves one protocol for the entire lens, again only <code>atproto</code> in the current CLI.</li>
 <li><code>schema theory compile</code> validates and compiles a theory document but does not add it to the running CLI’s built-in protocol lookup.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>

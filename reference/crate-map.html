@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="crate-map"><a class="header" href="#crate-map">Crate map</a></h1>
-<p>The workspace contains 36 <code>panproto-*</code> crates. This page groups them by dependency role; the repository <a href="https://github.com/panproto/panproto/blob/main/Cargo.toml"><code>Cargo.toml</code></a> is authoritative for membership, and each crate’s manifest is authoritative for features.</p>
+<p>The workspace contains 36 <code>panproto-*</code> crates. This page groups them by dependency role. The repository <a href="https://github.com/panproto/panproto/blob/main/Cargo.toml"><code>Cargo.toml</code></a> is authoritative for membership, and each crate’s manifest is authoritative for features.</p>
 <h2 id="theory-schemas-and-migration"><a class="header" href="#theory-schemas-and-migration">Theory, schemas, and migration</a></h2>
 <div class="table-wrapper">
 <table>
@@ -194,14 +194,14 @@
 <tr><td><code>panproto-gat</code></td><td>Generalized algebraic theory data, checking, morphisms, transforms, colimits, and finite-model evaluation (<a href="../bibliography.html#cartmell1986generalised">Cartmell 1986</a>).</td></tr>
 <tr><td><code>panproto-gat-macros</code></td><td><code>class!</code> and <code>inductive!</code> procedural macros targeting <code>panproto-gat</code>.</td></tr>
 <tr><td><code>panproto-schema</code></td><td>Schema graph, protocol rules, validation, induction, layout erasure, and canonical digests.</td></tr>
-<tr><td><code>panproto-inst</code></td><td>W-type instances, values, migration compilation output, restrict/lift, complements, and instance-aware expression environments.</td></tr>
-<tr><td><code>panproto-mig</code></td><td>Migration existence and compilation, schema correspondence search, spans, and homomorphism search.</td></tr>
+<tr><td><code>panproto-inst</code></td><td>W-type, functor, and graph instances. It also provides compiled migration tables, source-to-target surviving-fragment restriction, (\Sigma_F), (\Pi_F), target-to-source (\Delta_F), complements, and instance-aware expression environments.</td></tr>
+<tr><td><code>panproto-mig</code></td><td>Migration existence and compilation, the plain source-to-target restrict-based lift, separate (\Sigma_F) and (\Pi_F) entry points, schema correspondence search, spans, and total-morphism search.</td></tr>
 <tr><td><code>panproto-check</code></td><td>Breaking-change classification and compatibility reports.</td></tr>
 <tr><td><code>panproto-protocols</code></td><td>Built-in semantic protocol definitions, parsers, emitters, and theory registration.</td></tr>
 </tbody>
 </table>
 </div>
-<p><code>panproto-mig::solve</code> uses bucket elimination (<a href="../bibliography.html#dechter1999bucket">Dechter 1999</a>), hybrid best-first search (<a href="../bibliography.html#allouchedegivrykatsirelosschiexzytnicki2015anytime">Allouche et al. 2015</a>) over branch and bound with soft consistency through EDAC* [Larrosa &amp; Schiex (<a href="../bibliography.html#larrosaschiex2004solving">2004</a>); de et al. (<a href="../bibliography.html#degivryheraszytnickilarrosa2005existential">2005</a>)], a counting all-different path (<a href="../bibliography.html#mccreeshprosser2015backjumping">McCreesh and Prosser 2015</a>), and McSplit for isomorphism requests (<a href="../bibliography.html#mccreeshprossertrimble2017partitioning">McCreesh et al. 2017</a>). <a href="../explanation/what-is-verified.html#search-results">What panproto verifies</a> states what their returned certificates establish.</p>
+<p><code>panproto-mig::solve</code> implements exact bucket elimination (<a href="../bibliography.html#dechter1999bucket">Dechter 1999</a>), budgeted hybrid search with EDAC* cost propagation [Allouche et al. (<a href="../bibliography.html#allouchedegivrykatsirelosschiexzytnicki2015anytime">2015</a>); Larrosa &amp; Schiex (<a href="../bibliography.html#larrosaschiex2004solving">2004</a>); de et al. (<a href="../bibliography.html#degivryheraszytnickilarrosa2005existential">2005</a>)], an all-different constraint for injective mappings (<a href="../bibliography.html#mccreeshprosser2015backjumping">McCreesh and Prosser 2015</a>), and McSplit partitioning for isomorphism requests (<a href="../bibliography.html#mccreeshprossertrimble2017partitioning">McCreesh et al. 2017</a>). <a href="../explanation/morphism-search.html">Searching for a morphism</a> defines these paths. <a href="../explanation/what-is-verified.html#search-results">What panproto verifies</a> states what their certificates establish.</p>
 <h2 id="lenses-expressions-and-dsls"><a class="header" href="#lenses-expressions-and-dsls">Lenses, expressions, and DSLs</a></h2>
 <div class="table-wrapper">
 <table>
@@ -225,7 +225,7 @@
 <tr><th>Crate</th><th>Role</th></tr>
 </thead>
 <tbody>
-<tr><td><code>panproto-io</code></td><td>Instance-level codecs for native data formats; tree-sitter integration is optional.</td></tr>
+<tr><td><code>panproto-io</code></td><td>Instance-level codecs for native data formats, with optional tree-sitter integration.</td></tr>
 <tr><td><code>panproto-parse</code></td><td>Feature-selected tree-sitter full-AST parsing, layout preservation, source emission, and parser registry.</td></tr>
 <tr><td><code>panproto-grammars</code></td><td>Vendored tree-sitter grammar build and <code>group-*</code> / <code>lang-*</code> Cargo features. <code>group-all</code> currently names 261 grammars.</td></tr>
 <tr><td><code>panproto-project</code></td><td>Directory walking, package detection, manifest configuration, parsing cache, import resolution, and schema coproduct assembly.</td></tr>
@@ -282,9 +282,9 @@
 <tr><td><code>panproto-core</code></td><td><code>project</code></td><td>Adds <code>panproto-project</code> and implies <code>full-parse</code>.</td></tr>
 <tr><td><code>panproto-core</code></td><td><code>git</code></td><td>Adds <code>panproto-git</code> and implies <code>project</code>.</td></tr>
 <tr><td><code>panproto-core</code></td><td><code>tree-sitter</code></td><td>Enables <code>panproto-io/tree-sitter</code> for format-preserving codecs.</td></tr>
-<tr><td><code>panproto-parse</code>, <code>panproto-grammars</code></td><td><code>group-*</code>, <code>lang-*</code></td><td>Select grammar groups or individual grammars; both default to <code>group-core</code>.</td></tr>
-<tr><td><code>panproto-py</code></td><td><code>group-*</code>, <code>lang-*</code></td><td>Mirrors grammar selection into the Python extension; default is <code>group-core</code>.</td></tr>
-<tr><td><code>panproto-c</code></td><td><code>full-parse</code>, <code>project</code>, <code>git</code>, <code>format-preserving</code>, <code>full</code></td><td>Adds the corresponding optional <code>panproto-core</code> surfaces; <code>full</code> enables all four.</td></tr>
+<tr><td><code>panproto-parse</code>, <code>panproto-grammars</code></td><td><code>group-*</code>, <code>lang-*</code></td><td>Selects grammar groups or individual grammars. Both default to <code>group-core</code>.</td></tr>
+<tr><td><code>panproto-py</code></td><td><code>group-*</code>, <code>lang-*</code></td><td>Mirrors grammar selection into the Python extension. The default is <code>group-core</code>.</td></tr>
+<tr><td><code>panproto-c</code></td><td><code>full-parse</code>, <code>project</code>, <code>git</code>, <code>format-preserving</code>, <code>full</code></td><td>Adds the corresponding optional <code>panproto-core</code> surfaces. <code>full</code> enables all four.</td></tr>
 <tr><td><code>panproto-wasm</code></td><td><code>format-preserving</code></td><td>Enables <code>panproto-core/tree-sitter</code>.</td></tr>
 <tr><td><code>panproto-io</code></td><td><code>tree-sitter</code></td><td>Adds <code>panproto-parse</code>, selected data grammars, and tree-sitter support.</td></tr>
 </tbody>

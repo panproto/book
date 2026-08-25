@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -188,7 +188,7 @@
 <h2 id="the-registered-construction"><a class="header" href="#the-registered-construction">The registered construction</a></h2>
 <p>The constrained-multigraph group illustrates the process. Its first pushout combines <code>ThGraph</code> with <code>ThConstraint</code> by identifying <code>Vertex</code>. A second pushout combines that result with <code>ThMulti</code> by identifying both <code>Vertex</code> and <code>Edge</code>. <code>ThWType</code> is registered separately as the group’s instance theory. Schema structure and instance structure thus remain distinct even when a protocol registration names both.</p>
 <p>The helper <code>pushout_by_name</code> constructs identity-by-name inclusions for the shared sorts and operations. It first requires every requested name to exist on both sides, then invokes the GAT colimit construction. Construction checks that the resulting cocone commutes. The returned <code>ColimitResult</code> also exposes <code>verify_universal</code> for checking factorization against a supplied alternative cocone; that stronger check is not implicit in every call to <code>pushout_by_name</code>.</p>
-<p>The shared registration helpers treat a failed built-in composition as a programming error and panic with a message naming the failed step. This behavior should not be generalized to every protocol-specific registration path, some of which handle composition errors locally.</p>
+<p>The shared registration helpers treat a failed built-in composition as a programming error and panic with a message naming the failed step. Other protocol-specific registration paths handle composition errors locally.</p>
 <h2 id="universal-characterization"><a class="header" href="#universal-characterization">Universal characterization</a></h2>
 <p>Suppose compatible maps send each input theory into another theory <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span></span></span></span>. The universal property states that these maps factor uniquely through the colimit. This property characterizes which identifications the construction introduces: the mediating map is determined by the compatible input maps, rather than by an additional choice made during composition.</p>
 <p>Runtime construction and universal characterization have different scopes. <code>pushout_by_name</code> validates names and constructs a commuting cocone. <code>verify_universal</code> evaluates the additional mediator condition for an alternative cocone supplied to it. <a href="./semantics/pushouts-and-merge.html">Pushouts and merge</a> states the formal condition and the scope of the implementation checks.</p>
@@ -203,12 +203,12 @@
 <tr><td><code>ThGraph</code></td><td>Vertices and directed edges with source and target.</td></tr>
 <tr><td><code>ThConstraint</code></td><td>Vertex-indexed constraints and their targets.</td></tr>
 <tr><td><code>ThMulti</code></td><td>Edge labels for parallel edges.</td></tr>
-<tr><td><code>ThWType</code></td><td>Instance nodes, arcs, and values linked to schema structure.</td></tr>
+<tr><td><code>ThWType</code></td><td>Instance nodes, arcs, and values linked to schema structure, with two equations relating arc endpoints to schema-edge endpoints.</td></tr>
 <tr><td><code>ThMeta</code></td><td>Discriminators, extra fields, and values attached to nodes.</td></tr>
 </tbody>
 </table>
 </div>
-<p>These five foundations declare no equations of their own. The library also defines composed or higher-level theories including <code>ThSimpleGraph</code>, <code>ThHypergraph</code>, <code>ThInterface</code>, <code>ThFunctor</code>, <code>ThFlat</code>, and <code>ThGraphInstance</code>. A protocol registration selects the theory group appropriate to its structures and separately supplies parsing, emission, and protocol-specific rules. <a href="../how-to/build-protocol.html">Build a custom protocol</a> describes that registration process.</p>
+<p><code>ThGraph</code>, <code>ThConstraint</code>, <code>ThMulti</code>, and <code>ThMeta</code> declare no equations. <code>ThWType</code> declares <code>arc_src_anchor</code> and <code>arc_tgt_anchor</code>. The library also defines composed or higher-level theories including <code>ThSimpleGraph</code>, <code>ThHypergraph</code>, <code>ThInterface</code>, <code>ThFunctor</code>, <code>ThFlat</code>, and <code>ThGraphInstance</code>. A protocol registration selects the theory group appropriate to its structures and separately supplies parsing, emission, and protocol-specific rules. <a href="../how-to/build-protocol.html">Build a custom protocol</a> describes that registration process.</p>
 <h2 id="related-work"><a class="header" href="#related-work">Related work</a></h2>
 <p>Data exchange supplies universal solutions and chase-based composition [Fagin et al. (<a href="../bibliography.html#faginkolaitispopa2005data">2005</a>); Fagin et al. (<a href="../bibliography.html#faginkolaitispopatan2005composing">2005</a>)]. CQL treats schemas as algebraic theories or categories and uses pushouts for data integration [Schultz &amp; Wisnesky (<a href="../bibliography.html#schultzwisnesky2017algebraic">2017</a>); Schultz et al. (<a href="../bibliography.html#schultzspivakvasilakopoulouwisnesky2017algebraic">2017</a>)]. <a href="https://calcite.apache.org/">Apache Calcite</a> (<a href="../bibliography.html#begolicamachorodriguezhydemiorlemire2018calcite">Begoli et al. 2018</a>), <a href="https://substrait.io/">Substrait</a>, <a href="https://arrow.apache.org/">Apache Arrow</a>, and <a href="https://mlir.llvm.org/">MLIR</a> provide related engineering precedents for intermediate representations. panproto applies GAT colimits to reusable descriptions of wire-format schemas. <a href="./related-work.html#cross-protocol-translation-and-data-exchange">Related work</a> develops these comparisons.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>

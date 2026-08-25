@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,12 +183,12 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="build-a-custom-protocol"><a class="header" href="#build-a-custom-protocol">Build a custom protocol</a></h1>
-<p>A custom protocol is needed when panproto must parse, emit, compare, and migrate a schema language outside the built-in catalog. The implementation consists of a GAT, a parser/emitter pair, and registrations for the required surfaces.</p>
+<p>A custom protocol starts with a <code>Protocol</code> value and its schema and instance theories. Parsing, emission, migration, and language bindings are separate integration points. Implement only the surfaces the protocol will expose, and register each one explicitly.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>Familiarity with <a href="../explanation/schemas-as-theories.html">Schemas as theories</a> and <a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a>. The Rust toolchain.</p>
 <h2 id="the-task"><a class="header" href="#the-task">The task</a></h2>
 <h3 id="declare-the-theory"><a class="header" href="#declare-the-theory">Declare the theory</a></h3>
-<p>The fastest path is the theory DSL (<a href="https://github.com/panproto/panproto/tree/main/crates/panproto-theory-dsl"><code>panproto-theory-dsl</code></a>):</p>
+<p>The theory DSL provides one authoring path:</p>
 <pre><code class="language-nickel">let T = import "panproto/theory.ncl" in
 {
   id = "dev.example.my-proto-schema",
@@ -210,8 +210,9 @@
 <p>This document declares the schema-side theory directly. Give every document a stable <code>id</code> and <code>description</code>; the <code>theory</code> field supplies the name used by registrations and later compositions. Use a <code>compose</code> document when the schema theory should instead be a colimit of existing theories.</p>
 <p>For finer control, declare the theory directly in Rust with the <code>class!</code> and <code>inductive!</code> macros from <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-gat-macros"><code>panproto-gat-macros</code></a>.</p>
 <p>From Python, the same DSL document loads via <code>Theory.from_nickel(source)</code>, <code>Theory.from_yaml(source)</code>, <code>Theory.from_json(source)</code>, or <code>Theory.from_path(path)</code> (dispatches by extension). The loaders accept the <code>theory</code>, <code>class</code>, and <code>inductive</code> body variants; multi-body documents (morphism, composition, protocol, bundle) belong in <code>panproto-theory-dsl::load_and_compile</code> directly. For incremental authoring, <code>panproto.TheoryBuilder</code> mirrors <code>class!</code> in a chainable form. Round-trip the flat Theory shape via <code>to_json</code> / <code>to_yaml</code> paired with <code>from_dict_json</code> / <code>from_dict_yaml</code>.</p>
-<h3 id="implement-parser-and-emitter"><a class="header" href="#implement-parser-and-emitter">Implement parser and emitter</a></h3>
-<p>Each protocol provides a <code>Parser: Bytes -&gt; Schema</code> and an <code>Emitter: Schema -&gt; Bytes</code>. Implement both in a new submodule of <code>panproto-protocols</code>. See existing modules (<code>serialization::avro</code>, <code>data_schema::cddl</code>, <code>web_document::atproto</code>) for canonical structure.</p>
+<h3 id="implement-external-format-boundaries"><a class="header" href="#implement-external-format-boundaries">Implement external-format boundaries</a></h3>
+<p><code>panproto-protocols</code> has no common <code>Parser</code> or <code>Emitter</code> trait. Protocol modules expose format-specific free functions. A JSON document parser usually has the shape <code>fn(&amp;serde_json::Value) -&gt; Result&lt;Schema, ProtocolError&gt;</code>; a text-language parser usually accepts <code>&amp;str</code>. Add the parser to <code>parse_schema_document</code> or <code>parse_schema_source</code> in <code>crates/panproto-protocols/src/lib.rs</code>, and add its canonical name to the corresponding <code>document_parser_protocols</code> or <code>source_parser_protocols</code> list.</p>
+<p>Emitters are also format-specific functions in their protocol modules. Add one only when the protocol has a defined external representation and the application needs to produce it. Internal schema validation and migration operate on <code>Schema</code> values and do not require an external-format emitter.</p>
 <h3 id="register"><a class="header" href="#register">Register</a></h3>
 <p>Each protocol module exposes <code>protocol() -&gt; Protocol</code> and <code>register_theories(&amp;mut HashMap&lt;String, Theory, _&gt;)</code>. The internal module skeleton below is repository code, not a standalone Rust program:</p>
 <pre><code class="language-text">// crates/panproto-protocols/src/my_proto.rs
@@ -240,15 +241,26 @@ pub fn register_theories&lt;S: ::std::hash::BuildHasher&gt;(
     );
 }
 </code></pre>
-<p>Pick the <code>theories::register_*</code> helper that matches your theory shape (<code>register_constrained_multigraph_wtype</code>, <code>register_typed_graph_wtype</code>, <code>register_hypergraph_functor</code>, …). Colimit failures during registration panic with a named intermediate step; that is a build-time bug to fix in the theory composition. To expose <code>my_proto</code> to the language SDKs and CLI, add it to the <code>lookup</code> table in <code>crates/panproto-py/src/protocols.rs</code> and the <code>lookup_builtin_protocol</code> table in <code>crates/panproto-wasm/src/api/helpers.rs</code>.</p>
+<p>Pick the <code>theories::register_*</code> helper that matches the intended schema and instance shapes (<code>register_constrained_multigraph_wtype</code>, <code>register_typed_graph_wtype</code>, <code>register_hypergraph_functor</code>, and related helpers). A helper is appropriate only when its constructed theories match the names and operations declared by the protocol.</p>
+<p>Registration is surface-specific:</p>
+<ol>
+<li>Export the module from its category module in <code>panproto-protocols</code>.</li>
+<li>Add document or source parsing to the dispatch functions in <code>panproto-protocols::lib</code> when the protocol has an external parser.</li>
+<li>Add the protocol name and constructor to <code>builtin_protocol_names</code> and <code>lookup_builtin_protocol</code> in <code>crates/panproto-wasm/src/api/helpers.rs</code> for the TypeScript SDK. Add theory registration there as well if SDK operations need the theories; that registry currently has arms only for <code>atproto</code>, <code>json-schema</code>, <code>graphql</code>, <code>sql</code>, and <code>protobuf</code>.</li>
+<li>Add the constructor to <code>crates/panproto-py/src/protocols.rs</code> for the Python SDK.</li>
+<li>Add the constructor and theory registration to <code>resolve_protocol</code> and <code>build_theory_registry</code> in <code>crates/panproto-cli/src/cmd/helpers.rs</code> for CLI commands. Both tables currently contain only <code>atproto</code>.</li>
+</ol>
+<p>Other bindings that expose a fixed built-in table need their own entry. A Rust caller can use the module’s <code>protocol()</code> and <code>register_theories()</code> functions directly without a global lookup.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<pre><code class="language-sh">cargo nextest run -p panproto-protocols -E 'test(/my_proto/)'
+<pre><code class="language-sh">cargo test -p panproto-protocols my_proto
 </code></pre>
-<p>Add tests under the new protocol module with names containing <code>my_proto</code>; the command above runs that subset. At minimum, cover theory registration, schema validation, and a parse/emit round trip. Add a migration test when the protocol claims migration support.</p>
+<p>Add tests under the new protocol module with names containing <code>my_proto</code>; the command above runs that subset with Cargo alone. Cover every implemented surface. That means theory registration and schema validation for a theory-backed protocol, parsing for an external parser, and a parse/emit round trip only when an emitter exists. Add a migration test when the protocol claims migration support.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Declaring extensions before the colimit components are correct. Extensions interact with the colimit structure; if a building-block step is wrong, the extension may not even reach registration.</li>
-<li>Skipping the parser/emitter. Without both, the protocol cannot participate in <code>schema convert</code> or <code>schema validate</code> workflows.</li>
+<li>Adding a module without updating its dispatch tables. The Rust module remains directly callable, but string-based SDK and CLI lookups will not find it.</li>
+<li>Assuming the CLI uses the same catalog as the language SDKs. Its resolver and theory registry are separate and currently recognize only <code>atproto</code>.</li>
+<li>Requiring an emitter for internal operations. <code>schema validate</code> reads panproto schema JSON directly; it does not call a protocol document parser or emitter.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

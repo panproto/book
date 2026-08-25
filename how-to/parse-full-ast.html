@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -185,7 +185,7 @@
 <h1 id="parse-full-asts"><a class="header" href="#parse-full-asts">Parse full ASTs</a></h1>
 <p>Full-AST parsing converts source code into a panproto <code>Schema</code> derived from its tree-sitter syntax tree. The available languages are the grammars compiled into the current binary or SDK package.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>The <code>schema</code> CLI or the Rust SDK with <code>full-parse</code>. The default <code>panproto-parse</code> build enables the eleven-language core grammar group; feature groups and companion Python packages can add more, up to the full grammar catalog.</p>
+<p>The <code>schema</code> CLI or the Rust SDK with <code>full-parse</code>. The default <code>panproto-parse</code> build enables the eleven-language core grammar group. Feature groups and companion Python packages can add more, up to the full grammar catalog.</p>
 <h2 id="inspect-a-file-from-the-cli"><a class="header" href="#inspect-a-file-from-the-cli">Inspect a file from the CLI</a></h2>
 <pre><code class="language-sh">schema parse file src/main.rs
 </code></pre>
@@ -230,9 +230,9 @@ schema = registry.parse_file("src/app.py", source)
 print(len(schema.vertices), len(schema.edges))
 print(registry.protocol_names())
 </code></pre>
-<p>The core Python wheel discovers installed <code>panproto-grammars-*</code> companion packages when <code>panproto.AstParserRegistry()</code> is constructed. Install the group that contains the required language before creating the registry; for instance, <code>panproto-grammars-functional</code> adds Haskell, OCaml, and related grammars.</p>
+<p>The core Python wheel discovers installed <code>panproto-grammars-*</code> companion packages when <code>panproto.AstParserRegistry()</code> is constructed. Install the group that contains the required language before creating the registry. For instance, <code>panproto-grammars-functional</code> adds Haskell, OCaml, and related grammars.</p>
 <h2 id="read-anonymous-token-fields"><a class="header" href="#read-anonymous-token-fields">Read anonymous-token fields</a></h2>
-<p>Named tree-sitter children appear as schema edges. When a grammar attaches a field name to an unnamed token alternative, the walker stores the token text as a <code>field:&lt;name&gt;</code> constraint on the parent. Use <code>Schema.field_text</code> to read it:</p>
+<p>Named tree-sitter children appear as schema edges. When a grammar attaches a field name to an unnamed token alternative, the walker stores the token text as a <code>field:&lt;name&gt;</code> constraint on the parent. The following QVR example requires <code>panproto-grammars-all</code>, which registers the <code>qvr</code> grammar. Use <code>Schema.field_text</code> to read the constraint:</p>
 <pre><code class="language-python">schema = registry.parse_with_protocol(
     "qvr",
     b"let y = log(x)",

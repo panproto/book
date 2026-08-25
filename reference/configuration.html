@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -224,7 +224,7 @@ path = "schemas/events"
 </tbody>
 </table>
 </div>
-<p>If an overridden parser rejects a file, project assembly falls back to <code>raw_file</code>; it does not retry ordinary language detection. Package paths supply protocol-prefix overrides, but do not restrict the directory walk to the declared packages.</p>
+<p>If an overridden parser rejects a file, project assembly falls back to <code>raw_file</code>. It does not retry ordinary language detection. Package paths supply protocol-prefix overrides, but do not restrict the directory walk to the declared packages.</p>
 <h2 id="generated-defaults"><a class="header" href="#generated-defaults">Generated defaults</a></h2>
 <p><code>schema init [PATH]</code> always initializes <code>.panproto/</code>. When package scanning finds at least one recognized package, it also writes <code>panproto.toml</code> with detected package entries and these exclusions:</p>
 <pre><code class="language-toml">exclude = ["target", "node_modules", "__pycache__", "build", "dist", ".git"]

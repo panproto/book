@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,11 +183,11 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="rust-sdk-reference"><a class="header" href="#rust-sdk-reference">Rust SDK reference</a></h1>
-<p>The <a href="https://www.rust-lang.org/">Rust</a> entry point is the <a href="https://docs.rs/panproto-core/latest/panproto_core/"><code>panproto-core</code></a> facade. Version 0.71 requires Rust 1.85 or later.</p>
+<p>The <a href="https://www.rust-lang.org/">Rust</a> entry point is the <a href="https://docs.rs/panproto-core/latest/panproto_core/"><code>panproto-core</code></a> facade. Version 0.72 requires Rust 1.85 or later.</p>
 <pre><code class="language-toml">[dependencies]
-panproto-core = "0.71"
+panproto-core = "0.72"
 </code></pre>
-<p>The facade re-exports each component crate as a module. For instance, <code>panproto_core::schema::Schema</code> is the <code>Schema</code> type from <code>panproto-schema</code>; depending on <code>panproto-schema</code> directly exposes the same type without the facade.</p>
+<p>The facade re-exports each component crate as a module. For instance, <code>panproto_core::schema::Schema</code> is the <code>Schema</code> type from <code>panproto-schema</code>. Depending on <code>panproto-schema</code> directly exposes the same type without the facade.</p>
 <h2 id="modules"><a class="header" href="#modules">Modules</a></h2>
 <div class="table-wrapper">
 <table>
@@ -226,8 +226,25 @@ panproto-core = "0.71"
 </table>
 </div>
 <p><code>full-parse</code> adds the tree-sitter grammar build dependencies described in the crate manifest. It is separate from the <code>tree-sitter</code> feature on <code>panproto-io</code>.</p>
+<h2 id="instance-transport-and-direction"><a class="header" href="#instance-transport-and-direction">Instance transport and direction</a></h2>
+<p>Let a compiled migration have schema direction (F:S\to T). The functorial data-migration names (\Sigma_F) and (\Delta_F) follow the usual source and target directions (<a href="../bibliography.html#spivak2012functorial">Spivak 2012</a>), but the plain <code>lift</code> API is a separate operation:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Rust API</th><th>Instance direction</th><th>Implemented operation</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="https://docs.rs/panproto-mig/latest/panproto_mig/fn.lift_wtype.html"><code>lift_wtype</code></a>, <code>lift_functor</code></td><td>(S\to T)</td><td>Runs the restrict pipeline. It retains the source fragment that survives the compiled mapping, remaps it into the target schema, and may prune data.</td></tr>
+<tr><td><a href="https://docs.rs/panproto-mig/latest/panproto_mig/fn.lift_wtype_sigma.html"><code>lift_wtype_sigma</code></a>, <code>lift_functor_sigma</code></td><td>(S\to T)</td><td>Computes the left Kan extension (\Sigma_F). The functor form may then run the supplied chase dependencies.</td></tr>
+<tr><td><a href="https://docs.rs/panproto-mig/latest/panproto_mig/fn.lift_wtype_pi.html"><code>lift_wtype_pi</code></a></td><td>(S\to T)</td><td>Runs the <code>pi</code>-named W-type path. It accepts only vertex-injective maps and relabels the tree rather than constructing a general right Kan extension. Its <code>max_product_nodes</code> parameter is retained for signature compatibility and is unused.</td></tr>
+<tr><td><code>lift_functor_pi</code></td><td>(S\to T)</td><td>Computes the functor-instance right Kan extension (\Pi_F) by products over fibers and applies <code>max_product_size</code>.</td></tr>
+<tr><td><a href="https://docs.rs/panproto-inst/latest/panproto_inst/adjunction/fn.w_delta.html"><code>w_delta</code></a>, <a href="https://docs.rs/panproto-inst/latest/panproto_inst/adjunction/fn.f_delta.html"><code>f_delta</code></a></td><td>(T\to S)</td><td>Computes precomposition (\Delta_F). The W-type form is defined only for injective vertex and edge maps and for anchors in the image. The functor form also handles vertex-merging maps.</td></tr>
+</tbody>
+</table>
+</div>
+<p>Thus <code>panproto_mig::lift_wtype</code> is not (\Delta_F), despite its delegation to <code>wtype_restrict</code>. <a href="https://docs.rs/panproto-inst/latest/panproto_inst/enum.Instance.html#method.restrict"><code>Instance::restrict</code></a> has the same source-to-target surviving-fragment direction. <a href="https://docs.rs/panproto-inst/latest/panproto_inst/enum.Instance.html#method.extend"><code>Instance::extend</code></a> is a total source-to-target extension path. The W-type (\Sigma_F) implementation delegates to that path, but the generic method does not establish an adjunction for every <code>Instance</code> variant.</p>
 <h2 id="morphism-search"><a class="header" href="#morphism-search">Morphism search</a></h2>
-<p>The <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/"><code>panproto_core::mig::hom_search</code></a> module distinguishes partial overlap from total morphisms.</p>
+<p>The <a href="https://docs.rs/panproto-mig/latest/panproto_mig/hom_search/"><code>panproto_core::mig::hom_search</code></a> module distinguishes partial overlap from total morphisms. A returned <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/struct.SchemaSpan.html"><code>SchemaSpan</code></a> has shape (S\leftarrow A\to T): (A) is the sub-schema of (S) induced by mapped source vertices, the left leg includes (A) into (S), and the right leg maps (A) into (T).</p>
 <pre><code class="language-text">find_span(
     src: &amp;Schema,
     tgt: &amp;Schema,
@@ -248,10 +265,10 @@ find_best_morphism(
 ) -&gt; Result&lt;Option&lt;FoundMorphism&gt;, SpanError&gt;
 </code></pre>
 <p><code>find_span</code> may return an empty apex when the schemas share no vertices. The protocol argument is used to validate the induced apex. Setting <code>SearchOptions::epic</code> is invalid for this partial search and returns <code>SpanError::EpicIsNotASpanProperty</code>.</p>
-<p><code>find_morphisms</code> returns total morphisms that attain the optimum, rather than every morphism or a sequence of lower-quality alternatives. <code>MorphismList::truncated</code> records whether enumeration of tied optima stopped at the engine cap. An empty <code>morphisms</code> vector means that no total morphism exists; a search that could not run returns <code>Err</code>.</p>
+<p><code>find_morphisms</code> returns total morphisms that attain the optimum, rather than every morphism or a sequence of lower-quality alternatives. <code>MorphismList::truncated</code> records whether enumeration of tied optima stopped at the engine cap. An empty <code>morphisms</code> vector means that no total morphism exists. A search that could not run returns <code>Err</code>.</p>
 <p><code>SearchOptions::default()</code> leaves <code>monic</code>, <code>epic</code>, and <code>iso</code> false, uses no hard pins, and sets <code>max_results</code> to zero. Here zero requests all optima the implementation will enumerate, subject to its safety cap. Use <code>find_morphisms_budgeted</code> or <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/struct.SpanSearch.html"><code>SpanSearch</code></a> when the caller must supply a <code>SearchBudget</code>.</p>
 <h2 id="ownership-and-errors"><a class="header" href="#ownership-and-errors">Ownership and errors</a></h2>
-<p>Rust values follow ordinary ownership and drop semantics; the Rust API does not expose the opaque-handle lifecycle used by foreign-language bindings. Fallible operations return the error type declared by their component crate. <code>panproto-core</code> does not replace those errors with a facade-wide error enum.</p>
+<p>Rust values follow ordinary ownership and drop semantics. The Rust API does not expose the opaque-handle lifecycle used by foreign-language bindings. Fallible operations return the error type declared by their component crate. <code>panproto-core</code> does not replace those errors with a facade-wide error enum.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="../how-to/install/rust.html">Install the Rust SDK</a></li>

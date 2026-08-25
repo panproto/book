@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -199,7 +199,7 @@
 </tbody>
 </table>
 </div>
-<p>Start with the CLI for an existing JSON Schema, Protobuf schema, or ATProto Lexicon. Start with a language SDK when the application constructs the schema programmatically.</p>
+<p>The CLI’s schema-checking commands currently accept panproto’s internal schema JSON and resolve only the <code>atproto</code> protocol. Its shared loaders can parse an ATProto Lexicon when a manifest selects <code>atproto</code>, and its full-AST commands parse supported source files as syntax trees. Use a language SDK’s <code>parseSchemaDocument</code> or <code>parseSchemaSource</code> dispatch for the other external schema languages in the protocol catalog. Start with a language SDK when the application constructs the schema programmatically.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="../../reference/protocols.html">Reference: protocol catalog</a> for the list of supported protocols.</li>

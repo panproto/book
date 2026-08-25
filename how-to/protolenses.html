@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -204,30 +204,39 @@
 </span><span class="boring">fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
 </span><span class="boring">let rename_legacy_id: ProtolensChain = combinators::rename_field("user", "user:legacy_id", "legacy_id", "id");
 </span><span class="boring">let protocol: Protocol = panproto_core::protocols::atproto::protocol();
-</span><span class="boring">let user_schema: Schema = SchemaBuilder::new(&amp;protocol).vertex("user", "object", None)?.entry("user").build()?;
-</span><span class="boring">let post_schema: Schema = user_schema.clone();
+</span><span class="boring">let user_schema: Schema = SchemaBuilder::new(&amp;protocol)
+</span><span class="boring">    .vertex("user", "object", None)?
+</span><span class="boring">    .vertex("user:legacy_id", "string", None)?
+</span><span class="boring">    .edge("user", "user:legacy_id", "prop", Some("legacy_id"))?
+</span><span class="boring">    .entry("user")
+</span><span class="boring">    .build()?;
 </span>let lens_for_users = rename_legacy_id.instantiate(&amp;user_schema, &amp;protocol)?;
-let lens_for_posts = rename_legacy_id.instantiate(&amp;post_schema, &amp;protocol)?;
-<span class="boring">let _ = (lens_for_users, lens_for_posts);
+<span class="boring">let _ = lens_for_users;
 </span><span class="boring">Ok(()) }</span></code></pre>
-<p>Each call produces a concrete <code>Lens</code> against a specific schema, with the migration metadata preserved as a single fused morphism.</p>
+<p>The precondition requires the named property edge in addition to the <code>user</code> vertex. Instantiation produces a concrete <code>Lens</code> for any schema containing that structure. For a multi-step chain, the fused path compiles the composed transform in one pass and retains the migration metadata computed for the whole chain.</p>
 <h3 id="apply-sequential"><a class="header" href="#apply-sequential">Apply (sequential)</a></h3>
 <pre class="playground"><code class="language-rust no_run"><span class="boring">use panproto_lens::protolens::{ProtolensChain, combinators};
 </span><span class="boring">use panproto_core::schema::{Protocol, Schema, SchemaBuilder};
 </span><span class="boring">fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
 </span><span class="boring">let rename_legacy_id: ProtolensChain = combinators::rename_field("user", "user:legacy_id", "legacy_id", "id");
 </span><span class="boring">let protocol: Protocol = panproto_core::protocols::atproto::protocol();
-</span><span class="boring">let base_schema: Schema = SchemaBuilder::new(&amp;protocol).vertex("user", "object", None)?.entry("user").build()?;
+</span><span class="boring">let base_schema: Schema = SchemaBuilder::new(&amp;protocol)
+</span><span class="boring">    .vertex("user", "object", None)?
+</span><span class="boring">    .vertex("user:legacy_id", "string", None)?
+</span><span class="boring">    .edge("user", "user:legacy_id", "prop", Some("legacy_id"))?
+</span><span class="boring">    .entry("user")
+</span><span class="boring">    .build()?;
 </span>let stepwise = rename_legacy_id.instantiate_sequential(&amp;base_schema, &amp;protocol)?;
 <span class="boring">let _ = stepwise;
 </span><span class="boring">Ok(()) }</span></code></pre>
-<p>Sequential instantiation yields one lens per step; useful in property tests when each intermediate state needs to be inspected.</p>
+<p>Sequential instantiation applies each step to the running schema and composes the resulting lenses. It returns one composed <code>Lens</code>, not a list of intermediate lenses. The implementation exists to exercise the stepwise path in tests; it does not expose the intermediate schemas to the caller.</p>
 <h3 id="compose"><a class="header" href="#compose">Compose</a></h3>
-<pre class="playground"><code class="language-rust no_run">use panproto_lens::protolens::{Protolens, vertical_compose, elementary};
+<pre class="playground"><code class="language-rust no_run">use panproto_inst::Value;
+use panproto_lens::protolens::{Protolens, vertical_compose, elementary};
 
 <span class="boring">fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
-</span>let first:  Protolens = elementary::drop_sort("old_field");
-let second: Protolens = elementary::drop_sort("legacy_id");
+</span>let first: Protolens = elementary::rename_sort("string", "text");
+let second: Protolens = elementary::add_sort("tags", "array", Value::Null);
 let composed = vertical_compose(&amp;first, &amp;second)?;
 <span class="boring">let _ = composed;
 </span><span class="boring">Ok(()) }</span></code></pre>

@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -185,7 +185,7 @@
 <h1 id="lens-combinator-reference"><a class="header" href="#lens-combinator-reference">Lens combinator reference</a></h1>
 <p>panproto implements asymmetric lenses (<a href="../bibliography.html#foster2007combinators">Foster et al. 2007</a>) with an explicit complement in the complementary-view tradition (<a href="../bibliography.html#bancilhonspyratos1981update">Bancilhon and Spyratos 1981</a>). For a fixed <a href="https://docs.rs/panproto-lens/latest/panproto_lens/struct.Lens.html"><code>Lens</code></a>, the data-level operations have the shapes</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8095em;vertical-align:-0.1944em;"></span><span class="mop"><span class="mord mathrm">get</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm">put</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mord">.</span></span></span></span></span></p>
-<p>Both Rust functions return <code>Result</code>. <code>get(&amp;Lens, &amp;WInstance)</code> returns the view and its <code>Complement</code>; <code>put(&amp;Lens, &amp;WInstance, &amp;Complement)</code> reconstructs a source or returns <code>LensError</code>.</p>
+<p>Both Rust functions return <code>Result</code>. <a href="https://docs.rs/panproto-lens/latest/panproto_lens/fn.get.html"><code>get</code></a> accepts an instance of the source schema and runs the source-to-target restrict pipeline, returning the target-schema view and its <code>Complement</code>. <a href="https://docs.rs/panproto-lens/latest/panproto_lens/fn.put.html"><code>put</code></a> accepts that target-schema view and complement and reconstructs a source or returns <code>LensError</code>.</p>
 <h2 id="law-checking-api"><a class="header" href="#law-checking-api">Law-checking API</a></h2>
 <div class="table-wrapper">
 <table>
@@ -197,13 +197,13 @@
 <tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/fn.check_put_get.html"><code>check_put_get</code></a></td><td>Checks the original view and one deterministic scalar mutation. Comparison ignores fields marked as derived.</td></tr>
 <tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/fn.check_laws.html"><code>check_laws</code></a></td><td>Runs the two checks above. It does not run PutPut.</td></tr>
 <tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/laws/fn.check_put_put.html"><code>check_put_put</code></a></td><td>Compares a chained put with a direct put for one supplied source and second view.</td></tr>
-<tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/optic/fn.check_optic_laws.html"><code>check_optic_laws</code></a></td><td>Runs the checks selected for one <code>OpticKind</code>, lens, and concrete instance.</td></tr>
+<tr><td><a href="https://docs.rs/panproto-lens/latest/panproto_lens/optic/fn.check_optic_laws.html"><code>check_optic_laws</code></a></td><td>For every kind, checks GetPut and PutGet on the unedited view. <code>Prism</code> and <code>Affine</code> add preview stability. <code>Traversal</code> and <code>Affine</code> add one deterministic perturbed-view round trip. <code>Iso</code> also requires a complement with no recorded data loss.</td></tr>
 </tbody>
 </table>
 </div>
 <p>These functions are on-demand checks over their supplied values. Property tests exercise generated lenses, instances, and views, but a passing test run is not a proof for every constructor input. <a href="../explanation/what-is-verified.html#lenses-coercions-and-expressions">What panproto verifies</a> records the corresponding limits.</p>
 <h2 id="optic-kinds"><a class="header" href="#optic-kinds">Optic kinds</a></h2>
-<p><a href="https://docs.rs/panproto-lens/latest/panproto_lens/optic/enum.OpticKind.html"><code>OpticKind</code></a> is a structural classification derived from <code>TheoryTransform</code>; classification itself does not run an optic-law checker.</p>
+<p><a href="https://docs.rs/panproto-lens/latest/panproto_lens/optic/enum.OpticKind.html"><code>OpticKind</code></a> is a structural classification derived from <code>TheoryTransform</code>. Classification itself does not run an optic-law checker.</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -218,7 +218,7 @@
 </tbody>
 </table>
 </div>
-<p><code>OpticKind::compose</code> uses <code>Iso</code> as the identity and <code>Traversal</code> as an absorbing element. <code>Lens</code> composed with <code>Prism</code>, or either composed with <code>Affine</code>, yields <code>Affine</code>. This table describes the enum’s implementation; it does not certify the full laws of profunctor optics (<a href="../bibliography.html#pickeringgibbonswu2017profunctor">Pickering et al. 2017</a>).</p>
+<p><code>OpticKind::compose</code> uses <code>Iso</code> as the identity and <code>Traversal</code> as an absorbing element. <code>Lens</code> composed with <code>Prism</code>, or either composed with <code>Affine</code>, yields <code>Affine</code>. This table describes the enum’s implementation. It does not certify the full laws of profunctor optics (<a href="../bibliography.html#pickeringgibbonswu2017profunctor">Pickering et al. 2017</a>).</p>
 <h2 id="constructor-modules"><a class="header" href="#constructor-modules">Constructor modules</a></h2>
 <div class="table-wrapper">
 <table>
@@ -235,12 +235,12 @@
 </tbody>
 </table>
 </div>
-<p>The full parameter types are the public Rust signatures in those module indexes. Several elementary constructors accept <code>impl Into&lt;Name&gt;</code>; checked coercion constructors additionally return <code>Result</code> when their finite honesty samples fail.</p>
+<p>The full parameter types are the public Rust signatures in those module indexes. Several elementary constructors accept <code>impl Into&lt;Name&gt;</code>. Checked coercion constructors additionally return <code>Result</code> when their finite honesty samples fail. The elementary <code>pullback</code> constructor stores a supplied <code>TheoryMorphism</code> in <code>TheoryTransform::Pullback</code>. It does not construct a categorical pullback object or return a certificate of a pullback universal property.</p>
 <h2 id="complement-composition"><a class="header" href="#complement-composition">Complement composition</a></h2>
 <p><code>ComplementCompose::compose(&amp;left, &amp;right)</code> returns <code>Result&lt;Complement, LensError&gt;</code>. It rejects distinct nonzero source fingerprints with <code>ComplementFingerprintMismatch</code> and conflicting values under a shared key with <code>ComplementConflict</code>. <code>ComplementCompose::is_compatible</code> runs the same predicate without returning the merged value. The trait must be in scope because <code>Complement</code> is defined in <code>panproto-inst</code>.</p>
 <h2 id="protolens-composition-and-instantiation"><a class="header" href="#protolens-composition-and-instantiation">Protolens composition and instantiation</a></h2>
-<p>A <code>Protolens</code> stores source and target theory endofunctors, a schema precondition, and a complement constructor. The intended natural-transformation structure uses the standard categorical definition (<a href="../bibliography.html#eilenbergmaclane1945general">Eilenberg and Mac Lane 1945</a>); constructing a value does not verify naturality over every schema.</p>
-<p><code>protolens_composable(eta, theta)</code> accepts either structurally equal intermediate endofunctors or an identity transform on <code>theta.source</code>. The identity-source case retains <code>theta</code>’s source precondition in the composite. <code>vertical_compose</code> rejects other pairs with <code>CompositionMismatch</code>; <code>horizontal_compose</code> currently returns <code>Ok</code> without an additional compatibility check.</p>
+<p>A <code>Protolens</code> stores source and target theory endofunctors, a schema precondition, and a complement constructor. The intended natural-transformation structure uses the standard categorical definition (<a href="../bibliography.html#eilenbergmaclane1945general">Eilenberg and Mac Lane 1945</a>). Constructing a value does not verify naturality over every schema.</p>
+<p><code>protolens_composable(eta, theta)</code> accepts either structurally equal intermediate endofunctors or an identity transform on <code>theta.source</code>. The identity-source case retains <code>theta</code>’s source precondition in the composite. <code>vertical_compose</code> rejects other pairs with <code>CompositionMismatch</code>. <code>horizontal_compose</code> currently returns <code>Ok</code> without an additional compatibility check.</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -253,7 +253,7 @@
 </tbody>
 </table>
 </div>
-<p>Call <code>check_applicability_with</code> before fused instantiation when preconditions must be enforced. Fused and sequential instantiation are compared in property tests; neither return value is a proof of the lens laws for all instances.</p>
+<p>Call <code>check_applicability_with</code> before fused instantiation when preconditions must be enforced. Fused and sequential instantiation are compared in property tests. Neither return value is a proof of the lens laws for all instances.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="../how-to/use-lenses.html">Use lenses</a></li>

@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -217,7 +217,7 @@ schema data status records/
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Editing data inside the store directly. Like schemas, data objects are content-addressed.</li>
-<li>Skipping data when committing schema changes. If you commit a v2 schema without ever staging v1 data, there is nothing for the lens to lift; this is fine, but the v2 commit will have no data even though v1 might.</li>
+<li>Skipping data when committing schema changes. If the v1 commit has no staged data, the later commit-range operation has no stored v1 records to migrate. The v2 commit may thus have no data even when records exist in the working directory.</li>
 <li>Assuming rebase or amend migrates working data. Those commands take no data-directory option. Run an explicit data migration after rewriting history.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>

@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -203,6 +203,7 @@
 </div>
 <p><code>Native</code> has no <code>SchemaValidate</code>, migration, lens, instance, or search instance in the current source. The structural <code>Schema</code>, <code>Migration</code>, <code>ProtolensChain</code>, <code>Theory</code>, and <code>Instance</code> data types remain available as ordinary Haskell values, but a pure value type does not imply a runnable <code>Native</code> capability instance.</p>
 <p>The Haskell <code>Instance</code> exchange type mirrors the W-type instance used by the C boundary. It is not the Rust <code>panproto_inst::Instance</code> enum over W-type, relational, and graph representations.</p>
+<p>For a compiled schema mapping (S\to T), <code>MigrationBackend.liftRecord</code> accepts an (S)-instance and returns the surviving fragment as a (T)-instance. It wraps <code>pp_mig_lift_record</code>, which calls the restrict-based Rust function <code>mig::lift_wtype</code>. This operation is neither the left Kan extension (\Sigma_F) nor precomposition (\Delta_F). The Haskell capability class does not expose the separate Rust (\Sigma_F) and (\Pi_F) entry points.</p>
 <h2 id="capability-lookup"><a class="header" href="#capability-lookup">Capability lookup</a></h2>
 <div class="table-wrapper">
 <table>
@@ -246,10 +247,10 @@ findSpan
     -&gt; IO FoundSpan
 </code></pre>
 <p><code>defaultFindOpts</code> sets <code>monic</code>, <code>epic</code>, and <code>iso</code> to <code>False</code>, <code>maxResults</code> to zero, and <code>hardPins</code> to the empty map. <code>defaultDomainConstraints</code> applies no domain restrictions or weight override.</p>
-<p><code>findMorphisms</code> returns total morphisms attaining the optimum, and <code>findBestMorphism</code> returns <code>Nothing</code> when no total morphism exists. The Haskell list omits the engine’s truncation field for tied optima. <code>findSpan</code> may return an empty apex; it rejects <code>epic = True</code> because a span’s right leg is partial.</p>
+<p><code>findMorphisms</code> returns total morphisms attaining the optimum, and <code>findBestMorphism</code> returns <code>Nothing</code> when no total morphism exists. The Haskell list omits the engine’s truncation field for tied optima. <code>findSpan</code> may return an empty apex. It rejects <code>epic = True</code> because a span’s right leg is partial.</p>
 <h2 id="handle-ownership"><a class="header" href="#handle-ownership">Handle ownership</a></h2>
 <p>Rust-backed representations that own slab entries have matching <code>release*</code> methods on their capability classes. Examples include <code>releaseProtocol</code>, <code>releaseSchema</code>, <code>releaseChain</code>, <code>releaseLens</code>, <code>releaseTheory</code>, <code>releaseModel</code>, <code>releaseRegistry</code>, <code>releaseRepo</code>, and <code>releaseDataSet</code>. Release is idempotent at the C slab boundary.</p>
-<p>Use a bracket helper where the binding provides one. Public helpers include <code>withRustProtocol</code>, <code>withRustSchema</code>, <code>withCompiled</code>, <code>withRustTheory</code>, <code>withRepo</code>, and <code>withDataSet</code>. Some exchange representations, including the Rust <code>InstanceRep</code>, carry no slab entry and have a no-op release method; the class method remains the ownership authority.</p>
+<p>Use a bracket helper where the binding provides one. Public helpers include <code>withRustProtocol</code>, <code>withRustSchema</code>, <code>withCompiled</code>, <code>withRustTheory</code>, <code>withRepo</code>, and <code>withDataSet</code>. Some exchange representations, including the Rust <code>InstanceRep</code>, carry no slab entry and have a no-op release method. The class method remains the ownership authority.</p>
 <h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
 <p>FFI failures are exceptions in <code>IO</code>. <code>SomePanprotoError</code> is the root wrapper, <code>PanprotoError</code> is the generic fallback, and the domain exception types include <code>MigrationError</code>, <code>LensError</code>, <code>SchemaValidationError</code>, <code>CheckError</code>, <code>ExistenceCheckError</code>, <code>ExprError</code>, <code>GatError</code>, <code>IoError</code>, <code>VcsError</code>, <code>ParseError</code>, <code>ProjectError</code>, and <code>GitBridgeError</code>. Each error carries a <code>PpStatus</code> and may carry a decoded <code>ErrorEnvelope</code>.</p>
 <h2 id="cabal-flags"><a class="header" href="#cabal-flags">Cabal flags</a></h2>
@@ -261,9 +262,9 @@ findSpan
 <tbody>
 <tr><td><code>rust</code></td><td>on</td><td>Builds the FFI backend and links <code>libpanproto_c</code></td></tr>
 <tr><td><code>native-only</code></td><td>off</td><td>Excludes Rust backend modules even if <code>rust</code> is enabled</td></tr>
-<tr><td><code>parse</code></td><td>off</td><td>Exposes <code>Panproto.Parse</code>; the Rust instance needs a library built with <code>full-parse</code></td></tr>
-<tr><td><code>project</code></td><td>off</td><td>Exposes <code>Panproto.Project</code>; the Rust instance needs a library built with <code>project</code></td></tr>
-<tr><td><code>git</code></td><td>off</td><td>Exposes <code>Panproto.Git</code>; the Rust instance needs a library built with <code>git</code></td></tr>
+<tr><td><code>parse</code></td><td>off</td><td>Exposes <code>Panproto.Parse</code>. The Rust instance needs a library built with <code>full-parse</code>.</td></tr>
+<tr><td><code>project</code></td><td>off</td><td>Exposes <code>Panproto.Project</code>. The Rust instance needs a library built with <code>project</code>.</td></tr>
+<tr><td><code>git</code></td><td>off</td><td>Exposes <code>Panproto.Git</code>. The Rust instance needs a library built with <code>git</code>.</td></tr>
 <tr><td><code>optics-adaptors</code></td><td>off</td><td>Adds <code>optics-core</code> adaptors in <code>Panproto.Lens.Optics</code></td></tr>
 <tr><td><code>lens-adaptors</code></td><td>off</td><td>Adds <code>lens</code> adaptors when <code>optics-core</code> is not selected</td></tr>
 <tr><td><code>effectful</code></td><td>off</td><td>Adds the <code>Panproto</code> effect, <code>Eff</code> instance, and <code>runPanproto</code></td></tr>

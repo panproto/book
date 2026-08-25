@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -187,7 +187,7 @@
 <pre><code class="language-sh">python -m pip install panproto
 </code></pre>
 <h2 id="module-surface"><a class="header" href="#module-surface">Module surface</a></h2>
-<p>Public names are re-exported from <code>panproto</code>; there is no umbrella engine class. The package source lists those names in <a href="https://github.com/panproto/panproto/blob/main/bindings/python/src/panproto/__init__.py"><code>panproto.__all__</code></a>, and the shipped <code>_native.pyi</code> file is the signature authority for the extension.</p>
+<p>Public names are re-exported from <code>panproto</code>. There is no umbrella engine class. The package source lists those names in <a href="https://github.com/panproto/panproto/blob/main/bindings/python/src/panproto/__init__.py"><code>panproto.__all__</code></a>, and the shipped <code>_native.pyi</code> file is the signature authority for the extension.</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -195,7 +195,7 @@
 </thead>
 <tbody>
 <tr><td>Protocols and schemas</td><td><code>get_builtin_protocol</code>, <code>list_builtin_protocols</code>, <code>define_protocol</code>, <code>Protocol</code>, <code>SchemaBuilder</code>, <code>Schema</code></td></tr>
-<tr><td>Schema parsing</td><td><code>parse_atproto_lexicon</code>, <code>parse_schema_document</code>, <code>parse_schema_bundle</code>, <code>parse_schema_source</code></td></tr>
+<tr><td>Schema parsing</td><td><code>parse_atproto_lexicon</code>, <code>parse_schema_document</code>, <code>parse_schema_bundle</code>, <code>parse_schema_bundle_project</code>, <code>parse_schema_source</code></td></tr>
 <tr><td>Migrations</td><td><code>MigrationBuilder</code>, <code>compile_migration</code>, <code>compose_migrations</code>, <code>invert_migration</code>, <code>CompiledMigration</code></td></tr>
 <tr><td>Morphism search</td><td><code>find_span</code>, <code>find_morphisms</code>, <code>find_best_morphism</code>, <code>SchemaSpan</code>, <code>FoundMorphism</code></td></tr>
 <tr><td>Checking</td><td><code>diff_schemas</code>, <code>diff_and_classify</code>, <code>check_existence</code>, <code>check_coverage</code></td></tr>
@@ -224,6 +224,8 @@
     def build(self) -&gt; Schema: ...
 </code></pre>
 <p><code>TheoryBuilder.sort</code>, <code>TheoryBuilder.op</code>, and <code>TheoryBuilder.eq</code> return the builder and may be chained. Check <code>_native.pyi</code> before assuming that a builder follows either convention.</p>
+<h2 id="migration-direction"><a class="header" href="#migration-direction">Migration direction</a></h2>
+<p>For a <code>CompiledMigration</code> whose schema mapping is (S\to T), <code>lift(instance)</code> accepts an (S)-instance and returns the surviving fragment as a (T)-instance. The method calls Rust’s restrict-based <code>lift_wtype</code>. It is neither the left Kan extension (\Sigma_F) nor precomposition (\Delta_F). <code>get</code> uses the same source-to-target operation and returns a complement with the view. <code>put</code> accepts the target view and complement and reconstructs a source instance.</p>
 <h2 id="morphism-search"><a class="header" href="#morphism-search">Morphism search</a></h2>
 <pre><code class="language-python">find_span(
     src: Schema,
@@ -245,10 +247,10 @@ find_morphisms(
     max_results: int = 0,
 ) -&gt; list[FoundMorphism]
 </code></pre>
-<p><code>find_span</code> returns an empty apex when the schemas share no vertices. It requires a protocol because the induced apex is validated before it is returned. <code>epic=True</code> raises <code>MigrationError</code> for span search; surjectivity is defined for the total-morphism functions.</p>
+<p><code>find_span</code> returns an empty apex when the schemas share no vertices. It requires a protocol because the induced apex is validated before it is returned. <code>epic=True</code> raises <code>MigrationError</code> for span search. Surjectivity is defined for the total-morphism functions.</p>
 <p><code>find_morphisms</code> returns total morphisms attaining the optimum. An empty list means that no total morphism exists, whereas a search failure raises <code>MigrationError</code>. The Python list does not carry the Rust <code>MorphismList.truncated</code> field, so this binding cannot report whether the engine stopped enumerating tied optima at its cap.</p>
 <h2 id="grammar-packs"><a class="header" href="#grammar-packs">Grammar packs</a></h2>
-<p><code>AstParserRegistry()</code> constructs a native registry and adds grammars advertised through installed <code>panproto.grammars</code> entry points. Discovery occurs when the factory is called; importing a companion package is not required.</p>
+<p><code>AstParserRegistry()</code> constructs a native registry and adds grammars advertised through installed <code>panproto.grammars</code> entry points. Discovery occurs when the factory is called. Importing a companion package is not required.</p>
 <div class="table-wrapper">
 <table>
 <thead>

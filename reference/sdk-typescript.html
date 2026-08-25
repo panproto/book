@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -205,7 +205,7 @@ const panproto = await Panproto.init();
 <tbody>
 <tr><td><code>Panproto</code></td><td>Engine initialization and convenience methods for protocols, parsing, diffs, migrations, lenses, instance I/O, VCS, and data sets</td></tr>
 <tr><td><code>Protocol</code></td><td>Protocol specification and <code>schema(): SchemaBuilder</code></td></tr>
-<tr><td><code>SchemaBuilder</code></td><td>Immutable builder; each mutation returns a new builder and <code>build()</code> returns <code>BuiltSchema</code></td></tr>
+<tr><td><code>SchemaBuilder</code></td><td>Immutable builder. Each mutation returns a new builder, and <code>build()</code> returns <code>BuiltSchema</code>.</td></tr>
 <tr><td><code>BuiltSchema</code></td><td>Engine-backed schema with structural metadata, normalization, and validation</td></tr>
 <tr><td><code>MigrationBuilder</code></td><td>Immutable vertex, edge, and resolver mapping builder</td></tr>
 <tr><td><code>CompiledMigration</code></td><td><code>lift</code>, complement-carrying <code>get</code> and <code>put</code>, plus JSON convenience methods</td></tr>
@@ -215,7 +215,7 @@ const panproto = await Panproto.init();
 <tr><td><code>TheoryHandle</code>, <code>TheoryBuilder</code></td><td>GAT construction, colimits, and morphism operations</td></tr>
 <tr><td><code>Repository</code>, <code>DataSetHandle</code></td><td>In-memory VCS and data-versioning resources</td></tr>
 <tr><td><code>parseExpr</code>, <code>evalExpr</code>, <code>formatExpr</code>, <code>ExprBuilder</code></td><td>Expression parsing, evaluation, formatting, and construction</td></tr>
-<tr><td><code>executeQuery</code>, <code>fiberAt</code>, <code>fiberDecomposition</code>, <code>polyHom</code></td><td>Instance-query and structural operations</td></tr>
+<tr><td><code>executeQuery</code>, <code>fiberAt</code>, <code>fiberDecomposition</code>, <code>polyHom</code></td><td>Instance-query and structural exports. <code>executeQuery</code> has the boundary mismatch described below.</td></tr>
 </tbody>
 </table>
 </div>
@@ -241,12 +241,13 @@ class CompiledMigration {
   put(view: unknown, complement: Uint8Array): LiftResult;
 }
 </code></pre>
-<p><code>LiftResult.data</code> is <code>unknown</code>. <code>GetResult</code> contains <code>view: unknown</code> and <code>complement: Uint8Array</code>; the complement must be passed back unchanged unless an operation explicitly returns a replacement.</p>
+<p><code>LiftResult.data</code> is <code>unknown</code>. <code>GetResult</code> contains <code>view: unknown</code> and <code>complement: Uint8Array</code>. The complement must be passed back unchanged unless an operation explicitly returns a replacement.</p>
+<p>If the compiled mapping has schema direction (S\to T), <code>lift</code> accepts an (S)-record and returns the surviving fragment as a (T)-record. It calls Rust’s restrict-based <code>lift_wtype</code>. It is neither the left Kan extension (\Sigma_F) nor precomposition (\Delta_F). <code>get</code> has the same source-to-target direction and additionally captures the complement. <code>put</code> takes a (T)-view and that complement and reconstructs an (S)-record.</p>
 <h2 id="resource-ownership"><a class="header" href="#resource-ownership">Resource ownership</a></h2>
 <p>Engine-backed wrappers implement <code>Disposable</code>. This includes <code>Protocol</code>, <code>BuiltSchema</code>, <code>CompiledMigration</code>, the three lens-handle classes, <code>IoRegistry</code>, <code>TheoryHandle</code>, <code>Repository</code>, and <code>DataSetHandle</code>. Dispose each owned wrapper after its last use, preferably with an explicit resource-management scope:</p>
 <pre><code class="language-ts">using schema = protocol.schema().vertex('root', 'object').build();
 </code></pre>
-<p>Disposal is idempotent. Accessing a disposed handle raises <code>WasmError</code>. A <code>FinalizationRegistry</code> frees a leaked handle as a fallback, but collection time is nondeterministic. Disposing <code>Panproto</code> releases its cached <code>Protocol</code> objects; it does not own every schema, migration, lens, registry, repository, or data-set wrapper created from it.</p>
+<p>Disposal is idempotent. Accessing a disposed handle raises <code>WasmError</code>. A <code>FinalizationRegistry</code> frees a leaked handle as a fallback, but collection time is nondeterministic. Disposing <code>Panproto</code> releases its cached <code>Protocol</code> objects. It does not own every schema, migration, lens, registry, repository, or data-set wrapper created from it.</p>
 <p><code>Instance</code>, result objects, and <code>SpanResponse</code> are plain JavaScript data and do not implement <code>Disposable</code>.</p>
 <h2 id="span-search"><a class="header" href="#span-search">Span search</a></h2>
 <pre><code class="language-ts">span(
@@ -259,6 +260,7 @@ class CompiledMigration {
 <p>The WASM surface exposes span search but not the Rust total-morphism functions <code>find_morphisms</code> and <code>find_best_morphism</code>. Use <code>span.is_total</code> when a caller needs to know whether the returned apex covers the complete source.</p>
 <h2 id="boundary-limits"><a class="header" href="#boundary-limits">Boundary limits</a></h2>
 <p>The SDK passes structured payloads through the WASM layer and stores live engine resources behind integer handles. The package does not expose the Rust <code>panproto-parse</code> full-AST registry, multi-file <code>panproto-project</code> builder, or <code>panproto-git</code> bridge. Schema-document and schema-source parsers available through <code>Panproto.parseSchemaDocument</code> and <code>Panproto.parseSchemaSource</code> are separate from that full-AST surface.</p>
+<p>The current <code>executeQuery</code> wrapper does not match the current WASM entry point. TypeScript sends only a query and instance, while Rust requires query, instance, and schema payloads. The TypeScript wire fields also use <code>projection</code>, <code>groupBy</code>, and <code>nodeId</code>, while the Rust query types use <code>project</code>, <code>group_by</code>, and <code>node_id</code>. Treat <code>executeQuery</code> as unavailable until the binding and WASM signatures are aligned.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="../how-to/install/typescript.html">Install the TypeScript SDK</a></li>

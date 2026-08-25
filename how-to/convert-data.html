@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -185,7 +185,7 @@
 <h1 id="convert-data-between-schemas"><a class="header" href="#convert-data-between-schemas">Convert data between schemas</a></h1>
 <p><code>schema data convert</code> auto-generates a lens between two schemas in one protocol and applies it to JSON records.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>The <code>schema</code> CLI, two schema JSON files, and input records rooted at a vertex the CLI can infer from the source schema.</p>
+<p>The <code>schema</code> CLI, two files in panproto’s internal schema JSON format, and input records rooted at a vertex the CLI can infer from the source schema. The current command resolves only the <code>atproto</code> protocol.</p>
 <h2 id="convert-one-file"><a class="header" href="#convert-one-file">Convert one file</a></h2>
 <pre><code class="language-sh">schema data convert --protocol atproto \
   --from schemas/user-v1.json \
@@ -201,7 +201,13 @@
   --defaults status=active,locale=en \
   data/user.json
 </code></pre>
-<p>The CLI parses all default values as strings.</p>
+<p>The CLI parses all default values as strings. A key resolves against an added
+target vertex ID first, then a unique incoming field label, and finally the
+vertex kind. The generated lens adds the value only when the source-backed
+parent does not already carry that field. Generation reports an error when a
+default is unused, ambiguous, or cannot be placed from the target schema. With
+<code>--chain</code>, defaults must already be embedded in the serialized chain;
+<code>--defaults</code> cannot override them.</p>
 <h2 id="convert-a-directory"><a class="header" href="#convert-a-directory">Convert a directory</a></h2>
 <p>Directory mode reads the immediate <code>*.json</code> files and requires an output directory:</p>
 <pre><code class="language-sh">schema data convert --protocol atproto \
@@ -219,13 +225,15 @@ const output = view as Record&lt;string, unknown&gt;;
 <p>Retain <code>complement</code> if the application may later call <code>putJson</code> to propagate an edited view backward.</p>
 <h2 id="verify-the-conversion"><a class="header" href="#verify-the-conversion">Verify the conversion</a></h2>
 <p>Check the actual record with the SDK law checker:</p>
-<pre><code class="language-ts">const result = lens.checkLaws(instanceBytes);
+<pre><code class="language-ts">const instance = p.parseJson(srcSchema, JSON.stringify(inputRecord));
+const result = lens.checkLaws(instance._bytes);
 if (!result.holds) {
   throw new Error(result.violation ?? 'lens law failed');
 }
 </code></pre>
-<p>The current <code>schema lens verify</code> dispatch does not pass its positional path as test data to the law checker; it treats that path as a schema. Do not use that command as evidence that representative records satisfy the laws.</p>
+<p><code>schema lens verify &lt;DATA&gt; &lt;SCHEMA&gt; --protocol &lt;PROTOCOL&gt;</code> parses the data with the supplied schema and runs the concrete GetPut and PutGet checks. A passing result applies to that record. It is not a proof over every instance of the schema.</p>
 <p>Backward CLI conversion uses an empty complement. It can reconstruct only lenses that need no captured source data or for which defaults suffice. Use an SDK <code>get</code>/<code>put</code> pair when backward conversion depends on the complement produced from a specific source record.</p>
+<p><code>--chain</code> selects a saved chain instead of automatic lens generation. It still requires <code>--from</code> and <code>--to</code>, since a serialized <code>ProtolensChain</code> does not contain the concrete schemas needed for instantiation. <code>schema lens generate --save</code> writes this round-trippable chain format. The compiled artifact produced by <code>schema lens compile --out</code> also carries ordered value-transform stages and is intended for <code>schema lens apply</code>, not <code>schema convert --chain</code>.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="./use-lenses.html">Use lenses</a> for bidirectional updates.</li>

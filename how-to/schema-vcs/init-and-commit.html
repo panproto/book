@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -193,7 +193,7 @@ schema add user.json
 schema commit -m "initial user schema"
 schema log                  # show history
 </code></pre>
-<p><code>init</code> creates a <code>.panproto/</code> object store and a <code>main</code> branch. It may also generate <code>panproto.toml</code> when package detection finds source packages. <code>add</code> parses or loads the supplied path and stages the resulting schema; <code>commit</code> records the staged schema.</p>
+<p><code>init</code> creates a <code>.panproto/</code> object store and a <code>main</code> branch. It may also generate <code>panproto.toml</code> when package detection finds source packages. <code>add</code> parses or loads the supplied path and stages the resulting schema; <code>commit</code> records the staged schema. A path ending in <code>.json</code> is deserialized directly as panproto’s internal <code>Schema</code> representation. To stage an ATProto Lexicon bundle, point <code>add</code> at a directory whose manifest declares a homogeneous <code>atproto</code> package. Non-JSON source files use the full-AST parser.</p>
 <p>To inspect the current state:</p>
 <pre><code class="language-sh">schema status
 schema diff --staged      # diff the staged schema against HEAD

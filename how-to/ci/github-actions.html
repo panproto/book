@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -206,7 +206,7 @@ jobs:
           fetch-depth: 0           # need history for the diff base
 
       - name: Install schema
-        run: cargo install panproto-cli --version 0.71.0 --locked
+        run: cargo install panproto-cli --version 0.72.0 --locked
 
       - name: Validate
         run: |
@@ -225,7 +225,7 @@ jobs:
 <p>The <code>--protocol</code> flag is required for every per-file <code>schema validate</code>. There is no <code>--project</code> flag. For an external document such as a Lexicon, use the appropriate parse path before this validation step.</p>
 <p>The job has separate validation and breaking-change steps. Validation fails on a malformed schema; <code>schema compat</code> gives the gate its compatibility exit code, and <code>schema check --typecheck</code> rejects an invalid migration mapping.</p>
 <h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
-<p>Push a PR and watch the workflow run. The validation step exits zero on a clean schema; the gate prints the classification and exits non-zero on breaking.</p>
+<p>After a pull request is pushed, validation exits zero when every schema passes. The compatibility gate prints its classification and exits nonzero for a breaking change.</p>
 <h2 id="common-mistakes"><a class="header" href="#common-mistakes">Common mistakes</a></h2>
 <ul>
 <li>Omitting <code>fetch-depth: 0</code>. Shallow clones make the merge-base lookup fail; the gate then runs against the wrong base.</li>

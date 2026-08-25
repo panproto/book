@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="swift-sdk-reference"><a class="header" href="#swift-sdk-reference">Swift SDK reference</a></h1>
-<p>The Swift package lives in <a href="https://github.com/panproto/panproto/tree/main/bindings/swift"><code>bindings/swift/</code></a>. It uses Swift 6 language mode and supports macOS 14 and iOS 17. The engine-backed products call <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>panproto-c</code></a>; <code>PanprotoStructural</code> has no FFI dependency.</p>
+<p>The Swift package lives in <a href="https://github.com/panproto/panproto/tree/main/bindings/swift"><code>bindings/swift/</code></a>. It uses Swift 6 language mode and supports macOS 14 and iOS 17. The engine-backed products call <a href="https://github.com/panproto/panproto/tree/main/crates/panproto-c"><code>panproto-c</code></a>. <code>PanprotoStructural</code> has no FFI dependency.</p>
 <p>See <a href="../how-to/install/swift.html">Install the Swift SDK</a> for package and library setup.</p>
 <h2 id="products"><a class="header" href="#products">Products</a></h2>
 <div class="table-wrapper">
@@ -213,7 +213,7 @@
 <tbody>
 <tr><td><code>ProtocolHandle</code></td><td>A protocol specification loaded by the engine</td></tr>
 <tr><td><code>SchemaHandle</code></td><td>A schema stored in the engine</td></tr>
-<tr><td><code>MigrationHandle</code></td><td>An uncompiled migration</td></tr>
+<tr><td><code>MigrationHandle</code></td><td>A compiled migration payload without retained source and target schema handles. Operations reconstruct minimal schemas when needed.</td></tr>
 <tr><td><code>CompiledMigrationHandle</code></td><td>A migration compiled against source and target schemas</td></tr>
 <tr><td><code>ProtolensChainHandle</code>, <code>SymmetricLensHandle</code></td><td>Engine-backed lens resources</td></tr>
 <tr><td><code>IoRegistryHandle</code></td><td>Protocol-specific instance parsers and emitters</td></tr>
@@ -227,7 +227,7 @@
 </div>
 <p><code>SchemaBuilder</code> and <code>MigrationBuilder</code> are Swift structs. Their mutating methods update the builder value. <code>MigrationBuilder.build()</code> returns a <code>Migration</code>, which can then be compiled against two schema handles.</p>
 <h2 id="engine-isolation"><a class="header" href="#engine-isolation">Engine isolation</a></h2>
-<p>Every operation that consumes a handle is isolated to the <code>PanprotoEngine</code> global actor. The actor uses one pinned thread because the C ABI’s last-error slot is thread-local. Calls from outside the actor consequently use <code>await</code>:</p>
+<p>Every operation that consumes a handle is isolated to the <code>PanprotoEngine</code> global actor. The C ABI protects its resource slab and last-error slot with process-global mutexes, so a handle is valid from any thread. The error slot holds only one pending envelope, however, and an interleaved failure can overwrite it before Swift drains it. The actor’s pinned serial executor keeps each call and error drain together and makes the engine’s serial contention visible to Swift concurrency. Calls from outside the actor consequently use <code>await</code>:</p>
 <pre><code class="language-swift">let protocolHandle = try await ProtocolHandle.builtin("atproto")
 let schema = try await SchemaHandle.parseAtprotoLexicon(lexicon)
 </code></pre>
@@ -243,8 +243,9 @@ let schema = try await SchemaHandle.parseAtprotoLexicon(lexicon)
 func get(_ source: Instance) throws(PanprotoError) -&gt; LensProjection
 func put(view: Instance, complement: Complement) throws(PanprotoError) -&gt; Instance
 </code></pre>
-<p><code>LensProjection</code> carries the view and the complement captured during <code>get</code>. Pass that complement to <code>put</code>; complements are tied to the source schema and may conflict when composed.</p>
-<p>Law-checking methods return <code>LawCheckResult</code> rather than throwing when a law is false. They can still throw when the operation itself cannot be evaluated.</p>
+<p><code>LensProjection</code> carries the view and the complement captured during <code>get</code>. Pass that complement to <code>put</code>. Complements are tied to the source schema and may conflict when composed.</p>
+<p>For a compiled schema mapping (S\to T), <code>lift</code> accepts an (S)-instance and returns the surviving fragment as a (T)-instance. It wraps the restrict-based Rust <code>mig::lift_wtype</code>. It is neither the left Kan extension (\Sigma_F) nor precomposition (\Delta_F). <code>get</code> has the same source-to-target direction and captures the complement. <code>put</code> accepts the target view and complement and reconstructs a source instance.</p>
+<p>Law-checking methods return <code>LawCheckResult</code> rather than throwing when a law is false. They can still throw when the operation itself cannot be evaluated. <code>checkLaws</code> checks GetPut and a deterministic two-view PutGet smoke test at the supplied source instance. It is not a proof for all instances or edits.</p>
 <h2 id="morphism-and-span-search"><a class="header" href="#morphism-and-span-search">Morphism and span search</a></h2>
 <p>Search methods are defined on <code>SchemaHandle</code>:</p>
 <pre><code class="language-swift">func findMorphisms(
@@ -265,9 +266,9 @@ func findSpan(
 ) throws(PanprotoError) -&gt; SchemaSpan
 </code></pre>
 <p><code>findMorphisms</code> returns total morphisms that attain the optimum. An empty array means that no total morphism exists. The Swift array does not expose the Rust <code>MorphismList.truncated</code> field, so callers cannot distinguish complete enumeration of tied optima from an answer stopped by the engine cap.</p>
-<p><code>findSpan</code> admits a partial match and may return an empty apex. The protocol handle is required because the induced apex is validated as a schema. The span result is a Swift value; call <code>SchemaSpan.overlap()</code> when the identification pairs for a pushout are needed.</p>
+<p><code>findSpan</code> admits a partial match and may return an empty apex. The protocol handle is required because the induced apex is validated as a schema. The span result is a Swift value. Call <code>SchemaSpan.overlap()</code> when the identification pairs for a pushout are needed.</p>
 <h2 id="ownership"><a class="header" href="#ownership">Ownership</a></h2>
-<p>Each <code>PanprotoHandle</code> owns one engine slab entry. <code>release()</code> returns that entry early and is idempotent. If a live handle reaches deinitialization, its release is queued onto the engine thread. Do not call engine operations on a handle after releasing it; the engine reports the slab index as invalid or may have reused it for another resource.</p>
+<p>Each <code>PanprotoHandle</code> owns one engine slab entry. <code>release()</code> returns that entry early and is idempotent. If a live handle reaches deinitialization, its release is queued onto the engine thread. Do not call engine operations on a handle after releasing it. The engine reports the slab index as invalid or may have reused it for another resource.</p>
 <h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
 <p>Public engine operations use typed throws with <code>PanprotoError</code>. Its cases identify the operation domain, including <code>parse</code>, <code>migration</code>, <code>lens</code>, <code>schemaValidation</code>, <code>check</code>, <code>existenceCheck</code>, <code>expr</code>, <code>gat</code>, <code>io</code>, <code>vcs</code>, <code>gitBridge</code>, and <code>project</code>. Each case carries a <code>Detail</code> containing the raw status, operation name, optional error envelope, and any recognized structured fault.</p>
 <h2 id="package-traits"><a class="header" href="#package-traits">Package traits</a></h2>
@@ -285,7 +286,7 @@ func findSpan(
 </div>
 <p>The linked C library and selected package traits must agree. Enabling a trait while linking a library without the corresponding symbols fails at link time.</p>
 <h2 id="boundary-limits"><a class="header" href="#boundary-limits">Boundary limits</a></h2>
-<p><code>PanprotoStructural</code> can decode, encode, compare, and transform its value types without starting the engine. Validation, migration compilation, lens execution, search, law checks, and other semantic operations require an engine-backed product. The Swift API exposes only operations exported by <code>panproto-c</code>; Rust APIs with no C entry point are not available through this binding.</p>
+<p><code>PanprotoStructural</code> can decode, encode, compare, and transform its value types without starting the engine. Validation, migration compilation, lens execution, search, law checks, and other semantic operations require an engine-backed product. The Swift API exposes only operations exported by <code>panproto-c</code>. Rust APIs with no C entry point are not available through this binding.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="../how-to/install/swift.html">Install the Swift SDK</a></li>

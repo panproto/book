@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-adbb6774.js"></script>
@@ -196,7 +196,7 @@ schema commit -m "add handle"
 schema checkout main
 schema merge feature/add-handle
 </code></pre>
-<p><code>merge</code> uses the current commit, the named branch, and their common ancestor. A fast-forward moves the current branch. A divergent merge combines compatible structural changes and records a two-parent commit unless <code>--no-commit</code> or <code>--squash</code> changes that behavior.</p>
+<p><code>merge</code> uses the current commit, the named branch, and their common ancestor. A fast-forward moves the current branch. A divergent merge performs a three-way structural merge and records a two-parent commit unless <code>--no-commit</code> or <code>--squash</code> changes that behavior. Before it records a normal clean merge commit, the repository verifies that the total migrations from the base through both parents to the result form a commuting cocone. When both branches add the same name with the same definition, structural merge identifies the additions. In that case the result is not a free pushout. The <code>--no-commit</code> and <code>--squash</code> paths do not run this commit-time cocone check.</p>
 <p>If both branches make incompatible changes to the same structure, the command prints the detected conflicts and exits nonzero. The current CLI does not persist an editable conflict descriptor.</p>
 <p>Resolve the source schemas on one branch, commit that resolution, and rerun the merge:</p>
 <pre><code class="language-sh">schema checkout feature/add-handle
@@ -217,7 +217,7 @@ schema merge feature/add-handle
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="../../explanation/semantics/pushouts-and-merge.html">Pushouts and merge</a> for the merge construction.</li>
+<li><a href="../../explanation/semantics/pushouts-and-merge.html">Pushouts and merge</a> for the categorical comparison.</li>
 <li><a href="../../explanation/vcs-semantics.html">Schema version control semantics</a>.</li>
 <li><a href="./init-and-commit.html">Init and commit</a>.</li>
 </ul>

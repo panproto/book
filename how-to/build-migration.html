@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -185,7 +185,7 @@
 <h1 id="build-a-migration"><a class="header" href="#build-a-migration">Build a migration</a></h1>
 <p>A migration maps vertices and edges in a source schema to a target schema. Build or derive the mapping, check it, then apply it to representative data.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>Two schemas using the same registered protocol and the <code>schema</code> CLI. Cross-protocol mappings require a separately constructed shared theory; see <a href="./cross-protocol.html">Translate across protocols</a>.</p>
+<p>Two panproto schema JSON files and the <code>schema</code> CLI. The current CLI protocol resolver supports <code>atproto</code>. The TypeScript SDK can check a narrow explicit mapping between two protocol-tagged schema handles, with the qualifications in <a href="./cross-protocol.html">Translate across protocols</a>.</p>
 <h2 id="derive-a-mapping"><a class="header" href="#derive-a-mapping">Derive a mapping</a></h2>
 <p>Inspect the inferred span first:</p>
 <pre><code class="language-sh">schema auto-migrate schemas/v1.json schemas/v2.json
@@ -215,7 +215,7 @@
   --tgt-schema schemas/v2.json \
   data/user.json &gt; data/user-v2.json
 </code></pre>
-<p>The default direction is <code>restrict</code> and the default instance type is <code>wtype</code>. The command infers the record root from the migration’s mapped vertices. A mapping with no vertex entries cannot be lifted.</p>
+<p>The default direction is <code>restrict</code> and the default instance type is <code>wtype</code>. In this command, <code>restrict</code> reads a source-shaped record, follows the compiled source-to-target migration, retains the part represented by mapped vertices, and serializes that result with the target schema. It is not the categorical precomposition functor (\Delta_F), which has the opposite instance-level direction, from a target instance to a source instance. Both other modes also run source to target. <code>sigma</code> uses the total extension path. For functor instances, <code>pi</code> forms Cartesian products from the values associated with each target vertex (its fiber). For W-type instances, <code>pi</code> only accepts vertex-injective mappings and relabels the tree; it does not construct the general right Kan extension. <a href="../explanation/decoder-ring.html">The vocabulary in plain terms</a> gives the categorical directions. The command infers the record root from the migration’s mapped source vertices; a mapping with no vertex entries cannot be applied.</p>
 <h2 id="build-a-mapping-in-typescript"><a class="header" href="#build-a-mapping-in-typescript">Build a mapping in TypeScript</a></h2>
 <pre><code class="language-ts">const builder = p
   .migration(srcSchema, tgtSchema)
@@ -239,6 +239,7 @@ const migrated = migration.liftJson(oldRecord, 'user');
 <li><code>schema check</code> does not measure how much of the source schema is mapped.</li>
 <li>Automatic alignment ranks candidates; it does not certify that the selected correspondence matches domain intent. Review every generated map.</li>
 <li>A vertex map cannot split one value across several targets or compute a new value. Those operations require field transforms.</li>
+<li><code>schema lift --direction restrict</code> is named after <code>panproto-mig</code>’s surviving-fragment operation. Do not identify it with <code>panproto-inst::adjunction::w_delta</code> or <code>f_delta</code>, which implement target-to-source precomposition.</li>
 </ul>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>

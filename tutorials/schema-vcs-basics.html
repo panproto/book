@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -183,7 +183,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="schema-version-control-basics"><a class="header" href="#schema-version-control-basics">Schema version control basics</a></h1>
-<p>Two schema files record two states; a repository records how those states relate over time. In this tutorial, the <code>schema</code> CLI commits a TypeScript interface, creates a feature branch, and merges the branch back into <code>main</code>.</p>
+<p>This tutorial uses the <code>schema</code> CLI to commit a TypeScript interface, create a feature branch, and merge the branch into <code>main</code>.</p>
 <h2 id="prerequisite"><a class="header" href="#prerequisite">Prerequisite</a></h2>
 <p>Install the <code>schema</code> binary by following <a href="../how-to/install/cli.html">Install the CLI</a>. The commands below create a new <code>vcs-tutorial/</code> directory.</p>
 <h2 id="commit-the-first-version"><a class="header" href="#commit-the-first-version">Commit the first version</a></h2>
@@ -204,7 +204,7 @@ schema commit -m "v1 user schema"
 schema log --oneline
 </code></pre>
 <p><em>Listing 5.1: Initializing a repository and committing a parsed TypeScript schema.</em></p>
-<p><code>schema add</code> parses <code>src/user.ts</code> through the <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a> registry and stages the resulting schema graph. The commit stores that graph under <code>.panproto/</code>; the source file remains an ordinary TypeScript file. Run <code>schema add</code> from the repository root so the command can find <code>.panproto/</code>.</p>
+<p><code>schema add</code> parses <code>src/user.ts</code> through the <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a> registry and stages the resulting schema graph. The commit stores that graph under <code>.panproto/</code>. The source file remains an ordinary TypeScript file. Run <code>schema add</code> from the repository root so the command can find <code>.panproto/</code>.</p>
 <h2 id="commit-the-rename"><a class="header" href="#commit-the-rename">Commit the rename</a></h2>
 <p>Replace the file with v2, inspect the staged diff, and commit it:</p>
 <pre><code class="language-sh">cat &gt; src/user.ts &lt;&lt;'EOF'
@@ -243,9 +243,9 @@ schema log --oneline
 </code></pre>
 <p><em>Listing 5.3: Creating a feature branch and merging it into <code>main</code>.</em></p>
 <p><code>main</code> has not moved since the branch was created, so this merge is a fast-forward. The command reports <code>Merge successful.</code> and moves the <code>main</code> ref to the feature commit.</p>
-<p>There is one operational difference from <a href="https://git-scm.com/">git</a>: <code>schema checkout</code> moves the schema-history ref but does not rewrite <code>src/user.ts</code>. Panproto stores and merges parsed schemas; your editor, build system, or an explicit emit step remains responsible for working-source files. <code>schema log --graph</code> currently accepts <code>--graph</code> but renders the ordinary log, so the examples use <code>--oneline</code>.</p>
+<p>There is one operational difference from <a href="https://git-scm.com/">git</a>: <code>schema checkout</code> moves the schema-history ref but does not rewrite <code>src/user.ts</code>. Panproto stores and merges parsed schemas. An editor, build system, or explicit emit step remains responsible for working-source files. <code>schema log --graph</code> currently accepts <code>--graph</code> but renders the ordinary log, so the examples use <code>--oneline</code>.</p>
 <h2 id="next"><a class="header" href="#next">Next</a></h2>
-<p>The <a href="../how-to/schema-vcs/index.html">schema version control how-to</a> covers non-fast-forward merges, data versioning, and the git bridge. <a href="../explanation/vcs-semantics.html">Schema version control semantics</a> explains why the merge operation is structural, while <a href="../explanation/semantics/pushouts-and-merge.html">Pushouts and merge</a> develops the formal construction.</p>
+<p>The <a href="../how-to/schema-vcs/index.html">schema version control how-to</a> covers non-fast-forward merges, data versioning, and the git bridge. <a href="../explanation/vcs-semantics.html">Schema version control semantics</a> describes the three-way structural merge and its commuting-cocone check. <a href="../explanation/semantics/pushouts-and-merge.html">Pushouts and merge</a> gives the categorical comparison and its limits.</p>
 
                     </main>
 

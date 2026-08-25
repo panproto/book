@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-b2f12291.js";
+            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -256,7 +256,7 @@ converted: { name: 'Alice', years: 30 }
 round trip: { age: 30, name: 'Alice' }
 </code></pre>
 <h2 id="what-the-checks-establish"><a class="header" href="#what-the-checks-establish">What the checks establish</a></h2>
-<p>The structural classifier reports incompatibility because it sees a removed <code>age</code> field and an added <code>years</code> field; it does not consult the explicit migration. Every required target edge nevertheless has a source, so existence checking passes and <code>compile()</code> can produce the migration. Round-trip behavior is checked separately: <code>getJson()</code> produces the view and an opaque complement, and <code>putJson()</code> uses both to restore the source record. The <code>assert.deepEqual</code> call checks that result structurally, so JSON object key order does not affect it.</p>
+<p>The structural classifier reports incompatibility because it sees a removed <code>age</code> field and an added <code>years</code> field. It does not consult the explicit migration. Every required target edge nevertheless has a source, so existence checking passes and <code>compile()</code> can produce the migration. Round-trip behavior is checked separately: <code>getJson()</code> produces the view and an opaque complement, and <code>putJson()</code> uses both to restore the source record. The <code>assert.deepEqual</code> call checks that result structurally, so JSON object key order does not affect it.</p>
 <h2 id="next"><a class="header" href="#next">Next</a></h2>
 <p><a href="./schema-vcs-basics.html">Schema version control basics</a> stores the v1 and v2 schemas as history. <a href="./cross-protocol-translation.html">Cross-protocol translation</a> carries the explicit-mapping pattern across two registered protocols. For computed field values rather than a rename, continue with <a href="../how-to/field-transforms.html">Apply field transforms</a>.</p>
 
