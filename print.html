@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-5fa11ba6.js";
+            window.path_to_searchindex_js = "searchindex-0c0ea77d.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-adbb6774.js"></script>
+        <script src="toc-043c729d.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -655,6 +655,7 @@ converted: { displayName: 'Alice', years: 30 }
 </table>
 </div>
 <p>The CLI and SDK packages are independent; installing one does not install the others.</p>
+<p>Every release attaches checksums, a software bill of materials, and build attestations for its binary archives. <a href="#verify-a-release-artifact">Verify a release artifact</a> covers checking them.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
 <li><a href="#configuration-reference">Reference: configuration</a> for the <code>panproto.toml</code> manifest.</li>
@@ -914,6 +915,34 @@ print(messages.isEmpty ? "valid" : messages.joined(separator: "\n"))
 </code></pre>
 <p>Engine calls run on the <code>@PanprotoEngine</code> global actor, which is pinned to one thread. Release long-lived handles explicitly when their work is complete.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="verify-a-release-artifact"><a class="header" href="#verify-a-release-artifact">Verify a release artifact</a></h1>
+<p>Every binary archive attached to a panproto release carries two independent claims: a checksum, which says the bytes are the ones that were built, and an attestation, which says which workflow built them and from which source revision. The first catches a truncated or corrupted download. Only the second distinguishes an archive panproto built from one someone else assembled and named the same thing.</p>
+<h2 id="checksums"><a class="header" href="#checksums">Checksums</a></h2>
+<p>Each release attaches a <code>SHA256SUMS</code> file covering every <code>.tar.gz</code> and <code>.zip</code>, in the format <code>sha256sum -c</code> reads:</p>
+<pre><code class="language-sh">gh release download v0.72.1 --pattern 'panproto-c-*' --pattern 'SHA256SUMS'
+sha256sum -c SHA256SUMS
+</code></pre>
+<p>On macOS, <code>shasum -a 256 -c SHA256SUMS</code>.</p>
+<p>The Swift XCFramework is verified separately and automatically. <code>Package.swift</code> pins <code>releaseXCFrameworkChecksum</code>, and SwiftPM refuses to resolve if the downloaded artifact does not match, so a consumer adding the package as a dependency gets this check without asking for it.</p>
+<h2 id="attestations"><a class="header" href="#attestations">Attestations</a></h2>
+<p>A checksum only says the file matches a hash published beside it. Both come from the same release, so an attacker able to replace one can replace the other. An attestation is signed by the workflow’s own OIDC identity at build time and records the repository, the workflow file, and the commit:</p>
+<pre><code class="language-sh">gh attestation verify panproto-c-aarch64-apple-darwin.tar.gz --repo panproto/panproto
+</code></pre>
+<p>This succeeds only for an archive built by this repository’s workflow. It needs no key on your side and no key is stored on ours: signing is keyless, tied to the job’s identity rather than to a secret that could leak.</p>
+<h2 id="what-is-in-an-archive"><a class="header" href="#what-is-in-an-archive">What is in an archive</a></h2>
+<p>Each release also carries <code>panproto-c.cdx.json</code>, a <a href="https://cyclonedx.org/">CycloneDX</a> software bill of materials listing every crate the C library was built from, at the versions <code>Cargo.lock</code> pinned. It is itself attested, so the inventory is as verifiable as the binary it describes.</p>
+<p>To answer “does this release contain some vulnerable dependency”, read the SBOM rather than rebuilding:</p>
+<pre><code class="language-sh">gh release download v0.72.1 --pattern 'panproto-c.cdx.json'
+jq -r '.components[] | "\(.name) \(.version)"' panproto-c.cdx.json | sort
+</code></pre>
+<h2 id="crates-wheels-and-npm-packages"><a class="header" href="#crates-wheels-and-npm-packages">Crates, wheels and npm packages</a></h2>
+<p>These do not need the steps above. <code>crates.io</code>, PyPI and npm are all published through OIDC Trusted Publishing, so the registry itself records which workflow published each version, and npm additionally carries provenance that <code>npm audit signatures</code> checks. No long-lived publication token exists for any of them.</p>
+<h2 id="see-also-6"><a class="header" href="#see-also-6">See also</a></h2>
+<ul>
+<li><a href="#install-the-cli">Install the CLI</a> for the installer scripts, which verify checksums themselves.</li>
+<li><a href="#install-the-swift-sdk">Install the Swift SDK</a> for the XCFramework pin.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="define-a-schema"><a class="header" href="#define-a-schema">Define a schema</a></h1>
 <p>Choose a surface according to where the schema enters the project. The CLI loads and inspects schema files; the five SDKs construct schemas inside an application.</p>
 <div class="table-wrapper">
@@ -932,7 +961,7 @@ print(messages.isEmpty ? "valid" : messages.joined(separator: "\n"))
 </table>
 </div>
 <p>The CLI’s schema-checking commands currently accept panproto’s internal schema JSON and resolve only the <code>atproto</code> protocol. Its shared loaders can parse an ATProto Lexicon when a manifest selects <code>atproto</code>, and its full-AST commands parse supported source files as syntax trees. Use a language SDK’s <code>parseSchemaDocument</code> or <code>parseSchemaSource</code> dispatch for the other external schema languages in the protocol catalog. Start with a language SDK when the application constructs the schema programmatically.</p>
-<h2 id="see-also-6"><a class="header" href="#see-also-6">See also</a></h2>
+<h2 id="see-also-7"><a class="header" href="#see-also-7">See also</a></h2>
 <ul>
 <li><a href="#protocol-catalog">Reference: protocol catalog</a> for the list of supported protocols.</li>
 <li><a href="#schemas-as-theories">Schemas as theories</a> for the model.</li>
@@ -964,7 +993,7 @@ print(messages.isEmpty ? "valid" : messages.joined(separator: "\n"))
 <li>Passing an external schema-language document to <code>validate</code>, <code>verify</code>, or <code>scaffold</code>. These commands deserialize panproto’s internal schema JSON. Parse or convert an external document first.</li>
 <li>Running <code>schema validate</code> when you mean <code>schema check</code> (the latter checks a <em>migration</em>, not a schema).</li>
 </ul>
-<h2 id="see-also-7"><a class="header" href="#see-also-7">See also</a></h2>
+<h2 id="see-also-8"><a class="header" href="#see-also-8">See also</a></h2>
 <ul>
 <li><a href="#cli-reference">Reference: CLI</a> for the full subcommand list.</li>
 <li><a href="#your-first-schema">Tutorial: your first schema</a>.</li>
@@ -999,7 +1028,7 @@ if (!result.isValid) throw new Error(JSON.stringify(result.issues));
 <li>Treating <code>.build()</code> as equation verification. It constructs a schema and enforces builder-level checks; <code>schema.validate(proto)</code> is the finished-schema structural validation pass.</li>
 <li>Treating the returned <code>Schema</code> handle as a plain object. It is an opaque handle into the WASM heap; pass it to subsequent SDK calls, do not introspect it directly.</li>
 </ul>
-<h2 id="see-also-8"><a class="header" href="#see-also-8">See also</a></h2>
+<h2 id="see-also-9"><a class="header" href="#see-also-9">See also</a></h2>
 <ul>
 <li><a href="#typescript-sdk-reference">Reference: TypeScript SDK</a>.</li>
 <li><a href="#build-a-migration">Build a migration</a> for what to do with the schema next.</li>
@@ -1034,7 +1063,7 @@ assert not issues, issues
 <li>Chaining the builder calls. The Python <code>SchemaBuilder.vertex(...)</code> / <code>edge(...)</code> / <code>constraint(...)</code> methods mutate in place and return <code>None</code>; hold the builder in a variable and mutate it statement-by-statement, then call <code>.build()</code>.</li>
 <li>Using a Python dict where the SDK expects a <code>Schema</code> handle. Conversion is deliberate; to materialize an <code>Instance</code> from bytes against a built <code>Schema</code>, use <code>panproto.IoRegistry().parse(protocol, schema, data)</code>.</li>
 </ul>
-<h2 id="see-also-9"><a class="header" href="#see-also-9">See also</a></h2>
+<h2 id="see-also-10"><a class="header" href="#see-also-10">See also</a></h2>
 <ul>
 <li><a href="#python-sdk-reference">Reference: Python SDK</a>.</li>
 <li><a href="#build-a-migration">Build a migration</a>.</li>
@@ -1081,7 +1110,7 @@ assert!(errors.is_empty(), "validation errors: {errors:?}");
 <li>Reaching past <code>panproto-core</code> to lower-level crates without a reason. The facade re-exports the canonical surface; do not depend on <code>panproto-schema</code> directly unless you need an internal API.</li>
 <li>Assuming <code>build()</code> validates constraints. The builder records constraints without checking their sorts; call <code>validate(&amp;schema, &amp;proto)</code> before using an externally supplied constraint.</li>
 </ul>
-<h2 id="see-also-10"><a class="header" href="#see-also-10">See also</a></h2>
+<h2 id="see-also-11"><a class="header" href="#see-also-11">See also</a></h2>
 <ul>
 <li><a href="#rust-sdk-reference">Reference: Rust SDK</a>.</li>
 <li><a href="https://docs.rs/panproto-core">docs.rs for <code>panproto-core</code></a>.</li>
@@ -1143,7 +1172,7 @@ validate =
 <li>Holding a <code>SchemaRep Rust</code> past its <code>bracket</code>. The <code>Rust</code> representations are <code>u32</code> slab handles into a thread-local arena; use them inside the <code>bracket</code> and let <code>releaseSchema</code> reclaim them, and do not share a handle across threads.</li>
 <li>Using optional lens-adaptor packages to build structure. Schema construction goes through <code>SchemaBuilderM</code>.</li>
 </ul>
-<h2 id="see-also-11"><a class="header" href="#see-also-11">See also</a></h2>
+<h2 id="see-also-12"><a class="header" href="#see-also-12">See also</a></h2>
 <ul>
 <li><a href="#haskell-sdk-reference">Reference: Haskell SDK</a>.</li>
 <li><a href="#install-the-haskell-sdk">Install the Haskell SDK</a> for the bootstrap scripts and toolchain prerequisites.</li>
@@ -1279,7 +1308,7 @@ const migrated = migration.liftJson(oldRecord, 'user');
 <li>A vertex map cannot split one value across several targets or compute a new value. Those operations require field transforms.</li>
 <li><code>schema lift --direction restrict</code> is named after <code>panproto-mig</code>’s surviving-fragment operation. Do not identify it with <code>panproto-inst::adjunction::w_delta</code> or <code>f_delta</code>, which implement target-to-source precomposition.</li>
 </ul>
-<h2 id="see-also-12"><a class="header" href="#see-also-12">See also</a></h2>
+<h2 id="see-also-13"><a class="header" href="#see-also-13">See also</a></h2>
 <ul>
 <li><a href="#find-a-span-between-two-schemas">Find a span between two schemas</a> for coverage and search constraints.</li>
 <li><a href="#apply-field-transforms">Apply field transforms</a> for value-level rewrites.</li>
@@ -1347,7 +1376,7 @@ fn search(
 <li><code>--monic</code> prevents vertex collisions but does not establish edge injectivity. The overlap discovery used by <code>schema integrate --auto-overlap</code> performs the stronger search required for a pushout.</li>
 <li><code>--json</code> omits the apex and certificate. Keep the human report if later review needs the coverage or proof status.</li>
 </ul>
-<h2 id="see-also-13"><a class="header" href="#see-also-13">See also</a></h2>
+<h2 id="see-also-14"><a class="header" href="#see-also-14">See also</a></h2>
 <ul>
 <li><a href="#build-a-migration">Build a migration</a> for checking and applying the saved mapping.</li>
 <li><a href="#apply-field-transforms">Apply field transforms</a> for value-level computations.</li>
@@ -1433,7 +1462,7 @@ if (!laws.holds) throw new Error(laws.violation ?? 'lens law failed');
 <li>Classify lossy computations as <code>projection</code> or <code>opaque</code>, not <code>iso</code>.</li>
 <li>Test boundary values for partial operations such as division, parsing, <code>head</code>, and indexing.</li>
 </ul>
-<h2 id="see-also-14"><a class="header" href="#see-also-14">See also</a></h2>
+<h2 id="see-also-15"><a class="header" href="#see-also-15">See also</a></h2>
 <ul>
 <li><a href="#expression-language-reference">Expression-language reference</a> for syntax, builtins, and evaluator limits.</li>
 <li><a href="#write-lenses-in-the-lens-dsl">Write lenses in the lens DSL</a> for the document structure.</li>
@@ -1480,7 +1509,7 @@ const putget = lens.checkPutGet(instanceBytes);
 <li>Reading <code>get</code> and then mutating the source before calling <code>put</code>. The complement is computed against the source as it was at <code>get</code> time; if you mutate the source, the complement is stale.</li>
 <li>Composing lenses whose intermediate schemas are isomorphic but not equal. The structural-equality check on <code>protolens_composable</code> will reject; rebuild one of the lenses against the other’s schema.</li>
 </ul>
-<h2 id="see-also-15"><a class="header" href="#see-also-15">See also</a></h2>
+<h2 id="see-also-16"><a class="header" href="#see-also-16">See also</a></h2>
 <ul>
 <li><a href="#lens-combinator-reference">Reference: lens combinators</a>.</li>
 <li><a href="#lenses-and-round-trip-laws">Lenses and round-trip laws</a>.</li>
@@ -1555,7 +1584,7 @@ let composed = vertical_compose(&amp;first, &amp;second)?;
 <li>Reaching for sequential instantiation in production. Use fused (<code>instantiate</code>) by default; sequential exists for inspection and tests.</li>
 <li>Treating preconditions as pure documentation. The precondition is checked at instantiation time; a schema that does not satisfy it raises <code>LensError::ProtolensError</code> with a message listing the unmet constraints (use <code>Protolens::check_applicability</code> first if you want to surface the reasons separately).</li>
 </ul>
-<h2 id="see-also-16"><a class="header" href="#see-also-16">See also</a></h2>
+<h2 id="see-also-17"><a class="header" href="#see-also-17">See also</a></h2>
 <ul>
 <li><a href="#lens-combinator-reference">Reference: lens combinators</a>.</li>
 <li><a href="#protolens-composition">Protolens composition</a> for the formal model.</li>
@@ -1606,7 +1635,7 @@ fn classify_scoped(schema: &amp;Schema, scoped: &amp;Protolens) -&gt; OpticKind 
 <li>Assuming every non-<code>prop</code> spelling is rejected. The refinement function treats unknown kinds as <code>Lens</code>; validate the schema against its protocol before relying on the classification.</li>
 <li>Treating the classified kind as proof of the laws. Run <code>check_optic_laws</code> on representative instances and handle <code>OpticLawViolation</code>.</li>
 </ul>
-<h2 id="see-also-17"><a class="header" href="#see-also-17">See also</a></h2>
+<h2 id="see-also-18"><a class="header" href="#see-also-18">See also</a></h2>
 <ul>
 <li><a href="#lens-combinator-reference">Reference: lens combinators</a>.</li>
 <li><a href="#lens-dsl-denotational-semantics">Lens DSL: denotational semantics</a>.</li>
@@ -1679,7 +1708,7 @@ schema lens apply compiled.json user-v1.json \
 <p>Raw <code>ProtolensChain</code> JSON remains accepted by <code>schema lens apply</code>, as does a target schema used for automatic lens generation. A file written by <code>schema lens generate --save</code> is a raw structural chain rather than a compiled-lens artifact. It can be applied, but it does not store value transforms derived during automatic generation.</p>
 <h2 id="verification-14"><a class="header" href="#verification-14">Verification</a></h2>
 <p>Instantiate the document against the intended source schema, run <code>get</code> and <code>put</code> on representative instances, and use <code>LensHandle.checkLaws</code> or <code>panproto_lens::laws::check_laws</code>. Compilation validates document shape and expression syntax; it does not show that a value transform is total on production data.</p>
-<h2 id="see-also-18"><a class="header" href="#see-also-18">See also</a></h2>
+<h2 id="see-also-19"><a class="header" href="#see-also-19">See also</a></h2>
 <ul>
 <li><a href="#apply-field-transforms">Apply field transforms</a> for <code>apply_expr</code> and <code>compute_field</code>.</li>
 <li><a href="#use-lenses">Use lenses</a> for runtime operations.</li>
@@ -1735,7 +1764,7 @@ let posts = execute_query(&amp;query, instance, schema);
 <h2 id="verification-and-limits"><a class="header" href="#verification-and-limits">Verification and limits</a></h2>
 <p><code>execute_query</code> returns a vector and does not return predicate errors. A predicate evaluation that fails or does not produce <code>true</code> excludes that node. The executor accepts a schema argument but does not use it to reject an anchor absent from the schema. The byte-oriented WASM entry point rejects missing or malformed schema bytes, while the handle entry point rejects an invalid or non-schema handle. Neither entry point type-checks the query against the schema after resolving it.</p>
 <p>Expression evaluation uses <code>EvalConfig::default()</code>. <code>InstanceQuery</code> exposes no budget field, and the query functions expose no configuration argument, so a caller cannot raise that budget at the query call site.</p>
-<h2 id="see-also-19"><a class="header" href="#see-also-19">See also</a></h2>
+<h2 id="see-also-20"><a class="header" href="#see-also-20">See also</a></h2>
 <ul>
 <li><a href="#expression-language-reference">Reference: expression language</a>.</li>
 <li><a href="#convert-data-between-schemas">Convert data between formats</a>.</li>
@@ -1793,7 +1822,7 @@ if (!result.holds) {
 <p><code>schema lens verify &lt;DATA&gt; &lt;SCHEMA&gt; --protocol &lt;PROTOCOL&gt;</code> parses the data with the supplied schema and runs the concrete GetPut and PutGet checks. A passing result applies to that record. It is not a proof over every instance of the schema.</p>
 <p>Backward CLI conversion uses an empty complement. It can reconstruct only lenses that need no captured source data or for which defaults suffice. Use an SDK <code>get</code>/<code>put</code> pair when backward conversion depends on the complement produced from a specific source record.</p>
 <p><code>--chain</code> selects a saved chain instead of automatic lens generation. It still requires <code>--from</code> and <code>--to</code>, since a serialized <code>ProtolensChain</code> does not contain the concrete schemas needed for instantiation. <code>schema lens generate --save</code> writes this round-trippable chain format. The compiled artifact produced by <code>schema lens compile --out</code> also carries ordered value-transform stages and is intended for <code>schema lens apply</code>, not <code>schema convert --chain</code>.</p>
-<h2 id="see-also-20"><a class="header" href="#see-also-20">See also</a></h2>
+<h2 id="see-also-21"><a class="header" href="#see-also-21">See also</a></h2>
 <ul>
 <li><a href="#use-lenses">Use lenses</a> for bidirectional updates.</li>
 <li><a href="#apply-field-transforms">Apply field transforms</a> for computed values.</li>
@@ -1828,7 +1857,7 @@ assert_eq!(out, bytes);
 <li>Discarding the complement after modifying the instance. The complement contains layout rather than the authoritative field value. Reusing it preserves the original whitespace and ordering around values supplied by the modified instance.</li>
 <li>Mixing <code>format-preserving</code> codec output with non-preserving codec input. The two pipelines are separate; choose one consistently.</li>
 </ul>
-<h2 id="see-also-21"><a class="header" href="#see-also-21">See also</a></h2>
+<h2 id="see-also-22"><a class="header" href="#see-also-22">See also</a></h2>
 <ul>
 <li><a href="#protocol-catalog">Reference: protocol catalog</a>.</li>
 <li><a href="#convert-data-between-schemas">Convert data between formats</a>.</li>
@@ -1920,7 +1949,7 @@ match registry.emit_verification_status("rust") {
 <li>Tree-sitter may include error nodes for malformed source, and panproto’s schema construction can still fail. Do not treat parsing as an unconditional total operation.</li>
 <li>Language availability depends on build features and installed grammar packs. Query <code>protocol_names()</code> rather than relying on the maximum catalog size.</li>
 </ul>
-<h2 id="see-also-22"><a class="header" href="#see-also-22">See also</a></h2>
+<h2 id="see-also-23"><a class="header" href="#see-also-23">See also</a></h2>
 <ul>
 <li><a href="#decorate-an-abstract-schema">Decorate an abstract schema</a> for rendering a layout-free schema.</li>
 <li><a href="#source-code-emission">Source-code emission</a> for replay and pretty-emission paths.</li>
@@ -2009,7 +2038,7 @@ assert_eq!(
 <li><code>build_decorated()</code> and <code>DecoratedSchema::wrap_unchecked()</code> do not validate that a complete layout fiber is present. Reserve them for data produced by parsing or a trusted decoration path.</li>
 <li>The section law concerns abstract structure, not byte equality with an earlier source file. A new <code>LayoutPolicy</code> may produce different canonical bytes.</li>
 </ul>
-<h2 id="see-also-23"><a class="header" href="#see-also-23">See also</a></h2>
+<h2 id="see-also-24"><a class="header" href="#see-also-24">See also</a></h2>
 <ul>
 <li><a href="#parse-full-asts">Parse full ASTs</a> for parsing source into a decorated schema.</li>
 <li><a href="#source-code-emission">Source-code emission</a> for the emitter.</li>
@@ -2096,7 +2125,7 @@ pub fn register_theories&lt;S: ::std::hash::BuildHasher&gt;(
 <li>Assuming the CLI uses the same catalog as the language SDKs. Its resolver and theory registry are separate and currently recognize only <code>atproto</code>.</li>
 <li>Requiring an emitter for internal operations. <code>schema validate</code> reads panproto schema JSON directly; it does not call a protocol document parser or emitter.</li>
 </ul>
-<h2 id="see-also-24"><a class="header" href="#see-also-24">See also</a></h2>
+<h2 id="see-also-25"><a class="header" href="#see-also-25">See also</a></h2>
 <ul>
 <li><a href="#protocol-catalog">Reference: protocol catalog</a>.</li>
 <li><a href="#theory-dsl-compilation-semantics">Theory DSL: denotational semantics</a>.</li>
@@ -2118,7 +2147,7 @@ pub fn register_theories&lt;S: ::std::hash::BuildHasher&gt;(
 </tbody>
 </table>
 </div>
-<h2 id="see-also-25"><a class="header" href="#see-also-25">See also</a></h2>
+<h2 id="see-also-26"><a class="header" href="#see-also-26">See also</a></h2>
 <ul>
 <li><a href="#schema-version-control-semantics">Schema version control semantics</a> for the model.</li>
 <li><a href="#pushouts-and-merge">Pushouts and merge</a> for the merge construction.</li>
@@ -2152,7 +2181,7 @@ schema show &lt;commit-hash&gt;
 <li>Forgetting to <code>schema add</code> before <code>schema commit</code>. Like git, the staging area is explicit; commits only include staged changes.</li>
 <li>Editing inside <code>.panproto/objects/</code> directly. The store is content-addressed; manual edits break the hash invariants.</li>
 </ul>
-<h2 id="see-also-26"><a class="header" href="#see-also-26">See also</a></h2>
+<h2 id="see-also-27"><a class="header" href="#see-also-27">See also</a></h2>
 <ul>
 <li><a href="#branch-and-merge-1">Branch and merge</a>.</li>
 <li><a href="#cli-reference">Reference: CLI</a>.</li>
@@ -2192,7 +2221,7 @@ schema merge feature/add-handle
 <li>Expecting checkout to rewrite source files. It moves the repository ref only. Edit or regenerate working files explicitly.</li>
 <li>Looking for a saved conflict object after a failed merge. Capture the printed conflict details; the CLI does not yet provide an interactive continuation flow.</li>
 </ul>
-<h2 id="see-also-27"><a class="header" href="#see-also-27">See also</a></h2>
+<h2 id="see-also-28"><a class="header" href="#see-also-28">See also</a></h2>
 <ul>
 <li><a href="#pushouts-and-merge">Pushouts and merge</a> for the categorical comparison.</li>
 <li><a href="#schema-version-control-semantics">Schema version control semantics</a>.</li>
@@ -2237,7 +2266,7 @@ schema data status records/
 <li>Skipping data when committing schema changes. If the v1 commit has no staged data, the later commit-range operation has no stored v1 records to migrate. The v2 commit may thus have no data even when records exist in the working directory.</li>
 <li>Assuming rebase or amend migrates working data. Those commands take no data-directory option. Run an explicit data migration after rewriting history.</li>
 </ul>
-<h2 id="see-also-28"><a class="header" href="#see-also-28">See also</a></h2>
+<h2 id="see-also-29"><a class="header" href="#see-also-29">See also</a></h2>
 <ul>
 <li><a href="#schema-version-control-semantics">Schema version control semantics</a>.</li>
 <li><a href="#build-a-migration">Build a migration</a>.</li>
@@ -2274,7 +2303,7 @@ git status
 <li>Three-way text-merging <code>.panproto/objects/</code> files. Re-run the schema operation in panproto, then export the result.</li>
 <li>Mixing the two modes. Choose sidecar or remote-bridge per project; mixing creates ambiguity about which DAG is the source of truth.</li>
 </ul>
-<h2 id="see-also-29"><a class="header" href="#see-also-29">See also</a></h2>
+<h2 id="see-also-30"><a class="header" href="#see-also-30">See also</a></h2>
 <ul>
 <li><a href="#schema-version-control-semantics">Schema version control semantics</a>.</li>
 <li><a href="#init-and-commit">Init and commit</a>.</li>
@@ -2306,7 +2335,7 @@ git status
 <li><code>schema lens generate --protocol &lt;name&gt;</code> likewise resolves one protocol for the entire lens, again only <code>atproto</code> in the current CLI.</li>
 <li><code>schema theory compile</code> validates and compiles a theory document but does not add it to the running CLI’s built-in protocol lookup.</li>
 </ul>
-<h2 id="see-also-30"><a class="header" href="#see-also-30">See also</a></h2>
+<h2 id="see-also-31"><a class="header" href="#see-also-31">See also</a></h2>
 <ul>
 <li><a href="#build-a-custom-protocol">Build a custom protocol</a> for the repository changes needed to register a protocol.</li>
 <li><a href="#composing-protocols-by-colimit">Composing protocols by colimit</a> for the theory construction.</li>
@@ -2327,7 +2356,7 @@ git status
 </tbody>
 </table>
 </div>
-<h2 id="see-also-31"><a class="header" href="#see-also-31">See also</a></h2>
+<h2 id="see-also-32"><a class="header" href="#see-also-32">See also</a></h2>
 <ul>
 <li><a href="#schema-version-control-semantics">Schema version control semantics</a>.</li>
 <li><a href="#what-panproto-verifies">What panproto verifies</a>.</li>
@@ -2379,7 +2408,7 @@ fi
 <li>Running <code>schema check</code> without a maintained mapping file. Compatibility classification needs only the two schemas; mapping checks are an additional gate for repositories that version migrations.</li>
 <li>Comparing against the wrong base. The gate must compare against the merge base of the PR and <code>main</code>, not against <code>main</code>’s tip; otherwise force-pushes to <code>main</code> make every PR look breaking.</li>
 </ul>
-<h2 id="see-also-32"><a class="header" href="#see-also-32">See also</a></h2>
+<h2 id="see-also-33"><a class="header" href="#see-also-33">See also</a></h2>
 <ul>
 <li><a href="#github-actions">GitHub Actions</a> for a hosted workflow.</li>
 <li><a href="#pre-commit-hooks">Pre-commit hooks</a> for catching breakage before push.</li>
@@ -2435,7 +2464,7 @@ jobs:
 <li>Omitting <code>fetch-depth: 0</code>. Shallow clones make the merge-base lookup fail; the gate then runs against the wrong base.</li>
 <li>Leaving the CLI version unpinned. Update the pinned version deliberately and review any compatibility-classifier changes with the update.</li>
 </ul>
-<h2 id="see-also-33"><a class="header" href="#see-also-33">See also</a></h2>
+<h2 id="see-also-34"><a class="header" href="#see-also-34">See also</a></h2>
 <ul>
 <li><a href="#breaking-change-gate">Breaking-change gate</a> for the underlying mechanic.</li>
 <li><a href="#pre-commit-hooks">Pre-commit hooks</a> for the local-side equivalent.</li>
@@ -2489,7 +2518,7 @@ repos:
 <li>Silently skipping a missing <code>schema</code> binary. Prefer a failing hook with an installation message; CI remains the authoritative gate when contributors may bypass hooks.</li>
 <li>Validating every file on every commit. The script above scopes to staged <code>schemas/*.json</code> only; broader scopes are noisy.</li>
 </ul>
-<h2 id="see-also-34"><a class="header" href="#see-also-34">See also</a></h2>
+<h2 id="see-also-35"><a class="header" href="#see-also-35">See also</a></h2>
 <ul>
 <li><a href="#breaking-change-gate">Breaking-change gate</a> for the CI-side equivalent.</li>
 <li><a href="#cli-reference">Reference: CLI</a>.</li>
@@ -4036,7 +4065,7 @@ find_best_morphism(
 <p><code>SearchOptions::default()</code> leaves <code>monic</code>, <code>epic</code>, and <code>iso</code> false, uses no hard pins, and sets <code>max_results</code> to zero. Here zero requests all optima the implementation will enumerate, subject to its safety cap. Use <code>find_morphisms_budgeted</code> or <a href="https://docs.rs/panproto-mig/latest/panproto_mig/span/struct.SpanSearch.html"><code>SpanSearch</code></a> when the caller must supply a <code>SearchBudget</code>.</p>
 <h2 id="ownership-and-errors"><a class="header" href="#ownership-and-errors">Ownership and errors</a></h2>
 <p>Rust values follow ordinary ownership and drop semantics. The Rust API does not expose the opaque-handle lifecycle used by foreign-language bindings. Fallible operations return the error type declared by their component crate. <code>panproto-core</code> does not replace those errors with a facade-wide error enum.</p>
-<h2 id="see-also-35"><a class="header" href="#see-also-35">See also</a></h2>
+<h2 id="see-also-36"><a class="header" href="#see-also-36">See also</a></h2>
 <ul>
 <li><a href="#install-the-rust-sdk">Install the Rust SDK</a></li>
 <li><a href="#define-a-schema-from-rust">Define a schema from Rust</a></li>
@@ -4123,7 +4152,7 @@ class CompiledMigration {
 <h2 id="boundary-limits"><a class="header" href="#boundary-limits">Boundary limits</a></h2>
 <p>The SDK passes structured payloads through the WASM layer and stores live engine resources behind integer handles. The package does not expose the Rust <code>panproto-parse</code> full-AST registry, multi-file <code>panproto-project</code> builder, or <code>panproto-git</code> bridge. Schema-document and schema-source parsers available through <code>Panproto.parseSchemaDocument</code> and <code>Panproto.parseSchemaSource</code> are separate from that full-AST surface.</p>
 <p>The current <code>executeQuery</code> wrapper does not match the current WASM entry point. TypeScript sends only a query and instance, while Rust requires query, instance, and schema payloads. The TypeScript wire fields also use <code>projection</code>, <code>groupBy</code>, and <code>nodeId</code>, while the Rust query types use <code>project</code>, <code>group_by</code>, and <code>node_id</code>. Treat <code>executeQuery</code> as unavailable until the binding and WASM signatures are aligned.</p>
-<h2 id="see-also-36"><a class="header" href="#see-also-36">See also</a></h2>
+<h2 id="see-also-37"><a class="header" href="#see-also-37">See also</a></h2>
 <ul>
 <li><a href="#install-the-typescript-sdk">Install the TypeScript SDK</a></li>
 <li><a href="#define-a-schema-from-typescript">Define a schema from TypeScript</a></li>
@@ -4224,7 +4253,7 @@ find_morphisms(
 <p>PyO3 objects follow Python reference ownership. The public stub exposes no <code>dispose</code>, <code>release</code>, or <code>close</code> method for schema, migration, lens, theory, repository, parser, or project objects.</p>
 <p><code>PanprotoError</code> is the common exception base. Domain subclasses include <code>SchemaValidationError</code>, <code>MigrationError</code>, <code>LensError</code>, <code>CheckError</code>, <code>ExistenceCheckError</code>, <code>ExprError</code>, <code>GatError</code>, <code>IoError</code>, <code>VcsError</code>, <code>ParseError</code>, <code>ProjectError</code>, and <code>GitBridgeError</code>.</p>
 <p>The wheel includes <code>py.typed</code> and <code>_native.pyi</code>. Repository tests compare the stub’s public declarations with the loaded extension and check callable signatures, so generated documentation should follow the stub rather than infer signatures from Rust names.</p>
-<h2 id="see-also-37"><a class="header" href="#see-also-37">See also</a></h2>
+<h2 id="see-also-38"><a class="header" href="#see-also-38">See also</a></h2>
 <ul>
 <li><a href="#install-the-python-sdk">Install the Python SDK</a></li>
 <li><a href="#define-a-schema-from-python">Define a schema from Python</a></li>
@@ -4322,7 +4351,7 @@ findSpan
 </table>
 </div>
 <p>The parse, project, and git flags must match the features compiled into the linked C library. Enabling a Haskell module does not add missing symbols to <code>libpanproto_c</code>.</p>
-<h2 id="see-also-38"><a class="header" href="#see-also-38">See also</a></h2>
+<h2 id="see-also-39"><a class="header" href="#see-also-39">See also</a></h2>
 <ul>
 <li><a href="#install-the-haskell-sdk">Install the Haskell SDK</a></li>
 <li><a href="#define-a-schema-from-haskell">Define a schema from Haskell</a></li>
@@ -4435,7 +4464,7 @@ func findSpan(
 <p>The linked C library and selected package traits must agree. Enabling a trait while linking a library without the corresponding symbols fails at link time.</p>
 <h2 id="boundary-limits-1"><a class="header" href="#boundary-limits-1">Boundary limits</a></h2>
 <p><code>PanprotoStructural</code> can decode, encode, compare, and transform its value types without starting the engine. Validation, migration compilation, lens execution, search, law checks, and other semantic operations require an engine-backed product. The Swift API exposes only operations exported by <code>panproto-c</code>. Rust APIs with no C entry point are not available through this binding.</p>
-<h2 id="see-also-39"><a class="header" href="#see-also-39">See also</a></h2>
+<h2 id="see-also-40"><a class="header" href="#see-also-40">See also</a></h2>
 <ul>
 <li><a href="#install-the-swift-sdk">Install the Swift SDK</a></li>
 <li><a href="#define-a-schema-from-swift">Define a schema from Swift</a></li>
@@ -4516,7 +4545,7 @@ func findSpan(
 <p>The verified set currently contains 255 names. <a href="#the-verification-tier-api">Source-code emission</a> identifies the seven backend cases and the six grammars outside the set.</p>
 <h2 id="defining-a-protocol"><a class="header" href="#defining-a-protocol">Defining a protocol</a></h2>
 <p><a href="#build-a-custom-protocol">Build a custom protocol</a> covers theory declaration, registration, parsing, and emission. Adding a Rust module to <code>panproto-protocols</code> does not automatically extend the CLI, C, or WebAssembly lookup matches. Each exposed surface needs its own dispatch arm.</p>
-<h2 id="see-also-40"><a class="header" href="#see-also-40">See also</a></h2>
+<h2 id="see-also-41"><a class="header" href="#see-also-41">See also</a></h2>
 <ul>
 <li><a href="#schemas-as-theories">Schemas as theories</a></li>
 <li><a href="#composing-protocols-by-colimit">Composing protocols by colimit</a></li>
@@ -4608,7 +4637,7 @@ func findSpan(
 </div>
 <h2 id="source"><a class="header" href="#source">Source</a></h2>
 <p>The AST and builtin enum live in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/expr.rs"><code>expr.rs</code></a>, builtin implementations in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/builtin.rs"><code>builtin.rs</code></a>, evaluation and defaults in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/eval.rs"><code>eval.rs</code></a>, and the surface grammar in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr-parser/src/parser.rs"><code>parser.rs</code></a>.</p>
-<h2 id="see-also-41"><a class="header" href="#see-also-41">See also</a></h2>
+<h2 id="see-also-42"><a class="header" href="#see-also-42">See also</a></h2>
 <ul>
 <li><a href="#apply-field-transforms">Apply field transforms</a></li>
 <li><a href="#query-instances">Query instances</a></li>
@@ -4686,7 +4715,7 @@ func findSpan(
 </table>
 </div>
 <p>Call <code>check_applicability_with</code> before fused instantiation when preconditions must be enforced. Fused and sequential instantiation are compared in property tests. Neither return value is a proof of the lens laws for all instances.</p>
-<h2 id="see-also-42"><a class="header" href="#see-also-42">See also</a></h2>
+<h2 id="see-also-43"><a class="header" href="#see-also-43">See also</a></h2>
 <ul>
 <li><a href="#use-lenses">Use lenses</a></li>
 <li><a href="#use-protolenses">Use protolenses</a></li>
@@ -4744,7 +4773,7 @@ path = "schemas/events"
 <p>When scanning finds no package markers, <code>schema init</code> does not create a manifest. The package scanner recognizes Cargo, npm, Go, Python, Gradle, Elixir, and CMake project markers. Programmatic callers can use <a href="https://docs.rs/panproto-project/latest/panproto_project/config/fn.generate_config.html"><code>generate_config</code></a> and <a href="https://docs.rs/panproto-project/latest/panproto_project/config/fn.serialize_config.html"><code>serialize_config</code></a>.</p>
 <h2 id="source-1"><a class="header" href="#source-1">Source</a></h2>
 <p>The manifest structs and defaults live in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-project/src/config.rs"><code>crates/panproto-project/src/config.rs</code></a>. Project assembly applies them in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-project/src/lib.rs"><code>crates/panproto-project/src/lib.rs</code></a>.</p>
-<h2 id="see-also-43"><a class="header" href="#see-also-43">See also</a></h2>
+<h2 id="see-also-44"><a class="header" href="#see-also-44">See also</a></h2>
 <ul>
 <li><a href="#define-a-schema-from-the-cli">Define a schema from the CLI</a></li>
 <li><a href="#init-and-commit">Schema version control: init and commit</a></li>
@@ -4859,7 +4888,7 @@ path = "schemas/events"
 </table>
 </div>
 <p><code>xtask</code> is a workspace member but not a <code>panproto-*</code> library. It contains repository maintenance commands, including CLI-document generation.</p>
-<h2 id="see-also-44"><a class="header" href="#see-also-44">See also</a></h2>
+<h2 id="see-also-45"><a class="header" href="#see-also-45">See also</a></h2>
 <ul>
 <li><a href="#architecture">Architecture</a></li>
 <li><a href="#rust-sdk-reference">Rust SDK</a></li>
@@ -4910,7 +4939,7 @@ path = "schemas/events"
 <p>The version-control layer stores schemas, migrations, data sets, and related metadata as content-addressed objects. Its commands expose commits, branches, tags, diffs, blame, and structural merge over those objects. When two branches make incompatible structural changes, merge returns typed conflict descriptions for explicit resolution. <a href="#schema-version-control-semantics">Schema version control semantics</a> gives the details and limits of this construction.</p>
 <h2 id="scope"><a class="header" href="#scope">Scope</a></h2>
 <p>panproto does not supply application behavior that a schema leaves unspecified, deploy a migration, or replace a database. It operates on schema documents and schema-typed data. Its outputs include structural reports, compiled migrations, converted data, and repository objects.</p>
-<h2 id="see-also-45"><a class="header" href="#see-also-45">See also</a></h2>
+<h2 id="see-also-46"><a class="header" href="#see-also-46">See also</a></h2>
 <ul>
 <li><a href="#schemas-as-theories">Schemas as theories</a> for the common representation used across schema languages.</li>
 <li><a href="#migrations-as-morphisms">Migrations as morphisms</a> for the structure and execution of migrations.</li>
@@ -4949,7 +4978,7 @@ path = "schemas/events"
 </table>
 </div>
 <p>Tutorials chiefly use <em>schema</em>, <em>migration</em>, <em>lens</em>, and <em>complement</em>. How-to guides also refer to protocols and protolenses. Remaining terms appear in the explanation chapters where their distinctions affect an operation. The <a href="#glossary">glossary</a> provides shorter formal definitions, while <a href="#schemas-as-theories">Schemas as theories</a> and <a href="#migrations-as-morphisms">Migrations as morphisms</a> develop the central representations.</p>
-<h2 id="see-also-46"><a class="header" href="#see-also-46">See also</a></h2>
+<h2 id="see-also-47"><a class="header" href="#see-also-47">See also</a></h2>
 <ul>
 <li><a href="#glossary">Glossary</a> for formal definitions.</li>
 <li><a href="#what-panproto-solves">What panproto solves</a> for the problem statement.</li>
@@ -4970,7 +4999,7 @@ path = "schemas/events"
 <p>Validation reports consistency findings for the registered structural rules. Application invariants remain unchecked when neither the protocol theory nor the concrete schema represents them.</p>
 <h2 id="related-work"><a class="header" href="#related-work">Related work</a></h2>
 <p>The schemas-as-theories account also draws on Spivak’s functorial data model (<a href="#spivak2012functorial">Spivak 2012</a>), the algebraic-databases program [Schultz &amp; Wisnesky (<a href="#schultzwisnesky2017algebraic">2017</a>); Schultz et al. (<a href="#schultzspivakvasilakopoulouwisnesky2017algebraic">2017</a>)], attributed C-sets (<a href="#pattersonlynchfairbanks2022categorical">Patterson et al. 2022</a>), and Lu’s work on multi-model unification (<a href="#lu2025categorical">Lu 2025</a>). panproto assigns a GAT presentation to each protocol and can combine presentations by colimit. The attributed C-set and algebraic-database approaches instead fix a meta-theory and parameterize schemas within it. <a href="#related-work-3">Related work</a> develops the comparison.</p>
-<h2 id="see-also-47"><a class="header" href="#see-also-47">See also</a></h2>
+<h2 id="see-also-48"><a class="header" href="#see-also-48">See also</a></h2>
 <ul>
 <li><a href="#composing-protocols-by-colimit">Composing protocols by colimit</a> for composition of foundational theories.</li>
 <li><a href="#migrations-as-morphisms">Migrations as morphisms</a> for maps between concrete schemas.</li>
@@ -5030,7 +5059,7 @@ path = "schemas/events"
 </table>
 </div>
 <p>These labels classify structural change. They do not by themselves state that every source record can be transformed, since executable migration may also depend on defaults, value expressions, and protocol-specific requirements. The <a href="#breaking-change-gate">Breaking-change gate</a> shows how to apply a compatibility policy in CI.</p>
-<h2 id="see-also-48"><a class="header" href="#see-also-48">See also</a></h2>
+<h2 id="see-also-49"><a class="header" href="#see-also-49">See also</a></h2>
 <ul>
 <li><a href="#searching-for-a-morphism">Searching for a morphism</a> for span construction and its certificate.</li>
 <li><a href="#find-a-span-between-two-schemas">Find a span between two schemas</a> for the corresponding command.</li>
@@ -5227,7 +5256,7 @@ path = "schemas/events"
 <p>The <code>align::defaults</code> module centralizes the provenance ceilings, the general selection defaults, and the shipped anchor weight. It does not contain every numeric choice in the alignment pipeline. Tier thresholds live in <code>auto_lens.rs</code>, while the required-set adjustment lives in <code>align/mod.rs</code>. Strategy-specific mixture weights, confidence floors, and fixed confidences live with their emitters. An audit of all alignment numbers thus spans several files.</p>
 <p>Prior work supplies design precedents rather than a validation of these settings. COMA evaluated composite similarity aggregation and matrix-selection rules (<a href="#dorahm2002coma">Do and Rahm 2002</a>). The analysis of mapping extraction by Meilicke &amp; Stuckenschmidt (<a href="#meilickestuckenschmidt2007analyzing">2007</a>) supports treating selection as a separate stage. AgreementMakerLight supplies precedents for provenance weights and cardinality-aware selection, though panproto’s constants are not corpus fits (<a href="#fariapesquitasantospalmonaricruzcouto2013agreementmakerlight">Faria et al. 2013</a>). The reducer also avoids Dempster-Shafer combination because several strategies are deterministic readings of the same input rather than independent sources, the condition required by that combination rule (<a href="#dempster1967upper">Dempster 1967</a>). None of these results establishes that panproto’s current family partition or parameter values are optimal.</p>
 <p>The evidence-aware span API provides the soft scoring route. Current auto-lens behavior still passes through selected provisional pins, which is why <a href="#searching-for-a-morphism">Searching for a morphism</a> treats evidence and domain restrictions separately.</p>
-<h2 id="see-also-49"><a class="header" href="#see-also-49">See also</a></h2>
+<h2 id="see-also-50"><a class="header" href="#see-also-50">See also</a></h2>
 <ul>
 <li><a href="#searching-for-a-morphism">Searching for a morphism</a> for the objective and span-search constraints.</li>
 <li><a href="#find-a-span-between-two-schemas">Find a span between two schemas</a> for the public span-search interface.</li>
@@ -5256,7 +5285,7 @@ path = "schemas/events"
 <h2 id="layout-enrichment"><a class="header" href="#layout-enrichment">Layout enrichment</a></h2>
 <p>Layout preservation is described at the schema level rather than as an ordinary <code>WInstance</code> lens. The <code>parse_emit_protolens</code> construction strips <code>EnrichmentKind::Layout</code> from its source theory and adds the enrichment to its target theory. Its <code>ComplementConstructor::Enrichment</code> records the enrichment kind and synthesis driver. <code>apply_theory_transform_to_schema</code> interprets these transformations by removing layout constraints or dispatching to the registered driver that synthesizes them.</p>
 <p>This protolens describes a relation between abstract and layout-decorated schemas. It can participate in protolens composition, but instantiating it does not itself parse or emit bytes. The operational parsing and decoration entry point is <code>ParserRegistry::decorate</code>; formatted output is produced by <code>pretty_with_protocol</code> and <code>emit_pretty_with_protocol</code>. <a href="#layout-enrichment-1">Layout enrichment</a> gives the byte-level and schema-level accounts.</p>
-<h2 id="see-also-50"><a class="header" href="#see-also-50">See also</a></h2>
+<h2 id="see-also-51"><a class="header" href="#see-also-51">See also</a></h2>
 <ul>
 <li><a href="#lens-dsl-denotational-semantics">Lens DSL: denotational semantics</a> for the formal lens model and law statements.</li>
 <li><a href="#protolens-composition">Protolens composition</a> for vertical and sequential composition.</li>
@@ -5289,7 +5318,7 @@ path = "schemas/events"
 <p><code>parse_emit_protolens</code> describes the schema-level relation. Byte-level work remains with <code>ParserRegistry::decorate</code>, <code>pretty_with_protocol</code>, and <code>emit_pretty_with_protocol</code>; ordinary complements store discarded <code>WInstance</code> data rather than per-vertex layout constraints. The asymmetric <code>get</code> and <code>put</code> API is not the operational interface for parsing and emission.</p>
 <h2 id="limits"><a class="header" href="#limits">Limits</a></h2>
 <p><code>decorate</code> chooses canonical layout and cannot infer an absent original. Its section law ignores vertex identifiers and compares kind and edge multisets. The parse-emit protolens describes schema transforms but does not turn source bytes into a <code>WInstance</code> lens. Exact replay thus requires a retained decorated schema; <code>decorate</code> supplies canonical layout only.</p>
-<h2 id="see-also-51"><a class="header" href="#see-also-51">See also</a></h2>
+<h2 id="see-also-52"><a class="header" href="#see-also-52">See also</a></h2>
 <ul>
 <li><a href="#source-code-emission">Source-code emission</a> describes production walking, layout replay, <code>CHOICE</code> dispatch, and verification tiers.</li>
 <li><a href="#decorate-an-abstract-schema">Decorate an abstract schema</a> gives the operational workflow.</li>
@@ -5334,7 +5363,7 @@ path = "schemas/events"
 <p>Third, the emitter does not add parentheses from an expression precedence analysis. A parsed schema can retain explicit parentheses through its syntax and layout evidence, but a hand-built expression can be ambiguous or reparse with a different tree. Finally, <code>Generic</code> status records that a grammar is available, not that arbitrary emitted output has passed a round-trip corpus oracle.</p>
 <p>The tree-sitter walk that produces the schema has a separate nesting bound. <code>WalkerConfig::max_depth</code> defaults to 128 and returns <code>ParseError::NestingTooDeep</code> beyond that depth. Wide sibling lists do not consume this depth; a regression test covers a 20,000-element array and checks linear walking and byte-exact replay.</p>
 <p>Exact source preservation and canonical generation thus have different inputs. Retain the decorated schema for replay. Use <a href="#decorate-an-abstract-schema">Decorate an abstract schema</a> when an abstract schema should receive one canonical layout, and consult the verification status before treating a protocol’s emitter as a checked backend.</p>
-<h2 id="see-also-52"><a class="header" href="#see-also-52">See also</a></h2>
+<h2 id="see-also-53"><a class="header" href="#see-also-53">See also</a></h2>
 <ul>
 <li><a href="#layout-enrichment-1">Layout enrichment</a> documents <code>forget_layout</code>, <code>decorate</code>, and their tested section law.</li>
 <li><a href="#decorate-an-abstract-schema">Decorate an abstract schema</a> gives the synthesize-and-render workflow.</li>
@@ -5371,7 +5400,7 @@ path = "schemas/events"
 <p><code>ThGraph</code>, <code>ThConstraint</code>, <code>ThMulti</code>, and <code>ThMeta</code> declare no equations. <code>ThWType</code> declares <code>arc_src_anchor</code> and <code>arc_tgt_anchor</code>. The library also defines composed or higher-level theories including <code>ThSimpleGraph</code>, <code>ThHypergraph</code>, <code>ThInterface</code>, <code>ThFunctor</code>, <code>ThFlat</code>, and <code>ThGraphInstance</code>. A protocol registration selects the theory group appropriate to its structures and separately supplies parsing, emission, and protocol-specific rules. <a href="#build-a-custom-protocol">Build a custom protocol</a> describes that registration process.</p>
 <h2 id="related-work-1"><a class="header" href="#related-work-1">Related work</a></h2>
 <p>Data exchange supplies universal solutions and chase-based composition [Fagin et al. (<a href="#faginkolaitispopa2005data">2005</a>); Fagin et al. (<a href="#faginkolaitispopatan2005composing">2005</a>)]. CQL treats schemas as algebraic theories or categories and uses pushouts for data integration [Schultz &amp; Wisnesky (<a href="#schultzwisnesky2017algebraic">2017</a>); Schultz et al. (<a href="#schultzspivakvasilakopoulouwisnesky2017algebraic">2017</a>)]. <a href="https://calcite.apache.org/">Apache Calcite</a> (<a href="#begolicamachorodriguezhydemiorlemire2018calcite">Begoli et al. 2018</a>), <a href="https://substrait.io/">Substrait</a>, <a href="https://arrow.apache.org/">Apache Arrow</a>, and <a href="https://mlir.llvm.org/">MLIR</a> provide related engineering precedents for intermediate representations. panproto applies GAT colimits to reusable descriptions of wire-format schemas. <a href="#cross-protocol-translation-and-data-exchange">Related work</a> develops these comparisons.</p>
-<h2 id="see-also-53"><a class="header" href="#see-also-53">See also</a></h2>
+<h2 id="see-also-54"><a class="header" href="#see-also-54">See also</a></h2>
 <ul>
 <li><a href="#schemas-as-theories">Schemas as theories</a> for theory presentations and their models.</li>
 <li><a href="#pushouts-and-merge">Pushouts and merge</a> for the universal property and its checks.</li>
@@ -5417,7 +5446,7 @@ path = "schemas/events"
 <p>Ordinary commit records data that was staged for that commit; it does not automatically copy or migrate all data from the previous commit. Amend preserves existing data identifiers unless the caller stages replacements. A schema change made through either operation thus does not by itself imply that associated data was transformed.</p>
 <h2 id="related-work-2"><a class="header" href="#related-work-2">Related work</a></h2>
 <p>The categorical account of patches and merge also includes homotopical patch theory (<a href="#angiuli2014homotopical">Angiuli et al. 2014</a>) and Darcs (<a href="#roundy2005darcs">Roundy 2005</a>). Work on schema evolution includes the PRISM workbench and its schema-modification operators (<a href="#curinomoonzaniolo2008graceful">Curino et al. 2008</a>). panproto combines these ideas with content-addressed storage for protocols, schemas, data, migrations, and complements. <a href="#schema-versioning-as-structured-merge">Related work</a> gives the broader comparison.</p>
-<h2 id="see-also-54"><a class="header" href="#see-also-54">See also</a></h2>
+<h2 id="see-also-55"><a class="header" href="#see-also-55">See also</a></h2>
 <ul>
 <li><a href="#init-and-commit">Init and commit</a> for the practical workflow.</li>
 <li><a href="#branch-and-merge-1">Branch and merge</a> for conflict handling.</li>
@@ -5472,7 +5501,7 @@ path = "schemas/events"
 <li>Theory pushout construction checks its cocone, and the optional checker handles a supplied alternative cocone. Schema merge checks a cocone plus a vertex-level factorization when explicitly asked. Neither path supplies a formal proof of the full universal property for arbitrary theory or schema inputs.</li>
 <li>Isomorphic protocol theories do not make two protocol parsers or emitters equivalent. Parser behavior, layout preservation, and application invariants remain properties of their respective implementations and declared constraints.</li>
 </ul>
-<h2 id="see-also-55"><a class="header" href="#see-also-55">See also</a></h2>
+<h2 id="see-also-56"><a class="header" href="#see-also-56">See also</a></h2>
 <ul>
 <li><a href="#find-a-span-between-two-schemas">Find a span between two schemas</a> describes the search interface and its certificates.</li>
 <li><a href="#schema-version-control-semantics">Schema version control semantics</a> gives the merge and commit behavior.</li>
@@ -5599,7 +5628,7 @@ path = "schemas/events"
 <p>The CLI reference is generated from <code>schema --help</code> by <a href="https://github.com/panproto/panproto/blob/main/xtask/src/bin/gen-cli-docs.rs"><code>xtask/src/bin/gen-cli-docs.rs</code></a>. Publication regenerates the page and fails when the committed file differs.</p>
 <h2 id="versioning"><a class="header" href="#versioning">Versioning</a></h2>
 <p>The publishable <code>panproto-*</code> crates inherit the workspace package version and are released together. The <code>xtask</code> tooling package is an exception with its own <code>0.0.0</code> version. Release checks keep language-binding metadata aligned with the workspace release. See the <a href="https://github.com/panproto/panproto/blob/main/CHANGELOG.md">changelog</a> for release history.</p>
-<h2 id="see-also-56"><a class="header" href="#see-also-56">See also</a></h2>
+<h2 id="see-also-57"><a class="header" href="#see-also-57">See also</a></h2>
 <ul>
 <li><a href="#crate-map">Crate map</a> for one-line descriptions of every crate.</li>
 <li><a href="#what-panproto-verifies">What panproto verifies</a> for the per-crate properties checked.</li>
@@ -5731,7 +5760,7 @@ literal ::= int | float | str | bool | "Nothing"
 <p>For fixed input and configuration, evaluation follows one call-by-value order. Each recursive invocation checks the depth bound and consumes from the shared step budget; list construction, ranges, <code>map</code>, and <code>flatMap</code> enforce <code>max_list_len</code>. Builtin arity and argument checks run during evaluation, after their arguments have been evaluated.</p>
 <p>These checks do not establish type preservation for the language. <code>infer_type</code> returns <code>Any</code> for several constructs, chooses the first match arm without comparing the others, and does not validate builtin arguments. The resource bounds establish termination of a bounded evaluator invocation, not strong normalization of the language with those bounds removed.</p>
 <p>The evaluator lives in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/eval.rs"><code>crates/panproto-expr/src/eval.rs</code></a>, and the classifier lives in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/typecheck.rs"><code>crates/panproto-expr/src/typecheck.rs</code></a>.</p>
-<h2 id="see-also-57"><a class="header" href="#see-also-57">See also</a></h2>
+<h2 id="see-also-58"><a class="header" href="#see-also-58">See also</a></h2>
 <ul>
 <li><a href="#expression-language-reference">Expression-language reference</a> for the builtin catalog.</li>
 <li><a href="#apply-field-transforms">Apply field transforms</a> for usage.</li>
@@ -5844,7 +5873,7 @@ pub enum Step {
 <p>Lawful lens composition preserves the three equations when its premises hold. Property tests in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-lens/src/laws.rs"><code>crates/panproto-lens/src/laws.rs</code></a> and constructed DSL cases in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-lens-dsl/tests/step_laws.rs"><code>crates/panproto-lens-dsl/tests/step_laws.rs</code></a> test selected generated inputs and step constructors. Finite generated samples do not prove lawfulness for every document or instance.</p>
 <p>A <code>coerce_sort</code> step and directed equations are also checked for honesty against registered samples. A detected violation returns <code>LensDslError::CoercionNotHonest</code>. Passing means that the sampled values satisfied the declared round-trip class.</p>
 <p>The runtime checkers test one supplied case at a time, while property tests cover generated cases. Documents containing lossy or opaque transforms require scoped law claims; compilation alone does not prove them lawful. The semantics fixes the result of <code>put</code>, not its running time, and preserves step order without defining an equivalence on distinct documents that compile to the same lens.</p>
-<h2 id="see-also-58"><a class="header" href="#see-also-58">See also</a></h2>
+<h2 id="see-also-59"><a class="header" href="#see-also-59">See also</a></h2>
 <ul>
 <li><a href="#lens-combinator-reference">Reference: lens combinators</a> for the combinator algebra.</li>
 <li><a href="#write-lenses-in-the-lens-dsl">How-to: write lenses in the lens DSL</a>.</li>
@@ -5913,7 +5942,7 @@ TheorySpec { theory, extends, imports, sorts, ops,
 <p>Composition bodies use the colimit machinery described in <a href="#pushouts-and-merge">Pushouts and merge</a>. The <code>colimit</code> constructor checks cocone commutativity but does not run <code>check_morphism</code> on its inclusions, since a building-block instance theory may refer to sorts supplied only by the schema theory with which it is later combined. <code>ColimitResult::verify_universal</code> validates a constructed mediator for one caller-supplied alternative cocone. Built-in protocol registration assembles schema and instance theories from registered building blocks.</p>
 <p>Compilation checks sort and operation references, types both sides of equations, validates resolved morphisms, and tests declared coercion laws on registered samples unless <code>compile_unchecked</code> is used. Passing a finite coercion sample is evidence, not proof. Theory compilation also calls <code>validate_rewrite_system</code>. An analysis failure returns <code>RewriteSystemCheck</code>. <code>UnsoundRewriteSystem</code> reports either divergent rewrite paths that do not rejoin (a non-joining critical pair) or failure of the lexicographic-path-order termination check. Built-in registration treats either result as an internal programming error. These finite checks are not a proof in a proof assistant.</p>
 <p>The textual term parser rejects terms nested beyond <code>MAX_TERM_NESTING_DEPTH</code>, currently 128. This is an input-safety bound on the recursive parser and downstream traversals, not a bound on normalization steps. The REPL applies a separate 1,000-step normalization budget.</p>
-<h2 id="see-also-59"><a class="header" href="#see-also-59">See also</a></h2>
+<h2 id="see-also-60"><a class="header" href="#see-also-60">See also</a></h2>
 <ul>
 <li><a href="#pushouts-and-merge">Pushouts and merge</a> for the colimit construction.</li>
 <li><a href="#composing-protocols-by-colimit">Composing protocols by colimit</a> for the built-in theory components.</li>
@@ -5947,7 +5976,7 @@ TheorySpec { theory, extends, imports, sorts, ops,
 <p>The separate <a href="https://docs.rs/panproto-schema/latest/panproto_schema/fn.schema_pushout.html"><code>panproto_schema::schema_pushout</code></a> function accepts explicit vertex and edge pairs. It closes their endpoint identifications to an equivalence relation, builds a quotient schema, and returns morphisms from both inputs. It rejects overlap pairs that name absent elements. <code>SchemaSpan::pushout</code> calls this function only after rejecting a right leg that contracts vertices. Neither constructor invokes the VCS verifier or an on-demand universal-property checker.</p>
 <h2 id="limits-2"><a class="header" href="#limits-2">Limits</a></h2>
 <p>The pushout construction does not choose a resolution for incompatible edits. Repository histories are not themselves proved to present the base-to-branch span assumed above. The implementation also publishes no asymptotic or wall-clock bound for the complete merge procedure.</p>
-<h2 id="see-also-60"><a class="header" href="#see-also-60">See also</a></h2>
+<h2 id="see-also-61"><a class="header" href="#see-also-61">See also</a></h2>
 <ul>
 <li><a href="#schema-version-control-semantics">Schema version control semantics</a></li>
 <li><a href="#composing-protocols-by-colimit">Composing protocols by colimit</a></li>
@@ -5987,7 +6016,7 @@ TheorySpec { theory, extends, imports, sorts, ops,
 <p>Mathematically, if <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⇒</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⇒</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span></span> are natural transformations, their pointwise composite is natural, and lawful component lenses compose to a lawful component lens. Structural endofunctor equivalence is the implementation’s evidence that the middle object matches in the ordinary case.</p>
 <p>The identity-source branch is weaker. It accepts composition without establishing that <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span></span></span></span>’s target equals <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span></span></span></span>’s source as an endofunctor, then conjoins the second source precondition with the retained source precondition. <code>Protolens::check_applicability</code> and the chain APIs can reject a concrete schema that fails this retained obligation. <code>protolens_composable</code> is thus a construction guard, not a proof that every accepted composite is a natural transformation.</p>
 <p>Vertical and horizontal composition have structural tests, but the implementation does not quantify over all schema morphisms to certify naturality. It also treats protolenses that compute the same transform through different intermediate forms as distinct. Tests compare fused and sequential instantiation on representative chains, while the two routes may preserve different metadata shapes.</p>
-<h2 id="see-also-61"><a class="header" href="#see-also-61">See also</a></h2>
+<h2 id="see-also-62"><a class="header" href="#see-also-62">See also</a></h2>
 <ul>
 <li><a href="#lens-dsl-denotational-semantics">Lens DSL: denotational semantics</a> for the underlying lens model and the three laws.</li>
 <li><a href="#lens-combinator-reference">Reference: lens combinators</a> for the protolens module and entry points.</li>
@@ -6022,7 +6051,7 @@ cmd      ::= "load" | "theories" | "use" | "sorts" | "ops"
 <p>Commands that require <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mclose">)</span></span></span></span> fail when no theory is active or when the active name is missing from the map. Parsing, typechecking, normalization, free-model construction, and instance compilation render their failures as <code>ReplOutcome</code> messages rather than exposing the underlying error enums to the caller.</p>
 <p>The fixed normalization and model-depth bounds limit those particular operations. The implementation states no totality theorem for arbitrary input strings, and the REPL layer has no proof object for a successful typecheck or normalization.</p>
 <p><a href="https://github.com/panproto/panproto/blob/main/crates/panproto-cli/src/repl/engine.rs"><code>Repl::handle_line</code></a> implements this behavior. The surrounding <code>rustyline</code> driver supplies editing, command completion, and persistent history; those facilities are not part of the <code>Repl</code> state above.</p>
-<h2 id="see-also-62"><a class="header" href="#see-also-62">See also</a></h2>
+<h2 id="see-also-63"><a class="header" href="#see-also-63">See also</a></h2>
 <ul>
 <li><a href="#theory-dsl-compilation-semantics">Theory DSL</a></li>
 <li><a href="#cli-reference">CLI reference</a></li>
@@ -6103,7 +6132,7 @@ cmd      ::= "load" | "theories" | "use" | "sorts" | "ops"
 <p>For an abstract schema <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span> and policy <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>, the schema-level section property is:</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord texttt">forget_layout</span></span><span class="mopen">(</span><span class="mord text"><span class="mord texttt">decorate</span></span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">p</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≅</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span></span></p>
 <p>The current checks compare vertex-kind and edge-shape multisets, allowing fresh vertex identifiers introduced by parsing. The law is established for the fixtures exercised by those checks.</p>
-<h2 id="see-also-63"><a class="header" href="#see-also-63">See also</a></h2>
+<h2 id="see-also-64"><a class="header" href="#see-also-64">See also</a></h2>
 <p>For longer treatments, see <a href="#source-code-emission">Source-code emission</a>, <a href="#schemas-as-theories">Schemas as theories</a>, <a href="#lenses-and-round-trip-laws">Lenses and round-trip laws</a>, and <a href="#layout-enrichment-1">Layout enrichment</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="bibliography"><a class="header" href="#bibliography">Bibliography</a></h1>
