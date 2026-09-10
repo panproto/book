@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-f742feb5.js";
+            window.path_to_searchindex_js = "../searchindex-5fa11ba6.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-adbb6774.js"></script>
@@ -401,17 +401,33 @@ Options:
 Usage: schema verify [OPTIONS] --protocol &lt;PROTOCOL&gt; &lt;SCHEMA&gt;
 
 Arguments:
-  &lt;SCHEMA&gt;  Path to the schema JSON file
+  &lt;SCHEMA&gt;
+          Path to the schema JSON file
 
 Options:
       --protocol &lt;PROTOCOL&gt;
           The protocol name (e.g., "atproto")
+
   -v, --verbose
           Enable verbose output
+
       --max-assignments &lt;MAX_ASSIGNMENTS&gt;
-          Maximum assignments to check per equation (default: 10000) [default: 10000]
+          Maximum assignments to check per equation (default: 10000)
+          
+          [default: 10000]
+
+      --format &lt;FORMAT&gt;
+          Output format: `text` (default) or `json`
+          
+          [default: text]
+
+      --allow-incomplete
+          Exit zero when a theory could not be checked at all.
+          
+          A theory that does not typecheck, or one whose assignment enumeration exhausted `--max-assignments`, establishes nothing about the schema. By default that is an error, since treating it as a pass reports a schema verified that was never examined. This accepts it for exploratory use; the output still says the run was incomplete.
+
   -h, --help
-          Print help
+          Print help (see a summary with '-h')
 </code></pre>
 <h3 id="schema-init"><a class="header" href="#schema-init"><code>schema init</code></a></h3>
 <pre><code class="language-text">Initialize a new panproto repository
