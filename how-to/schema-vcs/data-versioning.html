@@ -36,7 +36,7 @@
             const path_to_root = "../../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-0c0ea77d.js";
+            window.path_to_searchindex_js = "../../searchindex-e09dca67.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-043c729d.js"></script>
@@ -198,7 +198,7 @@ schema commit -m "v2 schema"
 # Sync the working directory across parent..HEAD.
 schema data sync records/
 </code></pre>
-<p><code>schema add --data &lt;DATA&gt;</code> stages each immediate JSON file in the directory. Staging is all or nothing for the data files. <code>schema data sync</code> compares a target commit with its first parent, generates a lens, and rewrites records it can migrate; failed records are reported as skipped.</p>
+<p><code>schema add --data &lt;DATA&gt;</code> stages each immediate JSON file in the directory. Each file’s records are parsed and checked against the schema being staged, so a file that is not JSON, or one whose records do not fit the schema, fails at <code>add</code> rather than at whatever later operation first tries to read it. Staging is all or nothing for the data files, so a failure leaves none of them staged. <code>--skip-verify</code> stages without the check and leaves the result pending, which a default <code>commit</code> then refuses; it does not skip reading the file, since a data set records which schema its data belongs to and bytes that cannot be read as records of that schema cannot be recorded under it. <code>schema data sync</code> compares a target commit with its first parent, generates a lens, and rewrites records it can migrate; failed records are reported as skipped.</p>
 <p>Preview the default <code>parent..HEAD</code> range and run coverage without writing:</p>
 <pre><code class="language-sh">schema data migrate records/ --dry-run --coverage
 </code></pre>

@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-0c0ea77d.js";
+            window.path_to_searchindex_js = "../searchindex-e09dca67.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-043c729d.js"></script>
@@ -448,15 +448,29 @@ Options:
 Usage: schema add [OPTIONS] &lt;SCHEMA&gt;
 
 Arguments:
-  &lt;SCHEMA&gt;  Path to the schema JSON file
+  &lt;SCHEMA&gt;
+          Path to the schema JSON file
 
 Options:
-  -n, --dry-run      Show what would be staged without actually staging
-  -v, --verbose      Enable verbose output
-  -f, --force        Force staging even if validation fails
-      --data &lt;DATA&gt;  Stage data files alongside the schema
-      --skip-verify  Skip GAT migration validation while staging (leaves the stage pending; the migration is still recorded)
-  -h, --help         Print help
+  -n, --dry-run
+          Show what would be staged without actually staging
+
+  -v, --verbose
+          Enable verbose output
+
+  -f, --force
+          Force staging even if validation fails
+
+      --data &lt;DATA&gt;
+          Stage data files alongside the schema
+
+      --skip-verify
+          Skip GAT migration validation, and the check of staged data against its schema, while staging.
+          
+          Leaves the stage pending, which a default `commit` refuses; the migration is still recorded, and data files are still parsed, since a data set cannot be recorded under a schema its bytes cannot be read against.
+
+  -h, --help
+          Print help (see a summary with '-h')
 </code></pre>
 <h3 id="schema-commit"><a class="header" href="#schema-commit"><code>schema commit</code></a></h3>
 <pre><code class="language-text">Create a new commit from staged changes
