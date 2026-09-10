@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "navy";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-e09dca67.js";
+            window.path_to_searchindex_js = "searchindex-b0f2df80.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-043c729d.js"></script>
+        <script src="toc-249d4d7c.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -4657,6 +4657,58 @@ func findSpan(
 <li><a href="#query-instances">Query instances</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="resource-limits"><a class="header" href="#resource-limits">Resource limits</a></h1>
+<p>Reading a schema costs time and memory proportional to what the input asks for, and a public entry point reads input it did not author. Every such surface therefore parses within a <strong>budget</strong>: an allowance that is checked before work begins and drawn down as it proceeds.</p>
+<h2 id="what-is-bounded"><a class="header" href="#what-is-bounded">What is bounded</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Resource</th><th>Default</th><th>What it counts</th></tr>
+</thead>
+<tbody>
+<tr><td><code>input_bytes</code></td><td>64 MiB</td><td>Bytes of input accepted in one operation</td></tr>
+<tr><td><code>bundle_entries</code></td><td>4096</td><td>Documents in one bundle</td></tr>
+<tr><td><code>graph_elements</code></td><td>1,000,000</td><td>Vertices, edges and nodes in a decoded schema or instance</td></tr>
+<tr><td><code>metadata_bytes</code></td><td>16 MiB</td><td>Metadata attached to a schema or instance</td></tr>
+<tr><td><code>depth</code></td><td>128</td><td>Levels of nesting descended</td></tr>
+<tr><td><code>steps</code></td><td>10,000,000</td><td>Steps of evaluation or search</td></tr>
+<tr><td><code>output_bytes</code></td><td>64 MiB</td><td>Bytes of output produced</td></tr>
+</tbody>
+</table>
+</div>
+<p>The depth bound matches the walk and extraction depths that already existed, so it governs nothing it did not govern before.</p>
+<h2 id="two-properties-that-make-this-a-policy"><a class="header" href="#two-properties-that-make-this-a-policy">Two properties that make this a policy</a></h2>
+<p>Several subsystems already had sound local bounds: parser walk depth, CST extraction depth, expression evaluation steps, morphism search budget, model-check assignment counts. What they were not was a policy. What an input was allowed to cost depended on which door it came through, so the same document could be refused through one surface and accepted through another.</p>
+<p><strong>A budget is shared, not per-call.</strong> A nested operation draws from the same allowance as the operation containing it. Cloning a <code>Budget</code> shares its counters rather than copying them, so a caller is not charged once for a walk and again for each subwalk, and an oversized input cannot slip past a bound by being processed in pieces. A budget that reset per subsystem would bound each step and nothing overall, which is what several unrelated local limits already achieved.</p>
+<p><strong>A failure names the resource and the bound.</strong> <code>LimitExceeded</code> carries which allowance ran out and what it was set to. “Too deep” without a number tells a caller nothing about what to pass instead, and with seven separate allowances it does not even say which setting to change.</p>
+<h2 id="defaults-configuration-and-opting-out"><a class="header" href="#defaults-configuration-and-opting-out">Defaults, configuration, and opting out</a></h2>
+<p><code>parse_schema_document</code>, <code>parse_schema_source</code> and <code>parse_schema_bundle</code> apply <code>ResourceLimits::defaults()</code>. Every binding calls those, so the CLI, Python, C and WASM all inherit the same policy; none of them selects its own, and none can inherit an unbounded one by accident.</p>
+<p>A Rust caller that needs different bounds uses the <code>_within</code> variants:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use panproto_core::expr::limits::{Budget, ResourceLimits};
+use panproto_core::protocols::parse_schema_bundle_within;
+
+let mut limits = ResourceLimits::defaults();
+limits.bundle_entries = 32_768;
+let budget = Budget::new(limits);
+
+let docs = vec![serde_json::json!({
+    "lexicon": 1,
+    "id": "com.example.record",
+    "defs": { "main": { "type": "object", "properties": { "v": { "type": "string" } } } },
+})];
+let schema = parse_schema_bundle_within("atproto", &amp;docs, &amp;budget)?;
+assert!(schema.vertex_count() &gt; 0);
+<span class="boring">Ok::&lt;(), Box&lt;dyn std::error::Error&gt;&gt;(())
+</span><span class="boring">}</span></code></pre>
+<p>Passing the same budget to several calls has them share one allowance, which is how a caller bounds a whole pipeline rather than each stage of it.</p>
+<p><code>ResourceLimits::unbounded()</code> removes every bound, and a field set to <code>0</code> removes that one. This is a legitimate choice for a Rust caller processing input it produced itself. It is deliberately something to ask for: no FFI or command-line entry point selects it, because unbounded behaviour should never be inherited at a boundary that reads input from elsewhere.</p>
+<h2 id="see-also-43"><a class="header" href="#see-also-43">See also</a></h2>
+<ul>
+<li><a href="#what-panproto-verifies">What panproto verifies</a> for the bounded model check, whose assignment budget is configured separately per invocation.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="lens-combinator-reference"><a class="header" href="#lens-combinator-reference">Lens combinator reference</a></h1>
 <p>panproto implements asymmetric lenses (<a href="#foster2007combinators">Foster et al. 2007</a>) with an explicit complement in the complementary-view tradition (<a href="#bancilhonspyratos1981update">Bancilhon and Spyratos 1981</a>). For a fixed <a href="https://docs.rs/panproto-lens/latest/panproto_lens/struct.Lens.html"><code>Lens</code></a>, the data-level operations have the shapes</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8095em;vertical-align:-0.1944em;"></span><span class="mop"><span class="mord mathrm">get</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm">put</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mord">.</span></span></span></span></span></p>
@@ -4729,7 +4781,7 @@ func findSpan(
 </table>
 </div>
 <p>Call <code>check_applicability_with</code> before fused instantiation when preconditions must be enforced. Fused and sequential instantiation are compared in property tests. Neither return value is a proof of the lens laws for all instances.</p>
-<h2 id="see-also-43"><a class="header" href="#see-also-43">See also</a></h2>
+<h2 id="see-also-44"><a class="header" href="#see-also-44">See also</a></h2>
 <ul>
 <li><a href="#use-lenses">Use lenses</a></li>
 <li><a href="#use-protolenses">Use protolenses</a></li>
@@ -4787,7 +4839,7 @@ path = "schemas/events"
 <p>When scanning finds no package markers, <code>schema init</code> does not create a manifest. The package scanner recognizes Cargo, npm, Go, Python, Gradle, Elixir, and CMake project markers. Programmatic callers can use <a href="https://docs.rs/panproto-project/latest/panproto_project/config/fn.generate_config.html"><code>generate_config</code></a> and <a href="https://docs.rs/panproto-project/latest/panproto_project/config/fn.serialize_config.html"><code>serialize_config</code></a>.</p>
 <h2 id="source-1"><a class="header" href="#source-1">Source</a></h2>
 <p>The manifest structs and defaults live in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-project/src/config.rs"><code>crates/panproto-project/src/config.rs</code></a>. Project assembly applies them in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-project/src/lib.rs"><code>crates/panproto-project/src/lib.rs</code></a>.</p>
-<h2 id="see-also-44"><a class="header" href="#see-also-44">See also</a></h2>
+<h2 id="see-also-45"><a class="header" href="#see-also-45">See also</a></h2>
 <ul>
 <li><a href="#define-a-schema-from-the-cli">Define a schema from the CLI</a></li>
 <li><a href="#init-and-commit">Schema version control: init and commit</a></li>
@@ -4902,7 +4954,7 @@ path = "schemas/events"
 </table>
 </div>
 <p><code>xtask</code> is a workspace member but not a <code>panproto-*</code> library. It contains repository maintenance commands, including CLI-document generation.</p>
-<h2 id="see-also-45"><a class="header" href="#see-also-45">See also</a></h2>
+<h2 id="see-also-46"><a class="header" href="#see-also-46">See also</a></h2>
 <ul>
 <li><a href="#architecture">Architecture</a></li>
 <li><a href="#rust-sdk-reference">Rust SDK</a></li>
@@ -4953,7 +5005,7 @@ path = "schemas/events"
 <p>The version-control layer stores schemas, migrations, data sets, and related metadata as content-addressed objects. Its commands expose commits, branches, tags, diffs, blame, and structural merge over those objects. When two branches make incompatible structural changes, merge returns typed conflict descriptions for explicit resolution. <a href="#schema-version-control-semantics">Schema version control semantics</a> gives the details and limits of this construction.</p>
 <h2 id="scope"><a class="header" href="#scope">Scope</a></h2>
 <p>panproto does not supply application behavior that a schema leaves unspecified, deploy a migration, or replace a database. It operates on schema documents and schema-typed data. Its outputs include structural reports, compiled migrations, converted data, and repository objects.</p>
-<h2 id="see-also-46"><a class="header" href="#see-also-46">See also</a></h2>
+<h2 id="see-also-47"><a class="header" href="#see-also-47">See also</a></h2>
 <ul>
 <li><a href="#schemas-as-theories">Schemas as theories</a> for the common representation used across schema languages.</li>
 <li><a href="#migrations-as-morphisms">Migrations as morphisms</a> for the structure and execution of migrations.</li>
@@ -4992,7 +5044,7 @@ path = "schemas/events"
 </table>
 </div>
 <p>Tutorials chiefly use <em>schema</em>, <em>migration</em>, <em>lens</em>, and <em>complement</em>. How-to guides also refer to protocols and protolenses. Remaining terms appear in the explanation chapters where their distinctions affect an operation. The <a href="#glossary">glossary</a> provides shorter formal definitions, while <a href="#schemas-as-theories">Schemas as theories</a> and <a href="#migrations-as-morphisms">Migrations as morphisms</a> develop the central representations.</p>
-<h2 id="see-also-47"><a class="header" href="#see-also-47">See also</a></h2>
+<h2 id="see-also-48"><a class="header" href="#see-also-48">See also</a></h2>
 <ul>
 <li><a href="#glossary">Glossary</a> for formal definitions.</li>
 <li><a href="#what-panproto-solves">What panproto solves</a> for the problem statement.</li>
@@ -5013,7 +5065,7 @@ path = "schemas/events"
 <p>Validation reports consistency findings for the registered structural rules. Application invariants remain unchecked when neither the protocol theory nor the concrete schema represents them.</p>
 <h2 id="related-work"><a class="header" href="#related-work">Related work</a></h2>
 <p>The schemas-as-theories account also draws on Spivak’s functorial data model (<a href="#spivak2012functorial">Spivak 2012</a>), the algebraic-databases program [Schultz &amp; Wisnesky (<a href="#schultzwisnesky2017algebraic">2017</a>); Schultz et al. (<a href="#schultzspivakvasilakopoulouwisnesky2017algebraic">2017</a>)], attributed C-sets (<a href="#pattersonlynchfairbanks2022categorical">Patterson et al. 2022</a>), and Lu’s work on multi-model unification (<a href="#lu2025categorical">Lu 2025</a>). panproto assigns a GAT presentation to each protocol and can combine presentations by colimit. The attributed C-set and algebraic-database approaches instead fix a meta-theory and parameterize schemas within it. <a href="#related-work-3">Related work</a> develops the comparison.</p>
-<h2 id="see-also-48"><a class="header" href="#see-also-48">See also</a></h2>
+<h2 id="see-also-49"><a class="header" href="#see-also-49">See also</a></h2>
 <ul>
 <li><a href="#composing-protocols-by-colimit">Composing protocols by colimit</a> for composition of foundational theories.</li>
 <li><a href="#migrations-as-morphisms">Migrations as morphisms</a> for maps between concrete schemas.</li>
@@ -5073,7 +5125,7 @@ path = "schemas/events"
 </table>
 </div>
 <p>These labels classify structural change. They do not by themselves state that every source record can be transformed, since executable migration may also depend on defaults, value expressions, and protocol-specific requirements. The <a href="#breaking-change-gate">Breaking-change gate</a> shows how to apply a compatibility policy in CI.</p>
-<h2 id="see-also-49"><a class="header" href="#see-also-49">See also</a></h2>
+<h2 id="see-also-50"><a class="header" href="#see-also-50">See also</a></h2>
 <ul>
 <li><a href="#searching-for-a-morphism">Searching for a morphism</a> for span construction and its certificate.</li>
 <li><a href="#find-a-span-between-two-schemas">Find a span between two schemas</a> for the corresponding command.</li>
@@ -5270,7 +5322,7 @@ path = "schemas/events"
 <p>The <code>align::defaults</code> module centralizes the provenance ceilings, the general selection defaults, and the shipped anchor weight. It does not contain every numeric choice in the alignment pipeline. Tier thresholds live in <code>auto_lens.rs</code>, while the required-set adjustment lives in <code>align/mod.rs</code>. Strategy-specific mixture weights, confidence floors, and fixed confidences live with their emitters. An audit of all alignment numbers thus spans several files.</p>
 <p>Prior work supplies design precedents rather than a validation of these settings. COMA evaluated composite similarity aggregation and matrix-selection rules (<a href="#dorahm2002coma">Do and Rahm 2002</a>). The analysis of mapping extraction by Meilicke &amp; Stuckenschmidt (<a href="#meilickestuckenschmidt2007analyzing">2007</a>) supports treating selection as a separate stage. AgreementMakerLight supplies precedents for provenance weights and cardinality-aware selection, though panproto’s constants are not corpus fits (<a href="#fariapesquitasantospalmonaricruzcouto2013agreementmakerlight">Faria et al. 2013</a>). The reducer also avoids Dempster-Shafer combination because several strategies are deterministic readings of the same input rather than independent sources, the condition required by that combination rule (<a href="#dempster1967upper">Dempster 1967</a>). None of these results establishes that panproto’s current family partition or parameter values are optimal.</p>
 <p>The evidence-aware span API provides the soft scoring route. Current auto-lens behavior still passes through selected provisional pins, which is why <a href="#searching-for-a-morphism">Searching for a morphism</a> treats evidence and domain restrictions separately.</p>
-<h2 id="see-also-50"><a class="header" href="#see-also-50">See also</a></h2>
+<h2 id="see-also-51"><a class="header" href="#see-also-51">See also</a></h2>
 <ul>
 <li><a href="#searching-for-a-morphism">Searching for a morphism</a> for the objective and span-search constraints.</li>
 <li><a href="#find-a-span-between-two-schemas">Find a span between two schemas</a> for the public span-search interface.</li>
@@ -5299,7 +5351,7 @@ path = "schemas/events"
 <h2 id="layout-enrichment"><a class="header" href="#layout-enrichment">Layout enrichment</a></h2>
 <p>Layout preservation is described at the schema level rather than as an ordinary <code>WInstance</code> lens. The <code>parse_emit_protolens</code> construction strips <code>EnrichmentKind::Layout</code> from its source theory and adds the enrichment to its target theory. Its <code>ComplementConstructor::Enrichment</code> records the enrichment kind and synthesis driver. <code>apply_theory_transform_to_schema</code> interprets these transformations by removing layout constraints or dispatching to the registered driver that synthesizes them.</p>
 <p>This protolens describes a relation between abstract and layout-decorated schemas. It can participate in protolens composition, but instantiating it does not itself parse or emit bytes. The operational parsing and decoration entry point is <code>ParserRegistry::decorate</code>; formatted output is produced by <code>pretty_with_protocol</code> and <code>emit_pretty_with_protocol</code>. <a href="#layout-enrichment-1">Layout enrichment</a> gives the byte-level and schema-level accounts.</p>
-<h2 id="see-also-51"><a class="header" href="#see-also-51">See also</a></h2>
+<h2 id="see-also-52"><a class="header" href="#see-also-52">See also</a></h2>
 <ul>
 <li><a href="#lens-dsl-denotational-semantics">Lens DSL: denotational semantics</a> for the formal lens model and law statements.</li>
 <li><a href="#protolens-composition">Protolens composition</a> for vertical and sequential composition.</li>
@@ -5332,7 +5384,7 @@ path = "schemas/events"
 <p><code>parse_emit_protolens</code> describes the schema-level relation. Byte-level work remains with <code>ParserRegistry::decorate</code>, <code>pretty_with_protocol</code>, and <code>emit_pretty_with_protocol</code>; ordinary complements store discarded <code>WInstance</code> data rather than per-vertex layout constraints. The asymmetric <code>get</code> and <code>put</code> API is not the operational interface for parsing and emission.</p>
 <h2 id="limits"><a class="header" href="#limits">Limits</a></h2>
 <p><code>decorate</code> chooses canonical layout and cannot infer an absent original. Its section law ignores vertex identifiers and compares kind and edge multisets. The parse-emit protolens describes schema transforms but does not turn source bytes into a <code>WInstance</code> lens. Exact replay thus requires a retained decorated schema; <code>decorate</code> supplies canonical layout only.</p>
-<h2 id="see-also-52"><a class="header" href="#see-also-52">See also</a></h2>
+<h2 id="see-also-53"><a class="header" href="#see-also-53">See also</a></h2>
 <ul>
 <li><a href="#source-code-emission">Source-code emission</a> describes production walking, layout replay, <code>CHOICE</code> dispatch, and verification tiers.</li>
 <li><a href="#decorate-an-abstract-schema">Decorate an abstract schema</a> gives the operational workflow.</li>
@@ -5377,7 +5429,7 @@ path = "schemas/events"
 <p>Third, the emitter does not add parentheses from an expression precedence analysis. A parsed schema can retain explicit parentheses through its syntax and layout evidence, but a hand-built expression can be ambiguous or reparse with a different tree. Finally, <code>Generic</code> status records that a grammar is available, not that arbitrary emitted output has passed a round-trip corpus oracle.</p>
 <p>The tree-sitter walk that produces the schema has a separate nesting bound. <code>WalkerConfig::max_depth</code> defaults to 128 and returns <code>ParseError::NestingTooDeep</code> beyond that depth. Wide sibling lists do not consume this depth; a regression test covers a 20,000-element array and checks linear walking and byte-exact replay.</p>
 <p>Exact source preservation and canonical generation thus have different inputs. Retain the decorated schema for replay. Use <a href="#decorate-an-abstract-schema">Decorate an abstract schema</a> when an abstract schema should receive one canonical layout, and consult the verification status before treating a protocol’s emitter as a checked backend.</p>
-<h2 id="see-also-53"><a class="header" href="#see-also-53">See also</a></h2>
+<h2 id="see-also-54"><a class="header" href="#see-also-54">See also</a></h2>
 <ul>
 <li><a href="#layout-enrichment-1">Layout enrichment</a> documents <code>forget_layout</code>, <code>decorate</code>, and their tested section law.</li>
 <li><a href="#decorate-an-abstract-schema">Decorate an abstract schema</a> gives the synthesize-and-render workflow.</li>
@@ -5414,7 +5466,7 @@ path = "schemas/events"
 <p><code>ThGraph</code>, <code>ThConstraint</code>, <code>ThMulti</code>, and <code>ThMeta</code> declare no equations. <code>ThWType</code> declares <code>arc_src_anchor</code> and <code>arc_tgt_anchor</code>. The library also defines composed or higher-level theories including <code>ThSimpleGraph</code>, <code>ThHypergraph</code>, <code>ThInterface</code>, <code>ThFunctor</code>, <code>ThFlat</code>, and <code>ThGraphInstance</code>. A protocol registration selects the theory group appropriate to its structures and separately supplies parsing, emission, and protocol-specific rules. <a href="#build-a-custom-protocol">Build a custom protocol</a> describes that registration process.</p>
 <h2 id="related-work-1"><a class="header" href="#related-work-1">Related work</a></h2>
 <p>Data exchange supplies universal solutions and chase-based composition [Fagin et al. (<a href="#faginkolaitispopa2005data">2005</a>); Fagin et al. (<a href="#faginkolaitispopatan2005composing">2005</a>)]. CQL treats schemas as algebraic theories or categories and uses pushouts for data integration [Schultz &amp; Wisnesky (<a href="#schultzwisnesky2017algebraic">2017</a>); Schultz et al. (<a href="#schultzspivakvasilakopoulouwisnesky2017algebraic">2017</a>)]. <a href="https://calcite.apache.org/">Apache Calcite</a> (<a href="#begolicamachorodriguezhydemiorlemire2018calcite">Begoli et al. 2018</a>), <a href="https://substrait.io/">Substrait</a>, <a href="https://arrow.apache.org/">Apache Arrow</a>, and <a href="https://mlir.llvm.org/">MLIR</a> provide related engineering precedents for intermediate representations. panproto applies GAT colimits to reusable descriptions of wire-format schemas. <a href="#cross-protocol-translation-and-data-exchange">Related work</a> develops these comparisons.</p>
-<h2 id="see-also-54"><a class="header" href="#see-also-54">See also</a></h2>
+<h2 id="see-also-55"><a class="header" href="#see-also-55">See also</a></h2>
 <ul>
 <li><a href="#schemas-as-theories">Schemas as theories</a> for theory presentations and their models.</li>
 <li><a href="#pushouts-and-merge">Pushouts and merge</a> for the universal property and its checks.</li>
@@ -5460,7 +5512,7 @@ path = "schemas/events"
 <p>Ordinary commit records data that was staged for that commit; it does not automatically copy or migrate all data from the previous commit. Amend preserves existing data identifiers unless the caller stages replacements. A schema change made through either operation thus does not by itself imply that associated data was transformed.</p>
 <h2 id="related-work-2"><a class="header" href="#related-work-2">Related work</a></h2>
 <p>The categorical account of patches and merge also includes homotopical patch theory (<a href="#angiuli2014homotopical">Angiuli et al. 2014</a>) and Darcs (<a href="#roundy2005darcs">Roundy 2005</a>). Work on schema evolution includes the PRISM workbench and its schema-modification operators (<a href="#curinomoonzaniolo2008graceful">Curino et al. 2008</a>). panproto combines these ideas with content-addressed storage for protocols, schemas, data, migrations, and complements. <a href="#schema-versioning-as-structured-merge">Related work</a> gives the broader comparison.</p>
-<h2 id="see-also-55"><a class="header" href="#see-also-55">See also</a></h2>
+<h2 id="see-also-56"><a class="header" href="#see-also-56">See also</a></h2>
 <ul>
 <li><a href="#init-and-commit">Init and commit</a> for the practical workflow.</li>
 <li><a href="#branch-and-merge-1">Branch and merge</a> for conflict handling.</li>
@@ -5515,7 +5567,7 @@ path = "schemas/events"
 <li>Theory pushout construction checks its cocone, and the optional checker handles a supplied alternative cocone. Schema merge checks a cocone plus a vertex-level factorization when explicitly asked. Neither path supplies a formal proof of the full universal property for arbitrary theory or schema inputs.</li>
 <li>Isomorphic protocol theories do not make two protocol parsers or emitters equivalent. Parser behavior, layout preservation, and application invariants remain properties of their respective implementations and declared constraints.</li>
 </ul>
-<h2 id="see-also-56"><a class="header" href="#see-also-56">See also</a></h2>
+<h2 id="see-also-57"><a class="header" href="#see-also-57">See also</a></h2>
 <ul>
 <li><a href="#find-a-span-between-two-schemas">Find a span between two schemas</a> describes the search interface and its certificates.</li>
 <li><a href="#schema-version-control-semantics">Schema version control semantics</a> gives the merge and commit behavior.</li>
@@ -5642,7 +5694,7 @@ path = "schemas/events"
 <p>The CLI reference is generated from <code>schema --help</code> by <a href="https://github.com/panproto/panproto/blob/main/xtask/src/bin/gen-cli-docs.rs"><code>xtask/src/bin/gen-cli-docs.rs</code></a>. Publication regenerates the page and fails when the committed file differs.</p>
 <h2 id="versioning"><a class="header" href="#versioning">Versioning</a></h2>
 <p>The publishable <code>panproto-*</code> crates inherit the workspace package version and are released together. The <code>xtask</code> tooling package is an exception with its own <code>0.0.0</code> version. Release checks keep language-binding metadata aligned with the workspace release. See the <a href="https://github.com/panproto/panproto/blob/main/CHANGELOG.md">changelog</a> for release history.</p>
-<h2 id="see-also-57"><a class="header" href="#see-also-57">See also</a></h2>
+<h2 id="see-also-58"><a class="header" href="#see-also-58">See also</a></h2>
 <ul>
 <li><a href="#crate-map">Crate map</a> for one-line descriptions of every crate.</li>
 <li><a href="#what-panproto-verifies">What panproto verifies</a> for the per-crate properties checked.</li>
@@ -5774,7 +5826,7 @@ literal ::= int | float | str | bool | "Nothing"
 <p>For fixed input and configuration, evaluation follows one call-by-value order. Each recursive invocation checks the depth bound and consumes from the shared step budget; list construction, ranges, <code>map</code>, and <code>flatMap</code> enforce <code>max_list_len</code>. Builtin arity and argument checks run during evaluation, after their arguments have been evaluated.</p>
 <p>These checks do not establish type preservation for the language. <code>infer_type</code> returns <code>Any</code> for several constructs, chooses the first match arm without comparing the others, and does not validate builtin arguments. The resource bounds establish termination of a bounded evaluator invocation, not strong normalization of the language with those bounds removed.</p>
 <p>The evaluator lives in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/eval.rs"><code>crates/panproto-expr/src/eval.rs</code></a>, and the classifier lives in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-expr/src/typecheck.rs"><code>crates/panproto-expr/src/typecheck.rs</code></a>.</p>
-<h2 id="see-also-58"><a class="header" href="#see-also-58">See also</a></h2>
+<h2 id="see-also-59"><a class="header" href="#see-also-59">See also</a></h2>
 <ul>
 <li><a href="#expression-language-reference">Expression-language reference</a> for the builtin catalog.</li>
 <li><a href="#apply-field-transforms">Apply field transforms</a> for usage.</li>
@@ -5887,7 +5939,7 @@ pub enum Step {
 <p>Lawful lens composition preserves the three equations when its premises hold. Property tests in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-lens/src/laws.rs"><code>crates/panproto-lens/src/laws.rs</code></a> and constructed DSL cases in <a href="https://github.com/panproto/panproto/blob/main/crates/panproto-lens-dsl/tests/step_laws.rs"><code>crates/panproto-lens-dsl/tests/step_laws.rs</code></a> test selected generated inputs and step constructors. Finite generated samples do not prove lawfulness for every document or instance.</p>
 <p>A <code>coerce_sort</code> step and directed equations are also checked for honesty against registered samples. A detected violation returns <code>LensDslError::CoercionNotHonest</code>. Passing means that the sampled values satisfied the declared round-trip class.</p>
 <p>The runtime checkers test one supplied case at a time, while property tests cover generated cases. Documents containing lossy or opaque transforms require scoped law claims; compilation alone does not prove them lawful. The semantics fixes the result of <code>put</code>, not its running time, and preserves step order without defining an equivalence on distinct documents that compile to the same lens.</p>
-<h2 id="see-also-59"><a class="header" href="#see-also-59">See also</a></h2>
+<h2 id="see-also-60"><a class="header" href="#see-also-60">See also</a></h2>
 <ul>
 <li><a href="#lens-combinator-reference">Reference: lens combinators</a> for the combinator algebra.</li>
 <li><a href="#write-lenses-in-the-lens-dsl">How-to: write lenses in the lens DSL</a>.</li>
@@ -5956,7 +6008,7 @@ TheorySpec { theory, extends, imports, sorts, ops,
 <p>Composition bodies use the colimit machinery described in <a href="#pushouts-and-merge">Pushouts and merge</a>. The <code>colimit</code> constructor checks cocone commutativity but does not run <code>check_morphism</code> on its inclusions, since a building-block instance theory may refer to sorts supplied only by the schema theory with which it is later combined. <code>ColimitResult::verify_universal</code> validates a constructed mediator for one caller-supplied alternative cocone. Built-in protocol registration assembles schema and instance theories from registered building blocks.</p>
 <p>Compilation checks sort and operation references, types both sides of equations, validates resolved morphisms, and tests declared coercion laws on registered samples unless <code>compile_unchecked</code> is used. Passing a finite coercion sample is evidence, not proof. Theory compilation also calls <code>validate_rewrite_system</code>. An analysis failure returns <code>RewriteSystemCheck</code>. <code>UnsoundRewriteSystem</code> reports either divergent rewrite paths that do not rejoin (a non-joining critical pair) or failure of the lexicographic-path-order termination check. Built-in registration treats either result as an internal programming error. These finite checks are not a proof in a proof assistant.</p>
 <p>The textual term parser rejects terms nested beyond <code>MAX_TERM_NESTING_DEPTH</code>, currently 128. This is an input-safety bound on the recursive parser and downstream traversals, not a bound on normalization steps. The REPL applies a separate 1,000-step normalization budget.</p>
-<h2 id="see-also-60"><a class="header" href="#see-also-60">See also</a></h2>
+<h2 id="see-also-61"><a class="header" href="#see-also-61">See also</a></h2>
 <ul>
 <li><a href="#pushouts-and-merge">Pushouts and merge</a> for the colimit construction.</li>
 <li><a href="#composing-protocols-by-colimit">Composing protocols by colimit</a> for the built-in theory components.</li>
@@ -5990,7 +6042,7 @@ TheorySpec { theory, extends, imports, sorts, ops,
 <p>The separate <a href="https://docs.rs/panproto-schema/latest/panproto_schema/fn.schema_pushout.html"><code>panproto_schema::schema_pushout</code></a> function accepts explicit vertex and edge pairs. It closes their endpoint identifications to an equivalence relation, builds a quotient schema, and returns morphisms from both inputs. It rejects overlap pairs that name absent elements. <code>SchemaSpan::pushout</code> calls this function only after rejecting a right leg that contracts vertices. Neither constructor invokes the VCS verifier or an on-demand universal-property checker.</p>
 <h2 id="limits-2"><a class="header" href="#limits-2">Limits</a></h2>
 <p>The pushout construction does not choose a resolution for incompatible edits. Repository histories are not themselves proved to present the base-to-branch span assumed above. The implementation also publishes no asymptotic or wall-clock bound for the complete merge procedure.</p>
-<h2 id="see-also-61"><a class="header" href="#see-also-61">See also</a></h2>
+<h2 id="see-also-62"><a class="header" href="#see-also-62">See also</a></h2>
 <ul>
 <li><a href="#schema-version-control-semantics">Schema version control semantics</a></li>
 <li><a href="#composing-protocols-by-colimit">Composing protocols by colimit</a></li>
@@ -6030,7 +6082,7 @@ TheorySpec { theory, extends, imports, sorts, ops,
 <p>Mathematically, if <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⇒</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⇒</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span></span> are natural transformations, their pointwise composite is natural, and lawful component lenses compose to a lawful component lens. Structural endofunctor equivalence is the implementation’s evidence that the middle object matches in the ordinary case.</p>
 <p>The identity-source branch is weaker. It accepts composition without establishing that <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span></span></span></span>’s target equals <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span></span></span></span>’s source as an endofunctor, then conjoins the second source precondition with the retained source precondition. <code>Protolens::check_applicability</code> and the chain APIs can reject a concrete schema that fails this retained obligation. <code>protolens_composable</code> is thus a construction guard, not a proof that every accepted composite is a natural transformation.</p>
 <p>Vertical and horizontal composition have structural tests, but the implementation does not quantify over all schema morphisms to certify naturality. It also treats protolenses that compute the same transform through different intermediate forms as distinct. Tests compare fused and sequential instantiation on representative chains, while the two routes may preserve different metadata shapes.</p>
-<h2 id="see-also-62"><a class="header" href="#see-also-62">See also</a></h2>
+<h2 id="see-also-63"><a class="header" href="#see-also-63">See also</a></h2>
 <ul>
 <li><a href="#lens-dsl-denotational-semantics">Lens DSL: denotational semantics</a> for the underlying lens model and the three laws.</li>
 <li><a href="#lens-combinator-reference">Reference: lens combinators</a> for the protolens module and entry points.</li>
@@ -6065,7 +6117,7 @@ cmd      ::= "load" | "theories" | "use" | "sorts" | "ops"
 <p>Commands that require <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mclose">)</span></span></span></span> fail when no theory is active or when the active name is missing from the map. Parsing, typechecking, normalization, free-model construction, and instance compilation render their failures as <code>ReplOutcome</code> messages rather than exposing the underlying error enums to the caller.</p>
 <p>The fixed normalization and model-depth bounds limit those particular operations. The implementation states no totality theorem for arbitrary input strings, and the REPL layer has no proof object for a successful typecheck or normalization.</p>
 <p><a href="https://github.com/panproto/panproto/blob/main/crates/panproto-cli/src/repl/engine.rs"><code>Repl::handle_line</code></a> implements this behavior. The surrounding <code>rustyline</code> driver supplies editing, command completion, and persistent history; those facilities are not part of the <code>Repl</code> state above.</p>
-<h2 id="see-also-63"><a class="header" href="#see-also-63">See also</a></h2>
+<h2 id="see-also-64"><a class="header" href="#see-also-64">See also</a></h2>
 <ul>
 <li><a href="#theory-dsl-compilation-semantics">Theory DSL</a></li>
 <li><a href="#cli-reference">CLI reference</a></li>
@@ -6146,7 +6198,7 @@ cmd      ::= "load" | "theories" | "use" | "sorts" | "ops"
 <p>For an abstract schema <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span> and policy <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>, the schema-level section property is:</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord texttt">forget_layout</span></span><span class="mopen">(</span><span class="mord text"><span class="mord texttt">decorate</span></span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">p</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≅</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span></span></p>
 <p>The current checks compare vertex-kind and edge-shape multisets, allowing fresh vertex identifiers introduced by parsing. The law is established for the fixtures exercised by those checks.</p>
-<h2 id="see-also-64"><a class="header" href="#see-also-64">See also</a></h2>
+<h2 id="see-also-65"><a class="header" href="#see-also-65">See also</a></h2>
 <p>For longer treatments, see <a href="#source-code-emission">Source-code emission</a>, <a href="#schemas-as-theories">Schemas as theories</a>, <a href="#lenses-and-round-trip-laws">Lenses and round-trip laws</a>, and <a href="#layout-enrichment-1">Layout enrichment</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="bibliography"><a class="header" href="#bibliography">Bibliography</a></h1>

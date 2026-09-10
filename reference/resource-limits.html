@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Translate across protocols - panproto</title>
+        <title>Resource limits - panproto</title>
 
 
         <!-- Custom HTML head -->
@@ -147,7 +147,7 @@
                         <a href="https://github.com/aaronstevenwhite/panproto" title="Git repository" aria-label="Git repository">
                             <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
                         </a>
-                        <a href="https://github.com/aaronstevenwhite/panproto/edit/main/book/src/how-to/cross-protocol.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/aaronstevenwhite/panproto/edit/main/book/src/reference/resource-limits.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
                         </a>
 
@@ -182,47 +182,67 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
-<h1 id="translate-across-protocols"><a class="header" href="#translate-across-protocols">Translate across protocols</a></h1>
-<p>panproto has two different cross-protocol cases. The TypeScript SDK can apply an explicit vertex-and-edge mapping between two protocol-tagged schema handles. It does not construct a shared theory or emit a complete target-language document. The CLI does not expose that limited two-protocol path: each <code>--protocol</code> argument selects one protocol for both schemas, and the current CLI resolver accepts only <code>atproto</code>.</p>
-<h2 id="decide-whether-the-task-is-supported"><a class="header" href="#decide-whether-the-task-is-supported">Decide whether the task is supported</a></h2>
-<p>Use <a href="./convert-data.html">Convert data between schemas</a> when both schemas use <code>atproto</code> and are already stored as panproto schema JSON. For a small explicit map in TypeScript, build both schema handles, map every relevant vertex and edge, and compile the migration as shown in <a href="../tutorials/cross-protocol-translation.html">Cross-protocol translation</a>. <code>checkExistence</code> selects the source schema’s registered protocol, so that report does not establish validity under both protocols. The result of <code>liftJson</code> is target-shaped JSON, not a complete OpenAPI, Protobuf, or other target document.</p>
-<p>A general bridge requires repository-level implementation: a shared protocol theory, explicit source and target translations into that theory, and format-specific parsing and emission at the boundaries.</p>
-<p>The theory DSL can compile a colimit of building-block theories, but compilation alone does not register a runtime protocol or translate existing JSON Schema, Protobuf, ATProto, or other built-in schemas into the result. Thus a DSL <code>compose</code> document is only one component of a cross-protocol bridge.</p>
-<h2 id="implement-a-bridge-in-rust"><a class="header" href="#implement-a-bridge-in-rust">Implement a bridge in Rust</a></h2>
-<p>The supported building blocks are available in Rust:</p>
-<ol>
-<li>Define the shared theory and its instance theory, then register both under stable names.</li>
-<li>Define a <code>Protocol</code> whose <code>schema_theory</code> and <code>instance_theory</code> use those names.</li>
-<li>Parse each source format with its protocol-specific parser, and write an explicit schema translation into the shared protocol.</li>
-<li>Build and check a migration between the translated schemas.</li>
-<li>Parse source records, apply the migration or lens, then serialize with the target format’s emitter.</li>
-</ol>
-<p>Each translation in steps 3 and 5 is format-specific code. panproto does not infer those boundary translations from the fact that two protocol theories share sorts with names such as <code>Vertex</code> or <code>Edge</code>.</p>
-<h2 id="verify-the-bridge"><a class="header" href="#verify-the-bridge">Verify the bridge</a></h2>
-<p>Test the three boundaries separately: source parsing into the shared schema, migration or lens laws over representative instances, and target emission followed by the target protocol’s parser. Constraints with no representation in the shared theory must be reported or handled explicitly; no current generic command detects and reports every such loss.</p>
-<h2 id="cli-boundaries"><a class="header" href="#cli-boundaries">CLI boundaries</a></h2>
-<p>The following patterns do not provide cross-protocol translation:</p>
-<ul>
-<li><code>schema data convert --protocol &lt;name&gt;</code> accepts one protocol name and loads both schemas under it. The current resolver accepts only <code>atproto</code>.</li>
-<li><code>schema lens generate --protocol &lt;name&gt;</code> likewise resolves one protocol for the entire lens, again only <code>atproto</code> in the current CLI.</li>
-<li><code>schema theory compile</code> validates and compiles a theory document but does not add it to the running CLI’s built-in protocol lookup.</li>
-</ul>
+<h1 id="resource-limits"><a class="header" href="#resource-limits">Resource limits</a></h1>
+<p>Reading a schema costs time and memory proportional to what the input asks for, and a public entry point reads input it did not author. Every such surface therefore parses within a <strong>budget</strong>: an allowance that is checked before work begins and drawn down as it proceeds.</p>
+<h2 id="what-is-bounded"><a class="header" href="#what-is-bounded">What is bounded</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Resource</th><th>Default</th><th>What it counts</th></tr>
+</thead>
+<tbody>
+<tr><td><code>input_bytes</code></td><td>64 MiB</td><td>Bytes of input accepted in one operation</td></tr>
+<tr><td><code>bundle_entries</code></td><td>4096</td><td>Documents in one bundle</td></tr>
+<tr><td><code>graph_elements</code></td><td>1,000,000</td><td>Vertices, edges and nodes in a decoded schema or instance</td></tr>
+<tr><td><code>metadata_bytes</code></td><td>16 MiB</td><td>Metadata attached to a schema or instance</td></tr>
+<tr><td><code>depth</code></td><td>128</td><td>Levels of nesting descended</td></tr>
+<tr><td><code>steps</code></td><td>10,000,000</td><td>Steps of evaluation or search</td></tr>
+<tr><td><code>output_bytes</code></td><td>64 MiB</td><td>Bytes of output produced</td></tr>
+</tbody>
+</table>
+</div>
+<p>The depth bound matches the walk and extraction depths that already existed, so it governs nothing it did not govern before.</p>
+<h2 id="two-properties-that-make-this-a-policy"><a class="header" href="#two-properties-that-make-this-a-policy">Two properties that make this a policy</a></h2>
+<p>Several subsystems already had sound local bounds: parser walk depth, CST extraction depth, expression evaluation steps, morphism search budget, model-check assignment counts. What they were not was a policy. What an input was allowed to cost depended on which door it came through, so the same document could be refused through one surface and accepted through another.</p>
+<p><strong>A budget is shared, not per-call.</strong> A nested operation draws from the same allowance as the operation containing it. Cloning a <code>Budget</code> shares its counters rather than copying them, so a caller is not charged once for a walk and again for each subwalk, and an oversized input cannot slip past a bound by being processed in pieces. A budget that reset per subsystem would bound each step and nothing overall, which is what several unrelated local limits already achieved.</p>
+<p><strong>A failure names the resource and the bound.</strong> <code>LimitExceeded</code> carries which allowance ran out and what it was set to. “Too deep” without a number tells a caller nothing about what to pass instead, and with seven separate allowances it does not even say which setting to change.</p>
+<h2 id="defaults-configuration-and-opting-out"><a class="header" href="#defaults-configuration-and-opting-out">Defaults, configuration, and opting out</a></h2>
+<p><code>parse_schema_document</code>, <code>parse_schema_source</code> and <code>parse_schema_bundle</code> apply <code>ResourceLimits::defaults()</code>. Every binding calls those, so the CLI, Python, C and WASM all inherit the same policy; none of them selects its own, and none can inherit an unbounded one by accident.</p>
+<p>A Rust caller that needs different bounds uses the <code>_within</code> variants:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use panproto_core::expr::limits::{Budget, ResourceLimits};
+use panproto_core::protocols::parse_schema_bundle_within;
+
+let mut limits = ResourceLimits::defaults();
+limits.bundle_entries = 32_768;
+let budget = Budget::new(limits);
+
+let docs = vec![serde_json::json!({
+    "lexicon": 1,
+    "id": "com.example.record",
+    "defs": { "main": { "type": "object", "properties": { "v": { "type": "string" } } } },
+})];
+let schema = parse_schema_bundle_within("atproto", &amp;docs, &amp;budget)?;
+assert!(schema.vertex_count() &gt; 0);
+<span class="boring">Ok::&lt;(), Box&lt;dyn std::error::Error&gt;&gt;(())
+</span><span class="boring">}</span></code></pre>
+<p>Passing the same budget to several calls has them share one allowance, which is how a caller bounds a whole pipeline rather than each stage of it.</p>
+<p><code>ResourceLimits::unbounded()</code> removes every bound, and a field set to <code>0</code> removes that one. This is a legitimate choice for a Rust caller processing input it produced itself. It is deliberately something to ask for: no FFI or command-line entry point selects it, because unbounded behaviour should never be inherited at a boundary that reads input from elsewhere.</p>
 <h2 id="see-also"><a class="header" href="#see-also">See also</a></h2>
 <ul>
-<li><a href="./build-protocol.html">Build a custom protocol</a> for the repository changes needed to register a protocol.</li>
-<li><a href="../explanation/protocol-colimits.html">Composing protocols by colimit</a> for the theory construction.</li>
-<li><a href="./convert-data.html">Convert data between schemas</a> for the supported single-protocol path.</li>
+<li><a href="../explanation/what-is-verified.html">What panproto verifies</a> for the bounded model check, whose assignment budget is configured separately per invocation.</li>
 </ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../how-to/schema-vcs/git-bridge.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../reference/expression-language.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../how-to/ci/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../reference/lens-combinators.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -232,11 +252,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../how-to/schema-vcs/git-bridge.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../reference/expression-language.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../how-to/ci/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../reference/lens-combinators.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
