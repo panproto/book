@@ -1,0 +1,538 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Segments - panproto</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Documentation: tutorials, how-to guides, reference, and explanation">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href=".././theme/cite.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "navy";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-1d2a83d6.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-19d298fc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">panproto</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/panproto/panproto" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/panproto/panproto/edit/main/book/src/correctness/segments.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="segments"><a class="header" href="#segments">Segments</a></h1>
+<p>A large instance may need to be stored in pieces without changing the instance it denotes. Segment correctness fixes the conditions under which this is possible: identifiers remain global, each node has one owner, boundary records describe every crossing edge, and assembling the pieces recovers the original value. These conditions form the <em>segment agreement</em>. The laws below cover the segment foundation only; execution runners, storage backends, checkpoints, and segmented edits belong to later components.</p>
+<p>Let <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span> be a finite tree, table, or graph instance, and let <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span></span></span></span> be a partition for the same shape. We write <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> for the segment that owns node or row identifier <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mop"><span class="mord mathrm">split</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2342em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mclose">)</span></span></span></span> for partitioning, and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9386em;vertical-align:-0.2441em;"></span><span class="mop"><span class="mop"><span class="mord mathrm">glue</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2342em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span></span></span></span> for checked assembly. An edge is owned by the owner of its source endpoint. The finite differential carrier contains 25 labelled graphs and all 290 assignments of their nodes to two or three labelled segments, together with two fan-bearing trees and all 40 assignments of their tree and fan nodes to two segments; one crossing-boundary witness for each instance shape, and one for each fan-bearing tree, checks the shape-specific representation.</p>
+<p>First, the page establishes ownership, boundary, and assembly laws. Second, it fixes canonical artifacts, the storage vocabulary, and typed refusals. Third, it states the validation and allocation boundaries that the segment core must preserve.</p>
+<h2 id="L-segments-1"><a class="header" href="#L-segments-1">Ownership is a total partial function on declared ranges</a></h2>
+<h3 id="statement"><a class="header" href="#statement">Statement</a></h3>
+<p>A valid partition numbers its segments densely from zero, stores each segment’s node ranges in ascending disjoint order, and assigns no identifier to two ranges. For every identifier covered by a declared range, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> is unique and is found by binary search. Nodes and rows are owned by <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span>, while graph edges, tree arcs, and foreign-key pairs are owned by the owner of their source.</p>
+<h3 id="outside-the-domain"><a class="header" href="#outside-the-domain">Outside the domain</a></h3>
+<p>An inverted range, overlapping pair of ranges, non-dense segment identifier, node-allocation range outside the owned ranges, or edge-allocation range on a table is a typed partition refusal. An instance element whose identifier no range covers is <code>Unowned</code>.</p>
+<h3 id="definitions-used"><a class="header" href="#definitions-used">Definitions used</a></h3>
+<p>An <em>owned range</em> is an inclusive interval of <code>u32</code> identifiers. A <em>source endpoint</em> is the graph edge source, tree-arc parent, or referencing table row.</p>
+<h3 id="proof"><a class="header" href="#proof">Proof</a></h3>
+<p>Partition validation sorts all ranges by their lower endpoint and rejects the first overlap. The resulting range sequence admits at most one interval containing any identifier, so binary search returns a unique owner whenever one exists. Partitioning reads that owner for every node and for each edge’s source; it never derives edge ownership from an edge identifier.</p>
+<h3 id="executable-counterpart"><a class="header" href="#executable-counterpart">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>segments.sg1</code></li>
+<li>Reference: <code>panproto_reference::segment::partition</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::segments::graph_partition_cases; bound: graphs=25, partitions=290</code></li>
+<li>Exhaustive differential test: <code>bounded_graph_partition_glue_and_segment_bytes_agree_exhaustively; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=bounded_graph_partition_glue_and_segment_bytes_agree_exhaustively)'</code></li>
+<li>Property differential test: <code>segment::tests::partition::every_generated_partition_is_valid; command: cargo nextest run -p panproto-inst --lib --no-tests=fail -E 'test(=segment::tests::partition::every_generated_partition_is_valid)'</code></li>
+<li>Property differential test: <code>randomized::boundary_cut_matches_the_reference_on_generated_shape_choices; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=randomized::boundary_cut_matches_the_reference_on_generated_shape_choices)'</code></li>
+<li>Property scope: <code>five documented shape witnesses; paired partition, glue, segment bytes, manifest bytes, digest and authenticated verification; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/partition.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/split.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_segments.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/segments.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/segments.rs</code></li>
+</ul>
+<h2 id="L-segments-2"><a class="header" href="#L-segments-2">A boundary is the exact cut of the owned edge relation</a></h2>
+<h3 id="statement-1"><a class="header" href="#statement-1">Statement</a></h3>
+<p>For every owned edge from segment <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> to a node in segment <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.05724em;">j</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel"><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span><span class="mrel">=</span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span>, segment <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> contains one ghost for the remote target and segment <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.854em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.05724em;">j</span></span></span></span> contains one incoming stub keyed by that edge’s canonical reference. No boundary record exists for a non-crossing edge. A ghost records the target identifier, owner, and anchor; an incoming stub records the source identifier, source owner and anchor, target identifier, and label.</p>
+<h3 id="outside-the-domain-1"><a class="header" href="#outside-the-domain-1">Outside the domain</a></h3>
+<p>Missing, extra, or unequal ghosts and incoming stubs are refused. The same is true when an owned edge names a local endpoint that its owner does not hold, when a boundary key has the wrong shape, or when a tree segment disagrees with its embedding.</p>
+<h3 id="definitions-used-1"><a class="header" href="#definitions-used-1">Definitions used</a></h3>
+<p>The <em>cut</em> of an edge relation contains exactly those edges whose source and target owners differ. Graph edges and embedded fan edges use their edge identifier as the incoming-stub key; ordinary tree arcs and table pairs use their native references.</p>
+<h3 id="proof-1"><a class="header" href="#proof-1">Proof</a></h3>
+<p>Partitioning visits each edge once. A crossing edge inserts its target into the source boundary and the same edge record into the target boundary. Validation reconstructs this relation from owned edges and compares both ordered maps, so either an omitted record or an extra record produces a typed mismatch.</p>
+<h3 id="executable-counterpart-1"><a class="header" href="#executable-counterpart-1">Executable counterpart</a></h3>
+<ul>
+<li>
+<p>Law ID: <code>segments.sg2</code></p>
+</li>
+<li>
+<p>Reference: <code>panproto_reference::segment::partition</code></p>
+</li>
+<li>
+<p>Enumerator: <code>panproto_reference::enumerate::segments::shape_witnesses; bound: shapes=3, witnesses=5, segments=2</code></p>
+</li>
+<li>
+<p>Exhaustive differential test: <code>graph_table_and_tree_artifacts_match_the_reference_exactly; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=graph_table_and_tree_artifacts_match_the_reference_exactly)'</code></p>
+</li>
+<li>
+<p>Property differential test: <code>randomized::boundary_cut_matches_the_reference_on_generated_shape_choices; command: cargo +1.99 nextest run --cargo-profile ci-test --profile ci -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=randomized::boundary_cut_matches_the_reference_on_generated_shape_choices)'</code></p>
+</li>
+<li>
+<p>Fixed regression certificate: <code>segment::tests::segments::partition_verification_rejects_ghost_mismatch_duplicate_edge_ids_and_tree_cycles; command: cargo nextest run -p panproto-inst --lib --no-tests=fail -E 'test(=segment::tests::segments::partition_verification_rejects_ghost_mismatch_duplicate_edge_ids_and_tree_cycles)'</code></p>
+</li>
+<li>
+<p>File: <code>crates/panproto-inst/src/segment/body.rs</code></p>
+</li>
+<li>
+<p>File: <code>crates/panproto-inst/src/segment/check.rs</code></p>
+</li>
+<li>
+<p>File: <code>crates/panproto-inst/src/segment/split.rs</code></p>
+</li>
+<li>
+<p>File: <code>crates/panproto-inst/tests/reference_segments.rs</code></p>
+</li>
+<li>
+<p>File: <code>crates/panproto-reference/src/pages/segments.rs</code></p>
+</li>
+</ul>
+<h2 id="L-segments-3"><a class="header" href="#L-segments-3">Partitioning and assembly are inverse on valid inputs</a></h2>
+<h3 id="statement-2"><a class="header" href="#statement-2">Statement</a></h3>
+<p>For every valid <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span></span></span></span> of the same shape,</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mop"><span class="mord mathrm">glue</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2342em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mop"><span class="mop"><span class="mord mathrm">split</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2342em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mord">.</span></span></span></span></span></p>
+<p>Equality is exact for graph and table instances. For trees it also includes the root, arc order, fan order, embedding identifiers, and the two monotone embedding counters.</p>
+<h3 id="outside-the-domain-2"><a class="header" href="#outside-the-domain-2">Outside the domain</a></h3>
+<p>The equation is stated only when every element is owned, the tree and its embedding agree, and the partition and all produced segments satisfy their contracts. Assembly refuses duplicate elements, inconsistent boundaries, missing root state, or counters below a held identifier. Partitioning refuses a tree whose embedding does not agree with it, reporting <code>NotEmbedded</code> at the first element that breaks agreement; a tree whose fan parent edge identifiers do not ascend in fan order is refused at the first fan node out of order.</p>
+<h3 id="definitions-used-2"><a class="header" href="#definitions-used-2">Definitions used</a></h3>
+<p><em>Exact tree equality</em> pairs a tree with its <code>TreeEmbedding</code>; equality of the tree alone would omit the identifiers required by graph transport and later edits.</p>
+<p>A tree and its embedding <em>agree</em> when every node key equals its node identifier; the root is a node anchored at the schema root and reaches every node along arcs, each node having at most one parent; every arc has an edge identifier, and these ascend in arc order; every fan has a fan node that is no tree node, an edge identifier for its parent and for each of its labels, and endpoints that are tree nodes; fan parent edge identifiers ascend in fan order; no edge identifier is used twice; and both counters lie above every node and edge identifier the embedding uses. The initial embedding of a tree allocates each fan’s edges after every arc and after the fans before it, and a tree edit appends new fans with fresh identifiers and keeps the edge identifiers of a relocated fan node, so every embedding produced from a tree keeps fan parent edges ascending.</p>
+<h3 id="proof-2"><a class="header" href="#proof-2">Proof</a></h3>
+<p>Partitioning places each node and each source-owned edge in exactly one segment by <a href="#L-segments-1">L-segments-1</a>. Assembly verifies the boundaries from <a href="#L-segments-2">L-segments-2</a>, then unions the disjoint node maps and merges edge records in their canonical order. The root owner retains the tree root and counters, so no tree presentation data is lost.</p>
+<p>Fan order needs its own argument, because a segment lists its fans by fan node identifier and carries no global fan position. Fan node identifiers cannot stand for fan order: relocating a fan node gives it a fresh identifier without moving the fan. Partitioning copies each fan’s embedding (its node, parent edge, and labelled child edges) to the owner of its fan node. Assembly collects every segment’s fans and sorts them by parent edge identifier. Edge identifiers are unique across segments (assembly checks this before it merges), so the sort is a total order, and agreement makes it the original fan order. Each fan is rebuilt from the targets of its own edges, so the tree’s fans and the embedding’s fans are recovered in the same order.</p>
+<h3 id="executable-counterpart-2"><a class="header" href="#executable-counterpart-2">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>segments.sg3</code></li>
+<li>Reference: <code>panproto_reference::segment::partition</code></li>
+<li>Reference: <code>panproto_reference::segment::glue</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::segments::partition_cases; bound: graphs=25, fan_trees=2, partitions=330</code></li>
+<li>Exhaustive differential test: <code>bounded_graph_and_fan_tree_partitions_glue_and_agree_exhaustively; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=bounded_graph_and_fan_tree_partitions_glue_and_agree_exhaustively)'</code></li>
+<li>Property differential test: <code>segment::tests::laws::partitioning_then_assembling_returns_the_identical_instance_for_every_partition; command: cargo nextest run -p panproto-inst --lib --no-tests=fail -E 'test(=segment::tests::laws::partitioning_then_assembling_returns_the_identical_instance_for_every_partition)'</code></li>
+<li>Property differential test: <code>randomized::boundary_cut_matches_the_reference_on_generated_shape_choices; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=randomized::boundary_cut_matches_the_reference_on_generated_shape_choices)'</code></li>
+<li>Property scope: <code>five documented shape witnesses; paired partition, glue, segment bytes, manifest bytes, digest and authenticated verification; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/split.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_segments.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/segments.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/segments.rs</code></li>
+</ul>
+<h2 id="L-segments-4"><a class="header" href="#L-segments-4">Canonical segment artifacts bind all semantic inputs</a></h2>
+<h3 id="statement-3"><a class="header" href="#statement-3">Statement</a></h3>
+<p>Canonical segment bytes contain the format version, shape, schema digest, segment specification, complete owned body, and complete boundary in a fixed order. A tree body writes each fan as its fan node, parent edge, and labelled child edges, in ascending fan node order, and writes no global fan position. Segment digests derive from exactly those bytes under the segment context. Manifest records bind the segment digest, counts, greatest identifiers, owned edge-identifier run, and crossing-edge digests; the manifest root and instance digest are deterministic functions of those records and their streams. Manifest verification also takes a trusted expected manifest digest and compares it with the complete canonical manifest, including its schema digest and other header fields.</p>
+<h3 id="outside-the-domain-3"><a class="header" href="#outside-the-domain-3">Outside the domain</a></h3>
+<p>Segment-contract checking refuses malformed ownership, endpoints and boundary records. Sealing checks the records’ partition, crossing-digest pairs, allocation floors and committed edge-id runs, and refuses duplicate edge identifiers. Full sealing additionally refuses record streams whose shape, order, counts or stated statistics disagree. After validating the manifest layout version, manifest verification checks the partition, statistics identifiers, crossing pairs and Merkle root in that order, then refuses a full digest that differs from the trusted expected identity. A changed schema digest is thus refused even when the records and Merkle root remain unchanged. Verification of a supplied segment separately checks its contract and its complete record under the manifest schema. Decoding refuses malformed or noncanonical encodings, including truncated data, trailing bytes and invalid ordering.</p>
+<h3 id="definitions-used-3"><a class="header" href="#definitions-used-3">Definitions used</a></h3>
+<p>A <em>crossing digest</em> hashes the canonical records for one ordered pair of source and target segments. The manifest root is the domain-separated binary Merkle root over canonical record bytes. The expected manifest identity comes from a trusted artifact reference or an original sealed manifest; hashing the supplied manifest itself does not establish that expectation.</p>
+<h3 id="proof-3"><a class="header" href="#proof-3">Proof</a></h3>
+<p>Every byte writer traverses fields in declaration order and ordered collections in key order. Segment verification recomputes its complete record. After validating the manifest layout version, manifest verification checks the partition, then every statistics identifier. A statistics identifier that differs from its record identifier produces <code>MalformedPartition</code> with <code>NotDense</code> carrying the actual statistics identifier. It next checks crossing pairs in record order: outgoing entries precede incoming entries, with peer identifiers ascending within each map. A self-cross is refused even when its two digests agree, since the cut contains only edges whose owners differ. After those checks, verification recomputes the Merkle root and compares the digest of all canonical manifest bytes with the expected identity, without reading a segment body. The schema digest occurs in those bytes, so a header change is covered by the comparison even when every record is unchanged. Streaming instance records merge in the same canonical order as whole-instance writers, which gives the same instance digest without assembly.</p>
+<h3 id="executable-counterpart-3"><a class="header" href="#executable-counterpart-3">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>segments.sg6</code></li>
+<li>Reference: <code>panproto_reference::segment::canonical_manifest_bytes</code></li>
+<li>Reference: <code>panproto_reference::segment::canonical_segment_bytes</code></li>
+<li>Reference: <code>panproto_reference::segment::seal_manifest</code></li>
+<li>Reference: <code>panproto_reference::segment::verify_manifest</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::segments::shape_witnesses; bound: shapes=3, witnesses=5, segments=2</code></li>
+<li>Exhaustive differential test: <code>graph_table_and_tree_artifacts_match_the_reference_exactly; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=graph_table_and_tree_artifacts_match_the_reference_exactly)'</code></li>
+<li>Property differential test: <code>segment::tests::laws::streaming_instance_digest_equals_the_digest_of_the_assembled_instance; command: cargo nextest run -p panproto-inst --lib --no-tests=fail -E 'test(=segment::tests::laws::streaming_instance_digest_equals_the_digest_of_the_assembled_instance)'</code></li>
+<li>Production certificate: <code>manifest_header_schema_mutation_preserves_records_but_refuses_original_identity; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=manifest_header_schema_mutation_preserves_records_but_refuses_original_identity)'</code></li>
+<li>Production certificate: <code>manifest_header_schema_mutation_must_refuse_the_original_identity; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=manifest_header_schema_mutation_must_refuse_the_original_identity)'</code></li>
+<li>Production certificate: <code>manifest_cross_refusal_precedes_root_and_identity_refusals; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=manifest_cross_refusal_precedes_root_and_identity_refusals)'</code></li>
+<li>Production certificate: <code>manifest_root_refusal_precedes_identity_refusal_when_cross_pairs_agree; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=manifest_root_refusal_precedes_identity_refusal_when_cross_pairs_agree)'</code></li>
+<li>Production certificate: <code>malformed_manifests_preserve_the_complete_structural_refusal_order; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=malformed_manifests_preserve_the_complete_structural_refusal_order)'</code></li>
+<li>Property differential test: <code>randomized::boundary_cut_matches_the_reference_on_generated_shape_choices; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=randomized::boundary_cut_matches_the_reference_on_generated_shape_choices)'</code></li>
+<li>Property scope: <code>five documented shape witnesses; paired partition, glue, segment bytes, manifest bytes, digest and authenticated verification; configured successful cases per seed=256</code></li>
+<li>Property differential test: <code>randomized::manifest_refusals_match_on_generated_structural_mutations; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=randomized::manifest_refusals_match_on_generated_structural_mutations)'</code></li>
+<li>Property scope: <code>six existing malformed-manifest cases with rebuilt roots and the original trusted identity; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/bytes.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/manifest.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/stream.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_segments.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/segments.rs</code></li>
+</ul>
+<h2 id="L-segments-5"><a class="header" href="#L-segments-5">The storage vocabulary has one stable typed layout</a></h2>
+<h3 id="statement-4"><a class="header" href="#statement-4">Statement</a></h3>
+<p>The six phase names and seven artifact-kind names have stable snake-case serde forms. Task keys preserve both coordinator and segment forms. <code>TaskRecord::inputs_digest</code> binds a lens identity, a task key, and a sorted multiset of input-artifact digests. <code>RunJournal::reusable</code> returns true exactly when the journal contains that task with the requested input and output digests. The production <code>RunJournal::run_digest</code> changes on the witnessed carrier when its lens, input manifest, partition, or operation bytes change. These contracts are limited to serde names, task-key forms, digest inputs, and reuse predicates; they assert no runner or storage-backend law.</p>
+<h3 id="outside-the-domain-4"><a class="header" href="#outside-the-domain-4">Outside the domain</a></h3>
+<p>Unknown serde variants and malformed task keys are outside the accepted layout. The reuse predicate accepts an artifact digest supplied by its caller; it does not read artifact bytes or validate the recorded byte count. This law does not claim a canonical production journal-content encoding, equality with the reference journal encoding, transactional behavior of a concrete store, or the scheduling behavior of a runner.</p>
+<h3 id="definitions-used-4"><a class="header" href="#definitions-used-4">Definitions used</a></h3>
+<p>The <em>storage vocabulary</em> is the public data model for segmented task identity and journals. Layout stability here concerns serde names and task-key forms. The helper contract covers <code>TaskRecord::inputs_digest</code> and <code>RunJournal::reusable</code>; the input sensitivity of <code>RunJournal::run_digest</code> has production-only evidence. The law makes no claim about implementation-specific memory layout or canonical journal-content bytes.</p>
+<h3 id="proof-4"><a class="header" href="#proof-4">Proof</a></h3>
+<p>The Rust declarations determine the serde tags. <code>TaskKey</code> carries an optional segment, so its two forms are observed directly in a serialized journal. The reference <code>task_inputs_digest</code> writes the lens bytes, an explicit phase tag, the segment-presence field and identifier, a <code>u64</code> input count, and the sorted digest bytes under <code>SEGMENT_TASK_CONTEXT</code>. The independent <code>journal_task_reusable</code> helper performs one ordered-map lookup and compares only the recorded input and output digests. The bounded differential compares both helpers with their public production counterparts over every phase, coordinator and boundary segment identifiers, empty and repeated input carriers, and both boolean results. The production <code>RunJournal::run_digest</code> separately writes the lens and input digests, canonical partition bytes, and operation bytes under <code>RUN_JOURNAL_CONTEXT</code>; its four mutation checks are production-only.</p>
+<h3 id="executable-counterpart-4"><a class="header" href="#executable-counterpart-4">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>segments.sg7-types</code></li>
+<li>Reference: <code>panproto_reference::segment::task_inputs_digest</code></li>
+<li>Reference: <code>panproto_reference::segment::journal_task_reusable</code></li>
+<li>Evidence scope: <code>phases=6, artifact kinds=7, task-input digest cases=180 (lens digests=2, task keys=18, input lists=5), reuse cases=55, populated serde task keys=2, production run-identity input families=4</code></li>
+<li>Production certificate: <code>storage_vocabulary_serde_layout_and_run_identity_are_stable; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=storage_vocabulary_serde_layout_and_run_identity_are_stable)'</code></li>
+<li>Independent reference anchor: <code>bounded_task_input_digest_and_journal_reuse_match_the_reference; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=bounded_task_input_digest_and_journal_reuse_match_the_reference)'</code></li>
+<li>Exhaustive differential test: <code>bounded_task_input_digest_and_journal_reuse_match_the_reference; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=bounded_task_input_digest_and_journal_reuse_match_the_reference)'</code></li>
+<li>Property differential test: <code>randomized::task_digest_and_reuse_match_the_reference_on_generated_carrier_choices; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=randomized::task_digest_and_reuse_match_the_reference_on_generated_carrier_choices)'</code></li>
+<li>Property scope: <code>six phases, three segment choices, five input lists and two lens digests; matching, changed-input, changed-output and absent-task reuse queries; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/store.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/partition.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_segments.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/segments.rs</code></li>
+</ul>
+<h2 id="L-segments-6"><a class="header" href="#L-segments-6">Segment refusals preserve variant and witness data</a></h2>
+<h3 id="statement-5"><a class="header" href="#statement-5">Statement</a></h3>
+<p>For a fixed invalid input, segment operations return the same typed error variant and structured witness in every run. Structural validation precedes artifact and operation checks. Within one stage, errors are ordered by segment identifier, element reference, and the variant-specific precedence key. For manifest crossing errors, the ordering segment is the record being checked: outgoing entries precede incoming entries, and each map is visited by ascending peer identifier. A segment that breaks its contract returns <code>Invalid</code> listing every violation, sorted by element: an owned edge whose source is owned elsewhere is still checked at its target. Tree counters held without the root name no element, so the contract reports them as <code>MalformedPartition</code> with the <code>CountersWithoutRoot</code> defect before any element-located violation. Every segment entry point checks a segment’s shape against the partition before it validates the partition, so a segment of the wrong shape under an invalid partition is a <code>ShapeMismatch</code>. Partitioning a whole tree whose node key differs from its node identifier returns <code>NotEmbedded</code> at that node, since such a tree does not agree with its embedding.</p>
+<h3 id="outside-the-domain-5"><a class="header" href="#outside-the-domain-5">Outside the domain</a></h3>
+<p>Free-text messages of storage failures are supplied by an external store and are not compared here, and the message of a <code>Decode</code> refusal is free text; its variant and artifact are compared. This law covers the segment-core variants and their structured payloads; later runner reports add their own status laws.</p>
+<h3 id="definitions-used-5"><a class="header" href="#definitions-used-5">Definitions used</a></h3>
+<p>A <em>typed witness</em> is the complete payload of a <code>SegmentError</code>, including element references, owners, ranges, digests, and every violation in an <code>Invalid</code> value.</p>
+<h3 id="proof-5"><a class="header" href="#proof-5">Proof</a></h3>
+<p>Partition and segment checks traverse ordered carriers, accumulate local violations in canonical order, and select the first structural error before decoding later artifacts. The differential maps each reference error field for field into the production vocabulary and compares the complete values, so it observes branch selection, the order of an <code>Invalid</code> list, and every payload field. The labelled refusal carrier covers each stage once: partition validation, splitting, and the segment contract, including a segment that breaks four contract clauses at once, a segment of the wrong shape under an invalid partition, and a whole tree whose node key differs from its node identifier. A separate six-case manifest matrix checks reciprocal self-crosses, the crossing traversal tie, a statistics-identifier mismatch, a partition defect together with a statistics defect, a later statistics defect together with an earlier crossing defect, and an isolated density defect.</p>
+<h3 id="executable-counterpart-5"><a class="header" href="#executable-counterpart-5">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>segments.sg9</code></li>
+<li>Reference: <code>panproto_reference::segment::decode_segment_bytes</code></li>
+<li>Reference: <code>panproto_reference::segment::partition</code></li>
+<li>Reference: <code>panproto_reference::segment::validate_segment_contract</code></li>
+<li>Reference: <code>panproto_reference::segment::verify_manifest</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::segments::refusal_cases; bound: refusals=11</code></li>
+<li>Exhaustive differential test: <code>partition_and_decoder_refusals_preserve_typed_error_precedence; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=partition_and_decoder_refusals_preserve_typed_error_precedence)'</code></li>
+<li>Property differential test: <code>randomized::typed_refusals_match_the_reference_on_generated_carrier_choices; command: cargo +1.99 nextest run --cargo-profile ci-test --profile ci -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=randomized::typed_refusals_match_the_reference_on_generated_carrier_choices)'</code></li>
+<li>Fixed regression certificate: <code>segment::tests::segments::invalid_segments_list_every_violation_sorted; command: cargo nextest run -p panproto-inst --lib --no-tests=fail -E 'test(=segment::tests::segments::invalid_segments_list_every_violation_sorted)'</code></li>
+<li>Production certificate: <code>malformed_manifests_preserve_the_complete_structural_refusal_order; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=malformed_manifests_preserve_the_complete_structural_refusal_order)'</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/manifest.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/error.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/check.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/bytes.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/split.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_segments.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/segments.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/segments.rs</code></li>
+</ul>
+<h2 id="L-segments-7"><a class="header" href="#L-segments-7">Local validation retains node identity</a></h2>
+<h3 id="statement-6"><a class="header" href="#statement-6">Statement</a></h3>
+<p>A graph or tree segment used for local validation must store each node under its carried identifier. Validation checks this condition before constructing its local view, and a mismatch returns <code>NodeIdMismatch</code> with the map key and carried identifier.</p>
+<h3 id="outside-the-domain-6"><a class="header" href="#outside-the-domain-6">Outside the domain</a></h3>
+<p>Table rows carry their identifiers in map keys and row references, so this additional embedded-node check applies only to graph and tree segments. Other segment-contract violations retain their earlier precedence.</p>
+<h3 id="definitions-used-6"><a class="header" href="#definitions-used-6">Definitions used</a></h3>
+<p>The <em>local validation view</em> is the temporary graph used to evaluate checks whose locality is one segment. Map-key identity ensures that the view and canonical bytes address the same node.</p>
+<h3 id="proof-6"><a class="header" href="#proof-6">Proof</a></h3>
+<p>The contract check compares every ordered node-map key with <code>Node.id</code> before local view construction. Equality makes key lookup and embedded identity coincide. Inequality produces the typed witness, preventing validation from reporting facts about one identifier while serialization records another. The bounded differential compares the complete <code>Invalid { violations: [NodeIdMismatch { key, found }] }</code> value in both implementations.</p>
+<h3 id="executable-counterpart-6"><a class="header" href="#executable-counterpart-6">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>segments.s10</code></li>
+<li>Reference: <code>panproto_reference::segment::validate_segment_contract</code></li>
+<li>Evidence scope: <code>map keys=1, embedded node ids=1, mismatched pairs=1</code></li>
+<li>Production certificate: <code>partition_and_decoder_refusals_preserve_typed_error_precedence; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=partition_and_decoder_refusals_preserve_typed_error_precedence)'</code></li>
+<li>Independent reference anchor: <code>partition_and_decoder_refusals_preserve_typed_error_precedence; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=partition_and_decoder_refusals_preserve_typed_error_precedence)'</code></li>
+<li>Exhaustive differential test: <code>partition_and_decoder_refusals_preserve_typed_error_precedence; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=partition_and_decoder_refusals_preserve_typed_error_precedence)'</code></li>
+<li>Property differential test: <code>randomized::node_identity_refusals_match_the_reference_on_generated_identifiers; command: cargo +1.99 nextest run --cargo-profile ci-test --profile ci -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=randomized::node_identity_refusals_match_the_reference_on_generated_identifiers)'</code></li>
+<li>Property scope: <code>map keys=0..4, embedded node id=key+offset, offsets=1..5, identifier pairs=25</code></li>
+<li>Fixed regression certificate: <code>segment::tests::validation::validate_segment_returns_every_contract_violation_before_validation; command: cargo nextest run -p panproto-inst --lib --no-tests=fail -E 'test(=segment::tests::validation::validate_segment_returns_every_contract_violation_before_validation)'</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/check.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/validate.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_segments.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/segments.rs</code></li>
+</ul>
+<h2 id="L-segments-8"><a class="header" href="#L-segments-8">Validation-view capacity is checked before construction</a></h2>
+<h3 id="statement-7"><a class="header" href="#statement-7">Statement</a></h3>
+<p>Let <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">32</span></span></span></span></span></span></span></span></span></span></span></span>, the cardinality of the <code>EdgeId</code> carrier. A graph or tree segment with <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span> owned view edges and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span> incoming stubs is representable for local validation exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mord mathnormal">s</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span>. The sum is computed in <code>u64</code> before any temporary edge identifier is assigned. A larger carrier is refused as <code>ValidationViewUnrepresentable</code> with the exact total. The executable evidence calls both capacity checks on the same counts and compares the exact segment identifier and refused total.</p>
+<h3 id="outside-the-domain-7"><a class="header" href="#outside-the-domain-7">Outside the domain</a></h3>
+<p>Tables do not construct this local graph view and thus do not use the preflight. Segment-contract errors precede capacity checking.</p>
+<h3 id="definitions-used-7"><a class="header" href="#definitions-used-7">Definitions used</a></h3>
+<p>An <em>owned view edge</em> is an owned graph edge or embedded tree edge visible to validation. Incoming stubs require distinct temporary identifiers after the owned edge identifiers.</p>
+<h3 id="proof-7"><a class="header" href="#proof-7">Proof</a></h3>
+<p>There are exactly <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span> distinct <code>u32</code> edge identifiers. Assigning one identifier to every owned edge and stub is injective precisely when their count does not exceed <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span>. Counting in <code>u64</code> distinguishes <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span> from <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>, and the preflight runs before conversion to <code>u32</code>, so the refusal cannot alias the first identifier.</p>
+<h3 id="executable-counterpart-7"><a class="header" href="#executable-counterpart-7">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>segments.s10a</code></li>
+<li>Reference: <code>panproto_reference::segment::validation_view_preflight</code></li>
+<li>Reference: <code>panproto_reference::segment::validate_segment_contract</code></li>
+<li>Evidence scope: <code>capacity=2^32, boundary pairs=10, generated count pairs=512 per run with each count from 0 through capacity+1; valid, key/id mismatch and shape-mismatch controls on a one-edge graph with injected capacities 0 and 1</code></li>
+<li>Production certificate: <code>segment::tests::validation::validation_view_capacity_accepts_the_full_edge_id_domain_and_refuses_the_next_edge; command: cargo nextest run -p panproto-inst --lib --no-tests=fail -E 'test(=segment::tests::validation::validation_view_capacity_accepts_the_full_edge_id_domain_and_refuses_the_next_edge)'</code></li>
+<li>Independent reference anchor: <code>partition_and_decoder_refusals_preserve_typed_error_precedence; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=partition_and_decoder_refusals_preserve_typed_error_precedence)'</code></li>
+<li>Exhaustive differential test: <code>segment::tests::validation::validation_view_capacity_accepts_the_full_edge_id_domain_and_refuses_the_next_edge; command: cargo nextest run -p panproto-inst --lib --no-tests=fail -E 'test(=segment::tests::validation::validation_view_capacity_accepts_the_full_edge_id_domain_and_refuses_the_next_edge)'</code></li>
+<li>Property differential test: <code>segment::tests::validation::validation_view_capacity_agrees_with_the_reference; command: cargo nextest run -p panproto-inst --lib --no-tests=fail -E 'test(=segment::tests::validation::validation_view_capacity_agrees_with_the_reference)'</code></li>
+<li>Production certificate: <code>segment::tests::validation::validation_view_capacity_preserves_contract_error_precedence; command: cargo nextest run -p panproto-inst --lib --no-tests=fail -E 'test(=segment::tests::validation::validation_view_capacity_preserves_contract_error_precedence)'</code></li>
+<li>Production certificate: <code>segment::tests::validation::validation_view_capacity_reaches_only_valid_contracts; command: cargo nextest run -p panproto-inst --lib --no-tests=fail -E 'test(=segment::tests::validation::validation_view_capacity_reaches_only_valid_contracts)'</code></li>
+<li>Production certificate: <code>segment::tests::validation::validate_segment_runs_the_capacity_preflight_before_constructing_the_view; command: cargo nextest run -p panproto-inst --lib --no-tests=fail -E 'test(=segment::tests::validation::validate_segment_runs_the_capacity_preflight_before_constructing_the_view)'</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/tests/validation.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/validate.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/error.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_segments.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/segments.rs</code></li>
+</ul>
+<h2 id="L-segments-9"><a class="header" href="#L-segments-9">Segment observation equals observation of the glued instance</a></h2>
+<h3 id="statement-8"><a class="header" href="#statement-8">Statement</a></h3>
+<p>For every valid segment family <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span> under <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span></span></span></span> that seals, and every deterministic whole-instance observation <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span>,</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm">segmented</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mop"><span class="mop"><span class="mord mathrm">glue</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2342em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mclose">))</span><span class="mord">.</span></span></span></span></span></p>
+<p>A family <em>seals</em> when every declared edge allocation range of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span></span></span></span> starts above the greatest edge identifier the family owns. The certificate uses this equation as its semantic boundary and makes no claim about a checkpointed segmented runner.</p>
+<h3 id="outside-the-domain-8"><a class="header" href="#outside-the-domain-8">Outside the domain</a></h3>
+<p>The equation requires a valid partition and segment family. An invalid family returns the same structural refusal that checked assembly returns, before <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span> is called. A valid family that does not seal assembles, but the segmented run refuses it with <code>AllocationBelowFloor</code> for the first segment whose edge allocation range starts at or below that greatest edge identifier, and production sealing returns the same refusal. Partition validation cannot see this condition, since it sees no identifiers.</p>
+<h3 id="definitions-used-8"><a class="header" href="#definitions-used-8">Definitions used</a></h3>
+<p>A <em>whole-instance observation</em> is a deterministic function of the assembled instance. In the finite differential it is exact canonical identity, so the comparison retains every node, edge, row, arc, fan, root, and value.</p>
+<h3 id="proof-8"><a class="header" href="#proof-8">Proof</a></h3>
+<p>The reference run validates every segment, assembles the family by checked glue, observes the glued instance with <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span>, and seals the manifest. Validation and glue refuse exactly the invalid families. Sealing refuses exactly the families that do not seal, and on a family that seals it returns a manifest without changing the observed value. Production partition and assembly satisfy <a href="#L-segments-3">L-segments-3</a>, and exact canonical bytes agree between implementations on every carrier case, as do sealed manifests and seal refusals. Both sides thus present the same whole instance to the observation.</p>
+<h3 id="executable-counterpart-8"><a class="header" href="#executable-counterpart-8">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>segments.execution-equivalence</code></li>
+<li>Reference: <code>panproto_reference::segment::segmented</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::segments::allocated_graph_partition_cases; bound: graphs=25, partitions=290, allocations=3</code></li>
+<li>Exhaustive differential test: <code>segmented_observation_is_the_glued_observation_or_the_seal_floor_refusal; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=segmented_observation_is_the_glued_observation_or_the_seal_floor_refusal)'</code></li>
+<li>Property differential test: <code>segment::tests::laws::partitioning_then_assembling_returns_the_identical_instance_for_every_partition; command: cargo nextest run -p panproto-inst --lib --no-tests=fail -E 'test(=segment::tests::laws::partitioning_then_assembling_returns_the_identical_instance_for_every_partition)'</code></li>
+<li>Property differential test: <code>randomized::segmented_observation_matches_on_generated_allocated_partitions; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=randomized::segmented_observation_matches_on_generated_allocated_partitions)'</code></li>
+<li>Property scope: <code>870 documented allocated graph partitions; exact assembled bytes or typed seal-floor refusal; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/split.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/manifest.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_segments.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/segments.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/segments.rs</code></li>
+</ul>
+<h2 id="L-segments-10"><a class="header" href="#L-segments-10">Allocation is append-only within each declared range</a></h2>
+<h3 id="statement-9"><a class="header" href="#statement-9">Statement</a></h3>
+<p>For an inclusive range <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span>, the source floor is <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span>’s lower bound when the source holds no identifier in <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span>, and otherwise one more than the greatest source identifier in <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span>. A fresh identifier is the greater of that floor and one more than every additional used identifier in <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span>. Allocation succeeds only when that value lies in <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> and is below <code>u32::MAX</code>; otherwise it returns exhaustion.</p>
+<h3 id="outside-the-domain-9"><a class="header" href="#outside-the-domain-9">Outside the domain</a></h3>
+<p>An inverted range is a partition error rather than an allocation input. A segmented operation that requires an undeclared allocation range returns <code>NoAllocationRange</code>. The sentinel <code>u32::MAX</code> is never allocated, including when it is the range’s only member.</p>
+<h3 id="definitions-used-9"><a class="header" href="#definitions-used-9">Definitions used</a></h3>
+<p>The <em>source floor</em> includes retained and dropped source objects. The additional used set includes view, reserved, and synthesized identifiers already chosen by the operation.</p>
+<h3 id="proof-9"><a class="header" href="#proof-9">Proof</a></h3>
+<p>Both implementations filter source and used identifiers to <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span>, take their maxima, and advance with checked or saturating addition followed by the same sentinel test. The resulting candidate is greater than every relevant identifier, so no identifier below the floor can be reused. Conversely, any smaller admissible candidate would violate the append-only order. The carrier draws source and used sets from every subset of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">5</span><span class="mclose">]</span></span></span></span> for each range inside <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">4</span><span class="mclose">]</span></span></span></span>, so identifiers below, inside, and above the range all occur; an allocator that let a source identifier outside <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> raise the floor disagrees with both implementations on the carrier.</p>
+<h3 id="executable-counterpart-9"><a class="header" href="#executable-counterpart-9">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>segments.id-floor</code></li>
+<li>Reference: <code>panproto_reference::segment::fresh</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::segments::allocation_cases; bound: ranges=15, identifiers=6, allocations=61440</code></li>
+<li>Exhaustive differential test: <code>append_floor_and_exhaustion_agree_on_an_independently_counted_carrier; command: cargo nextest run -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=append_floor_and_exhaustion_agree_on_an_independently_counted_carrier)'</code></li>
+<li>Property differential test: <code>randomized::append_floor_matches_the_reference_on_generated_small_carriers; command: cargo +1.99 nextest run --cargo-profile ci-test --profile ci -p panproto-inst --test reference_segments --no-tests=fail -E 'test(=randomized::append_floor_matches_the_reference_on_generated_small_carriers)'</code></li>
+<li>Fixed regression certificate: <code>allocation_floor_is_append_only_on_the_exact_small_carrier; command: cargo nextest run -p panproto-reference --test segments --no-tests=fail -E 'test(=allocation_floor_is_append_only_on_the_exact_small_carrier)'</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/ids.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_segments.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/segments.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/segments.rs</code></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../correctness/validation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../correctness/lenses.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../correctness/validation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../correctness/lenses.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src=".././theme/cite-group.js"></script>
+        <script src=".././theme/mermaid.min.js"></script>
+        <script src=".././theme/mermaid-init.js"></script>
+        <script src=".././theme/bib-links.js"></script>
+        <script src=".././theme/bib-linkify.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

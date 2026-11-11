@@ -1,0 +1,833 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Keys and registration - panproto</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Documentation: tutorials, how-to guides, reference, and explanation">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href=".././theme/cite.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "navy";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-1d2a83d6.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-19d298fc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">panproto</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/panproto/panproto" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/panproto/panproto/edit/main/book/src/correctness/keys-and-registration.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="keys-and-registration"><a class="header" href="#keys-and-registration">Keys and registration</a></h1>
+<p>Keys connect graph structure to identity. A key declaration says how to read a tuple, which equality each part uses, and where equal tuples collide; a reference declaration names a key that can resolve such a tuple. Registration then binds those declarations to closed theories and replayable composition recipes. The eighteen laws on this page make each part of that chain explicit, from reading a key through canonical registration.</p>
+<p>A key has an id, an ordered sequence of parts, a role, a scope, and either an empty equality vector or one equality declaration per part. An empty vector means representation equality at every part. A path part is a finite sequence of schema-edge labels. A position part names an ordered edge. Key roles are <code>Primary</code>, <code>Unique</code>, <code>Identifier</code>, <code>SortKey</code>, and <code>Index</code>; the first three are resolvable uniqueness roles, <code>SortKey</code> imposes order without uniqueness, and <code>Index</code> imposes neither. Scopes are document-wide, global, or relative to the nearest ancestor of a named vertex.</p>
+<p><strong>Focused verification status.</strong></p>
+<p>The focused tests for laws 1–4 and 7–15 comprise 1 canonical-theory test,
+5 schema-declaration tests, 11 instance-key tests, 2 change-classification
+tests, and 2 VCS identity tests.
+The finite certificates cover 37 declaration encodings, 194 decoded
+extension-marker combinations, 30 declaration admission fixtures, 12
+target-set declaration fixtures, 8 of them projected to the local predicate,
+all 5 target-set member roles, 37 values under 12 equality
+configurations, 16,428 equality pairs, 607,836 transitivity triples, 341 XML
+strings, 116,281 XML pairs, 28 additional classification cases, 148 structural
+graphs, 27,329,908 schemas, and 816,223,680 directed classifications.</p>
+<p>These checks are the executable counterparts of the laws below.</p>
+<h2 id="L-keys-and-registration-1"><a class="header" href="#L-keys-and-registration-1">Key parts read the declared value or return NULL</a></h2>
+<h3 id="statement"><a class="header" href="#statement">Statement</a></h3>
+<p>For a graph <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span></span></span></span>, node <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>, and key <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span>, <code>key_value(G, n, K)</code> returns one value per key part exactly when every part has a value. For a path <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>, traversal follows matching schema-edge labels in edge-id order through <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6389em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span>. At the last step, each frontier node independently contributes the non-null own values of its matching targets or, when that node has no matching last edge, its field named by the last edge. The first contributed value is the part value. The empty path reads <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>’s non-null own value. A position part for edge <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span> first chooses the least-id ordinary incoming <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>-edge into <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>, orders that parent’s ordinary <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>-edges by <code>(stored position, edge id, target)</code>, and returns the selected edge’s zero-based ordinal in that sequence. The stored position orders siblings but is not itself the returned key value. Parallel edges into the same target retain distinct identities throughout this calculation.</p>
+<h3 id="outside-the-domain"><a class="header" href="#outside-the-domain">Outside the domain</a></h3>
+<p>The result is <code>None</code> when the start node is absent, a path has no successful frontier, a selected own value is absent or null, a last-hop field is absent or null, a position part has no ordinary incoming carrier edge, or its index does not fit <code>i64</code>. One missing part makes the whole tuple <code>None</code>.</p>
+<h3 id="definitions-used"><a class="header" href="#definitions-used">Definitions used</a></h3>
+<p>An <em>own value</em> is <code>Presence::Present(v)</code> with <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span> unequal to the value variant <code>Null</code>. An <em>ordinary edge</em> has neither reserved fan kind and joins two non-fan nodes. Edge and node maps are ordered by numeric id.</p>
+<h3 id="proof"><a class="header" href="#proof">Proof</a></h3>
+<ol>
+<li><code>path_value</code> handles the empty path by <code>own</code>. For a nonempty path, each preliminary hop replaces the frontier by matching targets in map order.</li>
+<li>At the final label, the implementation makes the target-or-field decision separately for each frontier node and retains frontier and edge order. Thus one branch with a matching edge cannot suppress a later branch’s field fallback.</li>
+<li>A position part retains the id of the first qualifying ordinary incoming edge, sorts every ordinary sibling tuple <code>(stored position, id, target)</code>, and finds the tuple with that id. This keeps parallel edges distinct before converting the selected ordinal to <code>i64</code>.</li>
+<li>The initial node lookup returns <code>None</code> when the start node is absent, including when the key has no parts. For a present node, <code>Iterator::collect</code> on <code>Option</code> returns a vector exactly when every part returns <code>Some</code>, proving tuple totality on the stated domain and NULL propagation outside it.</li>
+</ol>
+<h3 id="executable-counterpart"><a class="header" href="#executable-counterpart">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.key-declarations</code></li>
+<li>Reference: <code>panproto_reference::keys::key_value</code></li>
+<li>Evidence scope: <code>duplicated/twin graph witnesses over path and position parts; exact indexed elements=14, NULL elements=4</code></li>
+<li>Production certificate: <code>validation_reconstructs_path_keys_in_document_and_global_scopes; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=validation_reconstructs_path_keys_in_document_and_global_scopes)'</code></li>
+<li>Independent reference anchor: <code>validation_reconstructs_position_buckets; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=validation_reconstructs_position_buckets)'</code></li>
+<li>Parallel-edge regression test: <code>validation_identifies_exact_parallel_position_edges; command: cargo test --release -p panproto-inst --test reference_keys validation_identifies_exact_parallel_position_edges -- --exact --nocapture</code></li>
+<li>Regression differential test: <code>path_fallback_is_decided_per_last_hop_frontier_node; command: cargo test --release -p panproto-inst --test reference_keys path_fallback_is_decided_per_last_hop_frontier_node -- --exact --nocapture</code></li>
+<li>Property differential test: <code>randomized::key_values_and_scoped_buckets_match_on_generated_twin_graphs; command: cargo nextest run --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=randomized::key_values_and_scoped_buckets_match_on_generated_twin_graphs)'</code></li>
+<li>Property differential test: <code>randomized::position_key_values_and_buckets_match_on_generated_sibling_orders; command: cargo nextest run --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=randomized::position_key_values_and_buckets_match_on_generated_sibling_orders)'</code></li>
+<li>Randomized input scope: Generated twin graphs vary three groups of two nodes over six value presences, three connectivity bits, three scopes, and own-value or one-edge paths. Generated sibling graphs vary two positions, each absent or zero through three, across two lists under document or global scope. Complete duplicate-key tuples and members, NULL omissions, and outside-scope diagnostics are reconstructed from public validation and compared with reference key values and buckets.</li>
+<li>File: <code>crates/panproto-inst/src/validation/state.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/keys_and_registration.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/checks.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-2"><a class="header" href="#L-keys-and-registration-2">Key buckets implement declared equality and scope</a></h2>
+<h3 id="statement-1"><a class="header" href="#statement-1">Statement</a></h3>
+<p>For graph <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span></span></span></span>, vertex name <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span>, and key <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span>, <code>buckets(G, v, K)</code> examines precisely the non-fan nodes anchored at <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span>, in node-id order. A node with no key value is omitted. Under <code>Within(a)</code>, a node belongs to the scope of the least nearest ordinary ancestor anchored at <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span>; a node with no such ancestor is returned in the ordered <code>outside</code> list. Document and global scopes use no ancestor id. Every remaining node belongs to the bucket indexed by its scope and the canonical bytes of its tuple under <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span>’s per-part equality. The bucket retains the first tuple and all member ids in ascending order.</p>
+<h3 id="outside-the-domain-1"><a class="header" href="#outside-the-domain-1">Outside the domain</a></h3>
+<p>The operation refuses only while it keys an element: at the first node that has a complete key value and, under <code>Within</code>, an ancestor, it returns <code>EqualityArity</code> when a nonempty equality vector does not have one entry per part, and <code>UnsupportedCollation(name)</code> when that node’s string part requires a named SQL collation, whose comparison is deliberately left to the database. A key whose vertex has no keyed element thus returns empty buckets whatever its equality vector, as production <code>KeyIndex::build</code> does, and a named collation over a numeric part refuses nothing. A production value constructed with an invalid numeric carrier may instead return <code>InvalidNumericRepresentation</code>; such values are outside the well-formed finite reference carrier. A keyed value without canonical bytes, namely a <code>Temporal</code> that is not well formed (for instance a fixed offset of 1440 minutes) or a value that contains one, has no representation and no declared equality, and the reference refuses it with <code>NoCanonicalBytes</code> at the first keyed node that holds it rather than placing it in a bucket. Production refuses it with the same <code>NoCanonicalBytes</code> at the same node, in its bucket bytes, in validation (as the required incomplete reason <code>NoCanonicalKeyBytes</code>), and in resolution. Thus equality arity, named collation, and missing canonical bytes are the three typed refusals of both sides.</p>
+<h3 id="definitions-used-1"><a class="header" href="#definitions-used-1">Definitions used</a></h3>
+<p>The <em>nearest ancestor</em> is found breadth-first by reversing ordinary edges one level at a time, excluding the start node; ties at the first matching distance go to the least node id. Tuple bytes are a length-delimited concatenation of the canonical equality key of each part, defined only on values with canonical bytes. Equal tuple bytes have equal declared-key behavior by <a href="#L-keys-and-registration-8">L-keys-and-registration-8</a>.</p>
+<h3 id="proof-1"><a class="header" href="#proof-1">Proof</a></h3>
+<ol>
+<li>The outer loop filters the ordered node map by anchor and non-fan shape, so it visits exactly the stated carrier in ascending order.</li>
+<li><a href="#L-keys-and-registration-1">L-keys-and-registration-1</a> omits NULL tuples. Breadth-first reverse traversal follows only ordinary arcs, so reserved fan incidence and arcs incident on reified hyper-edge nodes cannot supply an ancestor. Sorting each next frontier selects the least matching ancestor at the nearest level.</li>
+<li>The scope id and equality-key bytes form the ordered map key. Map insertion creates one stored tuple at the first member and appends every later member, preserving node-id order.</li>
+<li>Equality-vector expansion and equality-key construction are the only fallible calls, and both run inside the loop after a node’s key value and scope are known. Their errors are exactly the typed refusals in the outside-domain clause, raised at the first keyed node that meets them; a loop that keys no node raises none.</li>
+</ol>
+<h3 id="executable-counterpart-1"><a class="header" href="#executable-counterpart-1">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.reference-declarations</code></li>
+<li>Reference: <code>panproto_reference::keys::buckets</code></li>
+<li>Evidence scope: <code>duplicated/twin graph witnesses over Document, Global, and Within scopes; the two Within witnesses assert 3 buckets and 3 outside elements (2 and 2 across twin documents, 1 and 1 across fan incidence); both refusals asserted only at a keyed element</code></li>
+<li>Production certificate: <code>validation_reconstructs_within_buckets_and_outside_cases; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=validation_reconstructs_within_buckets_and_outside_cases)'</code></li>
+<li>Independent reference anchor: <code>validation_preserves_both_reference_keying_refusals; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=validation_preserves_both_reference_keying_refusals)'</code></li>
+<li>Regression differential test: <code>within_scope_does_not_traverse_fan_incidence; command: cargo test --release -p panproto-inst --test reference_keys within_scope_does_not_traverse_fan_incidence -- --exact --nocapture</code></li>
+<li>Canonical-bytes refusal test: <code>values_without_canonical_bytes_are_a_typed_keying_refusal; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=values_without_canonical_bytes_are_a_typed_keying_refusal)'</code></li>
+<li>Property differential test: <code>randomized::key_values_and_scoped_buckets_match_on_generated_twin_graphs; command: cargo nextest run --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=randomized::key_values_and_scoped_buckets_match_on_generated_twin_graphs)'</code></li>
+<li>Property differential test: <code>randomized::position_key_values_and_buckets_match_on_generated_sibling_orders; command: cargo nextest run --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=randomized::position_key_values_and_buckets_match_on_generated_sibling_orders)'</code></li>
+<li>Randomized input scope: Generated twin graphs vary three groups of two nodes over six value presences, three connectivity bits, three scopes, and own-value or one-edge paths. Generated sibling graphs vary two positions, each absent or zero through three, across two lists under document or global scope. Complete duplicate-key tuples and members, NULL omissions, and outside-scope diagnostics are reconstructed from public validation and compared with reference key values and buckets.</li>
+<li>File: <code>crates/panproto-inst/src/validation/state.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/keys_and_registration.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/checks.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/key.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-3"><a class="header" href="#L-keys-and-registration-3">Canonical schema bytes separate the finite declaration carrier</a></h2>
+<h3 id="statement-2"><a class="header" href="#statement-2">Statement</a></h3>
+<p>For schemas in the finite declaration carrier, <code>canonical_bytes</code> is injective. It writes vertices, edges, hyper-edges, constraints, required edges, orderings, entries, keys, references, and target sets in declaration order. Ordered maps and sets use key order; sequences retain stored order behind a <code>u64</code> length; each sum variant has a distinct one-byte tag; strings and schema edges use the canonical primitive layout. Each optional extension inside a reference (a nondefault variable binding, the standoff extension, and the reference envelope of guard, null match, null vertex, and scope chain) is introduced by the eight-byte little-endian marker <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">63</span></span></span></span></span></span></span></span></span></span></span></span>, and the trailing target-set extension by the byte <code>0xff</code>. Thus two schemas have equal bytes exactly when every represented declaration field is equal. A declaration without these extensions keeps the bytes it had before the markers were introduced.</p>
+<h3 id="outside-the-domain-2"><a class="header" href="#outside-the-domain-2">Outside the domain</a></h3>
+<p>The statement concerns the finite reference <code>Schema</code> carrier. A larger production schema field absent from that carrier is outside this function’s type and is not claimed to affect these bytes. Guard values outside canonical value encoding, such as a <code>Temporal</code> that is not well formed, are represented by the reference writer’s declared empty fallback and are excluded from the injectivity claim.</p>
+<h3 id="definitions-used-2"><a class="header" href="#definitions-used-2">Definitions used</a></h3>
+<p>A <em>self-delimiting field</em> has either fixed width or a length prefix. A tagged sum writes its variant tag before its payload. A code is <em>prefix-free</em> when no codeword is a proper prefix of another; a concatenation of codes, each chosen by the bytes already read and each prefix-free, is uniquely decodable. The exact declaration carrier has zero through three vertices, one vertex kind, one edge name, and at most three labelled edges. Its two key slots are absent or hold an owner/key descriptor built from five roles, the document, global, and vertex-relative scopes, and the six nonempty words of length at most two over <code>Path([])</code> and <code>Path([v0 -prop:e-&gt; v0])</code>. These atoms do not depend on the surrounding graph.</p>
+<h3 id="proof-2"><a class="header" href="#proof-2">Proof</a></h3>
+<ol>
+<li>Fixed order separates top-level fields, and a count separates every variable-length collection. Map and set order is canonical; within a collection, primitive encodings and distinct tags separate keys, variants, and payloads. A fixed-width field and a length-prefixed string are prefix-free, since a reader knows each one’s extent before reading its content, and a tagged sum is prefix-free when each variant’s payload is.</li>
+<li>An optional extension is the one place where the reader decides presence from the bytes rather than from a tag. Where an extension inside a reference is absent, the next bytes are a <code>u64</code> length (the target vertex’s name after a variable or standoff source, the next reference’s id after a reference), the target-set byte <code>0xff</code>, or the end of the bytes. A length is the length of an allocated Rust string, which is at most <code>isize::MAX</code> <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">63</span></span></span></span></span></span></span></span></span></span></span></span>, so it never equals the marker; the marker’s first byte is <code>0x00</code>, never <code>0xff</code>; and the marker has eight bytes where the end of the bytes has none. The trailing target-set byte is followed by nothing when absent. Presence is thus decided by whether the next eight bytes are the marker, or for target sets whether any byte remains. This lookahead gives the extension layout a unique parse. The complete schema encodings need not be prefix-free: omitting a trailing target-set extension can leave a proper prefix of the encoding with that extension. The earlier one-byte marker <code>0xff</code> failed this test, because a length whose low byte is <code>0xff</code> begins with it: the regression pair below, two valid declarations whose binding and target name differ, encoded identically under it.</li>
+<li>Reading equal byte streams from the beginning thus gives equal counts and equal fields by induction over the layout. Applying this argument to every top-level field yields schema equality; determinism gives the converse.</li>
+<li>There are 1, 2, 15, and 130 structural graphs at vertex counts zero through three. At positive <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>, there are <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">30</span><span class="mord mathnormal">n</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">2</span><span class="mclose">)</span></span></span></span> owner/key descriptors, hence <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span> labelled two-slot declaration contexts per graph.</li>
+<li>The certificate executes all 148 graphs, every descriptor in both slots, every directed one-axis transition, and every absent, same-owner, and different-owner second-key class. Because graph fields precede declaration fields and the untouched slot is encoded unchanged, equality of complete byte strings factors through equality of the executed graph and declaration components. The recorded multiplicities reconcile to <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">27</span><span class="mord"><span class="mpunct">,</span></span><span class="mord">329</span><span class="mord"><span class="mpunct">,</span></span><span class="mord">908</span></span></span></span> schemas.</li>
+</ol>
+<h3 id="executable-counterpart-2"><a class="header" href="#executable-counterpart-2">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.canonical-schema-bytes-injective</code></li>
+<li>Reference: <code>panproto_reference::schema::canonical_bytes</code></li>
+<li>Evidence scope: <code>all 148 structural graphs, descriptor counts 90, 240, and 450, and 27,329,908 schemas</code></li>
+<li>Production certificate: <code>canonical_declaration_factorization_reconciles_the_exact_carrier; command: cargo nextest run --release --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=canonical_declaration_factorization_reconciles_the_exact_carrier)'</code></li>
+<li>Independent reference anchor: <code>canonical_declaration_factorization_reconciles_the_exact_carrier; command: cargo nextest run --release --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=canonical_declaration_factorization_reconciles_the_exact_carrier)'</code></li>
+<li>Extension decoding test: <code>declaration_bytes_decode_back_on_every_extension_combination; command: cargo nextest run --release --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=declaration_bytes_decode_back_on_every_extension_combination)'</code></li>
+<li>Marker regression test: <code>extension_markers_separate_the_audit_counterexample; command: cargo nextest run --release --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=extension_markers_separate_the_audit_counterexample)'</code></li>
+<li>Property differential test: <code>randomized::canonical_bytes_distinguish_generated_descriptor_schemas; command: cargo nextest run --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=randomized::canonical_bytes_distinguish_generated_descriptor_schemas)'</code></li>
+<li>Property differential test: <code>randomized::extension_declarations_match_and_decode_on_generated_pairs; command: cargo nextest run --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=randomized::extension_declarations_match_and_decode_on_generated_pairs)'</code></li>
+<li>Randomized input scope: Generated structural schemas have one through three vertices and two independently chosen key slots; declaration bytes are compared and decoded. A separate generated pair from the 194 extension carriers compares equality with equality of both encodings.</li>
+<li>File: <code>crates/panproto-schema/src/canonical.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+</ul>
+<p>The extension decoding test inverts the declaration bytes with a decoder written from the grammar of proof step 2, over every combination of the three in-reference extensions and the target-set extension with neighbouring names whose length prefix begins with <code>0xff</code>, 194 declarations in all; decoding back proves the encoding injective there. Under the one-byte marker both new tests fail.</p>
+<ul>
+<li>Stored-key-order differential: <code>canonical_declaration_bytes_preserve_raw_key_order_and_primary_selection; command: cargo nextest run --locked -p panproto-schema --test reference_keys --cargo-profile ci-test --profile ci --no-tests=fail -E 'test(=canonical_declaration_bytes_preserve_raw_key_order_and_primary_selection)'</code>; valid raw key permutations compare complete bytes and first-primary selection</li>
+</ul>
+<h2 id="L-keys-and-registration-4"><a class="header" href="#L-keys-and-registration-4">Change classification is the stated backward-compatibility decision</a></h2>
+<h3 id="statement-3"><a class="header" href="#statement-3">Statement</a></h3>
+<p>Within the declaration-change carrier, <code>classify_change(A, B)</code> returns <code>Identical</code> exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span>. Otherwise it returns <code>Breaking</code> when any of the following holds: a primary, unique, or identifier key is added to a vertex already present in <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span>; a primary key is removed; the first primary key selected from an existing owner’s stored sequence changes to a different id or disappears; an existing key changes parts, equality, or role, widens its scope, or changes between distinct scopes of the same rank; a reference added to an existing holder is non-nullable or fails unresolved values; an existing reference narrows cardinality, nullability, or unresolved handling, or changes any other semantic field; a target set is new or gains a member or changes scope; or the entry sequence changes. Adding a sort key or index does not add an instance-admission obligation and is <code>BackwardCompatible</code>, as are removals of non-primary keys and the other nonidentical declaration changes not listed above. Reordering keys without changing the selected primary, and adding or removing an empty owner entry, are nonidentical changes but impose no new admission obligation.</p>
+<h3 id="outside-the-domain-3"><a class="header" href="#outside-the-domain-3">Outside the domain</a></h3>
+<p>The independent decision requires distinct key ids within each owner in both schemas and unchanged structural graph fields, apart from the explicitly tested entry sequence. Duplicate key ids cannot be represented by the owner/id maps used in this decision and are outside its oracle domain. Other declaration validity is not required by the finite descriptor carrier. Other vertex, edge, hyper-edge, constraint, required-edge, and ordering changes belong to the production classifier’s larger domain. The finite reference function remains total on its data type, but its result outside this declaration-change carrier is not an oracle for production behavior.</p>
+<h3 id="definitions-used-3"><a class="header" href="#definitions-used-3">Definitions used</a></h3>
+<p>The five roles make different uniqueness, identity, ordering, and resolution promises. Thus every role-to-role change fails closed as breaking. Scope ranks are 3 for global, 2 for document, and 1 for within; distinct scopes at one rank count as a tightening in either direction. The <em>selected primary</em> is the first primary key in an owner’s stored sequence, the choice used by an unnamed reference. Removing any primary key fails closed because it removes an identity and resolution guarantee, even when another primary remains first. A directed <em>one-axis transition</em> adds or removes one descriptor, or changes only its role, scope, or part word. The finite carrier assigns fixed key ids to its two slots and stores them in id order; raw permutations and empty owner entries have separate controls.</p>
+<h3 id="proof-3"><a class="header" href="#proof-3">Proof</a></h3>
+<ol>
+<li>Structural equality is tested first and gives exactly <code>Identical</code>. <code>key_is_tightened</code> is the disjunction of changed parts, equality, role, greater scope rank, and unequal same-rank scopes; <code>reference_is_tightened</code> is the corresponding disjunction over every reference field.</li>
+<li>Ordered-map scans detect added, removed and changed declarations exactly as stated. Removing a primary is breaking independently of its slot or other declarations. A separate scan compares the first primary ids in stored order, while preserving owner presence and key sequence distinguishes harmless changes from equality. An addition on an old vertex is breaking exactly for the three uniqueness-bearing roles; sort keys impose only an advisory order check, and indexes promise no uniqueness or resolution. The separate target-set predicate detects a changed scope or any new member. The final entry comparison refuses an entry-sequence change.</li>
+<li>Each descriptor contributes one add, one remove, four role changes, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> scope changes, and five part changes, giving <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">12</span><span class="mclose">)</span></span></span></span> directed transitions. The second slot is either absent, owned by the changed key’s vertex, or owned by another vertex. Since its declaration is identical before and after, classification is congruent under that untouched context; the same argument applies to the unchanged structural graph.</li>
+<li>The differential executes every graph, descriptor transition, slot, and nonempty second-key context class. The certificate’s multiplicities sum to
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.3em;vertical-align:-1.25em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.9em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord"><span class="mord mathrm">graphs</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.0573em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">2</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">12</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">816</span><span class="mord"><span class="mpunct">,</span></span><span class="mord">223</span><span class="mord"><span class="mpunct">,</span></span><span class="mord">680</span><span class="mpunct">,</span></span></span></span></span>
+which is the full labelled two-slot classification carrier. The added removal rule is independent of the untouched slot. A changed first-primary selection in this sorted carrier can arise only from an already-breaking addition, primary removal or role change; thus it introduces no extra dependence on that slot.</li>
+<li>A separate 28-case same-input matrix holds the structural context fixed while changing equality, reference addition and removal, each reference semantic field, target-set membership and scope, or the entry sequence. It checks both directed relaxation pairs and the explicit entry refusal against production.</li>
+</ol>
+<h3 id="executable-counterpart-3"><a class="header" href="#executable-counterpart-3">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.change-classification</code></li>
+<li>Reference: <code>panproto_reference::schema::classify_change</code></li>
+<li>Evidence scope: <code>816,223,680 key classifications and 28 additional non-key cases</code></li>
+<li>Production certificate: <code>every_key_change_classifies_through_the_factorization_certificate; command: cargo nextest run --release --locked -p panproto-check --test reference_classify --no-tests=fail -E 'test(=every_key_change_classifies_through_the_factorization_certificate)'</code></li>
+<li>Independent reference anchor: <code>non_key_classification_axes_match_the_reference; command: cargo nextest run --release --locked -p panproto-check --test reference_classify --no-tests=fail -E 'test(=non_key_classification_axes_match_the_reference)'</code></li>
+<li>Property differential test: <code>randomized_key_change_classification; command: cargo nextest run --locked -p panproto-check --test reference_classify --no-tests=fail -E 'test(=randomized_key_change_classification)'</code></li>
+<li>Property differential test: <code>randomized_reference_change_classification; command: cargo nextest run --locked -p panproto-check --test reference_classify --no-tests=fail -E 'test(=randomized_reference_change_classification)'</code></li>
+<li>Randomized input scope: Generated coordinates choose a structural graph, a directed descriptor transition, a changed slot and an optional other descriptor. A second family varies reference cardinality, nullability, unresolved policy, removal and transition direction; each compares production classification with the reference.</li>
+<li>Fixed differential test: <code>stored_key_order_and_primary_removal_match_reference; command: cargo nextest run --locked -p panproto-check --test reference_classify --cargo-profile ci-test --profile ci --no-tests=fail -E 'test(=stored_key_order_and_primary_removal_match_reference)'</code></li>
+<li>Fixed differential test: <code>key_owner_presence_and_role_selection_are_recorded; command: cargo nextest run --locked -p panproto-check --test reference_classify --cargo-profile ci-test --profile ci --no-tests=fail -E 'test(=key_owner_presence_and_role_selection_are_recorded)'</code></li>
+<li>Property differential test: <code>randomized_stored_key_sequence_classification; command: cargo nextest run --locked -p panproto-check --test reference_classify --cargo-profile ci-test --profile ci --no-tests=fail -E 'test(=randomized_stored_key_sequence_classification)'</code></li>
+<li>Fixed production test: <code>isolated_primary_selection_metadata_is_classified_and_rendered; command: cargo nextest run --locked -p panproto-check --test reference_classify --cargo-profile ci-test --profile ci --no-tests=fail -E 'test(=isolated_primary_selection_metadata_is_classified_and_rendered)'</code></li>
+<li>Additional scope: 25 two-key role permutations, 50 removals, both empty-owner presence directions, and a fixed role-driven selection change; generated cases combine two roles, reversal and optional removal.</li>
+<li>File: <code>crates/panproto-check/src/diff.rs</code></li>
+<li>File: <code>crates/panproto-check/src/classify.rs</code></li>
+<li>File: <code>crates/panproto-check/src/report.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/keys_and_registration.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-5"><a class="header" href="#L-keys-and-registration-5">Each shape theory is closed and composes with its schema theories</a></h2>
+<h3 id="statement-4"><a class="header" href="#statement-4">Statement</a></h3>
+<p>The instance theories for tree, graph, table, and flat shapes typecheck without undeclared symbols. Composing each instance theory with every schema theory in its registration group over the declared interface reports every <code>InclusionIsMorphism</code> and <code>UniversalIdentity</code> check as passed, with no failed, incomplete, or inapplicable record.</p>
+<h3 id="outside-the-domain-4"><a class="header" href="#outside-the-domain-4">Outside the domain</a></h3>
+<p>Caller-supplied open theories remain outside this claim. Composition may report <code>Inapplicable { OpenTheory }</code> for such a theory. This law concerns the closed in-tree theories used by protocol registration.</p>
+<h3 id="definitions-used-4"><a class="header" href="#definitions-used-4">Definitions used</a></h3>
+<p>A theory is <em>closed</em> when every sort and operation used by its declarations and equations is declared in that theory. The tree and graph interfaces contain <code>Vertex</code>, <code>Edge</code>, <code>src</code>, and <code>tgt</code>; the table and flat interfaces contain <code>Vertex</code>. A <em>total composition report</em> contains applicable passed records for both inclusion-morphism and universal-identity checks.</p>
+<h3 id="proof-4"><a class="header" href="#proof-4">Proof</a></h3>
+<ol>
+<li>The W-type, graph-instance, functor, and flat theories each declare the interface symbols they use. Their coherence equations thus typecheck in the theory that contains them.</li>
+<li>Each registration group builds one explicit-identity diagram over its stated interface. Symbols outside the interface are rejected on a name clash rather than silently identified.</li>
+<li>The composition checker verifies every inclusion and the identity mediator. The per-shape tests require passed records for both checks, a passed report status, and a passed record (<code>Passed</code> or <code>PassedByEquation</code>) for every check kind, so no record is failed, incomplete, or inapplicable.</li>
+<li>The registered-theory reference test converts every theory each protocol registers into the reference model field by field, checks that the reference’s canonical bytes of the converted theory equal production’s, and runs the reference signature check on it. For each protocol’s schema and instance recipe it replays the recipe in the reference and composes the recipe’s one diagram step in the reference, requiring a passed report with every record passed and the registered theory’s canonical bytes. The generic production/reference differential separately establishes agreement of composition over its bounded span carrier.</li>
+</ol>
+<h3 id="executable-counterpart-4"><a class="header" href="#executable-counterpart-4">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.q6</code></li>
+<li>Reference: <code>panproto_reference::theory::typecheck_signature</code></li>
+<li>Reference: <code>panproto_reference::theory::compose</code></li>
+<li>Evidence scope: <code>the tree, graph, table, and flat registration groups over their declared interfaces</code></li>
+<li>Production certificate: <code>theories::tests::standalone_total_theories_pass_inclusion_and_universal_checks; command: cargo nextest run --release --locked -p panproto-protocols --lib --no-tests=fail -E 'test(=theories::tests::standalone_total_theories_pass_inclusion_and_universal_checks)'</code></li>
+<li>Independent reference anchor: <code>composition_agrees_with_the_reference_on_every_span; command: cargo nextest run --release --locked -p panproto-gat --test reference_theories --no-tests=fail -E 'test(=composition_agrees_with_the_reference_on_every_span)'</code></li>
+<li>Registered-theory reference test: <code>registered_theories_agree_with_the_reference_typecheck_compose_and_recompose; command: cargo nextest run --release --locked -p panproto-protocols --test reference_registration --no-tests=fail -E 'test(=registered_theories_agree_with_the_reference_typecheck_compose_and_recompose)'</code></li>
+<li>Signature differential test: <code>signature_checking_agrees_with_the_reference_on_every_signature; command: cargo nextest run --release --locked -p panproto-gat --test reference_theories --no-tests=fail -E 'test(=signature_checking_agrees_with_the_reference_on_every_signature)'</code></li>
+<li>Property differential test: <code>randomized_registered_recipe_differential; command: cargo nextest run --locked -p panproto-protocols --test reference_registration --no-tests=fail -E 'test(=randomized_registered_recipe_differential)'</code></li>
+<li>Randomized input scope: Generated cases choose one of the 57 protocol registrations, its schema or instance recipe, and a registry insertion rotation. Both signature checks must accept; both compositions must contain inclusion and universal-identity checks, with every report record passed, and their result theory bytes must agree.</li>
+<li>File: <code>crates/panproto-protocols/src/theories.rs</code></li>
+<li>File: <code>crates/panproto-gat/src/compose.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/theories.rs</code></li>
+<li>File: <code>crates/panproto-gat/src/typecheck.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/theories.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-6"><a class="header" href="#L-keys-and-registration-6">Registration records replayable recipes and preserves the compatibility surface</a></h2>
+<h3 id="statement-5"><a class="header" href="#statement-5">Statement</a></h3>
+<p>Each built-in protocol records the exact composition recipe for its schema and instance theories. Replaying either recipe from the theories it names reproduces the registered theory’s canonical bytes. The amalgamation wrappers retain the 0.74 naming and result surface, while registration uses one explicit-identity diagram with reject-on-clash semantics. The 0.74 surface is fixed by a frozen artifact: the schema and instance theories that panproto-protocols 0.74.4, built from crates.io, registered for each of its 54 protocols, stored as that build serialized them, and compared by canonical theory bytes with today’s registration. All 54 schema theories keep their 0.74.4 bytes. Exactly 17 instance theories differ: the 10 whose shape declaration re-declares them, and the 7 further protocols that register through the table building block, which gained the vertex and edge sorts and the foreign-key coherence axioms of the table shape (arrow, conllu, dataframe, edi-x12, parquet, sql, and swift-mt); the other 37 keep their bytes.</p>
+<h3 id="outside-the-domain-5"><a class="header" href="#outside-the-domain-5">Outside the domain</a></h3>
+<p>A protocol introduced after 0.74 has no earlier registered theory to compare. For such a protocol, the law still requires a recorded replayable recipe and a passed composition report. Protocols whose instance theory was deliberately redeclared, or amended through the table building block, compare against that declared replacement rather than an obsolete byte string; the frozen comparison names exactly which ones.</p>
+<h3 id="definitions-used-5"><a class="header" href="#definitions-used-5">Definitions used</a></h3>
+<p>A <em>recorded recipe</em> is the versioned <code>CompositionSpec</code> stored on the protocol. A <code>Diagram</code> step records its nodes, edges, composition mode, clash policy, rewrite budget, and inline theories. <em>Compatibility surface</em> means the 0.74 wrapper names and amalgamated result after the documented building-block amendments.</p>
+<h3 id="proof-5"><a class="header" href="#proof-5">Proof</a></h3>
+<ol>
+<li>Each registration helper constructs one diagram and attaches the corresponding schema and instance recipes to the returned protocol.</li>
+<li><code>recompose</code> resolves recorded nodes and inline theories, applies each stored option, and returns the recipe’s named result. The registration test compares its canonical bytes with the registered theory.</li>
+<li>The equivalence test reconstructs the 0.74 amalgamation and compares canonical theory bytes, subject only to the enumerated new-protocol and redeclared-instance cases.</li>
+<li>The generic recipe differential compares production and reference replay over every bounded recipe, including their typed refusals. These checks separate recipe correctness from the compatibility comparison.</li>
+</ol>
+<h3 id="executable-counterpart-5"><a class="header" href="#executable-counterpart-5">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.q7</code></li>
+<li>Reference: <code>panproto_reference::theory::recompose</code></li>
+<li>Evidence scope: <code>every registered schema and instance recipe, plus the bounded reference recipe carrier</code></li>
+<li>Production certificate: <code>recompose_of_every_registration_spec_reproduces_its_theory; command: cargo nextest run --release --locked -p panproto-protocols --test registration_equivalence --no-tests=fail -E 'test(=recompose_of_every_registration_spec_reproduces_its_theory)'</code></li>
+<li>Independent reference anchor: <code>recipe_replay_agrees_with_the_reference_on_every_recipe; command: cargo nextest run --release --locked -p panproto-gat --test reference_theories --no-tests=fail -E 'test(=recipe_replay_agrees_with_the_reference_on_every_recipe)'</code></li>
+<li>Compatibility surface test: <code>registration_equivalence; command: cargo nextest run --release --locked -p panproto-protocols --test registration_equivalence --no-tests=fail -E 'test(=registration_equivalence)'</code></li>
+<li>Frozen 0.74.4 test: <code>registration_reproduces_the_frozen_0_74_4_theories; command: cargo nextest run --release --locked -p panproto-protocols --test registration_equivalence --no-tests=fail -E 'test(=registration_reproduces_the_frozen_0_74_4_theories)'</code></li>
+<li>Diagram form test: <code>every_registered_protocol_records_a_diagram_step; command: cargo nextest run --release --locked -p panproto-protocols --test registration_equivalence --no-tests=fail -E 'test(=every_registered_protocol_records_a_diagram_step)'</code></li>
+<li>Property differential test: <code>randomized_registered_recipe_differential; command: cargo nextest run --locked -p panproto-protocols --test reference_registration --no-tests=fail -E 'test(=randomized_registered_recipe_differential)'</code></li>
+<li>Randomized input scope: Generated protocol/recipe coordinates and registry insertion rotations compare production and reference replay bytes with the registered theory. The frozen compatibility comparison remains the separate exhaustive certificate.</li>
+<li>File: <code>crates/panproto-protocols/src/theories.rs</code></li>
+<li>File: <code>crates/panproto-protocols/tests/registration_equivalence.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/theories.rs</code></li>
+<li>File: <code>crates/panproto-gat/src/composition.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/theories.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-7"><a class="header" href="#L-keys-and-registration-7">Canonical theory and composition identities are deterministic</a></h2>
+<h3 id="statement-6"><a class="header" href="#statement-6">Statement</a></h3>
+<p>Canonical theory bytes encode the complete theory in declared field order with name-keyed collections sorted. Canonical composition bytes additionally encode inclusions in node order, sorted provenance maps, and the complete report. Their domain-separated digests are functions of those bytes. The frozen corpus agrees across its named MessagePack, CBOR, and JSON forms, and composing every registration diagram yields identical canonical bytes in independent processes.</p>
+<h3 id="outside-the-domain-6"><a class="header" href="#outside-the-domain-6">Outside the domain</a></h3>
+<p>The law concerns canonical identities, not the incidental bytes of Rust’s ordinary <code>Serialize</code> implementation. It does not claim that different valid theories have different cryptographic digests; it requires equal canonical content to produce equal bytes and digests.</p>
+<h3 id="definitions-used-6"><a class="header" href="#definitions-used-6">Definitions used</a></h3>
+<p><code>THEORY_CONTEXT</code> and <code>COMPOSITION_CONTEXT</code> are distinct digest domains. A <em>frozen fixture</em> records a diagram, its options, the expected composition in three boundary encodings, and the expected composition digest. The cross-process carrier contains every registration diagram and uses independent hash-map seeds.</p>
+<h3 id="proof-6"><a class="header" href="#proof-6">Proof</a></h3>
+<ol>
+<li>Both canonical writers use exhaustive variant tags, length prefixes, declared field order, and sorted traversal for map-like collections. Thus allocation and hash-map iteration order do not enter either byte string.</li>
+<li>Each digest hashes the corresponding canonical bytes under its fixed context. Equal byte strings thus produce equal identities without conflating theory and composition domains.</li>
+<li>A bounded same-input differential independently encodes empty and unary theories plus one carrier-complete theory. The third fixture visits every sort kind, value kind, coercion class, expression, literal, pattern, conflict strategy, optional directed-equation field, and duplicate-name tie order. Its composition carrier adds a nonempty inclusion with both operation-assignment forms, an entry in every provenance map, an added equation, one freshening, every report-check tag, every subject form, and every outcome family. Wrapping all three theories in both composition modes also checks the inline theory and consecutive provenance-map layout.</li>
+<li>The fixture test recomposes each recorded diagram, compares its canonical composition bytes with the decoded fixture, and compares the resulting digest with <code>golden.json</code>.</li>
+<li>The cross-process test repeats every registration composition in 32 child processes and compares the complete byte maps. This directly checks the process-dependent source of nondeterminism that a single-process test cannot observe.</li>
+</ol>
+<h3 id="executable-counterpart-6"><a class="header" href="#executable-counterpart-6">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.q8</code></li>
+<li>Reference: <code>panproto_reference::theory::canonical_theory_bytes</code></li>
+<li>Reference: <code>panproto_reference::theory::canonical_composition_bytes</code></li>
+<li>Evidence scope: <code>three bounded same-input theories under both composition modes, including one carrier-complete fixture; the frozen theory-composition corpus; every registered composition in 32 child processes</code></li>
+<li>Production certificate: <code>canonical_theory_and_composition_bytes_match_reference_on_bounded_fixtures; command: cargo nextest run --release --locked -p panproto-schema --test reference_theory_canonical --no-tests=fail -E 'test(=canonical_theory_and_composition_bytes_match_reference_on_bounded_fixtures)'</code></li>
+<li>Independent reference anchor: <code>cross_process::compose_bytes_are_identical_across_processes; command: cargo nextest run --release --locked -p panproto-protocols --test registration_equivalence --no-tests=fail -E 'test(=cross_process::compose_bytes_are_identical_across_processes)'</code></li>
+<li>Frozen-corpus regression test: <code>theory_composition_fixtures_recompose_to_their_bytes_and_digests; command: cargo test --release -p panproto-protocols --test registration_equivalence theory_composition_fixtures_recompose_to_their_bytes_and_digests -- --exact --nocapture</code></li>
+<li>Property differential test: <code>randomized_theory_and_composition_canonical_bytes; command: cargo nextest run --locked -p panproto-schema --test reference_theory_canonical --no-tests=fail -E 'test(=randomized_theory_and_composition_canonical_bytes)'</code></li>
+<li>Randomized input scope: Generated names and declaration reversal vary the three paired theory carriers under either composition mode. Complete theory and composition bytes are compared; the independent-process obligation remains the separate process certificate.</li>
+<li>File: <code>crates/panproto-protocols/src/theories.rs</code></li>
+<li>File: <code>crates/panproto-schema/src/canonical_theory.rs</code></li>
+<li>File: <code>crates/panproto-protocols/tests/registration_equivalence.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/theories.rs</code></li>
+<li>File: <code>crates/panproto-schema/src/canonical.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-8"><a class="header" href="#L-keys-and-registration-8">Declared key equality is exactly its canonical kernel</a></h2>
+<h3 id="statement-7"><a class="header" href="#statement-7">Statement</a></h3>
+<p><code>key_equivalence(E, x, y)</code> has the following kernel. <code>Representation</code> uses canonical value representation equality. <code>NumericValue</code> compares every numeric variant by exact mathematical value, with negative infinity below finite values, positive infinity above them, and all NaNs in one equality class; when either value is nonnumeric it falls back to representation equality. <code>NumericValueWithinKind(p)</code> additionally requires the selected primitive to agree, where <code>Any</code> selects decimal for integers and decimals and binary64 for floats. SQL equality uses exact numeric equality for numeric pairs, declared collation and padding for string pairs, representation equality for other nonnumeric pairs, and false for a mixed numeric-nonnumeric pair. XML non-CDATA equality normalizes string pairs as in <a href="#L-keys-and-registration-14">L-keys-and-registration-14</a> and otherwise uses representation equality.</p>
+<h3 id="outside-the-domain-7"><a class="header" href="#outside-the-domain-7">Outside the domain</a></h3>
+<p>Under a named SQL collation, every pair that holds text on either side (text against text, null, a number, or any other value) returns <code>None</code> in the reference and <code>UnsupportedCollation</code> in production: the key function of that text belongs to the database implementation and is undefined here, so not even inequality with a non-text value is decided. A malformed production numeric carrier may return <code>InvalidNumericRepresentation</code>; it has no value in the finite reference carrier. A branch that requires representation equality returns <code>None</code> in the reference and <code>NoCanonicalBytes</code> in production when either value has no canonical bytes, as for a malformed temporal. Every remaining enumerated input returns <code>Some(true)</code> or <code>Some(false)</code> in the reference and the corresponding <code>Ok</code> value in production.</p>
+<h3 id="definitions-used-7"><a class="header" href="#definitions-used-7">Definitions used</a></h3>
+<p>Finite numerics are normalized to a sign, a base-ten natural significand without trailing zeroes, and an adjusted exponent. Binary floats enter this carrier exactly when their denominator is a power of two, which always holds for finite IEEE values. SQL <code>PadSpace</code> removes trailing U+0020 before collation; <code>AsciiCaseInsensitive</code> folds ASCII uppercase letters only.</p>
+<h3 id="proof-7"><a class="header" href="#proof-7">Proof</a></h3>
+<ol>
+<li>The five outer match arms are exactly the five equality declarations.</li>
+<li>Numeric normalization maps integers, decimals, and finite floats to one exact decimal value; special values map to three distinguished keys. Equality of these keys is thus the stated mathematical kernel.</li>
+<li>The within-kind arm prefixes that key with the declared or selected primitive. The SQL and XML arms perform their stated string transformations and use the same fallback for other values.</li>
+<li><code>sql_text</code> refuses exactly a named collation. Numeric normalization separately propagates <code>InvalidNumericRepresentation</code> for an ill-formed production carrier. Each representation-based branch propagates <code>NoCanonicalBytes</code> when canonical encoding is unavailable, matching the reference’s <code>None</code> branch.</li>
+</ol>
+<h3 id="executable-counterpart-7"><a class="header" href="#executable-counterpart-7">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.equality-kernel-equivalence</code></li>
+<li>Reference: <code>panproto_reference::keys::key_equivalence</code></li>
+<li>Evidence scope: <code>37 values under 12 configurations, 16,428 ordered pairs, and 607,836 ordered triples</code></li>
+<li>Production certificate: <code>equality_carrier_executes_all_pairs_and_triples; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=equality_carrier_executes_all_pairs_and_triples)'</code></li>
+<li>Independent reference anchor: <code>equality_carrier_executes_all_pairs_and_triples; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=equality_carrier_executes_all_pairs_and_triples)'</code></li>
+<li>Supplemental property differential test: <code>randomized::key_kernels_and_typed_refusals_match_on_generated_pairs; command: cargo nextest run --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=randomized::key_kernels_and_typed_refusals_match_on_generated_pairs)'</code></li>
+<li>File: <code>crates/panproto-inst/src/key.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/keys_and_registration.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-9"><a class="header" href="#L-keys-and-registration-9">Representation equality refines every computable declared equality</a></h2>
+<h3 id="statement-8"><a class="header" href="#statement-8">Statement</a></h3>
+<p>For every equality declaration <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span></span></span></span> and values <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span></span></span> on which <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span></span></span></span> is computable, if <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span></span></span> are equal by representation then they are equivalent under <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span></span></span></span>. <code>representation_refines(E, x, y)</code> returns the truth value of this implication. The reference returns <code>Some(true)</code> when representation equality is false or both equalities hold, <code>Some(false)</code> only if representation equality holds and declared equality does not, and <code>None</code> precisely when the consequent requires an unsupported named SQL collation or either value has no canonical bytes (a <code>Temporal</code> that is not well formed, or a value that contains one). Production returns the corresponding <code>Ok</code> value or typed refusal.</p>
+<h3 id="outside-the-domain-8"><a class="header" href="#outside-the-domain-8">Outside the domain</a></h3>
+<p>A representationally equal string pair under a named SQL collation returns <code>None</code> in the reference and <code>UnsupportedCollation</code> in production; the function does not assume a database-specific kernel. An invalid production numeric carrier may additionally return <code>InvalidNumericRepresentation</code> and is outside the finite reference carrier. A value without canonical bytes has no representation equality; the reference returns <code>None</code> for it and production refuses it with <code>NoCanonicalBytes</code>, so the two are compared on such values as well.</p>
+<h3 id="definitions-used-8"><a class="header" href="#definitions-used-8">Definitions used</a></h3>
+<p>For propositions <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span></span></span></span>, implication <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⇒</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span></span></span></span> is <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">¬</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∨</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span></span></span></span>. Representation equality and declared equality are those of the value layer and <a href="#L-keys-and-registration-8">L-keys-and-registration-8</a>.</p>
+<h3 id="proof-8"><a class="header" href="#proof-8">Proof</a></h3>
+<ol>
+<li>The function first evaluates representation equality, which is undefined, and returned as <code>None</code>, on a value without canonical bytes.</li>
+<li>It returns <code>!represented || key_equivalence(E, x, y)?</code>, which is exactly the Boolean implication.</li>
+<li>If the antecedent is false, short-circuit evaluation returns true without demanding a declared comparison. If it is true, the result and any refusal are exactly those of the declared equality.</li>
+</ol>
+<h3 id="executable-counterpart-8"><a class="header" href="#executable-counterpart-8">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.representation-refinement</code></li>
+<li>Reference: <code>panproto_reference::keys::representation_refines</code></li>
+<li>Evidence scope: <code>37 values under 12 equality configurations, for 16,428 ordered pairs</code></li>
+<li>Production certificate: <code>equality_carrier_executes_all_pairs_and_triples; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=equality_carrier_executes_all_pairs_and_triples)'</code></li>
+<li>Independent reference anchor: <code>named_collation_has_the_exact_typed_refusal_boundary; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=named_collation_has_the_exact_typed_refusal_boundary)'</code></li>
+<li>Supplemental property differential test: <code>randomized::key_kernels_and_typed_refusals_match_on_generated_pairs; command: cargo nextest run --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=randomized::key_kernels_and_typed_refusals_match_on_generated_pairs)'</code></li>
+<li>File: <code>crates/panproto-inst/src/key.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/keys_and_registration.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-10"><a class="header" href="#L-keys-and-registration-10">Equality declarations have an injective canonical byte layout</a></h2>
+<h3 id="statement-9"><a class="header" href="#statement-9">Statement</a></h3>
+<p>Within canonical schema bytes, a key with an empty equality vector retains the legacy role tag 0 through 4 and writes no equality payload. A nonempty vector sets the high bit of that role tag, writes its length, and writes each declaration in order. Equality tags are 0 for representation, 1 for numeric value, 2 for numeric value within kind, 3 for SQL, and 4 for XML non-CDATA. Nested primitive, collation, and padding variants have distinct tags and include their width or name payload. This encoding is injective over key roles, equality-vector presence, and equality declarations.</p>
+<h3 id="outside-the-domain-9"><a class="header" href="#outside-the-domain-9">Outside the domain</a></h3>
+<p>A nonempty equality vector of the wrong arity remains encodable, but declaration validation rejects it. The injectivity statement concerns bytes, not declaration validity.</p>
+<h3 id="definitions-used-9"><a class="header" href="#definitions-used-9">Definitions used</a></h3>
+<p>The legacy role tags are 0 for primary, 1 for unique, 2 for identifier, 3 for sort key, and 4 for index. The high bit is <code>0x80</code>; none of the legacy tags sets it. Vectors are length-prefixed and preserve element order.</p>
+<h3 id="proof-9"><a class="header" href="#proof-9">Proof</a></h3>
+<ol>
+<li>The high bit separates empty from nonempty equality vectors without colliding with a role tag, while the low bits retain the role.</li>
+<li>Distinct equality variants have distinct tags. Every nested sum also has distinct tags, and scalar payload encodings are injective.</li>
+<li>The vector length and sequential element encodings distinguish length, order, and contents. Hence equal bytes imply equal role and equality declaration data.</li>
+</ol>
+<h3 id="executable-counterpart-9"><a class="header" href="#executable-counterpart-9">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.equality-declaration-byte-injectivity</code></li>
+<li>Reference: <code>panproto_reference::schema::canonical_bytes</code></li>
+<li>Evidence scope: <code>10 equality forms: legacy empty, representation, numeric value, decimal/float/any within-kind, binary/ascii-folded/named SQL, and XML non-CDATA</code></li>
+<li>Production certificate: <code>extended_declaration_bytes_match_reference_on_every_sum_variant; command: cargo nextest run --release --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=extended_declaration_bytes_match_reference_on_every_sum_variant)'</code></li>
+<li>Independent reference anchor: <code>extended_declaration_bytes_match_reference_on_every_sum_variant; command: cargo nextest run --release --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=extended_declaration_bytes_match_reference_on_every_sum_variant)'</code></li>
+<li>Property differential test: <code>randomized::equality_declaration_words_match_and_decode; command: cargo nextest run --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=randomized::equality_declaration_words_match_and_decode)'</code></li>
+<li>Randomized input scope: Generated equality words of length at most three use all twelve configurations; production and reference declaration bytes agree and decode to the input declaration.</li>
+<li>File: <code>crates/panproto-schema/src/canonical.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/keys_and_registration.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-11"><a class="header" href="#L-keys-and-registration-11">Sort-key comparison is a total preorder on each declared family</a></h2>
+<h3 id="statement-10"><a class="header" href="#statement-10">Statement</a></h3>
+<p><code>sort_order(x, y)</code> is defined for two non-NaN numeric values, two strings, or two booleans. Numeric values are ordered by exact value with negative infinity first and positive infinity last; equal exact values across numeric representations compare equal. Strings use lexicographic UTF-8 byte order, and booleans use <code>false &lt; true</code>. On each of these three families the relation <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⪯</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span></span></span> defined by a non-greater result is reflexive, transitive, and total. Its induced numeric equivalence classes are exact-value classes, so the numeric relation is a total preorder rather than representation equality.</p>
+<h3 id="outside-the-domain-10"><a class="header" href="#outside-the-domain-10">Outside the domain</a></h3>
+<p>Comparison returns <code>None</code> when either numeric value is NaN, when values come from different families, or when a nonnumeric value is neither a string nor a boolean pair. An invalid production numeric carrier returns <code>InvalidNumericRepresentation</code> rather than an ordering and is outside the finite reference carrier.</p>
+<h3 id="definitions-used-10"><a class="header" href="#definitions-used-10">Definitions used</a></h3>
+<p>A total preorder is reflexive, transitive, and total; antisymmetry is not required. The exact numeric key is the normalized key of <a href="#L-keys-and-registration-8">L-keys-and-registration-8</a>.</p>
+<h3 id="proof-10"><a class="header" href="#proof-10">Proof</a></h3>
+<ol>
+<li>Numeric-key matching places negative infinity, finite exact decimals, and positive infinity in a lexicographic three-part order and removes NaN. This is a total order on normalized keys.</li>
+<li>Pulling that order back along normalization gives a total preorder on numeric values; two representations of one exact value may be equivalent.</li>
+<li>UTF-8 byte strings and booleans each carry their standard total order. The match arms return precisely those orders.</li>
+<li>Every cross-family and unsupported case reaches <code>None</code>, proving the domain boundary.</li>
+</ol>
+<h3 id="executable-counterpart-10"><a class="header" href="#executable-counterpart-10">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.sort-key-total-preorder</code></li>
+<li>Reference: <code>panproto_reference::keys::sort_order</code></li>
+<li>Evidence scope: <code>the seven values {0, 1, 1.5, "a", "ab", "b", NaN}; exact ordered pairs=49, triples=343</code></li>
+<li>Production certificate: <code>sort_preorder_and_adjacent_descent_match_the_reference; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=sort_preorder_and_adjacent_descent_match_the_reference)'</code></li>
+<li>Independent reference anchor: <code>sort_preorder_and_adjacent_descent_match_the_reference; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=sort_preorder_and_adjacent_descent_match_the_reference)'</code></li>
+<li>Supplemental property differential test: <code>randomized::sort_order_and_adjacent_descent_match_on_generated_words; command: cargo nextest run --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=randomized::sort_order_and_adjacent_descent_match_on_generated_words)'</code></li>
+<li>File: <code>crates/panproto-inst/src/key.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/keys_and_registration.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-12"><a class="header" href="#L-keys-and-registration-12">A sort-key sequence is ordered exactly when no adjacent pair descends</a></h2>
+<h3 id="statement-11"><a class="header" href="#statement-11">Statement</a></h3>
+<p>For values <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>, the reference <code>key_order</code> returns <code>Some(true)</code> exactly when <code>sort_order(x_i, x_{i+1})</code> is defined and not greater for every adjacent pair. It returns <code>Some(false)</code> exactly when every adjacent comparison is defined and at least one adjacent pair descends, and <code>None</code> when any adjacent pair is incomparable, even if an earlier pair descends. Production returns the corresponding <code>Ok(Some(_))</code> or <code>Ok(None)</code> value. Empty and singleton sequences are ordered.</p>
+<h3 id="outside-the-domain-11"><a class="header" href="#outside-the-domain-11">Outside the domain</a></h3>
+<p>There is no separate refusal value on the well-formed reference carrier beyond <code>None</code> for an incomparable adjacent pair. An invalid production numeric carrier instead returns <code>InvalidNumericRepresentation</code>. Comparability need not be checked between nonadjacent elements because transitivity from <a href="#L-keys-and-registration-11">L-keys-and-registration-11</a> carries adjacent order across the sequence.</p>
+<h3 id="definitions-used-11"><a class="header" href="#definitions-used-11">Definitions used</a></h3>
+<p>An <em>adjacent descent</em> is an index <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> with <code>sort_order(x_i, x_{i+1}) = Greater</code>. Rust’s <code>windows(2)</code> is empty when the sequence has fewer than two elements.</p>
+<h3 id="proof-11"><a class="header" href="#proof-11">Proof</a></h3>
+<ol>
+<li>The function maps every adjacent window to <code>Some(!order.is_gt())</code> or propagates <code>None</code> from <code>sort_order</code>.</li>
+<li>Its fold starts at true and conjoins every defined Boolean. Conjunction is true exactly when no element is false and false when at least one descent occurs.</li>
+<li><code>Option</code> propagation makes any incomparable pair return <code>None</code>. The empty fold returns its true identity.</li>
+</ol>
+<h3 id="executable-counterpart-11"><a class="header" href="#executable-counterpart-11">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.sort-key-adjacent-descents</code></li>
+<li>Reference: <code>panproto_reference::keys::key_order</code></li>
+<li>Evidence scope: <code>all 2,801 sequences of length at most four over {0, 1, 1.5, "a", "ab", "b", NaN}</code></li>
+<li>Production certificate: <code>sort_preorder_and_adjacent_descent_match_the_reference; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=sort_preorder_and_adjacent_descent_match_the_reference)'</code></li>
+<li>Independent reference anchor: <code>sort_preorder_and_adjacent_descent_match_the_reference; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=sort_preorder_and_adjacent_descent_match_the_reference)'</code></li>
+<li>Supplemental property differential test: <code>randomized::sort_order_and_adjacent_descent_match_on_generated_words; command: cargo nextest run --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=randomized::sort_order_and_adjacent_descent_match_on_generated_words)'</code></li>
+<li>File: <code>crates/panproto-inst/src/key.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/keys_and_registration.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-13"><a class="header" href="#L-keys-and-registration-13">Target sets are nonempty, distinct, and signature-compatible</a></h2>
+<h3 id="statement-12"><a class="header" href="#statement-12">Statement</a></h3>
+<p>For a sequence of target-set members <code>(vertex, key, arity, equality)</code>, <code>target_set</code> returns true exactly when the sequence is nonempty, no <code>(vertex, key)</code> pair repeats, the first member’s equality vector has one entry per part, and every member has the first member’s arity and equality vector. The schema-level <code>validate_declarations</code> operation does not call this helper. It instead requires (i) an id distinct from every vertex id, (ii) at least one member, and (iii) member keys that exist, do not repeat, have the declared scope, have a well-formed equality vector (empty, or one entry per part), have a role other than <code>Index</code>, and share the first valid member’s effective signature. Production and the reference flag the same members.</p>
+<h3 id="outside-the-domain-12"><a class="header" href="#outside-the-domain-12">Outside the domain</a></h3>
+<p>The Boolean helper returns false for an empty or incompatible sequence. Schema validation records <code>TargetSetNameClash</code> for an id collision and <code>EmptyTargetSet</code> for an empty sequence. It records one <code>TargetSetMemberMismatch</code> for each absent, repeated, <code>Index</code>-role, scope-incompatible, malformed-equality, arity-incompatible, or equality-incompatible member, in target-set and member declaration order. A member key with one part and two equality entries thus yields <code>EqualityArity</code> from the key pass and <code>TargetSetMemberMismatch</code> from the set pass.</p>
+<h3 id="definitions-used-12"><a class="header" href="#definitions-used-12">Definitions used</a></h3>
+<p>The <em>signature</em> of a member key is its part count and effective equality vector. Its effective vector is the declared nonempty vector, or one <code>Representation</code> entry per part when the declaration is empty; a declared vector of the wrong length gives the key no signature. An <code>Index</code> key promises no uniqueness and resolves no pair, so it is never a member of a key over several vertices.</p>
+<h3 id="proof-12"><a class="header" href="#proof-12">Proof</a></h3>
+<ol>
+<li>The helper obtains the first signature with <code>first</code>; absence returns false. A set cardinality comparison gives pairwise distinctness, and an all-quantifier gives signature compatibility.</li>
+<li>Schema validation walks ordered target sets. It checks the name clash before member checks, then maintains a set of member pairs and the first valid signature.</li>
+<li>A member is valid precisely when lookup succeeds, its role is not <code>Index</code>, its pair is new, its scope agrees, it has a signature, and that signature agrees. Only a member valid apart from agreement anchors the signature. The negation appends <code>TargetSetMemberMismatch</code> naming the member, proving completeness and order for declared members.</li>
+<li>The schema validator tests emptiness before the member loop and emits <code>EmptyTargetSet</code>, then skips the loop. Thus an empty declaration has one typed defect rather than an accidental arity or member error.</li>
+</ol>
+<h3 id="executable-counterpart-12"><a class="header" href="#executable-counterpart-12">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.target-set-declaration</code></li>
+<li>Reference: <code>panproto_reference::keys::target_set</code></li>
+<li>Evidence scope: <code>nine declaration fixtures covering compatible, empty, duplicate, arity-incompatible, equality-incompatible, implicit/explicit representation, absent-key, scope-mismatch, and invalid-first-member signatures; eight fixtures have resolved signatures and are also projected to the local predicate; three further fixtures for a wrong-length equality vector and an Index member in either position; every fixture compares the flagged (set, vertex, key) members of both validators</code></li>
+<li>Production certificate: <code>target_sets_match_on_the_complete_local_predicate; command: cargo nextest run --release --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=target_sets_match_on_the_complete_local_predicate)'</code></li>
+<li>Independent reference anchor: <code>target_sets_match_on_the_complete_local_predicate; command: cargo nextest run --release --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=target_sets_match_on_the_complete_local_predicate)'</code></li>
+<li>Member condition test: <code>target_set_members_need_a_well_formed_equality_and_a_resolving_role; command: cargo nextest run --release --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=target_set_members_need_a_well_formed_equality_and_a_resolving_role)'</code></li>
+<li>Property differential test: <code>randomized::target_set_admission_matches_on_generated_member_words; command: cargo nextest run --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=randomized::target_set_admission_matches_on_generated_member_words)'</code></li>
+<li>Randomized input scope: Generated member words of length at most four use eight declared, mismatched, scoped or missing member coordinates. Complete declaration diagnostic-class multisets and member mismatch records agree; the local signature predicate is compared on its all-document subdomain.</li>
+<li>File: <code>crates/panproto-schema/src/validate.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-14"><a class="header" href="#L-keys-and-registration-14">XML non-CDATA equality has one normalization kernel</a></h2>
+<h3 id="statement-13"><a class="header" href="#statement-13">Statement</a></h3>
+<p><code>xml_noncdata(s)</code> replaces each maximal nonempty run of U+0020 by one U+0020 and removes U+0020 from both ends. XML attribute processing has already replaced TAB, CR, and LF before this key function runs, so this kernel preserves those code points if they nevertheless occur in its direct string input. It preserves every other Unicode scalar unchanged. The function is idempotent, and two strings are equivalent under XML non-CDATA equality exactly when their normalized strings are equal.</p>
+<h3 id="outside-the-domain-13"><a class="header" href="#outside-the-domain-13">Outside the domain</a></h3>
+<p>There is none for UTF-8 strings. TAB, CR, LF, nonbreaking space, and every character other than U+0020 are ordinary content at this layer and are not collapsed.</p>
+<h3 id="definitions-used-13"><a class="header" href="#definitions-used-13">Definitions used</a></h3>
+<p>The implementation splits on U+0020, removes empty pieces, and joins the remaining pieces with one U+0020. Idempotence means <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mopen">(</span><span class="mord mathnormal">s</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mopen">(</span><span class="mord mathnormal">s</span><span class="mclose">)</span></span></span></span>.</p>
+<h3 id="proof-13"><a class="header" href="#proof-13">Proof</a></h3>
+<ol>
+<li>Splitting creates one piece between successive U+0020 runs and empty pieces at a run or endpoint. Filtering empties removes every run and endpoint occurrence.</li>
+<li>Joining inserts exactly one U+0020 between successive nonempty pieces and changes no character inside a piece, which gives the stated normal form.</li>
+<li>A normalized output has neither endpoint U+0020 nor adjacent U+0020. Repeating the same operation thus leaves it fixed.</li>
+<li>The <code>XmlNonCdata</code> string branch compares these outputs, so its kernel is equality of normal forms.</li>
+</ol>
+<h3 id="executable-counterpart-13"><a class="header" href="#executable-counterpart-13">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.xml-noncdata-equivalence</code></li>
+<li>Reference: <code>panproto_reference::keys::xml_noncdata</code></li>
+<li>Evidence scope: <code>the 341 strings of length at most four over {a, b, U+0020, U+0009}, all 116,281 ordered pairs, 184 normalization classes and 1,171 equivalent ordered pairs (counted independently), with LF, CR, TAB and token-order units</code></li>
+<li>Production certificate: <code>xml_kernel_executes_the_exact_key_carrier; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=xml_kernel_executes_the_exact_key_carrier)'</code></li>
+<li>Independent reference anchor: <code>xml_kernel_executes_the_exact_key_carrier; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=xml_kernel_executes_the_exact_key_carrier)'</code></li>
+<li>Supplemental property differential test: <code>randomized::key_kernels_and_typed_refusals_match_on_generated_pairs; command: cargo nextest run --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=randomized::key_kernels_and_typed_refusals_match_on_generated_pairs)'</code></li>
+<li>File: <code>crates/panproto-inst/src/key.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/keys_and_registration.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-15"><a class="header" href="#L-keys-and-registration-15">Group-G declarations validate and encode without collisions</a></h2>
+<h3 id="statement-14"><a class="header" href="#statement-14">Statement</a></h3>
+<p>The complete key, target-set, and reference declaration carrier is valid exactly when the independent <code>validate_declarations</code> function returns <code>Ok(())</code>. Key ids are unique per vertex, equality arity is exact, and sort keys have a unique ordered carrier from their <code>Within</code> scope. A repeated key id contributes one duplicate defect, regardless of how many later declarations repeat it. Target sets are nonempty and satisfy the schema-level member conditions in <a href="#L-keys-and-registration-13">L-keys-and-registration-13</a>. A reference whose resolving key, or any member key of its target set, has role <code>SortKey</code> or <code>Index</code> is refused with <code>KeyNotResolvable</code>, under either <code>on_unresolved</code> policy; in this release no reference resolves through an <code>Index</code> key. Every reference names a present target of matching arity and a compatible edge. A reference with no explicit target key selects the first declared <code>Primary</code> key; a key-value reference with neither resolves through the empty key, so a nonempty source is refused as an arity mismatch against zero parts. A target-set virtual edge starts at the reference holder and expands to a declared edge for every member. Inline references redirect through a target set. Variable binders name identifier keys of the target vertex itself and use one binding mode. A target set is no vertex and declares no key, so a variable reference to a set names no binder and is refused as an unknown target, and a variable reference whose named <code>target_key</code> is absent is refused the same way although its binder would resolve it. For text constraints, standoff lengths are not inclusive; fragmented standoffs are many-valued over an ordered holder edge; guarded partitions have distinct representation values; referenced text and scope-via chains are typed and acyclic; and target-set references carry no redundant per-vertex key. A referenced-text declaration is invalid when any reachable suffix repeats a reference, including when it enters a cycle that does not contain the starting declaration. The production validator agrees on this declaration-local predicate and additionally checks that named vertices, paths, positional carriers, scope ancestors, and protocol-required edges exist in the production schema. Each validator returns every defect in its domain in deterministic declaration order and with the stated multiplicity. A reference to a target set whose only member key is missing yields <code>TargetSetMemberMismatch</code> followed by <code>UnknownTarget</code>; source arity is not inspected without a resolvable target. Canonical schema bytes distinguish every valid declaration in this carrier.</p>
+<h3 id="outside-the-domain-14"><a class="header" href="#outside-the-domain-14">Outside the domain</a></h3>
+<p>An invalid carrier returns the nonempty ordered defect vector. Named SQL collation behavior at instance level is outside declaration validity; its name remains part of canonical bytes. Production fields absent from the finite reference carrier are outside the injectivity claim.</p>
+<h3 id="definitions-used-14"><a class="header" href="#definitions-used-14">Definitions used</a></h3>
+<p>The independent declaration errors are <code>EqualityArity</code>, <code>DuplicateKeyId</code>, <code>TargetSetNameClash</code>, <code>EmptyTargetSet</code>, <code>TargetSetMemberMismatch</code>, <code>SortKeyNotOrdered</code>, <code>KeyNotResolvable</code>, <code>UnknownTarget</code>, <code>ReferenceArity</code>, <code>InlineRequiresRedirect</code>, <code>InlineRequiresTargetSet</code>, <code>LengthInclusive</code>, <code>InvalidFragments</code>, <code>DuplicateGuard</code>, <code>EdgeMismatch</code>, <code>TargetSetHasKey</code>, <code>VariableBinderInvalid</code>, <code>BinderModeConflict</code>, <code>TextReferenceInvalid</code>, and <code>ScopeViaInvalid</code>. Production splits <code>UnknownTarget</code> into <code>UnknownTarget</code> and <code>UnknownTargetKey</code>, renames <code>VariableBinderInvalid</code> to <code>BinderNotIdentifier</code> and <code>ReferenceArity</code> to <code>ArityMismatch</code>; and adds <code>UnknownVertex</code>, <code>PathDoesNotResolve</code>, <code>PositionNotOrdered</code>, <code>EdgeRequired</code>, and <code>WithinNotAncestor</code> for the graph-aware checks. These substitutions yield the 26 public <code>KeyRefError</code> variants. Representation equality determines duplicate guard values.</p>
+<h3 id="proof-14"><a class="header" href="#proof-14">Proof</a></h3>
+<ol>
+<li><code>validate_declarations</code> appends results from key, target-set, reference, binder-mode, and guard passes in that order and returns success exactly when the vector is empty.</li>
+<li>Each pass traverses ordered maps and stored sequences and appends the defect corresponding to the negation of one condition in the Statement. A repeated-id set limits duplicate diagnostics to one per id. Reference validation independently exercises all five key roles, checks the virtual edge’s holder before its member expansions, and selects the first <code>Primary</code> key when no target key is named. It first reports a redundant target-set key and, for a variable reference to a vertex, a missing named target key. It then checks the resolving target, recording a separate unknown-target defect when the binder is missing. Only a missing resolving target stops the remaining target-dependent checks; a missing named key does not stop them when the variable binder resolves.</li>
+<li>The text-reference helper carries the active suffix through recursion, so every reachable repeated node is rejected. The scope-via helper similarly follows its named chain with a visited set. Thus both accept exactly the typed acyclic chains described above.</li>
+<li>Canonical writing gives every declaration sum a distinct tag, every collection a length, every map a canonical order, and every optional extension a marker that the bytes following its absence cannot begin with. The unique-decoding argument of <a href="#L-keys-and-registration-3">L-keys-and-registration-3</a> thus applies to this declaration subcarrier.</li>
+</ol>
+<h3 id="executable-counterpart-14"><a class="header" href="#executable-counterpart-14">Executable counterpart</a></h3>
+<ul>
+<li>
+<p>Law ID: <code>keys.group-g-declaration-injectivity</code></p>
+</li>
+<li>
+<p>Reference: <code>panproto_reference::schema::canonical_bytes</code></p>
+</li>
+<li>
+<p>Reference: <code>panproto_reference::schema::validate_declarations</code></p>
+</li>
+<li>
+<p>Evidence scope: <code>37 canonical fixtures covering every declaration sum variant, including Position, and nondefault extension; 30 validation fixtures covering success, every independent refusal class, exact duplicate multiplicity, implicit-primary selection, missing-only target sets, holder-source agreement, reachable text cycles, a variable over a target set, a variable with a missing named key, and key-value parts against the empty key; plus all five target-set member roles; plus the extension-marker regression pair and the 194 decoded extension combinations of L-keys-and-registration-3</code></p>
+</li>
+<li>
+<p>Production certificate: <code>extended_declaration_bytes_match_reference_on_every_sum_variant; command: cargo nextest run --release --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=extended_declaration_bytes_match_reference_on_every_sum_variant)'</code></p>
+</li>
+<li>
+<p>Independent reference anchor: <code>declaration_validation_matches_reference_on_every_common_refusal; command: cargo nextest run --release --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=declaration_validation_matches_reference_on_every_common_refusal)'</code></p>
+</li>
+<li>
+<p>Role differential test: <code>target_set_references_check_every_member_key_role; command: cargo test --release -p panproto-schema --test reference_keys target_set_references_check_every_member_key_role -- --exact --nocapture</code></p>
+</li>
+<li>
+<p>Marker regression test: <code>extension_markers_separate_the_audit_counterexample; command: cargo nextest run --release --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=extension_markers_separate_the_audit_counterexample)'</code></p>
+</li>
+<li>
+<p>Extension decoding test: <code>declaration_bytes_decode_back_on_every_extension_combination; command: cargo nextest run --release --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=declaration_bytes_decode_back_on_every_extension_combination)'</code></p>
+</li>
+<li>
+<p>Property differential test: <code>randomized::extension_declarations_match_and_decode_on_generated_pairs; command: cargo nextest run --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=randomized::extension_declarations_match_and_decode_on_generated_pairs)'</code></p>
+</li>
+<li>
+<p>Property differential test: <code>randomized::key_and_reference_admission_match_on_generated_coordinates; command: cargo nextest run --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=randomized::key_and_reference_admission_match_on_generated_coordinates)'</code></p>
+</li>
+<li>
+<p>Randomized input scope: Generated pairs from the 194 extension carriers compare complete declaration bytes, decoding and injectivity. Generated key/reference coordinates additionally compare declaration diagnostic-class multisets, with no structural findings discarded.</p>
+</li>
+<li>
+<p>File: <code>crates/panproto-schema/src/canonical.rs</code></p>
+</li>
+<li>
+<p>File: <code>crates/panproto-schema/src/keys.rs</code></p>
+</li>
+<li>
+<p>File: <code>crates/panproto-schema/src/validate.rs</code></p>
+</li>
+<li>
+<p>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></p>
+</li>
+<li>
+<p>File: <code>crates/panproto-reference/src/enumerate/keys_and_registration.rs</code></p>
+</li>
+<li>
+<p>Fixed diagnostic differential: <code>independent_named_key_binder_and_target_set_defects_preserve_multiplicity; command: cargo nextest run --locked -p panproto-schema --test reference_keys --cargo-profile ci-test --profile ci --no-tests=fail -E 'test(=independent_named_key_binder_and_target_set_defects_preserve_multiplicity)'</code>; 27 declaration combinations compare complete common-class order and multiplicity with no structural defects discarded</p>
+</li>
+<li>
+<p>Stored-key-order differential: <code>canonical_declaration_bytes_preserve_raw_key_order_and_primary_selection; command: cargo nextest run --locked -p panproto-schema --test reference_keys --cargo-profile ci-test --profile ci --no-tests=fail -E 'test(=canonical_declaration_bytes_preserve_raw_key_order_and_primary_selection)'</code>; valid raw key permutations compare complete bytes and first-primary selection</p>
+</li>
+</ul>
+<h2 id="L-keys-and-registration-16"><a class="header" href="#L-keys-and-registration-16">Index keys never resolve references, and null-match mode determines occurrences</a></h2>
+<h3 id="statement-15"><a class="header" href="#statement-15">Statement</a></h3>
+<p>A reference whose resolving key has role <code>Index</code> is refused at declaration with <code>KeyNotResolvable</code> under both <code>on_unresolved</code> policies, so no schema that resolution accepts holds one and no pair is derived through an <code>Index</code> key. For a composite referencing tuple, <code>NullMatch::Simple</code> creates a resolution occurrence exactly when every part is non-NULL, while <code>NullMatch::Full</code> creates one exactly when at least one part is non-NULL. Thus an all-NULL tuple is absent under both modes; a partly NULL tuple is absent under <code>Simple</code> and unresolved under <code>Full</code>; and an all-present tuple is resolved or dangling according to the declared target key.</p>
+<h3 id="outside-the-domain-15"><a class="header" href="#outside-the-domain-15">Outside the domain</a></h3>
+<p>The law does not assert uniqueness for an <code>Index</code> key. The well-formed <code>Complement</code> reference through an <code>Index</code> key, whose get adds no edge, is not part of this release; such a declaration is the typed refusal above. The law also does not implement <code>MATCH PARTIAL</code>, which is a typed protocol refusal before resolution.</p>
+<h3 id="definitions-used-15"><a class="header" href="#definitions-used-15">Definitions used</a></h3>
+<p>A <em>resolution occurrence</em> is a holder element together with the tuple read from the reference’s declared source parts. An absent occurrence produces neither a pair nor a dangling record. An unresolved occurrence produces a dangling record containing the complete tuple, including its NULL parts.</p>
+<h3 id="proof-15"><a class="header" href="#proof-15">Proof</a></h3>
+<ol>
+<li>Declaration validation refuses every reference whose resolving key has role <code>Index</code> (<a href="#L-keys-and-registration-15">L-keys-and-registration-15</a>), whatever its <code>on_unresolved</code> policy, and resolution compiles only declarations that pass it. Thus no value equality, including equality of two absent index fields, can derive a pair through that role.</li>
+<li>Under <code>Simple</code>, the occurrence filter is conjunction over the tuple’s non-NULL tests. Under <code>Full</code>, it is disjunction. These formulas give the three null cases in the Statement.</li>
+<li>The filtered occurrences enter the ordinary target lookup. An equal all-present tuple derives one pair; an unequal all-present tuple is dangling. A partly NULL tuple enters that lookup only under <code>Full</code>, where it is necessarily dangling against an all-present target.</li>
+<li>The production/reference differential observes pairs and complement records through the complete <code>TreeToGraph</code> resolution operation. It does not infer these outcomes from a separate Boolean helper.</li>
+</ol>
+<h3 id="executable-counterpart-15"><a class="header" href="#executable-counterpart-15">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.index-and-null-match-declarations</code></li>
+<li>Reference: <code>panproto_reference::resolution::get</code></li>
+<li>Evidence scope: <code>five two-part tuples (equal, unequal, all NULL, and both partial-NULL orientations) under Simple and Full; all 16 optional-index pairs for the Index refusal</code></li>
+<li>Production certificate: <code>composite_foreign_key_null_matching_uses_real_resolution_occurrences; command: cargo nextest run --release --locked -p panproto-io --test reference_resolution --no-tests=fail -E 'test(=composite_foreign_key_null_matching_uses_real_resolution_occurrences)'</code></li>
+<li>Independent reference anchor: <code>index_fields_never_resolve_targets; command: cargo nextest run --release --locked -p panproto-io --test reference_resolution --no-tests=fail -E 'test(=index_fields_never_resolve_targets)'</code></li>
+<li>Property differential test: <code>randomized::index_refusal_matches_under_generated_unresolved_policy; command: cargo nextest run --locked -p panproto-io --test reference_resolution --no-tests=fail -E 'test(=randomized::index_refusal_matches_under_generated_unresolved_policy)'</code></li>
+<li>Property differential test: <code>randomized::null_match_outcomes_match_on_generated_existing_occurrences; command: cargo nextest run --locked -p panproto-io --test reference_resolution --no-tests=fail -E 'test(=randomized::null_match_outcomes_match_on_generated_existing_occurrences)'</code></li>
+<li>Randomized input scope: Generated cases vary the unresolved policy for an index-target declaration and compare its typed refusal. Five composite tuple pairs under either null-match mode compare actual resolution outcomes and the complete dangling literal or its absence; the fixed index matrix remains a separate exhaustive control.</li>
+<li>File: <code>crates/panproto-io/src/resolution/compile.rs</code></li>
+<li>File: <code>crates/panproto-io/src/resolution/occur.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/resolution.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-17"><a class="header" href="#L-keys-and-registration-17">Lexical-space validation preserves the literal and reports ill-typed values as advisory</a></h2>
+<h3 id="statement-16"><a class="header" href="#statement-16">Statement</a></h3>
+<p>Let <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span> be a stored literal lexeme and let <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> be its declared datatype. If the datatype table assigns <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> a kind, lexical-space validation reports a <code>ValueConstraint</code> diagnostic exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span> does not coerce under that kind. If the table does not assign <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> a kind, validation reports <code>UnsupportedDeclaration</code>. Both findings are advisory: they preserve <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span> and do not make an otherwise valid graph fail admission.</p>
+<h3 id="outside-the-domain-16"><a class="header" href="#outside-the-domain-16">Outside the domain</a></h3>
+<p>Syntax errors remain parser errors. This law begins after a literal and its datatype have been parsed and stored. It does not claim that the general panproto value readers implement every datatype’s lexical grammar.</p>
+<h3 id="definitions-used-16"><a class="header" href="#definitions-used-16">Definitions used</a></h3>
+<p>A <em>known datatype</em> is one present in the protocol’s value-kind table. A <em>derived value</em> is the successful result of coercing the stored lexeme under that kind. <code>ConstraintSemantics::LexicalSpace</code> compiles to an advisory <code>ValueConstraint</code> check.</p>
+<h3 id="proof-16"><a class="header" href="#proof-16">Proof</a></h3>
+<ol>
+<li><code>ValidationPlan::compile</code> resolves the datatype through the edge named by the lexical-space declaration.</li>
+<li>A known datatype supplies the kind used by the compiled check. The check emits a value-constraint diagnostic exactly when coercion fails.</li>
+<li>An unknown datatype cannot supply that check and produces the typed incomplete reason <code>UnsupportedDeclaration</code>.</li>
+<li>Both branches have advisory requirement. Thus neither changes a passing report to failure, and validation has no operation that could replace the graph’s stored lexeme; the differential reads the lexeme back after validation.</li>
+</ol>
+<h3 id="executable-counterpart-16"><a class="header" href="#executable-counterpart-16">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.lexical-space-declaration</code></li>
+<li>Reference: <code>panproto_reference::keys::lexical_space_outcome</code></li>
+<li>Evidence scope: <code>12 lexemes (signed, zero-padded, space-padded, fractional, exponent, both 64-bit boundaries, non-numeric, and empty) under the integer and decimal datatypes of the table and one datatype absent from it, 36 cases; each case compares the outcome with the reference, checks advisory admission, and reads back the kept lexeme</code></li>
+<li>Production certificate: <code>lexical_space_outcomes_match_the_datatype_table_reference; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=lexical_space_outcomes_match_the_datatype_table_reference)'</code></li>
+<li>Independent reference anchor: <code>lexical_space_outcomes_match_the_datatype_table_reference; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=lexical_space_outcomes_match_the_datatype_table_reference)'</code></li>
+<li>Property differential test: <code>randomized::lexical_space_admission_and_preservation_match_on_generated_literals; command: cargo nextest run --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=randomized::lexical_space_admission_and_preservation_match_on_generated_literals)'</code></li>
+<li>Randomized input scope: Generated cases draw from twelve lexical forms and three datatype declarations; production advisory/unsupported outcomes and the unchanged lexical form are compared with the reference.</li>
+<li>File: <code>crates/panproto-inst/src/validation/checks.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/plan.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_keys.rs</code></li>
+</ul>
+<h2 id="L-keys-and-registration-18"><a class="header" href="#L-keys-and-registration-18">An annotated format is preserved and checked only as advisory</a></h2>
+<h3 id="statement-17"><a class="header" href="#statement-17">Statement</a></h3>
+<p>For <code>ConstraintSemantics::AnnotatedFormat</code>, validation preserves the stored value and compiles every recognized format check with advisory requirement. A failed recognized check emits a <code>ValueConstraint</code> diagnostic without failing admission. An unrecognized annotation does not impose a required assertion. By contrast, the separate <code>Format</code> semantics may require the same recognized predicate.</p>
+<h3 id="outside-the-domain-17"><a class="header" href="#outside-the-domain-17">Outside the domain</a></h3>
+<p>This law does not govern <code>ConstraintSemantics::Format</code>, nor a dialect that explicitly enables a format-assertion vocabulary. Those declarations may make a recognized format predicate required.</p>
+<h3 id="definitions-used-17"><a class="header" href="#definitions-used-17">Definitions used</a></h3>
+<p>An <em>annotated format</em> is a named constraint whose semantics are <code>AnnotatedFormat(family)</code>. Preservation means that validation leaves the graph value unchanged. The bounded executable carrier uses the recognized <code>uuid</code> predicate under both annotated and asserting semantics, and one unrecognized annotation. The reference recognizer reads RFC 9562’s textual form: 36 characters, hyphens at positions 8, 13, 18 and 23, and a hexadecimal digit of either case elsewhere.</p>
+<h3 id="proof-17"><a class="header" href="#proof-17">Proof</a></h3>
+<ol>
+<li>Compilation distinguishes <code>AnnotatedFormat</code> from <code>Format</code> before selecting the same family-specific predicate.</li>
+<li>The annotated branch fixes the check requirement to advisory. Thus a failed predicate records a diagnostic but leaves the report passing.</li>
+<li>The asserting branch uses required status, so the same failed predicate fails admission. This contrast observes the declaration rather than an identity helper. An unrecognized annotation names no predicate, so compilation adds no check for it and its value is neither reported nor refused.</li>
+<li>Validation borrows the input graph and returns a report. The bounded differential reads the graph after both checks and confirms that its string is unchanged.</li>
+</ol>
+<h3 id="executable-counterpart-17"><a class="header" href="#executable-counterpart-17">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>keys.annotated-format-declaration</code></li>
+<li>Reference: <code>panproto_reference::keys::annotated_format_outcome</code></li>
+<li>Reference: <code>panproto_reference::keys::uuid_format</code></li>
+<li>Evidence scope: <code>eight strings (two UUIDs, a short group, misplaced hyphens, braces, a non-hexadecimal digit, a non-UUID word, and the empty string) under uuid as annotation and as assertion and under one unrecognized annotation, 24 cases: 4 recognized, 6 advisory, 6 refused, 8 unchecked; each case reads back the kept string</code></li>
+<li>Production certificate: <code>annotated_formats_match_the_independent_recognizer; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=annotated_formats_match_the_independent_recognizer)'</code></li>
+<li>Independent reference anchor: <code>annotated_formats_match_the_independent_recognizer; command: cargo nextest run --release --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=annotated_formats_match_the_independent_recognizer)'</code></li>
+<li>Property differential test: <code>randomized::annotated_format_admission_and_preservation_match_on_generated_strings; command: cargo nextest run --locked -p panproto-inst --test reference_keys --no-tests=fail -E 'test(=randomized::annotated_format_admission_and_preservation_match_on_generated_strings)'</code></li>
+<li>Randomized input scope: Generated cases draw from eight strings and three format/assertion configurations; status, diagnostic presence and the unchanged string are compared with the reference.</li>
+<li>File: <code>crates/panproto-inst/src/validation/checks.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/plan.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_keys.rs</code></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../correctness/theories.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../correctness/representation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../correctness/theories.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../correctness/representation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src=".././theme/cite-group.js"></script>
+        <script src=".././theme/mermaid.min.js"></script>
+        <script src=".././theme/mermaid-init.js"></script>
+        <script src=".././theme/bib-links.js"></script>
+        <script src=".././theme/bib-linkify.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

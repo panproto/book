@@ -1,0 +1,494 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Instance representation - panproto</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Documentation: tutorials, how-to guides, reference, and explanation">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href=".././theme/cite.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "navy";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-1d2a83d6.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-19d298fc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">panproto</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/panproto/panproto" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/panproto/panproto/edit/main/book/src/correctness/representation.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="representation"><a class="header" href="#representation">Representation</a></h1>
+<p>The representation boundary relates the tree, graph, and table carriers without identifying shapes that carry different information. Eight laws fix that boundary. <a href="#L-representation-1">L-representation-1</a> gives the graph form of a tree; <a href="#L-representation-2">L-representation-2</a> decides when a graph has a tree form; <a href="#L-representation-3">L-representation-3</a> records their common image. <a href="#L-representation-4">L-representation-4</a> gives canonical bytes and their partial inverses, and <a href="#L-representation-5">L-representation-5</a> fixes the complement identity envelope. The final three laws do the corresponding work for tables and reified hyper-edges.</p>
+<p>A graph has nodes and edges indexed by <code>u32</code>. Fresh-id allocation reserves <code>u32::MAX</code> as its exhausted-id sentinel, though an input may already hold that id. A tree has nodes, ordered arcs, a root, and an ordered list of fans. A fan names one parent and a finite map from child labels to nodes. A table has rows indexed by <code>u32</code> and a set of labelled relation pairs. Maps and sets below use their ascending stored order.</p>
+<p>The bounded production/reference suite covers all eight laws of this page. It includes the mixed refusal-precedence and schema-relative table witnesses.</p>
+<h2 id="L-representation-1"><a class="header" href="#L-representation-1">Every admissible tree has the specified graph form or one typed refusal</a></h2>
+<h3 id="statement"><a class="header" href="#statement">Statement</a></h3>
+<p>For every tree <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> and optional schema <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>, <code>tree_to_graph(T, S)</code> is determined as follows. It first copies every tree node. Arc <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span>, in arc order from zero, becomes unpositioned edge <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> with the same endpoints and label. Each fan then becomes a fresh hyper-edge-shaped node, beginning at one more than the greatest tree-node id, and receives a parent edge followed by child edges in ascending child-label order. These edges follow all arc edges. The fan node is anchored at the fan’s hyper-edge name; each fan edge is labelled from that name to its target node’s anchor. A declared hyper-edge supplies the parent edge’s name.</p>
+<p>The returned embedding maps each arc child to its edge id, records each fan node and its parent and child edge ids, and gives the saturated node and edge allocation floors. No allocated id is <code>u32::MAX</code>.</p>
+<h3 id="outside-the-domain"><a class="header" href="#outside-the-domain">Outside the domain</a></h3>
+<p>The function returns the first refusal encountered in construction order. It first returns <code>NodeIdMismatch</code> at the least node-map key whose node stores another id, as production does before any other check; the smallest witness files node 0 under key 1. It then returns <code>ReservedVocabulary</code> when a tree node already has the hyper-edge shape or an arc has a reserved fan kind. This preflight precedes every arc check: a hyper-edge-shaped node together with an arc to an absent endpoint therefore returns <code>ReservedVocabulary</code>, not the endpoint error. For each arc in stored order, it then checks endpoints, a second parent, and edge-id exhaustion immediately before allocating and inserting that arc. The reference calls the endpoint refusal <code>DanglingArc</code>; production reports <code>DanglingEdge</code> with the candidate edge id and absent endpoint. The node floor saturates at <code>u32::MAX</code>, so a fan-free tree that already holds that id still embeds. For each fan in stored order, allocating its node at a saturated floor may return <code>NodeIdsExhausted</code>; its parent is then checked for <code>DanglingFan</code> before the parent edge can return <code>EdgeIdsExhausted</code>; and each child in label order is checked for <code>DanglingFan</code> before its edge can return <code>EdgeIdsExhausted</code>. Production reports a dangling fan endpoint as <code>DanglingEdge</code>, naming the edge id the fan edge receives and the absent endpoint. Production draws that edge id before it checks the endpoint, so the two orders differ only when a fan endpoint dangles at an exhausted edge floor, which a tree reaches only after <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">32</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> edges. The empty tree maps to the empty graph and the default embedding.</p>
+<h3 id="definitions-used"><a class="header" href="#definitions-used">Definitions used</a></h3>
+<p>The reserved fan kinds are <code>hyper_parent</code> and <code>hyper_label</code>. The <em>node floor</em> is zero for an empty node map and otherwise the saturating successor of its greatest id. The <em>edge floor</em> is the first counter value after all emitted edges. A parent edge has kind <code>hyper_parent</code>; a child edge has kind <code>hyper_label</code> and is named by its child label.</p>
+<h3 id="proof"><a class="header" href="#proof">Proof</a></h3>
+<ol>
+<li>The implementation checks the key/id invariant at each key in ascending order, then rejects reserved tree vocabulary, before allocating anything. This gives the first two refusal families.</li>
+<li>It walks arcs in stored order with an edge counter initially zero. Endpoint membership is checked before insertion, and the embedding’s child map detects a second parent. Thus the successful arc prefix has exactly the stated edges and arc record.</li>
+<li>The node counter is the saturated node floor. Drawing an id increments the counter with <code>checked_add</code>, so the last allocatable value is <code>u32::MAX - 1</code>; a tree already containing <code>u32::MAX</code> requires no draw unless it carries a fan.</li>
+<li>Fans are traversed in tree order. Their children come from an ordered map, so parent-before-children and ascending child-label order follow directly. Endpoint lookup both supplies each target anchor and produces <code>DanglingFan</code> at the first absent endpoint.</li>
+<li>The same checked counter supplies every edge id. The completed counters are therefore the allocation floors—saturated when no storable successor exists—and the accumulated maps are exactly the embedding stated above.</li>
+</ol>
+<h3 id="executable-counterpart"><a class="header" href="#executable-counterpart">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>representation.tree-to-graph-total</code></li>
+<li>Reference: <code>panproto_reference::encode::tree_to_graph</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::representation::trees; exact carrier: 2 two-node trees, fans=0; explicit cases: 1 valid fan, 2 saturated-floor cases, 1 node-id mismatch, 1 reserved-vocabulary refusal, 1 mixed reserved-plus-dangling precedence witness, 1 second-parent refusal, 1 dangling arc and 2 dangling fan endpoints (parent and child)</code></li>
+<li>Production certificate: <code>tree_to_graph_matches_production_on_the_exact_carrier_and_refusals; command: cargo nextest run -p panproto-inst --test reference_representation --release --no-tests=fail -E 'test(=tree_to_graph_matches_production_on_the_exact_carrier_and_refusals)'</code></li>
+<li>Independent reference anchor: <code>every_valid_tree_embeds_and_round_trips; command: cargo nextest run -p panproto-inst --test a_tree_embeds_in_its_graph_form --release --no-tests=fail -E 'test(=every_valid_tree_embeds_and_round_trips)'</code></li>
+<li>File: <code>crates/panproto-inst/src/ginstance/embed.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/ginstance/embedding.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/representation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/representation.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_representation.rs</code></li>
+<li>Property differential test: <code>randomized_tree_representation_differential; command: cargo nextest run --locked --cargo-profile ci-test --profile ci -p panproto-inst --test reference_representation --no-tests=fail -E 'test(=randomized_tree_representation_differential)'</code></li>
+<li>Randomized evidence scope: <code>randomized_tree_representation_differential</code>: Rooted trees with 1–6 nodes, generated parent choices, node-id offset below 10,000, arbitrary i64 fields and annotations, and an optional ordered fan; paired graph encodings, embedding maps and floors, tree/graph canonical bytes, and reification.</li>
+</ul>
+<h2 id="L-representation-2"><a class="header" href="#L-representation-2">A graph has a tree form exactly under the stated decision procedure</a></h2>
+<h3 id="statement-1"><a class="header" href="#statement-1">Statement</a></h3>
+<p>Fix a graph <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span></span></span></span>, a proposed root <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span>, and a parent-name policy <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span> for each hyper-edge anchor. A policy result is either unconstrained or an exact optional name. With no schema, the result is unconstrained: a schema-free fan parent may be named or unnamed. With a schema, the result is exact: a declared hyper-edge requires its declared parent label, while an undeclared hyper-edge requires no name. <code>graph_to_tree(G, r, p)</code> succeeds exactly when all of the following hold: <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> exists and is not a fan node; every edge has existing endpoints and no position; every edge out of a fan node has the source and target anchors written by <a href="#L-representation-1">L-representation-1</a>, with a parent name admitted by <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>; every other edge has no reserved kind, does not enter a fan or the root, and is the sole ordinary edge into its target; every fan node is data-free and has no fan-domain violation without a schema; and every ordinary node reaches <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> by repeatedly following its unique parent.</p>
+<p>On success, ordinary edges become arcs in ascending edge-id order, fan nodes become fans in ascending node-id order, and the ordinary nodes and root are unchanged. Let <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> be a tree with <code>tree_to_graph(T, S) = G</code>. Then <code>graph_to_tree(G, root(T), p_S)</code>, with <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> the parent-name function induced by <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>, succeeds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> is <em>rooted at its stored root</em>, and on success it returns <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span>. The fresh numeric ids of fan nodes and edges are discarded. The encoding does not check rootedness: the tree with nodes 0 and 1, arcs <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>, and root 0 encodes, and its graph form is refused with <code>RootHasParent { edge: 1 }</code>; a tree whose stored root is not a node encodes and is refused with <code>MissingRoot</code>.</p>
+<h3 id="outside-the-domain-1"><a class="header" href="#outside-the-domain-1">Outside the domain</a></h3>
+<p>The reference returns the first local <code>NotATree</code> witness in this order: <code>MissingRoot</code>; then, by ascending edge id, <code>DanglingEdge</code>, <code>PositionedEdge</code>, <code>FanLabel</code>, <code>ReservedArc</code>, <code>ArcIntoFan</code>, <code>RootHasParent</code>, or <code>SecondParent</code>; then, by ascending fan-node id, <code>FanData</code> or the first <code>Fan</code> violation; then, by ascending ordinary-node id, <code>Unreached</code>. Production preserves that success domain and edge-local order but aggregates some global failures. In particular, a disconnected two-node graph is reference <code>Unreached { node: 1 }</code> and production <code>NotATree { reason: NoRoot }</code>. Thus the law identifies the decision and successful output, not literal equality between the two refusal enums. Explicit witnesses pin each side’s deterministic reason.</p>
+<p>The stated edge-first precedence applies to conversion with a proposed root, including production <code>to_wtype</code> and <code>to_wtype_with_schema_root</code>. Production <code>tree_shape</code> and <code>try_to_wtype</code> infer the root and check fan data before the edge-local conditions. A graph with both a positioned edge and a data-bearing fan can thus receive different deterministic reasons from these two groups of APIs.</p>
+<h3 id="definitions-used-1"><a class="header" href="#definitions-used-1">Definitions used</a></h3>
+<p>A tree is <em>rooted at its stored root</em> when the root is a node, no arc enters it, and every node reaches it along arcs. A <em>data-free fan node</em> has no value, discriminator, fields, position, or annotations. Its fan-domain conditions are those of <a href="#L-representation-8">L-representation-8</a>, evaluated without schema-relative label checks. A node <em>reaches the root</em> when finitely many parent-map steps end at <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span>; the implementation bounds the walk by the number of ordinary nodes, so a cycle is refused as <code>Unreached</code>.</p>
+<h3 id="proof-1"><a class="header" href="#proof-1">Proof</a></h3>
+<ol>
+<li>The root check is performed first and is exactly the first condition.</li>
+<li>One ascending pass over edges checks endpoint existence, positions, fan-label shape, reserved ordinary kinds, arcs into fans or the root, and duplicate parents, returning immediately. Its accumulated parent map exists exactly when every edge condition holds.</li>
+<li>The next ascending pass over fan nodes checks that each is data-free, then takes the first result of <code>violations_at</code> without a schema. It constructs one fan from the unique parent edge and the ordered child-label map.</li>
+<li>The remaining nodes are the ordinary nodes. Following the parent map for at most their count accepts exactly the nodes whose chains reach <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> and refuses a missing link or cycle at the least such node.</li>
+<li>Filtering the ascending edge map yields arcs in edge-id order. The preceding passes retain the nodes and root and construct fans in node-id order, which proves the output clause.</li>
+<li>Let <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span></span></span></span> be emitted by <code>tree_to_graph(T, S)</code>. Its edges are unpositioned with present endpoints, its fan edges carry the labels and the <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> parent names checked in step 2, no ordinary edge has a reserved kind or enters a fan node (arcs join tree nodes, which the preflight keeps out of the hyper-edge shape), no node has two arcs, and every fan node is data-free and well formed. So the only checks <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span></span></span></span> can fail are <code>MissingRoot</code>, <code>RootHasParent</code> and <code>Unreached</code>, and these fail exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> is not rooted at its stored root. When <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> is rooted, reading the arcs in edge-id order restores the arc list, the fans in fan-node-id order restore the fan list, and the ordinary nodes and root are those of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span>.</li>
+</ol>
+<h3 id="executable-counterpart-1"><a class="header" href="#executable-counterpart-1">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>representation.graph-to-tree-decision</code></li>
+<li>Reference: <code>panproto_reference::encode::graph_to_tree</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::representation::graphs; exact carrier: 8 graphs, each checked at 3 proposed roots, plus 3 typed-refusal witnesses, 1 named schema-free fan-parent witness, and the cyclic and rootless encoded trees outside the left-inverse domain</code></li>
+<li>Production certificate: <code>graph_to_tree_decision_matches_production_on_the_exact_carrier; command: cargo nextest run -p panproto-inst --test reference_representation --release --no-tests=fail -E 'test(=graph_to_tree_decision_matches_production_on_the_exact_carrier)'</code></li>
+<li>Independent reference anchor: <code>a_tree_shaped_graph_round_trips_through_its_tree; command: cargo nextest run -p panproto-inst --test a_graph_is_a_tree_when_its_shape_says_so --release --no-tests=fail -E 'test(=a_tree_shaped_graph_round_trips_through_its_tree)'</code></li>
+<li>File: <code>crates/panproto-inst/src/ginstance/tree_shape.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/representation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/representation.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_representation.rs</code></li>
+<li>Property differential test: <code>randomized_graph_representation_decisions; command: cargo nextest run --locked --cargo-profile ci-test --profile ci -p panproto-inst --test reference_representation --no-tests=fail -E 'test(=randomized_graph_representation_decisions)'</code></li>
+<li>Randomized evidence scope: <code>randomized_graph_representation_decisions</code>: Graphs with 1–5 nodes and 0–11 generated directed edges, loops and parallel edges, optional edge positions and a fan node, and present or missing proposed roots; paired tree/table decisions, successful canonical outputs, graph bytes, and ordered fan violations with and without a schema. Refusal enum taxonomies remain distinct.</li>
+</ul>
+<h2 id="L-representation-3"><a class="header" href="#L-representation-3">Reification is exactly the common tree-graph image round trip</a></h2>
+<h3 id="statement-2"><a class="header" href="#statement-2">Statement</a></h3>
+<p>For every tree <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> and optional schema <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>, <code>reify(T, S)</code> is defined exactly when <code>tree_to_graph(T, S)</code> succeeds and <code>graph_to_tree</code> succeeds on that graph at <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span>’s root with the parent names induced by <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>. When defined, it returns the latter tree. In particular, every admissible tree in the image of the encoding returns unchanged.</p>
+<h3 id="outside-the-domain-2"><a class="header" href="#outside-the-domain-2">Outside the domain</a></h3>
+<p><code>reify</code> returns <code>None</code> for every refusal of either direction. This includes a node filed under another id, reserved fan vocabulary already present as ordinary tree material, malformed arcs or fans, exhausted ids, and an encoded graph that fails the tree-form checks, such as a cyclic tree or one whose stored root is not a node.</p>
+<h3 id="definitions-used-2"><a class="header" href="#definitions-used-2">Definitions used</a></h3>
+<p>The schema-induced parent-name function returns a declared hyper-edge’s <code>parent_label</code> and returns no name for an undeclared hyper-edge. The <em>common image</em> is the set of trees accepted by the forward encoding whose graph form is accepted by the reverse decision under that same function.</p>
+<h3 id="proof-2"><a class="header" href="#proof-2">Proof</a></h3>
+<ol>
+<li>The function calls <code>tree_to_graph</code> and converts any error to <code>None</code>.</li>
+<li>It builds the schema-induced parent-name function used by the forward encoding.</li>
+<li>It calls <code>graph_to_tree</code> at the original root and converts any error to <code>None</code>, proving the domain statement by the semantics of <code>?</code> on <code>Option</code>.</li>
+<li>On a tree in the encoding image, <a href="#L-representation-2">L-representation-2</a> restores its ordinary nodes, arc order, fans, and root. Hence the returned tree is <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span>.</li>
+</ol>
+<h3 id="executable-counterpart-2"><a class="header" href="#executable-counterpart-2">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>representation.reify-round-trip</code></li>
+<li>Reference: <code>panproto_reference::encode::reify</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::representation::trees; exact carrier: 2 two-node trees, plus 1 explicit fan image and 9 refusals: node-id mismatch, reserved vocabulary, dangling arc, dangling fan parent, dangling fan child, second parent, node-id exhaustion, a cycle and an absent root</code></li>
+<li>Production certificate: <code>reification_round_trip_matches_production_on_the_exact_image; command: cargo nextest run -p panproto-inst --test reference_representation --release --no-tests=fail -E 'test(=reification_round_trip_matches_production_on_the_exact_image)'</code></li>
+<li>Independent reference anchor: <code>unreify_inverts_reify; command: cargo nextest run -p panproto-inst --test fans_reify_exactly_on_the_fan_domain --release --no-tests=fail -E 'test(=unreify_inverts_reify)'</code></li>
+<li>File: <code>crates/panproto-inst/src/ginstance/reify.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/representation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/representation.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_representation.rs</code></li>
+<li>Property differential test: <code>randomized_tree_representation_differential; command: cargo nextest run --locked --cargo-profile ci-test --profile ci -p panproto-inst --test reference_representation --no-tests=fail -E 'test(=randomized_tree_representation_differential)'</code></li>
+<li>Randomized evidence scope: <code>randomized_tree_representation_differential</code>: Rooted trees with 1–6 nodes, generated parent choices, node-id offset below 10,000, arbitrary i64 fields and annotations, and an optional ordered fan; paired graph encodings, embedding maps and floors, tree/graph canonical bytes, and reification.</li>
+</ul>
+<h2 id="L-representation-4"><a class="header" href="#L-representation-4">Canonical bytes are injective and decode exactly on their image</a></h2>
+<h3 id="statement-3"><a class="header" href="#statement-3">Statement</a></h3>
+<p>For graphs and tables, let <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">b</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07847em;">X</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> be the canonical byte writer and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07847em;">X</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> its decoder. For every well-formed value <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span> on which <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">b</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07847em;">X</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> is defined, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07847em;">X</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">b</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07847em;">X</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span>, and equal canonical bytes imply equal values. For a validated tree <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span>, let <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">c</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span></span></span></span> replace the stored root by its unique structural root and sort the fan list by canonical fan record. Validation here requires (i) every node-map key to equal the stored node id, (ii) every arc and fan endpoint to name a node, and (iii) exactly one structural root. Then <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.25em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathsf mtight">tree</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">b</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.25em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathsf mtight">tree</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">c</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span></span></span></span>, and equal tree bytes imply equal canonicalizations. A decoder accepts exactly one complete canonical record: it refuses unknown discriminants, truncated or trailing bytes, nonascending map or set records, and malformed graph or table data.</p>
+<p>Graph bytes contain node and edge counts, then nodes and edges in ascending id order. Table bytes contain rows in ascending id order and relation pairs in ascending tuple order. Tree bytes contain nodes in ascending id order, arcs in stored order, and fans in ascending canonical fan-record order; the root is reconstructed as the unique node no arc enters, and decoded fans use canonical record order.</p>
+<h3 id="outside-the-domain-3"><a class="header" href="#outside-the-domain-3">Outside the domain</a></h3>
+<p>A writer returns <code>None</code> when a contained value has no canonical value encoding. A decoder returns <code>None</code> for any byte string outside its writer’s image, including a decoded graph or table that is not well formed and a decoded tree without exactly one root. A tree’s stored root and original fan-list order are outside the byte layout. The injectivity claim does not cover unvalidated trees. For instance, a tree filed as key 0 with stored node id 0 and root 0 has the same bytes as one filed as key 1 with stored node id 0 and root 1; both serialize the same node record, but the latter violates the key/id invariant.</p>
+<h3 id="definitions-used-3"><a class="header" href="#definitions-used-3">Definitions used</a></h3>
+<p>Every variable-length sequence begins with its <code>u64</code> length. Strings, optional values, maps, node shapes, and values use the canonical primitive encodings defined by the value layer. Strictly ascending order means that each decoded key is greater than the preceding key, which rejects duplicates as well as descending input.</p>
+<h3 id="proof-3"><a class="header" href="#proof-3">Proof</a></h3>
+<ol>
+<li>Each writer emits a discriminated, length-delimited concatenation. Primitive readers consume the same fields in the same order and reject a missing field or unknown tag.</li>
+<li>Graph and table writers traverse ordered maps and sets. Their readers require strict ascent before insertion, so successful decoding recovers each key-value pair once and only once.</li>
+<li>Tree nodes are handled in the same way, and arcs retain sequence order. Sorting fans before writing makes the byte image independent of their stored list order. The decoder reconstructs that order and derives the unique root from the arcs, which is exactly <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">c</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span></span></span></span>.</li>
+<li>The final <code>done</code> check refuses trailing bytes. The carrier well-formedness and unique-root checks refuse structurally invalid records.</li>
+<li>Induction over the emitted fields proves the two round-trip equations. If two byte strings are equal, deterministic decoding gives the same representative, proving injectivity over graphs and tables and over trees modulo the intentionally erased root and fan-list order.</li>
+</ol>
+<h3 id="executable-counterpart-3"><a class="header" href="#executable-counterpart-3">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>representation.canonical-serde</code></li>
+<li>Reference: <code>panproto_reference::canonical::decode_graph</code></li>
+<li>Reference: <code>panproto_reference::canonical::decode_table</code></li>
+<li>Reference: <code>panproto_reference::canonical::decode_tree</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::representation::{graphs,tables,trees}; exact carrier: 8 graphs, 2 tables, 2 validated trees, plus 3 trailing-byte refusals, every proper prefix of a graph, a table and a tree, 1 unknown node-shape tag, nonascending node, row and pair records, a dangling edge, a dangling pair, a two-root tree, and 1 malformed tree-byte collision outside the theorem</code></li>
+<li>Production certificate: <code>canonical_graph_table_and_tree_bytes_decode_to_the_same_values; command: cargo nextest run -p panproto-inst --test reference_representation --release --no-tests=fail -E 'test(=canonical_graph_table_and_tree_bytes_decode_to_the_same_values)'</code></li>
+<li>Independent reference anchor: <code>a_graph_round_trips_through_its_encodings; command: cargo nextest run -p panproto-inst --test a_tree_is_a_graph_without_loss --release --no-tests=fail -E 'test(=a_graph_round_trips_through_its_encodings)'</code></li>
+<li>File: <code>crates/panproto-inst/src/ginstance/canonical.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/ginstance/table_embed.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/representation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/representation.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_representation.rs</code></li>
+<li>Property differential test: <code>randomized_tree_representation_differential; command: cargo nextest run --locked --cargo-profile ci-test --profile ci -p panproto-inst --test reference_representation --no-tests=fail -E 'test(=randomized_tree_representation_differential)'</code></li>
+<li>Randomized evidence scope: <code>randomized_tree_representation_differential</code>: Rooted trees with 1–6 nodes, generated parent choices, node-id offset below 10,000, arbitrary i64 fields and annotations, and an optional ordered fan; paired graph encodings, embedding maps and floors, tree/graph canonical bytes, and reification.</li>
+<li>Property differential test: <code>randomized_graph_representation_decisions; command: cargo nextest run --locked --cargo-profile ci-test --profile ci -p panproto-inst --test reference_representation --no-tests=fail -E 'test(=randomized_graph_representation_decisions)'</code></li>
+<li>Randomized evidence scope: <code>randomized_graph_representation_decisions</code>: Graphs with 1–5 nodes and 0–11 generated directed edges, loops and parallel edges, optional edge positions and a fan node, and present or missing proposed roots; paired tree/table decisions, successful canonical outputs, graph bytes, and ordered fan violations with and without a schema. Refusal enum taxonomies remain distinct.</li>
+<li>Property differential test: <code>randomized_table_representation_differential; command: cargo nextest run --locked --cargo-profile ci-test --profile ci -p panproto-inst --test reference_representation --no-tests=fail -E 'test(=randomized_table_representation_differential)'</code></li>
+<li>Randomized evidence scope: <code>randomized_table_representation_differential</code>: One-table instances with 1–6 rows, arbitrary i64 cells, generated relation pairs and row-id offsets below 10,000; paired canonical bytes, graph encodings and embedding maps.</li>
+</ul>
+<h2 id="L-representation-5"><a class="header" href="#L-representation-5">The identity envelope has one injective version-two layout</a></h2>
+<h3 id="statement-4"><a class="header" href="#statement-4">Statement</a></h3>
+<p>For an envelope with source-schema digest <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span>, target-schema digest <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span>, lens digest <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span></span></span></span>, complement shape <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">h</span></span></span></span>, and format version <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span>, <code>identity</code> returns 101 bytes: little-endian <code>u16</code> value 2; the 32 bytes of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span>, and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span></span></span></span> in that order; one shape byte, with <code>WType</code>, <code>Graph</code>, <code>Functor</code>, and <code>Resolution</code> mapped to 0, 1, 2, and 3; then <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span> as little-endian <code>u16</code>. This mapping is injective.</p>
+<h3 id="outside-the-domain-4"><a class="header" href="#outside-the-domain-4">Outside the domain</a></h3>
+<p>There is none for the five-field version-two carrier. Bytes bearing another envelope version belong to the decoder’s typed version-refusal domain, not to this writer.</p>
+<h3 id="definitions-used-4"><a class="header" href="#definitions-used-4">Definitions used</a></h3>
+<p>A digest is a 32-byte array. Little-endian <code>u16</code> writes the low byte before the high byte. The four complement shapes are distinct enum variants.</p>
+<h3 id="proof-4"><a class="header" href="#proof-4">Proof</a></h3>
+<ol>
+<li>The fixed slices <code>[0..2]</code>, <code>[2..34]</code>, <code>[34..66]</code>, <code>[66..98]</code>, byte 98, and <code>[99..101]</code> are disjoint and cover the output.</li>
+<li>The implementation writes the stated field into each slice and maps each shape to a different byte.</li>
+<li>Equality of two outputs gives equality on every slice. Little-endian encoding and the shape map are injective, so all five inputs are equal.</li>
+</ol>
+<h3 id="executable-counterpart-4"><a class="header" href="#executable-counterpart-4">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>representation.identity-envelope</code></li>
+<li>Reference: <code>panproto_reference::canonical::identity</code></li>
+<li>Evidence scope: <code>panproto_inst::ComplementShape::ALL; exact carrier: 4 shape variants</code></li>
+<li>Production certificate: <code>identity_envelope_layout_matches_the_production_manifest_writer; command: cargo nextest run -p panproto-inst --test reference_representation --release --no-tests=fail -E 'test(=identity_envelope_layout_matches_the_production_manifest_writer)'</code></li>
+<li>Independent reference anchor: <code>identity_envelope_is_the_exact_version_two_layout; command: cargo nextest run -p panproto-reference --test schema_v2 --release --no-tests=fail -E 'test(=identity_envelope_is_the_exact_version_two_layout)'</code></li>
+<li>File: <code>crates/panproto-inst/src/identity.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/segment/manifest.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/representation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/representation.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_representation.rs</code></li>
+<li>Property differential test: <code>randomized_identity_envelope_differential; command: cargo nextest run --locked --cargo-profile ci-test --profile ci -p panproto-inst --test reference_representation --no-tests=fail -E 'test(=randomized_identity_envelope_differential)'</code></li>
+<li>Randomized evidence scope: <code>randomized_identity_envelope_differential</code>: Three arbitrary 32-byte digests and all four complement shapes, using each shape’s current format version; production manifest envelope bytes against the independent 101-byte writer.</li>
+</ul>
+<h2 id="L-representation-6"><a class="header" href="#L-representation-6">Every well-formed table has the specified graph form or one typed refusal</a></h2>
+<h3 id="statement-5"><a class="header" href="#statement-5">Statement</a></h3>
+<p>For every production <code>FInstance</code> <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span>, and so for every coherent raw table, <code>from_finstance(T)</code> maps row <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> to plain node <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span>, anchored at its table name and holding its cells as fields. Relation pair <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">e</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">s</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">t</span><span class="mclose">)</span></span></span></span> becomes an unpositioned edge from <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span> to <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> labelled <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>. Pairs are traversed in ascending tuple order and receive edge ids from zero. The returned embedding maps each pair to its edge id, and <code>u32::MAX</code> is never allocated. The independent reference accepts a raw table record and performs the same mapping after checking that record.</p>
+<h3 id="outside-the-domain-5"><a class="header" href="#outside-the-domain-5">Outside the domain</a></h3>
+<p>The production converter receives an already validated <code>FInstance</code>; it does not emit a malformed-raw-table refusal. A raw reference table is outside the domain when some pair is not coherent: an endpoint row is absent, or names a row outside the label’s endpoint table. The reference returns <code>MalformedTable</code> with the least such pair. The differential’s <code>prod_table</code> adapter builds the <code>FInstance</code> first, and <code>FInstance::from_parts</code> refuses the same tables with <code>DanglingForeignKey</code>, naming a row rather than a pair: rows 0 in table <code>t</code> and 1 in table <code>u</code> with the pair <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span> are refused at row 1 by both, although row 1 exists. Once adapted, the only converter refusal is <code>EdgeIdsExhausted</code> when the number of pairs exhausts the nonreserved edge-id carrier. This distinction assigns the malformed-input claim to the boundary that can observe it.</p>
+<h3 id="definitions-used-5"><a class="header" href="#definitions-used-5">Definitions used</a></h3>
+<p>A table is <em>coherent</em> when every pair’s source row belongs to its label’s source table and its target row to its label’s target table; in particular both endpoints occur in the row map. The coherent raw tables are exactly the tables a production <code>FInstance</code> holds. The pair order is the lexicographic order of edge label, source row, and target row. A plain node has <code>Plain</code> shape and no value, discriminator, position, or annotations.</p>
+<h3 id="proof-5"><a class="header" href="#proof-5">Proof</a></h3>
+<ol>
+<li>The reference’s ordered search over pairs returns the least incoherent pair. A successfully constructed <code>FInstance</code> has already discharged coherence, so production never meets it.</li>
+<li>The converter’s row loop copies every ordered row once into a plain node with the stated anchor and fields.</li>
+<li>The pair loop uses the same checked id allocator as <a href="#L-representation-1">L-representation-1</a>. It emits one unpositioned edge and one embedding entry per pair, in the same order.</li>
+<li>Checked increment permits <code>u32::MAX - 1</code> and refuses before allocating <code>u32::MAX</code>, which proves the exhaustion clause.</li>
+</ol>
+<h3 id="executable-counterpart-5"><a class="header" href="#executable-counterpart-5">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>representation.table-to-graph-total</code></li>
+<li>Reference: <code>panproto_reference::encode::table_to_graph</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::representation::tables; exact carrier: 2 tables, plus 1 one-pair table, 1 three-pair table, 1 dangling-pair refusal, 1 incoherent-pair refusal and 1 saturated embedding refusal</code></li>
+<li>Production certificate: <code>table_to_graph_matches_production_on_the_exact_carrier_and_refusals; command: cargo nextest run -p panproto-inst --test reference_representation --release --no-tests=fail -E 'test(=table_to_graph_matches_production_on_the_exact_carrier_and_refusals)'</code></li>
+<li>Independent reference anchor: <code>the_table_graph_round_trip_is_a_bijection; command: cargo nextest run -p panproto-inst --test a_table_is_a_graph_without_loss --release --no-tests=fail -E 'test(=the_table_graph_round_trip_is_a_bijection)'</code></li>
+<li>File: <code>crates/panproto-inst/src/ginstance/table_embed.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/representation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/representation.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_representation.rs</code></li>
+<li>Property differential test: <code>randomized_table_representation_differential; command: cargo nextest run --locked --cargo-profile ci-test --profile ci -p panproto-inst --test reference_representation --no-tests=fail -E 'test(=randomized_table_representation_differential)'</code></li>
+<li>Randomized evidence scope: <code>randomized_table_representation_differential</code>: One-table instances with 1–6 rows, arbitrary i64 cells, generated relation pairs and row-id offsets below 10,000; paired canonical bytes, graph encodings and embedding maps.</li>
+</ul>
+<h2 id="L-representation-7"><a class="header" href="#L-representation-7">A graph has a table form exactly when it is table-shaped</a></h2>
+<h3 id="statement-6"><a class="header" href="#statement-6">Statement</a></h3>
+<p>Fix a schema <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>. <code>graph_to_table(G,S)</code> returns a table exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span></span></span></span> is well formed and table-shaped relative to <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>: (i) every node is plain, carries only its anchor and flat fields, and sources no edge of a reserved fan kind, (ii) every edge is unpositioned, belongs to <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>, and joins nodes anchored at its declared endpoints, (iii) no two edges have the same label and endpoints, (iv) each functional foreign key has at most one lift from a source row, and (v) each required foreign key has a lift from every row of its source table. The result has row <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> equal to node <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span>’s anchor and fields and has one relation pair for each edge. On a graph produced by <a href="#L-representation-6">L-representation-6</a>, the reverse direction returns the original table only when its cells are flat and it satisfies these schema-relative lift conditions.</p>
+<h3 id="outside-the-domain-6"><a class="header" href="#outside-the-domain-6">Outside the domain</a></h3>
+<p>Every graph violating one of the stated conditions is refused. The reference oracle returns no table; production returns the first <code>NotTableReason</code> in its documented order. The focused witnesses cover a nested cell, an edge absent from the schema, two lifts of a functional foreign key, a missing required lift, a plain node sourcing a declared <code>hyper_parent</code> edge, which production refuses as <code>FanNode</code>, a node carrying a discriminator, and an edge whose target anchor differs from its label’s. Edge ids need not be consecutive and are intentionally forgotten. A nested table still has a forward graph form under <a href="#L-representation-6">L-representation-6</a>, but that graph is outside this reverse domain; the smallest witness is row 0 of table <code>t</code> with field <code>c = [0]</code> and no relation pairs.</p>
+<h3 id="definitions-used-6"><a class="header" href="#definitions-used-6">Definitions used</a></h3>
+<p>A well-formed graph has node-map keys equal to the stored node ids and has both endpoints of every edge. A <em>flat field</em> holds neither a list nor a nested record. A foreign key is <em>functional</em> or <em>required</em> when the schema has a corresponding cardinality-one declaration, with required meaning non-nullable.</p>
+<h3 id="proof-6"><a class="header" href="#proof-6">Proof</a></h3>
+<ol>
+<li>The node pass checks representable node data and rejects the least nested field, establishing the flat-row condition. Every edge has a source node, so refusing each edge of a reserved kind refuses exactly the nodes that source one.</li>
+<li>The edge pass rejects positions, edges absent from <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>, and incoherent endpoint anchors in edge-id order.</li>
+<li>Grouping by label and endpoints detects duplicate relation pairs. Grouping outgoing edges by node and declared foreign key detects multiple functional lifts.</li>
+<li>An ordered pass over required declarations and source rows finds the least missing lift. With no witness, the graph defines exactly one schema-relative table.</li>
+<li>A graph from <code>from_finstance</code> has plain nodes, unpositioned edges, and one edge per set member. When all cells are flat and the declarations hold, reading it restores the table and discards only the embedding’s edge ids.</li>
+</ol>
+<h3 id="executable-counterpart-6"><a class="header" href="#executable-counterpart-6">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>representation.graph-to-table-decision</code></li>
+<li>Reference: <code>panproto_reference::encode::graph_to_table</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::representation::graphs; exact carrier: 8 graphs, plus positioned-edge, duplicate-pair, nested-cell, unknown-edge, functional-multiplicity, missing-required-lift, reserved-kind-source, node-data and incoherent-endpoint refusals</code></li>
+<li>Production certificate: <code>graph_to_table_decision_matches_production_on_the_exact_carrier; command: cargo nextest run -p panproto-inst --test reference_representation --release --no-tests=fail -E 'test(=graph_to_table_decision_matches_production_on_the_exact_carrier)'</code></li>
+<li>Independent reference anchor: <code>a_table_shaped_graph_round_trips_through_its_table; command: cargo nextest run -p panproto-inst --test a_table_is_a_graph_without_loss --release --no-tests=fail -E 'test(=a_table_shaped_graph_round_trips_through_its_table)'</code></li>
+<li>File: <code>crates/panproto-inst/src/ginstance/table_embed.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/representation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/representation.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_representation.rs</code></li>
+<li>Property differential test: <code>randomized_graph_representation_decisions; command: cargo nextest run --locked --cargo-profile ci-test --profile ci -p panproto-inst --test reference_representation --no-tests=fail -E 'test(=randomized_graph_representation_decisions)'</code></li>
+<li>Randomized evidence scope: <code>randomized_graph_representation_decisions</code>: Graphs with 1–5 nodes and 0–11 generated directed edges, loops and parallel edges, optional edge positions and a fan node, and present or missing proposed roots; paired tree/table decisions, successful canonical outputs, graph bytes, and ordered fan violations with and without a schema. Refusal enum taxonomies remain distinct.</li>
+</ul>
+<h2 id="L-representation-8"><a class="header" href="#L-representation-8">Fan-domain violations are complete and deterministically ordered</a></h2>
+<h3 id="statement-7"><a class="header" href="#statement-7">Statement</a></h3>
+<p>For a graph <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span></span></span></span>, node <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>, and optional schema <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>, <code>violations_at(G, n, S)</code> returns every fan-domain violation at <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> in the following order. If <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> is absent, the list is empty. If <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> is not a fan node, the list contains <code>ReservedKindOutsideFan</code> for each reserved-kind out-edge in ascending edge-id order. If <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> is a fan node, the list contains: each in-edge in edge-id order; each out-edge that is neither a parent edge nor a named child edge, in edge-id order; a missing-parent or multiple-parent witness; each duplicated child label in ascending label order; then, when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span> is present, either the unknown hyper-edge witness or each child label outside its declared signature in ascending label order.</p>
+<h3 id="outside-the-domain-7"><a class="header" href="#outside-the-domain-7">Outside the domain</a></h3>
+<p>There is no refusal. The function reports local defects even when the graph as a whole is malformed. Schema-relative checks are omitted when no schema is supplied.</p>
+<h3 id="definitions-used-7"><a class="header" href="#definitions-used-7">Definitions used</a></h3>
+<p>A <em>fan node</em> has shape <code>HyperEdge</code>. A parent edge has kind <code>hyper_parent</code>; exactly one is required. A child edge has kind <code>hyper_label</code> and a present name; at most one child edge may have each name. Every in-edge and every other out-edge is foreign incidence. A non-fan node may not source either reserved kind.</p>
+<h3 id="proof-7"><a class="header" href="#proof-7">Proof</a></h3>
+<ol>
+<li>Node lookup gives the empty-list clause.</li>
+<li>For a non-fan node, the ordered out-edge list is filtered by reserved kind and mapped without reordering, which gives exactly the stated witnesses.</li>
+<li>For a fan node, the first pass collects in-edges. The ordered out-edge pass partitions edges into parents, named children grouped in an ordered map, and foreign edges appended immediately.</li>
+<li>The parent-count match appends exactly one parent witness when the count differs from one. Traversing the ordered child map then appends every duplicate-label witness.</li>
+<li>Schema lookup appends one unknown-hyper-edge witness or filters the same ordered label keys against the signature. No branch drops an earlier witness, so the result is complete and has the stated order.</li>
+</ol>
+<h3 id="executable-counterpart-7"><a class="header" href="#executable-counterpart-7">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>representation.fan-domain</code></li>
+<li>Reference: <code>panproto_reference::fan::violations_at</code></li>
+<li>Evidence scope: <code>explicit labelled fan witnesses; exact carrier: 4 graph/node/schema cases covering absence, reserved vocabulary, missing parent, unknown hyper-edge, foreign incidence, multiple parents, duplicate labels and unknown labels</code></li>
+<li>Production certificate: <code>fan_domain_lists_the_same_ordered_typed_violations; command: cargo nextest run -p panproto-inst --test reference_representation --release --no-tests=fail -E 'test(=fan_domain_lists_the_same_ordered_typed_violations)'</code></li>
+<li>Independent reference anchor: <code>unreify_inverts_reify; command: cargo nextest run -p panproto-inst --test fans_reify_exactly_on_the_fan_domain --release --no-tests=fail -E 'test(=unreify_inverts_reify)'</code></li>
+<li>File: <code>crates/panproto-inst/src/ginstance/reify.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/fan_violation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/representation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/representation.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_representation.rs</code></li>
+<li>Property differential test: <code>randomized_graph_representation_decisions; command: cargo nextest run --locked --cargo-profile ci-test --profile ci -p panproto-inst --test reference_representation --no-tests=fail -E 'test(=randomized_graph_representation_decisions)'</code></li>
+<li>Randomized evidence scope: <code>randomized_graph_representation_decisions</code>: Graphs with 1–5 nodes and 0–11 generated directed edges, loops and parallel edges, optional edge positions and a fan node, and present or missing proposed roots; paired tree/table decisions, successful canonical outputs, graph bytes, and ordered fan violations with and without a schema. Refusal enum taxonomies remain distinct.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../correctness/keys-and-registration.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../correctness/kan-extensions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../correctness/keys-and-registration.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../correctness/kan-extensions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src=".././theme/cite-group.js"></script>
+        <script src=".././theme/mermaid.min.js"></script>
+        <script src=".././theme/mermaid-init.js"></script>
+        <script src=".././theme/bib-links.js"></script>
+        <script src=".././theme/bib-linkify.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

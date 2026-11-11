@@ -1,0 +1,992 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Value I/O - panproto</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Documentation: tutorials, how-to guides, reference, and explanation">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href=".././theme/cite.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "navy";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-1d2a83d6.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-19d298fc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">panproto</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/panproto/panproto" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/panproto/panproto/edit/main/book/src/correctness/value-io.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="value-io"><a class="header" href="#value-io">Value I/O</a></h1>
+<p>Value I/O sits at the boundary between an exact value and the bytes used to carry it. A canonical route may choose one spelling, whereas a preserving route must retain an accepted spelling until an edit requires replacement. The distinction is small but strict: semantic equality licenses neither loss of a decimal scale nor rewriting of an unedited byte sequence.</p>
+<p>This page fixes 31 laws. Laws 1 through 19 cover the canonical and default routes; Laws 20 through 31 give the corresponding concrete-syntax-tree (CST) obligations. The executable reference uses six routes: JSON, TOML, YAML, XML, CSV and TSV. The route parser and emitter are independent definitions in <a href="https://docs.rs/panproto-reference/latest/panproto_reference/value_io/"><code>panproto_reference::value_io</code></a>, and the bounded enumerator supplies byte strings of length at most two, every Unicode scalar as a one-scalar string, numerals with at most two digits and exponent from <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord">1</span></span></span></span> through <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>, exact integers at and beyond the <code>i64</code> boundary, the special decimals and the non-finite binary64 values, sequences of length at most two, and a fixed temporal lexical product.</p>
+<p>Write <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mclose">)</span></span></span></span> for <code>parse(r, b)</code>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span> for <code>emit(r, v)</code>, and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mclose">)</span></span></span></span> for <code>parse_cst(r, b)</code>. A byte sequence is <em>accepted</em> on route <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> returns a value. A value is <em>representable</em> on <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> returns bytes. A CST value is the pair <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">b</span><span class="mclose">)</span></span></span></span> of its parsed value and exact source bytes. Byte equality and string equality below are ordinary sequence equality; no normalization is implicit.</p>
+<p>The executable fields name the closest bounded reference witness and production property witness. Several production witnesses do not compare their results with the independent reference on the same generated input; for those laws, the named commands do not by themselves establish agreement between production and the reference.</p>
+<h2 id="L-value-io-1"><a class="header" href="#L-value-io-1">Canonical emission is a section of parsing</a></h2>
+<h3 id="statement"><a class="header" href="#statement">Statement</a></h3>
+<p>For every route <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> and value <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span> for which <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span>, reading <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span> under the route’s declared scalar kind returns <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span>. For strings, booleans and nulls this is <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span>, and so is it for integers on JSON, TOML and YAML. On XML, CSV and TSV an integer is cell text, so it is read under the signed 64-bit integer kind. Big integers, exact decimals and binary64 values are read under their respective numeric kinds, and temporal values are read under the lexical form carried by the value.</p>
+<p>The production certificates quantify over the always-compiled complement-free JSON, XML, CSV and TSV routes: every exact decimal of the numeral scope, every one-scalar string, the exact integers at and beyond the <code>i64</code> boundary, the special decimals and the non-finite binary64 values. Each production round trip through the matching reader is compared with <code>round_trip</code>. The reference operation remains defined on TOML and YAML; the certificates exclude their feature-gated production CST readers, and the string certificate reads each production TOML token with the reference TOML grammar instead.</p>
+<p>Open JSON objects also admit the reserved <code>Value::Blob</code> carrier. <a href="#L-value-io-19">L-value-io-19</a> fixes its canonical bytes and shows that the public JSON parser recovers the identical blob value. This is the structured-value instance of the same section equation in the production route; the scalar reference enumerator does not model structured values.</p>
+<h3 id="outside-the-domain"><a class="header" href="#outside-the-domain">Outside the domain</a></h3>
+<p>The law makes no claim when emission returns a typed refusal. <code>NotRepresentable</code> covers a noncanonical big-integer representation; null on TOML, XML, CSV and TSV; CSV strings containing a comma, quote, carriage return or line feed; booleans on the three text-cell routes; XML decimals with a positive or structurally excessive scale exponent; XML strings holding a scalar outside XML 1.0 <code>Char</code>; noncanonical NaN payloads on TOML, YAML and XML; TSV strings containing a tab or line break; and temporal values rejected by <a href="#L-value-io-5">L-value-io-5</a>. <code>NonFinite</code> covers every special decimal and every non-finite binary64 value on JSON, CSV and TSV. <code>LimitExceeded</code> covers a big integer whose spelling exceeds the 64 MiB output allowance.</p>
+<h3 id="definitions-used"><a class="header" href="#definitions-used">Definitions used</a></h3>
+<p>The functions <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> are defined above. A typed numeric reading applies the route’s numeral dialect with <code>ScalarKind::BigInt</code>, <code>ScalarKind::Decimal</code>, <code>ScalarKind::Float { bits: 64 }</code> or, for an integer on a text-cell route, <code>ScalarKind::Int { bits: 64, signed: true }</code>, rather than asking the open scalar parser to recover a representation-specific variant. The string spellings are those of <a href="#L-value-io-2">L-value-io-2</a>, and the reading grammars those of <a href="#L-value-io-4">L-value-io-4</a>.</p>
+<h3 id="proof"><a class="header" href="#proof">Proof</a></h3>
+<ol>
+<li><code>round_trip</code> first calls <code>emit</code>; every refusal returns <code>false</code>, so only representable pairs remain.</li>
+<li>For a temporal value it recovers the carried lexical form, removes JSON string quoting when necessary, and applies <code>parse_as</code>. Equality with the original value is the return condition.</li>
+<li>For the three representation-sensitive numeric variants, and for an integer on XML, CSV or TSV, it applies exact dialect coercion under the matching scalar kind. The emitter first requires a big integer to equal its canonical exact-integer representation, then writes its exact digits. The decimal emitter preserves the exact representation and the binary64 emitter writes a shortest spelling. Successful coercion thus returns the original carrier.</li>
+<li>Every other emitted value is passed to <code>parse</code>, and <code>round_trip</code> returns <code>true</code> exactly when the parsed value equals <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span>. The cases are these. A null or Boolean is written as the literal that <code>parse</code> matches before any other branch. An integer on JSON, TOML or YAML is written in decimal digits, a complete numeral token that exact coercion reads as the same <code>Int</code>. A string on JSON, TOML or YAML is written double-quoted with quote, backslash and every C0 control escaped, TOML also escaping DEL; <code>parse_double_quoted</code> inverts each escape, and every scalar written literally lies in the route’s literal set, which is every scalar from U+0020 on JSON, tab and every scalar from U+0020 except DEL on TOML, and tab and every scalar from U+0020 on YAML, in each case excluding double quote and backslash. An XML string is written with the five markup characters as predefined entities and carriage return as <code>&amp;#xD;</code>, and a scalar outside XML 1.0 <code>Char</code> is refused; reading normalizes only literal line ends, of which a written string holds no carriage return, and the references then restore each escaped character. A CSV string holding no comma, quote or line break is written and read verbatim. A TSV string holding no tab or line break is written and read verbatim. Each case reads back <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span>.</li>
+<li>The JSON tree writer starts the root at enclosing-container depth zero, increments the depth across every schema object or list, and increments it once more for an open extra field. Nested <code>Value::Unknown</code> objects and <code>Value::List</code> arrays add one at each container. Every value at depth 128 is refused, matching the parser. A blob at depth <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> also contains a <code>ref</code> object and its <code>$link</code> string, so it is admitted exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">d</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6835em;vertical-align:-0.0391em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">128</span></span></span></span>. The exact four-member object is recognized before the generic object case, and its link, media type and unsigned size reconstruct the original <code>Value::Blob</code>. Law 19 compares the source and reparsed trees under structural instance equivalence, checks the recovered blob directly, and checks exact JSON bytes after re-emission.</li>
+</ol>
+<h3 id="executable-counterpart"><a class="header" href="#executable-counterpart">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.rcm-prop1</code></li>
+<li>Reference: <code>panproto_reference::value_io::round_trip</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::value_io::numerals, single_scalars, exact_integer_lexemes, special_decimal_lexemes and nonfinite_float_bits; numerals=600 and one-scalar strings=1112064 on the always-compiled complement-free routes=4, exact integers=13, special decimals=10 and non-finite floats=6 on the same four readers</code></li>
+<li>Production certificate: <code>bounded_decimal_round_trips_match_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=bounded_decimal_round_trips_match_reference)'</code></li>
+<li>String certificate: <code>every_single_scalar_string_matches_reference_on_the_canonical_routes; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=every_single_scalar_string_matches_reference_on_the_canonical_routes)'</code></li>
+<li>Numeric certificate: <code>exact_integer_and_special_numeric_scalars_match_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=exact_integer_and_special_numeric_scalars_match_reference)'</code></li>
+<li>Structured JSON certificate: <code>canonical_blob_writer_matches_independent_atproto_layout; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=canonical_blob_writer_matches_independent_atproto_layout)'</code></li>
+<li>Independent reference anchor: <code>value_io_oracles_are_independent_and_toml_rejects_reduced_years; command: cargo nextest run --release --locked -p panproto-reference --test schema_v2 --no-tests=fail -E 'test(=value_io_oracles_are_independent_and_toml_rejects_reduced_years)'</code></li>
+<li>Fixed production regression: <code>every_parsed_value_emits_on_the_value_io_routes; command: cargo nextest run --release --locked -p panproto-io --test value_io_round_trip_totality --no-tests=fail -E 'test(=every_parsed_value_emits_on_the_value_io_routes)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Property differential test: <code>randomized_scalar_emission_and_round_trip; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_scalar_emission_and_round_trip)'</code></li>
+<li>Randomized input scope: an empty or one-Unicode-scalar string, on JSON, XML, CSV or TSV; exact scalar emission or typed refusal and the production reread compared with the reference section predicate.</li>
+<li>Property differential test: <code>randomized_numeric_emission_and_round_trip; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_numeric_emission_and_round_trip)'</code></li>
+<li>Randomized input scope: two signs, coefficients 0 through 99, exponents -1 through 1, ten special decimals and thirteen exact-integer lexemes, on five canonical writers; emitted token or refusal, exact TOML carrier and four canonical-reader section equations.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/value_io_round_trip_totality.rs</code></li>
+</ul>
+<h2 id="L-value-io-2"><a class="header" href="#L-value-io-2">Canonical emission follows the route grammar or refuses</a></h2>
+<h3 id="statement-1"><a class="header" href="#statement-1">Statement</a></h3>
+<p>For every route <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> and value <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span> is either the route’s canonical scalar spelling or a typed refusal: <code>NotRepresentable</code>, <code>NonFinite</code> or <code>LimitExceeded</code>. JSON and YAML write <code>null</code>; JSON, TOML and YAML write lowercase booleans; strings use the route quoting of the Definitions; admissible temporal values use their display spelling, quoted on JSON; and numeric values use exact integer, decimal or shortest binary64 text. A big integer must equal its canonical exact-integer representation; otherwise emission returns <code>NotRepresentable</code>. An admitted big integer is written in its digits when they fit the 64 MiB output allowance, else in the exponent form <code>{significand}e{zeros}</code> on every route but XML, whose integer lexemes have no exponent, and is otherwise refused with <code>LimitExceeded</code>. XML finite decimals use positional notation with at most 1,048,576 fractional places. A special decimal is refused with <code>NonFinite</code> on every route, since no route reads a special spelling back as the same <code>Decimal</code>. Infinities and canonical NaNs use the route spellings <code>inf</code> and <code>nan</code> on TOML, <code>.inf</code> and <code>.nan</code> on YAML, and the XML Schema spellings <code>INF</code> and <code>NaN</code> on XML, with a leading minus sign when negative; JSON, CSV and TSV refuse every non-finite binary64 value with <code>NonFinite</code>, since their cells read numerals in the JSON grammar. A CSV string containing a comma, quote, carriage return or line feed is refused with <code>NotRepresentable</code>: the canonical CSV writer writes no quoted field.</p>
+<p>The theorem above specifies the six-route reference. The production certificates compare the five always-compiled routes JSON, TOML, XML, CSV and TSV over exact-decimal emission on the complete bounded numeral scope, over every one-scalar string, and over the exact integers, special decimals and non-finite floats of the numeric scope. On TOML the writer chooses among basic, literal and multi-line string forms, so a TOML string token is compared by its reading under the reference TOML grammar, not byte for byte; the one multi-line token, for U+000A, is counted and skipped. The string certificate counts the refusals it observes on each route. Both the reference and the production readers read XML text under the XML Schema numeral dialect and CSV and TSV cells under the JSON one, so the spelling of every non-finite value on those routes is compared exactly. The decimal test contains a YAML branch only when <code>tree-sitter</code> is enabled; the default command below neither compiles nor certifies that branch.</p>
+<h3 id="outside-the-domain-1"><a class="header" href="#outside-the-domain-1">Outside the domain</a></h3>
+<p>Every case without a spelling in the Statement is refused. Emission never substitutes a different value, drops a field of a value, or chooses a fallback route.</p>
+<h3 id="definitions-used-1"><a class="header" href="#definitions-used-1">Definitions used</a></h3>
+<p>A <em>canonical NaN</em> is the positive or negative binary64 pattern named by <code>CANONICAL_NAN_BITS</code> or <code>NEGATIVE_CANONICAL_NAN_BITS</code>. JSON, TOML and YAML strings are double-quoted: quote and backslash are escaped, backspace, form feed, line feed, carriage return and tab use their named escapes, and every other C0 control is a four-digit <code>\u</code> escape. JSON writes those digits in lowercase and every other scalar literally, DEL and the C1 controls included. TOML writes them in uppercase and also escapes DEL as <code>\u007F</code>, which a TOML basic string may not hold literally. YAML writes every other scalar literally. XML escaping replaces the five markup characters with predefined entities and carriage return with <code>&amp;#xD;</code>, since XML 1.0 Sec 2.11 reads a literal carriage return as a line feed, and refuses a scalar outside XML 1.0 <code>Char</code>. CSV writes no quoted field: a cell containing a comma, quote, carriage return or line feed is refused, though the CSV reader accepts RFC 4180 quoted fields. TSV has no quoting rule.</p>
+<h3 id="proof-1"><a class="header" href="#proof-1">Proof</a></h3>
+<p>The match in <code>emit</code> handles null, Boolean, string and temporal cases before calling <code>numeric_text</code>. The string arms are <code>quote</code>, <code>xml_quote</code>, <code>csv_quote</code> and the TSV arm. <code>quote</code> escapes quote, backslash and every scalar up to U+001F, and on TOML also U+007F, which are the escape sets stated in the Definitions; <code>xml_quote</code> escapes the five markup characters and carriage return and refuses exactly the scalars outside the XML 1.0 <code>Char</code> ranges; <code>csv_text</code> refuses the four stated characters; and the TSV arm refuses its three forbidden characters. The temporal arm applies <code>temporal</code>. The numeric match is exhaustive over <code>Int</code>, <code>BigInt</code>, <code>Decimal</code> and <code>Float</code>: <code>bigint_text</code> first checks equality with the canonical exact-integer representation, then tests the digit count against the allowance before choosing the exponent form or <code>LimitExceeded</code>; the special-decimal arm returns <code>NonFinite</code>; the non-finite float arms write the three route spellings or return <code>NonFinite</code> on JSON, CSV and TSV; and every other variant reaches <code>NotRepresentable</code>. Thus a successful result has exactly the prescribed bytes, and every omitted case is a typed refusal.</p>
+<h3 id="executable-counterpart-1"><a class="header" href="#executable-counterpart-1">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.vf7-emission</code></li>
+<li>Reference: <code>panproto_reference::value_io::emit</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::value_io::numerals, single_scalars, exact_integer_lexemes, special_decimal_lexemes and nonfinite_float_bits; on the always-compiled routes=5, exact decimals=600, one-scalar strings=1112064, exact integers=13, special decimals=10 and non-finite floats=6</code></li>
+<li>Production certificate: <code>bounded_decimal_emission_matches_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=bounded_decimal_emission_matches_reference)'</code></li>
+<li>String certificate: <code>every_single_scalar_string_matches_reference_on_the_canonical_routes; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=every_single_scalar_string_matches_reference_on_the_canonical_routes)'</code></li>
+<li>Numeric certificate: <code>exact_integer_and_special_numeric_scalars_match_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=exact_integer_and_special_numeric_scalars_match_reference)'</code></li>
+<li>Independent reference anchor: <code>value_io_oracles_are_independent_and_toml_rejects_reduced_years; command: cargo nextest run --release --locked -p panproto-reference --test schema_v2 --no-tests=fail -E 'test(=value_io_oracles_are_independent_and_toml_rejects_reduced_years)'</code></li>
+<li>Fixed production regression: <code>every_parsed_value_emits_on_the_value_io_routes; command: cargo nextest run --release --locked -p panproto-io --test value_io_round_trip_totality --no-tests=fail -E 'test(=every_parsed_value_emits_on_the_value_io_routes)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Property differential test: <code>randomized_scalar_emission_and_round_trip; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_scalar_emission_and_round_trip)'</code></li>
+<li>Randomized input scope: an empty or one-Unicode-scalar string, on JSON, XML, CSV or TSV; exact scalar emission or typed refusal and the production reread compared with the reference section predicate.</li>
+<li>Property differential test: <code>randomized_numeric_emission_and_round_trip; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_numeric_emission_and_round_trip)'</code></li>
+<li>Randomized input scope: two signs, coefficients 0 through 99, exponents -1 through 1, ten special decimals and thirteen exact-integer lexemes, on five canonical writers; emitted token or refusal, exact TOML carrier and four canonical-reader section equations.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/value_io_round_trip_totality.rs</code></li>
+</ul>
+<h2 id="L-value-io-3"><a class="header" href="#L-value-io-3">Default routes distinguish null from absence</a></h2>
+<h3 id="statement-2"><a class="header" href="#statement-2">Statement</a></h3>
+<p>For a default route <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> and presence state <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>, <code>presence(r, p)</code> gives the following outcome:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Route</th><th><code>Null</code></th><th><code>Absent</code></th></tr>
+</thead>
+<tbody>
+<tr><td>JSON, YAML, XML</td><td><code>NullSyntax</code></td><td><code>Omitted</code></td></tr>
+<tr><td>TOML</td><td><code>NullNotRepresentable</code></td><td><code>Omitted</code></td></tr>
+<tr><td>CSV, TSV</td><td><code>NullNotRepresentable</code></td><td><code>AbsentNotRepresentable</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>Thus an explicit null never becomes an absent field or cell. A route either writes its native null syntax or returns a typed null refusal. Conversely, an absent position is omitted only on a route whose structure permits omission; a positional table cell returns a typed absence refusal.</p>
+<h3 id="outside-the-domain-2"><a class="header" href="#outside-the-domain-2">Outside the domain</a></h3>
+<p>The table covers default canonical emission. A configured tabular missing token and a CST-preserving route have separate contracts. The law also does not identify an empty string, an empty element or a zero-length byte sequence with either presence state.</p>
+<h3 id="definitions-used-2"><a class="header" href="#definitions-used-2">Definitions used</a></h3>
+<p><code>Null</code> is an explicit <code>FieldPresence::Null</code>. <code>Absent</code> is an omitted field or a missing positional cell. <code>NullSyntax</code> means JSON or YAML <code>null</code>, or an XML element marked with <code>xsi:nil="true"</code>. <code>Omitted</code> means that no member or child is written. The two refusal outcomes correspond to <code>EmitValueReason::NullNotRepresentable</code> and <code>EmitValueReason::AbsentNotRepresentable</code>.</p>
+<h3 id="proof-2"><a class="header" href="#proof-2">Proof</a></h3>
+<p><code>presence</code> is a complete match on the product of six routes and two presence states. Its four arms are the four cells of the table after routes with the same behavior are grouped. Since the two input enums have no other variants, the match proves the table exhaustively.</p>
+<h3 id="executable-counterpart-2"><a class="header" href="#executable-counterpart-2">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.vf8-null-and-absence</code></li>
+<li>Reference: <code>panproto_reference::value_io::presence</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::value_io::presences; routes=6, states=2, labelled cases=12</code></li>
+<li>Production certificate: <code>default_routes_match_null_and_absence_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --features tree-sitter --no-tests=fail -E 'test(=default_routes_match_null_and_absence_reference)'</code></li>
+<li>Independent reference anchor: <code>default_routes_distinguish_null_from_absence; command: cargo nextest run --release --locked -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=default_routes_distinguish_null_from_absence)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Property differential test: <code>randomized_presence_outcomes; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_presence_outcomes)'</code></li>
+<li>Randomized input scope: five always-compiled canonical routes and both null/absence states; native syntax, omission or the exact typed refusal class.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+</ul>
+<h2 id="L-value-io-4"><a class="header" href="#L-value-io-4">Reading is the route-specific scalar function</a></h2>
+<h3 id="statement-3"><a class="header" href="#statement-3">Statement</a></h3>
+<p><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> first requires UTF-8. JSON, TOML and YAML trim only surrounding whitespace admitted by their route grammars; XML, CSV and TSV retain it as cell text, XML after the line-end handling of XML 1.0 Sec 2.11, under which a literal carriage return, alone or before a line feed, reads as one line feed. JSON recognizes <code>null</code>, JSON, TOML and YAML recognize lowercase booleans, and YAML also recognizes <code>Null</code>, <code>NULL</code>, <code>~</code>, and the empty plain scalar as null. XML expands predefined entities and character references with no declarations, CSV applies its doubled-quote grammar, and TSV accepts exactly text without a tab or line break. Quoted JSON, TOML and YAML strings use their route escape grammar and literal sets: JSON admits every scalar from U+0020 unescaped, DEL and the C1 controls included; TOML admits tab and every scalar from U+0020 except DEL; and YAML admits tab and every scalar from U+0020. These literal ranges exclude the double quote and backslash, which introduce delimiter and escape syntax. TOML recognizes a temporal only when <a href="#L-value-io-5">L-value-io-5</a> admits it. On a numeric branch, a token reaches exact coercion only after it satisfies the route’s complete numeral grammar. YAML retains a nonnumeric unquoted scalar as text.</p>
+<p>For the production certificate, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> ranges over the always-compiled complement-free readers JSON, XML, CSV and TSV. The preceding paragraph defines the six-route reference function; the certificate excludes the feature-gated TOML and YAML CST readers.</p>
+<h3 id="outside-the-domain-3"><a class="header" href="#outside-the-domain-3">Outside the domain</a></h3>
+<p>Invalid UTF-8, an ill-formed quote or escape, an invalid XML entity, and a forbidden TSV byte return <code>Malformed</code> or the route’s typed encoding refusal. JSON refuses a token outside its numeral grammar as <code>Malformed</code>. TOML sends tokens beginning with a digit, sign or dot to exact coercion and preserves its <code>Fidelity</code> refusal, including <code>NotANumber</code> for a malformed numeral; for tokens beginning with <code>i</code> or <code>n</code>, it maps a failed numeric reading to <code>Malformed</code>. YAML returns plain text whenever its unquoted scalar numeric reading fails. XML, CSV and TSV read their cells as text. The parser requires one scalar and does not recover a prefix.</p>
+<h3 id="definitions-used-3"><a class="header" href="#definitions-used-3">Definitions used</a></h3>
+<p>The route dialects are JSON for JSON, CSV and TSV; TOML for TOML; YAML 1.2 for YAML; and XSD for XML. TOML and YAML single-quoted strings follow their distinct rules: a TOML literal string holds tab and every scalar from U+0020 except <code>'</code> and DEL, with no escape, while a YAML single-quoted scalar writes <code>'</code> doubled. JSON-style Unicode escapes require a valid scalar or a valid high-surrogate and low-surrogate pair. The double-quoted literal sets are RFC 8259’s <code>unescaped</code>, TOML 1.0’s <code>basic-unescaped</code> with its tab, and YAML 1.2.2’s <code>nb-json</code>; one modelled YAML scalar occupies one line, so a literal line break is refused there as well. An XML character reference is <code>&amp;#</code> followed by one or more ASCII decimal digits, or <code>&amp;#x</code> followed by one or more ASCII hexadecimal digits, then <code>;</code>; a sign or any other byte is malformed.</p>
+<h3 id="proof-3"><a class="header" href="#proof-3">Proof</a></h3>
+<ol>
+<li><code>parse</code> applies <code>from_utf8</code>, then the route-dependent whitespace rule. For YAML it refuses a carriage return or line feed remaining in the trimmed scalar, enforcing the one-line model before dispatch; escaped line breaks contain no such literal byte and remain available to the quoted-string reader.</li>
+<li>Its ordered match gives null and Boolean literals precedence over quoted strings, TOML temporals, YAML’s number-or-text choice, and route-valid numeral tokens.</li>
+<li><code>parse_string</code> dispatches XML, CSV, TSV, single-quoted and double-quoted grammars. The XML arm replaces each carriage return line feed pair, then each remaining carriage return, by a line feed before it expands references, so a reference such as <code>&amp;#13;</code> still yields a carriage return. <code>parse_double_quoted</code> rejects an unescaped interior double quote and dispatches a backslash to the escape reader. Every other scalar is literal exactly when <code>literal_in_double_quotes</code> holds for the route. Each helper consumes the whole string or returns <code>Malformed</code>.</li>
+<li><code>parse_number</code> supplies the route dialect to exact coercion and preserves its typed fidelity refusal. The YAML caller handles a failed numeric reading by returning the original plain scalar as text. These cases exhaust the function.</li>
+</ol>
+<h3 id="executable-counterpart-3"><a class="header" href="#executable-counterpart-3">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.vf9-reading</code></li>
+<li>Reference: <code>panproto_reference::value_io::parse</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::value_io::byte_strings; byte strings=65793, always-compiled complement-free routes=4, labelled cases=263172</code></li>
+<li>Production certificate: <code>bounded_canonical_scalar_parsing_matches_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=bounded_canonical_scalar_parsing_matches_reference)'</code></li>
+<li>Independent reference anchor: <code>value_io_oracles_are_independent_and_toml_rejects_reduced_years; command: cargo nextest run --release --locked -p panproto-reference --test schema_v2 --no-tests=fail -E 'test(=value_io_oracles_are_independent_and_toml_rejects_reduced_years)'</code></li>
+<li>Fixed reference grammar control: <code>double_quoted_readers_require_escaped_interior_quotes; command: cargo nextest run --locked -p panproto-reference --test schema_v2 --cargo-profile ci-test --profile ci --no-tests=fail -E 'test(=double_quoted_readers_require_escaped_interior_quotes)'</code></li>
+<li>Fixed differential test: <code>json_interior_quote_refusals_and_escapes_match_reference; command: cargo nextest run --locked -p panproto-io --test reference_value_io --cargo-profile ci-test --profile ci --no-tests=fail -E 'test(=json_interior_quote_refusals_and_escapes_match_reference)'</code></li>
+<li>Fixed reading witnesses: <code>fixed_scalar_reading_witnesses_match_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=fixed_scalar_reading_witnesses_match_reference)'</code>; with <code>--features tree-sitter</code> the same test also compares the TOML and YAML literal-tab and DEL witnesses</li>
+<li>Fixed JSON regression: <code>open_json_lexemes_choose_the_exact_contract_carriers; command: cargo nextest run --release --locked -p panproto-io --test value_fidelity_open_lexemes --no-tests=fail -E 'test(=open_json_lexemes_choose_the_exact_contract_carriers)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Property differential test: <code>randomized_canonical_scalar_reading; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_canonical_scalar_reading)'</code></li>
+<li>Randomized input scope: byte strings of length at most two on JSON, XML, CSV and TSV; the same wrapped scalar input and exact parsed carrier or refusal class.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/value_fidelity_open_lexemes.rs</code></li>
+</ul>
+<h2 id="L-value-io-5"><a class="header" href="#L-value-io-5">Temporal representability is route dependent</a></h2>
+<h3 id="statement-4"><a class="header" href="#statement-4">Statement</a></h3>
+<p>For every well-displaying temporal <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span>, <code>temporal(r, t)</code> holds on XML, CSV and TSV. It holds on JSON exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> is complete, and on YAML exactly when the offset of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> is not local, since a YAML timestamp written without a zone denotes UTC and so cannot carry a local value. On TOML it holds only for finite values in one of three forms: a full four-digit non-negative-zero date with local offset; a full time with local offset; or a date-time having both full parts and a local, Zulu, extended fixed, or extended negative-zero offset.</p>
+<p>The production certificate covers the five always-compiled emitters JSON, TOML, XML, CSV and TSV. The YAML arm is checked by the reference anchor only, because the YAML emitter is the feature-gated CST writer.</p>
+<h3 id="outside-the-domain-4"><a class="header" href="#outside-the-domain-4">Outside the domain</a></h3>
+<p>A temporal for which display followed by descriptor-directed parsing changes the value is refused on every route. TOML additionally refuses infinities, reduced or truncated fields, non-four-digit years, negative-zero years and non-extended numeric offsets. JSON refuses incomplete shapes, and YAML refuses a local offset.</p>
+<h3 id="definitions-used-4"><a class="header" href="#definitions-used-4">Definitions used</a></h3>
+<p>A <em>full date</em> contains a year of width four, a month and a day. A <em>full time</em> contains hour, minute and second. A complete temporal is the predicate implemented by <code>Temporal::is_complete</code>; display-parse agreement is <code>panproto_reference::temporal::display_parse</code>.</p>
+<h3 id="proof-4"><a class="header" href="#proof-4">Proof</a></h3>
+<p>The function first tests display-parse agreement and returns <code>false</code> on failure. The TOML arm computes the full-date, full-time and offset predicates, then matches the temporal form against exactly the three cases in the Statement. The JSON arm returns <code>is_complete</code>, the YAML arm returns whether the offset differs from <code>Offset::Local</code>, and the remaining routes return <code>true</code>. Hence the characterization is exact.</p>
+<h3 id="executable-counterpart-4"><a class="header" href="#executable-counterpart-4">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.temporal-route-representability</code></li>
+<li>Reference: <code>panproto_reference::value_io::temporal</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::value_io::temporal_lexemes; lexical candidates=19098, always-compiled routes=5; route checks apply to candidates admitted by both temporal parsers</code></li>
+<li>Production certificate: <code>temporal_route_representability_matches_public_emitters; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=temporal_route_representability_matches_public_emitters)'</code></li>
+<li>Independent reference anchor: <code>value_io_oracles_are_independent_and_toml_rejects_reduced_years; command: cargo nextest run --release --locked -p panproto-reference --test schema_v2 --no-tests=fail -E 'test(=value_io_oracles_are_independent_and_toml_rejects_reduced_years)'</code></li>
+<li>Fixed production regression: <code>every_parsed_value_emits_on_the_value_io_routes; command: cargo nextest run --release --locked -p panproto-io --test value_io_round_trip_totality --no-tests=fail -E 'test(=every_parsed_value_emits_on_the_value_io_routes)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Property differential test: <code>randomized_temporal_route_representability; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_temporal_route_representability)'</code></li>
+<li>Randomized input scope: one lexeme from the printed temporal scope and one of five canonical writers; parse-domain agreement and route representability.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/value_io.rs</code></li>
+</ul>
+<h2 id="L-value-io-6"><a class="header" href="#L-value-io-6">The generic byte encoder and JSON route writer agree exactly</a></h2>
+<h3 id="statement-5"><a class="header" href="#statement-5">Statement</a></h3>
+<p>Let <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span> be a byte sequence and let <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span> be one of <code>Base64</code>, <code>Base64Url</code>, <code>Base64Padded</code>, <code>Base64UrlPadded</code>, <code>Hex</code>, <code>Raw</code> or <code>Latin1</code>. If the generic <code>encode_bytes(b, x)</code> returns text <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span></span></span></span>, writing <code>Value::Bytes(b)</code> through the JSON value route under the same <code>BytesText</code> specification, at any value depth below 128, emits the JSON string <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span></span></span></span>. If the generic encoder returns <code>None</code>, which can occur for non-UTF-8 input under <code>Raw</code>, the route returns <code>EmitValueReason::NotRepresentable</code>. The predicate <code>bytes(g, r)</code> witnesses equality between the generic text and the string recovered from the route token.</p>
+<h3 id="outside-the-domain-5"><a class="header" href="#outside-the-domain-5">Outside the domain</a></h3>
+<p>The equality predicate applies only to successful text results. The production certificate checks the corresponding typed refusal separately. At a value depth of 128 or more the route refuses every value, bytes included, with <code>NotRepresentable</code>, whatever <code>encode_bytes</code> returns; the depth witnesses of <a href="#L-value-io-19">L-value-io-19</a> certify that boundary for a scalar. Other value variants and non-JSON document layouts are outside this law.</p>
+<h3 id="definitions-used-5"><a class="header" href="#definitions-used-5">Definitions used</a></h3>
+<p>The generic encoder is <code>json_pathway::encode_bytes</code>. The route writer is <code>write_json_value_at_depth</code> on <code>Value::Bytes</code> with a <code>ScalarKind::Bytes(x)</code> specification and a depth <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span>. It first refuses when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8304em;vertical-align:-0.136em;"></span><span class="mord mathnormal">d</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">128</span></span></span></span>, then runs the round-trip guard <code>json_value_roundtrips_at_depth</code>, which for bytes encodes the value and reads the text back under the same specification, and only then reaches its byte arm. That arm delegates to <code>write_json_bytes_scalar</code>, which calls <code>encode_bytes</code> and then quotes the returned text as a JSON string. Route text is obtained by decoding that string token, so JSON quoting is not confused with the encoded payload.</p>
+<h3 id="proof-5"><a class="header" href="#proof-5">Proof</a></h3>
+<p><code>bytes</code> returns <code>generic == route</code>. In production, below depth 128 the round-trip guard passes whenever <code>encode_bytes</code> succeeds, by the byte-text law that decoding a successful encoding under the same <code>BytesText</code> returns the original bytes; when <code>encode_bytes</code> returns <code>None</code> the guard and the byte arm both refuse. <code>write_json_bytes_scalar</code> then extracts the <code>BytesText</code> specification and delegates to <code>encode_bytes</code>; a successful result is passed unchanged to the JSON string writer, while <code>None</code> becomes <code>EmitValueReason::NotRepresentable</code>. The production certificate enumerates every byte sequence of length at most two and every <code>BytesText</code> variant and checks this delegation boundary after decoding the emitted JSON token, applying <code>bytes</code> to each pair. It is exhaustive over the stated production scope, but it is not an independent second implementation of byte encoding. The independent I4 anchor instead fixes the equality predicate on the three witnesses <code>left/left</code>, <code>left/right</code> and <code>right/left</code>.</p>
+<h3 id="executable-counterpart-5"><a class="header" href="#executable-counterpart-5">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.byte-text-writer-agreement</code></li>
+<li>Reference: <code>panproto_reference::value_io::bytes</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::value_io::byte_strings; byte strings=65793, BytesText variants=7, labelled delegation cases=460551, independent equality witnesses=3</code></li>
+<li>Production certificate: <code>json_pathway::tests::every_byte_text_route_writer_agrees_with_the_generic_encoder; command: cargo nextest run --release --locked -p panproto-io --lib --no-tests=fail -E 'test(=json_pathway::tests::every_byte_text_route_writer_agrees_with_the_generic_encoder)'</code></li>
+<li>Independent reference anchor: <code>byte_paths_compare_both_directions_and_blob_layout_is_exact; command: cargo nextest run --release --locked -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=byte_paths_compare_both_directions_and_blob_layout_is_exact)'</code></li>
+<li>Production certificate file: <code>crates/panproto-io/src/json_pathway.rs</code></li>
+<li>Property differential test: <code>json_pathway::tests::randomized_byte_text_route_writer; command: cargo nextest run --locked -p panproto-io --lib --no-tests=fail -E 'test(=json_pathway::tests::randomized_byte_text_route_writer)'</code></li>
+<li>Randomized input scope: byte vectors of length at most sixteen and all seven byte-text encodings; generic encoder output compared with the JSON writer through the reference byte-agreement predicate, including typed encoding refusal.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+</ul>
+<h2 id="L-value-io-7"><a class="header" href="#L-value-io-7">Exact-decimal writers agree on the spelling</a></h2>
+<h3 id="statement-6"><a class="header" href="#statement-6">Statement</a></h3>
+<p>For strings <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span>, <code>decimal(g, r)</code> holds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span>. The writer contract it witnesses is this: for every route <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> and decimal <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span>, the production writer writes the reference spelling <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">d</span><span class="mclose">)</span></span></span></span> when that spelling exists, including sign, significand, scale and exponent; and a writer writes a special decimal only in a spelling its route reads back as the same <code>Decimal</code>, and otherwise refuses it with <code>NonFinite</code>. No route reads a special spelling back as the same <code>Decimal</code> (JSON has no such number, and a TOML <code>nan</code> reads as a binary float), so every special decimal is refused with <code>NonFinite</code> on every route.</p>
+<h3 id="outside-the-domain-6"><a class="header" href="#outside-the-domain-6">Outside the domain</a></h3>
+<p>When both writers refuse, there is no pair of strings to compare; the certificate then compares the typed refusals, which must both be <code>NonFinite</code> for a special decimal.</p>
+<h3 id="definitions-used-6"><a class="header" href="#definitions-used-6">Definitions used</a></h3>
+<p>Spelling equality is Unicode string equality. Numeric equality after reparsing is insufficient; for instance, <code>1.50</code> differs from <code>1.5</code>. The special decimals are both infinities and the quiet and signalling NaNs of either sign, with or without payload digits.</p>
+<h3 id="proof-6"><a class="header" href="#proof-6">Proof</a></h3>
+<p><code>decimal</code> is <code>generic == route</code>, and string equality retains every component named in the Statement. The certificate takes the expected TOML spelling of each numeral from the reference <code>emit</code> and the route spelling from the production TOML writer, so the two sides are independent. For the special decimals, <code>emit</code> returns <code>NonFinite</code> on every route by its special-decimal arm, and the certificate requires the same typed refusal from each of the five production writers.</p>
+<h3 id="executable-counterpart-6"><a class="header" href="#executable-counterpart-6">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.special-decimal-writer-agreement</code></li>
+<li>Reference: <code>panproto_reference::value_io::decimal</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::numerals; bound: digits=2, exponents=3, special_decimals=10, routes=5</code></li>
+<li>Production differential test: <code>bounded_decimal_writer_spellings_match_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=bounded_decimal_writer_spellings_match_reference)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Exhaustive differential test: <code>decimal_route_agreement_is_exact_in_both_directions; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=decimal_route_agreement_is_exact_in_both_directions)'</code></li>
+<li>Fixed regression test: <code>canonical_routes_keep_extreme_decimal_zero_scale_and_sign; command: cargo nextest run -p panproto-io --test text_route_repairs --no-tests=fail -E 'test(=canonical_routes_keep_extreme_decimal_zero_scale_and_sign)'</code></li>
+<li>Property differential test: <code>randomized_numeric_emission_and_round_trip; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_numeric_emission_and_round_trip)'</code></li>
+<li>Randomized input scope: two signs, coefficients 0 through 99, exponents -1 through 1, ten special decimals and thirteen exact-integer lexemes, on five canonical writers; emitted token or refusal, exact TOML carrier and four canonical-reader section equations.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/text_route_repairs.rs</code></li>
+</ul>
+<h2 id="L-value-io-8"><a class="header" href="#L-value-io-8">An unedited numeric cell retains its lexeme</a></h2>
+<h3 id="statement-7"><a class="header" href="#statement-7">Statement</a></h3>
+<p>For source and emitted numeric lexemes <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>, <code>raw_numeric(s, e)</code> holds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>. Equality of parsed numbers does not suffice.</p>
+<h3 id="outside-the-domain-7"><a class="header" href="#outside-the-domain-7">Outside the domain</a></h3>
+<p>The law concerns an unedited preserving cell. An edited cell may use the canonical emitter, and a malformed source lexeme never enters the preserving value domain.</p>
+<h3 id="definitions-used-7"><a class="header" href="#definitions-used-7">Definitions used</a></h3>
+<p>A numeric <em>lexeme</em> is the exact scalar text, including leading sign, trailing zeros, decimal point and exponent spelling.</p>
+<h3 id="proof-7"><a class="header" href="#proof-7">Proof</a></h3>
+<p>The reference returns <code>source_lexeme == emitted_lexeme</code>. Thus <code>1.00e+2</code> is preserved only as <code>1.00e+2</code>, even though <code>100</code> denotes the same number.</p>
+<h3 id="executable-counterpart-7"><a class="header" href="#executable-counterpart-7">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.raw-numeric-lexeme-preservation</code></li>
+<li>Reference: <code>panproto_reference::value_io::raw_numeric</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::numerals; bound: digits=2, exponents=3</code></li>
+<li>Exhaustive differential test: <code>raw_numeric_preserves_the_written_lexeme_not_only_its_value; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=raw_numeric_preserves_the_written_lexeme_not_only_its_value)'</code></li>
+<li>Property differential test: <code>preserving_routes_keep_extreme_decimal_zero_scale_and_sign; command: cargo nextest run -p panproto-io --test text_route_repairs --features tree-sitter --no-tests=fail -E 'test(=preserving_routes_keep_extreme_decimal_zero_scale_and_sign)'</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/text_route_repairs.rs</code></li>
+</ul>
+<h2 id="L-value-io-9"><a class="header" href="#L-value-io-9">Duplicate member names are refused by exact name</a></h2>
+<h3 id="statement-8"><a class="header" href="#statement-8">Statement</a></h3>
+<p>For an ordered member sequence <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">((</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">))</span></span></span></span>, <code>duplicate_member(M)</code> holds exactly when there are indices <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6986em;vertical-align:-0.0391em;"></span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.854em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.05724em;">j</span></span></span></span> with <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7167em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>. On the canonical JSON and XML readers the names are decoded names: a JSON member name after its escapes are decoded, so <code>"a"</code> and <code>"\u0061"</code> are one name, and an XML attribute name as its expanded name, written <code>{uri}local</code> in a namespace, so <code>p:x</code> and <code>q:x</code> with <code>p</code> and <code>q</code> bound to one namespace are one name. Whenever the predicate holds for the members of one JSON object or one XML start tag, the reader refuses with <code>ParseInstanceError::DuplicateMember</code>, naming the decoded name and the byte offset of the second occurrence’s name token, counted from byte 0; the reader never keeps the first or the last member.</p>
+<h3 id="outside-the-domain-8"><a class="header" href="#outside-the-domain-8">Outside the domain</a></h3>
+<p>There is none for a finite member sequence. The predicate only identifies the refusal condition; the enclosing route supplies the typed refusal. An XML attribute supplied as a declared default has no name token in the start tag, so its refusal carries no offset. The preserving routes are governed by <a href="#L-value-io-23">L-value-io-23</a>.</p>
+<h3 id="definitions-used-8"><a class="header" href="#definitions-used-8">Definitions used</a></h3>
+<p>Names use exact Rust string equality on the decoded names. Adjacency is irrelevant, and values do not participate in duplicate detection.</p>
+<h3 id="proof-8"><a class="header" href="#proof-8">Proof</a></h3>
+<p>The function inserts names into an initially empty <code>BTreeSet</code> and returns <code>true</code> at the first insertion that reports an existing member. Such an insertion exists exactly when a name occurred earlier, which is the quantified condition in the Statement.</p>
+<h3 id="executable-counterpart-8"><a class="header" href="#executable-counterpart-8">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.duplicate-member-refusal</code></li>
+<li>Reference: <code>panproto_reference::value_io::duplicate_member</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::sequences; bound: length=2, json_spellings=3, xml_spellings=3</code></li>
+<li>Production differential test: <code>bounded_duplicate_member_refusals_match_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=bounded_duplicate_member_refusals_match_reference)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Exhaustive differential test: <code>duplicate_member_paths_find_nonadjacent_duplicates_only; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=duplicate_member_paths_find_nonadjacent_duplicates_only)'</code></li>
+<li>Fixed regression test: <code>preserving::json_cst_rejects_duplicate_keys_and_preserves_non_string_type_data; command: cargo nextest run -p panproto-io --test value_fidelity_corpus --features tree-sitter --no-tests=fail -E 'test(=preserving::json_cst_rejects_duplicate_keys_and_preserves_non_string_type_data)'</code></li>
+<li>Property differential test: <code>randomized_duplicate_member_refusals; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_duplicate_member_refusals)'</code></li>
+<li>Randomized input scope: member sequences of length at most two over three JSON spellings or three XML attribute spellings; decoded-name duplication and exact second-name offset/refusal.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/value_fidelity_corpus.rs</code></li>
+</ul>
+<h2 id="L-value-io-10"><a class="header" href="#L-value-io-10">Canonical emission normalizes the output encoding</a></h2>
+<h3 id="statement-9"><a class="header" href="#statement-9">Statement</a></h3>
+<p>For emitted bytes <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>, <code>encoding(e)</code> holds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span> is valid UTF-8 and begins with neither a UTF-8 nor a UTF-16 byte-order mark. Thus a canonical route that accepts another source encoding emits UTF-8 without carrying the source byte-order mark into its output.</p>
+<h3 id="outside-the-domain-9"><a class="header" href="#outside-the-domain-9">Outside the domain</a></h3>
+<p>The predicate checks canonical output, not source acceptance. Each parser separately decides which source encodings it admits and how it reports invalid code units. Exact source-encoding and byte-order-mark preservation belongs to the CST contract in <a href="#L-value-io-24">L-value-io-24</a>.</p>
+<h3 id="definitions-used-9"><a class="header" href="#definitions-used-9">Definitions used</a></h3>
+<p>UTF-8 validity is Rust string validity. The excluded prefixes are <code>EF BB BF</code>, <code>FF FE</code> and <code>FE FF</code>. The UTF-32LE byte-order mark begins with <code>FF FE</code>. The UTF-32BE mark, <code>00 00 FE FF</code>, does not begin with an excluded prefix, but <code>FE</code> and <code>FF</code> make it invalid UTF-8.</p>
+<h3 id="proof-9"><a class="header" href="#proof-9">Proof</a></h3>
+<p><code>encoding</code> first applies <code>from_utf8</code>, then rejects each excluded prefix with <code>starts_with</code>. These conditions are precisely UTF-8 output without a byte-order mark. The XML certificate parses UTF-8 with a mark, both UTF-16 byte orders and ISO-8859-1, emits each accepted document canonically, and applies this predicate to the result. The JSON, CSV and TSV certificate reads a document that begins with the UTF-8 mark, checks that the mark enters no value or header name and that a refusal offset still counts the mark’s three bytes, and applies the predicate to the canonical output, which must equal the document without its mark.</p>
+<h3 id="executable-counterpart-9"><a class="header" href="#executable-counterpart-9">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.canonical-encoding-normalization</code></li>
+<li>Reference: <code>panproto_reference::value_io::encoding</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::value_io::canonical_xml_encoding_cases; accepted XML encodings=4, typed refusal cases=2, and leading-mark documents=3 (JSON, CSV and TSV)</code></li>
+<li>Production certificate: <code>canonical_xml_normalizes_encodings_and_reports_typed_refusals; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=canonical_xml_normalizes_encodings_and_reports_typed_refusals)'</code></li>
+<li>Leading-mark certificate: <code>canonical_json_and_tabular_routes_read_past_a_leading_byte_order_mark; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=canonical_json_and_tabular_routes_read_past_a_leading_byte_order_mark)'</code></li>
+<li>Independent reference anchor: <code>canonical_encoding_normalizes_while_cst_encoding_is_exact; command: cargo nextest run --release --locked -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=canonical_encoding_normalizes_while_cst_encoding_is_exact)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Property differential test: <code>randomized_canonical_encoding; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_canonical_encoding)'</code></li>
+<li>Randomized input scope: ASCII text of length one through eight, XML sources in UTF-8, both UTF-16 byte orders, ISO-8859-1 or US-ASCII, and UTF-8 BOM inputs for JSON/CSV/TSV; preserved value and canonical output bytes.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+</ul>
+<h2 id="L-value-io-11"><a class="header" href="#L-value-io-11">Canonical TOML exact numbers retain their representation</a></h2>
+<h3 id="statement-10"><a class="header" href="#statement-10">Statement</a></h3>
+<p>For a declared exact kind <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span>, either <code>ScalarKind::Decimal</code> or <code>ScalarKind::BigInt</code>, a source TOML scalar token <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span> and a canonical emitted token <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>, <code>toml_scalar(k, s, e)</code> holds exactly when both tokens read under <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> give the same panproto carrier. Under <code>Decimal</code> the decimal scale and the sign of zero remain observable, so <code>10e-1</code> and <code>1e0</code> differ, as do <code>-0e-1</code> and <code>0e0</code>; under <code>BigInt</code> every integer digit remains observable, whatever exponent spells it. Token choices that encode one carrier, such as <code>0e-1</code> and <code>0.0</code> under <code>Decimal</code>, need not be identical.</p>
+<h3 id="outside-the-domain-10"><a class="header" href="#outside-the-domain-10">Outside the domain</a></h3>
+<p>A malformed TOML token, a value for which the TOML route returns a typed refusal, and every kind other than <code>Decimal</code> and <code>BigInt</code> are outside the comparison domain; the predicate returns <code>false</code> for such a kind.</p>
+<h3 id="definitions-used-10"><a class="header" href="#definitions-used-10">Definitions used</a></h3>
+<p>A token is the complete TOML scalar spelling, excluding surrounding document trivia. Under <code>Decimal</code> the carrier is the exact decimal of the token, with its scale and sign; under <code>BigInt</code> it is the exact integer the numeral denotes.</p>
+<h3 id="proof-10"><a class="header" href="#proof-10">Proof</a></h3>
+<p><code>toml_scalar</code> matches on <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span>. Under <code>Decimal</code> it parses both tokens with <code>parse_decimal</code> and compares the carriers, whose equality is equality of sign, digits and exponent, so scale and the sign of zero are compared. Under <code>BigInt</code> it parses both numerals and compares their exact integers. Every other kind returns <code>false</code>. Thus an emitter may select a canonical spelling, while reparsing under the declared kind still recovers the source carrier required by the round-trip law. The certificate reads each numeral of the scope under <code>Decimal</code>.</p>
+<h3 id="executable-counterpart-10"><a class="header" href="#executable-counterpart-10">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.toml-decimal-bigint-round-trip</code></li>
+<li>Reference: <code>panproto_reference::value_io::toml_scalar</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::numerals; bound: digits=2, exponents=3</code></li>
+<li>Production differential test: <code>bounded_decimal_writer_spellings_match_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=bounded_decimal_writer_spellings_match_reference)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Exhaustive differential test: <code>toml_scalar_paths_preserve_decimal_scale_and_bigint_digits; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=toml_scalar_paths_preserve_decimal_scale_and_bigint_digits)'</code></li>
+<li>Fixed regression test: <code>toml_writes_exact_decimals_and_big_integers; command: cargo nextest run -p panproto-io --test text_route_repairs --no-tests=fail -E 'test(=toml_writes_exact_decimals_and_big_integers)'</code></li>
+<li>Property differential test: <code>randomized_numeric_emission_and_round_trip; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_numeric_emission_and_round_trip)'</code></li>
+<li>Randomized input scope: two signs, coefficients 0 through 99, exponents -1 through 1, ten special decimals and thirteen exact-integer lexemes, on five canonical writers; emitted token or refusal, exact TOML carrier and four canonical-reader section equations.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/text_route_repairs.rs</code></li>
+</ul>
+<h2 id="L-value-io-12"><a class="header" href="#L-value-io-12">XML entity expansion is recursive and bounded</a></h2>
+<h3 id="statement-11"><a class="header" href="#statement-11">Statement</a></h3>
+<p>Given text <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> and a finite map <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span></span></span></span> of internal entity declarations, <code>xml_entity(t, D)</code> scans from left to right and expands the five predefined entities, valid decimal and hexadecimal XML 1.0 character references, and declarations in <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span></span></span></span>. Declared entities expand recursively. The result is defined only when every reference is complete and declared, every literal text run lies in XML 1.0 <code>Char</code>, declaration recursion is acyclic, nesting has depth at most 16, and the UTF-8 output has at most 1,048,576 bytes. Both bounds are inclusive: a chain of exactly 16 nested references and an output of exactly 1,048,576 bytes are admitted.</p>
+<h3 id="outside-the-domain-11"><a class="header" href="#outside-the-domain-11">Outside the domain</a></h3>
+<p>The function returns <code>Malformed</code> for an incomplete reference, an invalid XML name, character-reference digits that are not all ASCII digits of the reference’s radix (a leading sign included), or a scalar outside XML 1.0 <code>Char</code>, literal or referenced; <code>Undeclared(name)</code> for a well-formed absent declaration; <code>Recursive(name)</code> when a declaration reappears on the active stack; <code>Depth</code> after the nesting bound; and <code>Bytes</code> after the output bound or a length overflow.</p>
+<h3 id="definitions-used-11"><a class="header" href="#definitions-used-11">Definitions used</a></h3>
+<p>XML 1.0 <code>Char</code> contains tab, line feed, carriage return, U+0020 through U+D7FF, U+E000 through U+FFFD, and U+10000 through U+10FFFF. A character reference body is <code>#</code> and one or more ASCII decimal digits, or <code>#x</code> and one or more ASCII hexadecimal digits of either case. An XML name uses the <code>NameStartChar</code> and <code>NameChar</code> ranges implemented by <code>xml_name_start</code> and <code>xml_name_continue</code>. The nesting depth of a reference is the number of declarations being expanded when its replacement text is read, so a chain of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> declarations, each but the last referring to the next, has depth <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>.</p>
+<h3 id="proof-11"><a class="header" href="#proof-11">Proof</a></h3>
+<ol>
+<li><code>expand</code> appends literal text preceding each ampersand through <code>append</code>, which refuses a scalar outside XML 1.0 <code>Char</code> and checks the byte bound before mutation.</li>
+<li>It requires the next semicolon, then handles predefined entities and numeric references. <code>character_reference</code> reads the digits one byte at a time, accepting only ASCII digits of the reference’s radix with checked arithmetic, and then accepts exactly the character domain in the Definitions.</li>
+<li>Every remaining name is checked by the XML name predicate and looked up in <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span></span></span></span>. The active stack detects recursion before the recursive call.</li>
+<li>A recursive call begins by refusing when the active stack has more than 16 entries; all produced text passes through <code>append</code>. These are exactly the success and refusal conditions in the Statement.</li>
+</ol>
+<h3 id="executable-counterpart-11"><a class="header" href="#executable-counterpart-11">Executable counterpart</a></h3>
+<ul>
+<li>
+<p>Law ID: <code>value-io.xml-entity-bounded-expansion</code></p>
+</li>
+<li>
+<p>Reference: <code>panproto_reference::value_io::xml_entity</code></p>
+</li>
+<li>
+<p>Reference: <code>panproto_reference::xml::expand_entities</code></p>
+</li>
+<li>
+<p>Enumerator: <code>panproto_reference::enumerate::value_io::sequences; bound: length=2, entities=2, malformed_references=8, boundary_witnesses=4</code></p>
+</li>
+<li>
+<p>Production differential test: <code>bounded_xml_entity_expansion_matches_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=bounded_xml_entity_expansion_matches_reference)'</code></p>
+</li>
+<li>
+<p>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></p>
+</li>
+<li>
+<p>Exhaustive differential test: <code>standoff_forms_are_left_inverses_and_entities_are_bounded; command: cargo nextest run -p panproto-reference --test schema_v2 --no-tests=fail -E 'test(=standoff_forms_are_left_inverses_and_entities_are_bounded)'</code></p>
+</li>
+<li>
+<p>Fixed regression test: <code>xml_entity_text_canonical_emit_is_node_count_idempotent; command: cargo nextest run -p panproto-io --test data_format_corpus --features tree-sitter --no-tests=fail -E 'test(=xml_entity_text_canonical_emit_is_node_count_idempotent)'</code></p>
+</li>
+<li>
+<p>Property differential test: <code>randomized_xml_entity_expansion; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_xml_entity_expansion)'</code></p>
+</li>
+<li>
+<p>Randomized input scope: two entity declarations independently absent or chosen from four replacement strings, and source words of at most two entity references; exact expansion or refusal in the helper and public XML parser.</p>
+</li>
+<li>
+<p>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></p>
+</li>
+<li>
+<p>File: <code>crates/panproto-reference/src/enumerate/value_io.rs</code></p>
+</li>
+<li>
+<p>File: <code>crates/panproto-io/tests/data_format_corpus.rs</code></p>
+</li>
+<li>
+<p>Fixed differential test: <code>xml_entity_literals_and_replacements_obey_the_character_domain; command: cargo nextest run --locked -p panproto-io --test reference_value_io --cargo-profile ci-test --profile ci --no-tests=fail -E 'test(=xml_entity_literals_and_replacements_obey_the_character_domain)'</code></p>
+</li>
+<li>
+<p>Fixed differential test: <code>xml_entity_character_refusals_keep_append_stage_precedence; command: cargo nextest run --locked -p panproto-io --test reference_value_io --cargo-profile ci-test --profile ci --no-tests=fail -E 'test(=xml_entity_character_refusals_keep_append_stage_precedence)'</code></p>
+</li>
+</ul>
+<h2 id="L-value-io-13"><a class="header" href="#L-value-io-13">Canonical XML emits UTF-8 without a foreign declaration</a></h2>
+<h3 id="statement-12"><a class="header" href="#statement-12">Statement</a></h3>
+<p>For canonical XML bytes <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>, <code>xml_encoding(e)</code> holds exactly when <a href="#L-value-io-10">L-value-io-10</a> admits <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span> and, if <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span> begins with an XML declaration that contains an encoding pseudo-attribute, its quoted value is <code>UTF-8</code> or <code>UTF8</code> case-insensitively. A processing instruction such as <code>&lt;?xml-stylesheet href="encoding.xsl"?&gt;</code> is not a declaration, so <code>&lt;?xml-stylesheet href="encoding.xsl"?&gt;&lt;d/&gt;</code> is admitted. Thus canonical XML may omit the declaration, may include a declaration without an encoding pseudo-attribute, or may declare UTF-8. It cannot retain a declaration for a source encoding that it has normalized away.</p>
+<h3 id="outside-the-domain-12"><a class="header" href="#outside-the-domain-12">Outside the domain</a></h3>
+<p>The predicate deliberately implements only the canonical-output check. It is not a complete XML declaration parser, and it does not govern exact CST re-emission. Source-byte retention, including the original declaration and code-unit sequence, belongs to <a href="#L-value-io-27">L-value-io-27</a>.</p>
+<h3 id="definitions-used-12"><a class="header" href="#definitions-used-12">Definitions used</a></h3>
+<p>The optional declaration is present exactly when the bytes begin with <code>&lt;?xml</code> followed by XML white space (space, tab, carriage return or line feed); it ends at the first <code>?&gt;</code>, or at the end of the bytes when there is none. The optional encoding pseudo-attribute is the name <code>encoding</code> preceded by white space inside the declaration and followed by optional white space, <code>=</code>, optional white space and a quoted value. XML without a declaration and a declaration without that pseudo-attribute both satisfy this part of the predicate.</p>
+<h3 id="proof-12"><a class="header" href="#proof-12">Proof</a></h3>
+<p><code>xml_encoding</code> first applies <code>encoding</code>. It then requires <code>&lt;?xml</code> and one white-space byte at byte 0 before reading a declaration, and inside it matches <code>encoding</code> only at a position preceded by white space and followed, after white space, by <code>=</code>. It accepts no declaration, a declaration without an encoding pseudo-attribute, or a quoted <code>utf-8</code> or <code>utf8</code> value after ASCII case folding. Every other encoding value is rejected. The production certificate enumerates four admitted source-encoding fixtures and separately checks two fixed refusals: a <code>US-ASCII</code> declaration followed by byte <code>0x80</code>, and an unknown <code>x-unknown</code> declaration. For every admitted fixture, it reparses the canonical output and checks that the semantic text survived normalization. It also fixes the predicate on the stylesheet instruction above and on two declarations.</p>
+<h3 id="executable-counterpart-12"><a class="header" href="#executable-counterpart-12">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.xml-canonical-encoding</code></li>
+<li>Reference: <code>panproto_reference::value_io::xml_encoding</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::value_io::canonical_xml_encoding_cases; accepted source-encoding fixtures=4, fixed refusal witnesses=2</code></li>
+<li>Production certificate: <code>canonical_xml_normalizes_encodings_and_reports_typed_refusals; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=canonical_xml_normalizes_encodings_and_reports_typed_refusals)'</code></li>
+<li>Independent reference anchor: <code>canonical_encoding_normalizes_while_cst_encoding_is_exact; command: cargo nextest run --release --locked -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=canonical_encoding_normalizes_while_cst_encoding_is_exact)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Property differential test: <code>randomized_canonical_encoding; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_canonical_encoding)'</code></li>
+<li>Randomized input scope: ASCII text of length one through eight, XML sources in UTF-8, both UTF-16 byte orders, ISO-8859-1 or US-ASCII, and UTF-8 BOM inputs for JSON/CSV/TSV; preserved value and canonical output bytes.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+</ul>
+<h2 id="L-value-io-14"><a class="header" href="#L-value-io-14">TSV comments require an explicit route option</a></h2>
+<h3 id="statement-13"><a class="header" href="#statement-13">Statement</a></h3>
+<p>For a line <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span></span></span></span>, <code>tsv_comment(l)</code> holds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span></span></span></span> is nonempty. Thus the default TSV scalar route treats every nonempty line, including a line beginning with <code>#</code>, as data rather than assigning it implicit comment syntax.</p>
+<h3 id="outside-the-domain-13"><a class="header" href="#outside-the-domain-13">Outside the domain</a></h3>
+<p>The empty line is excluded by this predicate because its tabular interpretation depends on the column count, as specified by <a href="#L-value-io-16">L-value-io-16</a>. A codec configured with an explicit comment prefix is a separate route.</p>
+<h3 id="definitions-used-13"><a class="header" href="#definitions-used-13">Definitions used</a></h3>
+<p>The <em>default TSV route</em> has no comment-prefix option. Nonempty means that the UTF-8 string has at least one byte.</p>
+<h3 id="proof-13"><a class="header" href="#proof-13">Proof</a></h3>
+<p><code>tsv_comment</code> returns <code>!line.is_empty()</code>. Consequently <code>#ordinary-data</code> and every other nonempty line satisfy the data predicate, while the empty line is delegated to the row-shape rule. The certificate reads and writes through <code>parse_tsv</code> and <code>emit_tsv_with_schema</code> with no comment prefix, the configuration that <code>TabularCodec::tsv</code> builds (its constructor is pinned by the fixed regression below, since the codec type is deprecated in favour of the preserving codec), reads each line of the scope after a one-column header, requires exactly one row holding the line whenever the predicate holds, and writes that table back to its source bytes. The three lines that begin with <code>#</code> are counted. A table whose only header is <code>#header</code> is read and written back the same way.</p>
+<h3 id="executable-counterpart-13"><a class="header" href="#executable-counterpart-13">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.tsv-comment-opt-in</code></li>
+<li>Reference: <code>panproto_reference::value_io::tsv_comment</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::sequences; bound: length=2, symbols=2</code></li>
+<li>Production differential test: <code>bounded_tabular_observables_match_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=bounded_tabular_observables_match_reference)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Exhaustive differential test: <code>tabular_edge_cases_are_literal; command: cargo nextest run -p panproto-reference --test schema_v2 --no-tests=fail -E 'test(=tabular_edge_cases_are_literal)'</code></li>
+<li>Fixed production regression: <code>tabular_codec::tests::canonical_tsv_preserves_hashes_and_one_column_empty_rows; command: cargo nextest run --release --locked -p panproto-io --lib --no-tests=fail -E 'test(=tabular_codec::tests::canonical_tsv_preserves_hashes_and_one_column_empty_rows)'</code></li>
+<li>Fixed regression test: <code>tsv_has_no_comment_lines_by_default; command: cargo nextest run -p panproto-io --test text_route_repairs --no-tests=fail -E 'test(=tsv_has_no_comment_lines_by_default)'</code></li>
+<li>Property differential test: <code>randomized_tabular_observables; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_tabular_observables)'</code></li>
+<li>Randomized input scope: words of length at most two over the stated comment, missing-token, empty-row and quote alphabets; CSV/TSV selection and one/two columns, compared with the four reference predicates and emitted/reread cells.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/text_route_repairs.rs</code></li>
+</ul>
+<h2 id="L-value-io-15"><a class="header" href="#L-value-io-15">Underscore is ordinary tabular text</a></h2>
+<h3 id="statement-14"><a class="header" href="#statement-14">Statement</a></h3>
+<p>For a tabular cell <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span>, <code>tabular_missing(c)</code> holds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> is the one-character string <code>_</code>. On the default CSV and TSV routes this witness identifies the string that must remain ordinary data, never an implicit absent-value token.</p>
+<h3 id="outside-the-domain-14"><a class="header" href="#outside-the-domain-14">Outside the domain</a></h3>
+<p>The predicate does not provide a missing-value spelling. Absence has no default delimited-text representation and must receive a typed refusal unless a protocol declares one explicitly.</p>
+<h3 id="definitions-used-14"><a class="header" href="#definitions-used-14">Definitions used</a></h3>
+<p>An <em>ordinary text cell</em> parses as <code>Value::Str</code> under a text declaration. Exact string equality distinguishes <code>_</code> from the empty string and <code>__</code>.</p>
+<h3 id="proof-14"><a class="header" href="#proof-14">Proof</a></h3>
+<p><code>tabular_missing</code> is <code>cell == "_"</code>. The certificate reads every cell of the scope on the default CSV and TSV routes, which have no comment prefix, requires exactly one row holding the cell as text, so that <code>_</code> reads as <code>Value::Str("_")</code> exactly where the predicate holds, and writes each nonempty cell back to its source bytes. <a href="#L-value-io-3">L-value-io-3</a> certifies that an absent cell is refused with <code>AbsentNotRepresentable</code>.</p>
+<h3 id="executable-counterpart-14"><a class="header" href="#executable-counterpart-14">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.tabular-missing-token</code></li>
+<li>Reference: <code>panproto_reference::value_io::tabular_missing</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::sequences; bound: length=2, symbols=2, routes=2</code></li>
+<li>Production differential test: <code>bounded_tabular_observables_match_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=bounded_tabular_observables_match_reference)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Exhaustive differential test: <code>tabular_missing_paths_recognize_only_the_literal_missing_token; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=tabular_missing_paths_recognize_only_the_literal_missing_token)'</code></li>
+<li>Fixed regression test: <code>an_underscore_cell_is_text; command: cargo nextest run -p panproto-io --test text_route_repairs --no-tests=fail -E 'test(=an_underscore_cell_is_text)'</code></li>
+<li>Property differential test: <code>randomized_tabular_observables; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_tabular_observables)'</code></li>
+<li>Randomized input scope: words of length at most two over the stated comment, missing-token, empty-row and quote alphabets; CSV/TSV selection and one/two columns, compared with the four reference predicates and emitted/reread cells.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/text_route_repairs.rs</code></li>
+</ul>
+<h2 id="L-value-io-16"><a class="header" href="#L-value-io-16">A one-column empty line is one empty cell</a></h2>
+<h3 id="statement-15"><a class="header" href="#statement-15">Statement</a></h3>
+<p>For column count <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> and line <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span></span></span></span>, <code>tabular_empty_row(n, l)</code> holds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span></span></span></span> is empty. Such a line denotes one row containing one empty string, rather than zero rows.</p>
+<h3 id="outside-the-domain-15"><a class="header" href="#outside-the-domain-15">Outside the domain</a></h3>
+<p>An empty line under any other column count is not characterized by this law. A nonempty line follows the ordinary delimiter grammar.</p>
+<h3 id="definitions-used-15"><a class="header" href="#definitions-used-15">Definitions used</a></h3>
+<p>The column count is the number of header fields. An empty line has no bytes before its record terminator.</p>
+<h3 id="proof-15"><a class="header" href="#proof-15">Proof</a></h3>
+<p>The reference returns <code>column_count == 1 &amp;&amp; line.is_empty()</code>, the conjunction stated above. The certificate runs the default CSV and TSV routes for both column counts. With one column it requires exactly one row whose one cell is the line, and writes the table back to its source bytes, so an empty line is read as one row holding “” and written as an empty line. With two columns it requires zero rows for the empty line and a field-count refusal for a nonempty one-field line, so no empty-cell row arises there.</p>
+<h3 id="executable-counterpart-15"><a class="header" href="#executable-counterpart-15">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.one-column-empty-row-round-trip</code></li>
+<li>Reference: <code>panproto_reference::value_io::tabular_empty_row</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::sequences; bound: length=2, columns=2, routes=2</code></li>
+<li>Production differential test: <code>bounded_tabular_observables_match_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=bounded_tabular_observables_match_reference)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Exhaustive differential test: <code>tabular_empty_row_paths_require_one_column_and_an_empty_line; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=tabular_empty_row_paths_require_one_column_and_an_empty_line)'</code></li>
+<li>Fixed regression test: <code>one_column_empty_rows_and_tsv_quotes_round_trip; command: cargo nextest run -p panproto-io --test text_route_repairs --no-tests=fail -E 'test(=one_column_empty_rows_and_tsv_quotes_round_trip)'</code></li>
+<li>Property differential test: <code>randomized_tabular_observables; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_tabular_observables)'</code></li>
+<li>Randomized input scope: words of length at most two over the stated comment, missing-token, empty-row and quote alphabets; CSV/TSV selection and one/two columns, compared with the four reference predicates and emitted/reread cells.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/text_route_repairs.rs</code></li>
+</ul>
+<h2 id="L-value-io-17"><a class="header" href="#L-value-io-17">A quote has no special status inside a TSV cell</a></h2>
+<h3 id="statement-16"><a class="header" href="#statement-16">Statement</a></h3>
+<p>For a TSV cell <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span>, <code>tsv_quote(c)</code> holds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> contains no tab, carriage return or line feed. The quote character is admissible ordinary data and is emitted without CSV-style doubling.</p>
+<h3 id="outside-the-domain-16"><a class="header" href="#outside-the-domain-16">Outside the domain</a></h3>
+<p>A cell containing a delimiter or line break is not representable as one TSV cell under this route and receives a typed refusal. CSV quoting is governed by a different route.</p>
+<h3 id="definitions-used-16"><a class="header" href="#definitions-used-16">Definitions used</a></h3>
+<p>Containment is byte containment for the three ASCII control bytes. Other Unicode scalar values, including <code>"</code>, do not affect the predicate.</p>
+<h3 id="proof-16"><a class="header" href="#proof-16">Proof</a></h3>
+<p><code>tsv_quote</code> negates an <code>any</code> search for precisely <code>b'\t'</code>, <code>b'\r'</code> and <code>b'\n'</code>. Therefore its accepted set is exactly the set in the Statement, and quote requires no exceptional arm. The certificate writes every cell of the scope through the default TSV route: each writable cell must produce exactly the bytes of its header line, the cell and a line feed, with no quote doubled, and must read back as itself; each other cell must be refused with <code>NotRepresentable</code>.</p>
+<h3 id="executable-counterpart-16"><a class="header" href="#executable-counterpart-16">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.tsv-quote-acceptance</code></li>
+<li>Reference: <code>panproto_reference::value_io::tsv_quote</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::sequences; bound: length=2, symbols=4</code></li>
+<li>Production differential test: <code>bounded_tabular_observables_match_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=bounded_tabular_observables_match_reference)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Exhaustive differential test: <code>tabular_edge_cases_are_literal; command: cargo nextest run -p panproto-reference --test schema_v2 --no-tests=fail -E 'test(=tabular_edge_cases_are_literal)'</code></li>
+<li>Fixed regression test: <code>preserving::csv_quotes_are_syntax_while_tsv_quotes_are_ordinary_text; command: cargo nextest run -p panproto-io --test value_fidelity_corpus --features tree-sitter --no-tests=fail -E 'test(=preserving::csv_quotes_are_syntax_while_tsv_quotes_are_ordinary_text)'</code></li>
+<li>Property differential test: <code>randomized_tabular_observables; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_tabular_observables)'</code></li>
+<li>Randomized input scope: words of length at most two over the stated comment, missing-token, empty-row and quote alphabets; CSV/TSV selection and one/two columns, compared with the four reference predicates and emitted/reread cells.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/value_fidelity_corpus.rs</code></li>
+</ul>
+<h2 id="L-value-io-18"><a class="header" href="#L-value-io-18">XML name identity is namespace URI plus local name</a></h2>
+<h3 id="statement-17"><a class="header" href="#statement-17">Statement</a></h3>
+<p>For namespace URI <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">u</span></span></span></span> and local name <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span></span></span></span>, <code>xml_expanded_name(u, l)</code> is the ordered pair <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mclose">)</span></span></span></span>. Prefix spelling is absent from the identity, and the empty namespace remains the empty first component. The canonical XML reader identifies attribute names by this pair: two attributes of one start tag whose pairs are equal are refused as one duplicate member named <code>{u}l</code> (<a href="#L-value-io-9">L-value-io-9</a>), whatever prefixes spell them, and distinct pairs are stored under their Clark names <code>{u}l</code>, or <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span></span></span></span> when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">u</span></span></span></span> is empty. A schema edge named <code>{u}l</code> selects an element of that namespace and local name under any prefix.</p>
+<h3 id="outside-the-domain-17"><a class="header" href="#outside-the-domain-17">Outside the domain</a></h3>
+<p>Namespace binding, XML-name validation and reserved-prefix checks occur before this function. The function accepts the resolved strings it is given. A namespace declaration attribute is identified by its raw name in the <code>xmlns</code> namespace.</p>
+<h3 id="definitions-used-17"><a class="header" href="#definitions-used-17">Definitions used</a></h3>
+<p>An XML <em>expanded name</em> is an ordered pair of namespace URI and local name. Pair equality compares the two components in that order.</p>
+<h3 id="proof-17"><a class="header" href="#proof-17">Proof</a></h3>
+<p>The function clones <code>namespace</code> and <code>local</code> into a tuple without inspecting or transforming either string. This is exactly the expanded-name function in the Statement. The certificate drives the production parse path. For elements, it binds each namespace of the scope under two prefixes in turn and requires the Clark-named edge to select the element. For attributes, it binds <code>p</code> and <code>q</code> over every pair of namespaces and writes every ordered pair of attributes drawn from unprefixed, <code>p:</code> and <code>q:</code> names over two local names; production must refuse with <code>DuplicateMember</code> at the second name token exactly when the reference pairs are equal, and must otherwise store both values under their Clark names. Thirty-two of the 144 documents collide.</p>
+<h3 id="executable-counterpart-17"><a class="header" href="#executable-counterpart-17">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.xml-expanded-name-function</code></li>
+<li>Reference: <code>panproto_reference::value_io::xml_expanded_name</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::sequences; bound: length=2, names=2, prefixes=2, attribute_documents=144</code></li>
+<li>Production differential test: <code>bounded_xml_expanded_names_match_reference; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=bounded_xml_expanded_names_match_reference)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Exhaustive differential test: <code>xml_expanded_name_paths_preserve_namespace_then_local_order; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=xml_expanded_name_paths_preserve_namespace_then_local_order)'</code></li>
+<li>Fixed regression test: <code>preserving::xml_cst_refuses_conflicting_nil_markers_and_namespace_rebinding; command: cargo nextest run -p panproto-io --test value_fidelity_corpus --features tree-sitter --no-tests=fail -E 'test(=preserving::xml_cst_refuses_conflicting_nil_markers_and_namespace_rebinding)'</code></li>
+<li>Property differential test: <code>randomized_xml_expanded_names; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_xml_expanded_names)'</code></li>
+<li>Randomized input scope: two attributes over six prefix/local-name pairs and four namespace assignments; Clark names or exact duplicate-member name and offset.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/value_fidelity_corpus.rs</code></li>
+</ul>
+<h2 id="L-value-io-19"><a class="header" href="#L-value-io-19">The canonical blob object reads back as the same value</a></h2>
+<h3 id="statement-18"><a class="header" href="#statement-18">Statement</a></h3>
+<p>For a blob reference <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span>, media type <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> and size <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>, <code>blob_writer(r, m, n)</code> is the UTF-8 JSON object <code>{"$type":"blob","mimeType":m,"ref":{"$link":r},"size":n}</code>, where <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> are escaped as JSON strings. The generic JSON value route on <code>Value::Blob { ref_: r, mime: m, size: n }</code> emits those bytes when placed at an open object member whose parser value depth is at most 125. Parsing the emitted document recovers the identical <code>Value::Blob</code>, including when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> is <code>u64::MAX</code>. Depth 126 receives <code>NotRepresentable</code> because the nested <code>$link</code> string would occur at the parser’s excluded depth 128.</p>
+<h3 id="outside-the-domain-18"><a class="header" href="#outside-the-domain-18">Outside the domain</a></h3>
+<p>This law covers the canonical JSON tree route. A blob must occupy an open object member; placing it directly in a scalar node receives <code>NotRepresentable</code> because its object syntax would reparse as structure rather than as that node’s value. Binary blob contents, CID validation and preserving rewrites of noncanonical member order lie outside its domain. The older <code>panproto_inst::parse</code> JSON converter is also outside this route: it currently decodes JSON objects as <code>Value::Unknown</code> and serializes <code>Value::Blob.ref_</code> as a bare string. The certificate neither calls nor repairs that legacy converter.</p>
+<h3 id="definitions-used-18"><a class="header" href="#definitions-used-18">Definitions used</a></h3>
+<p>The canonical <a href="https://atproto.com/">ATProto</a> representation has four members in the displayed order. Its <code>ref</code> member holds a link object whose sole member is <code>$link</code>. The reader recognizes a blob only when the outer object has exactly the unique members <code>$type</code>, <code>mimeType</code>, <code>ref</code> and <code>size</code>, the <code>$type</code> string is <code>blob</code>, both text fields are strings, and <code>size</code> is an unsigned base-ten integer token in the inclusive range from zero through <code>u64::MAX</code>. A sign, fraction or exponent makes the object ordinary <code>Value::Unknown</code>, even when the token denotes a non-negative integral number such as <code>-0</code> or <code>1e0</code>. Other valid JSON objects also remain <code>Value::Unknown</code>; duplicate members receive the JSON parser’s typed <code>DuplicateMember</code> refusal.</p>
+<p>Tree equality in the depth certificate is <code>instances_equivalent</code>. On these validator-admitted chain fixtures it requires the same root and schema root, the same node ids with equal anchors, values and extra fields, the same parent map and arc multiset, and the same child sequence at every parent. Arc records belonging to different parents may occupy different positions in the two global vectors because those positions do not affect the tree or its JSON form. The comparison still distinguishes a reordering of two children under one parent. Canonical <code>WInstance</code> byte identity is not claimed; byte identity below means equality of the emitted JSON documents.</p>
+<p>JSON quoting escapes quote and backslash, uses the named escapes for backspace, form feed, line feed, carriage return and tab, and writes the remaining characters from U+0000 through U+001F as <code>\u00xx</code>. DEL, the C1 controls and all other Unicode scalars remain literal UTF-8.</p>
+<h3 id="proof-18"><a class="header" href="#proof-18">Proof</a></h3>
+<p><code>blob_writer</code> constructs the object independently with its local JSON string quoting function. Its final control branch is bounded by U+001F, which separates required C0 escaping from literal DEL and C1 output. The production certificate builds the corresponding <code>Value::Blob</code>, emits it through the public JSON route and compares the exact enclosing object bytes with the independent result. It then reparses those bytes and compares the recovered value with all three input fields. The four reference cases cover the two size boundaries. The string quoting is then settled exhaustively: for each of the 1,112,064 Unicode scalars, a blob whose link and media type are that one-scalar string is written by the production route exactly as <code>blob_writer</code> writes it and reads back as the same blob. Since the JSON string writer escapes each scalar of a string independently of its neighbours, agreement on every one-scalar string is agreement on every string, so the production escape set is exactly the one stated above. Fifteen reserved-shape near misses vary the required names and types, add a field, or leave the unsigned-integer grammar and range; two duplicate-member documents receive the parser’s refusal. A direct-node blob is refused because its object syntax would reparse structurally. The depth witnesses admit a blob at 125 and a scalar at 127, compare each reparsed tree structurally with its source, and recover the same JSON bytes on re-emission. The corresponding values at 126 and 128 are refused. Together, emission equality and parse equality instantiate <a href="#L-value-io-1">L-value-io-1</a> for blobs.</p>
+<h3 id="executable-counterpart-18"><a class="header" href="#executable-counterpart-18">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.blob-writer-agreement</code></li>
+<li>Reference: <code>panproto_reference::value_io::blob_writer</code></li>
+<li>Evidence scope: <code>panproto_reference::enumerate::value_io::blob_fields and single_scalars; writer cases=4, reserved-shape near misses=15, duplicate-key refusals=2, direct-node refusal=1, parser-depth boundaries=4, one-scalar link and media-type strings=1112064; covering empty strings, JSON escaping, literal DEL and C1 characters, BMP and non-BMP Unicode, size 0, and u64::MAX</code></li>
+<li>Production certificate: <code>canonical_blob_writer_matches_independent_atproto_layout; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=canonical_blob_writer_matches_independent_atproto_layout)'</code></li>
+<li>Escape-set certificate: <code>every_single_scalar_blob_field_matches_the_reference_layout; command: cargo nextest run --release --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=every_single_scalar_blob_field_matches_the_reference_layout)'</code></li>
+<li>Independent reference anchor: <code>byte_paths_compare_both_directions_and_blob_layout_is_exact; command: cargo nextest run --release --locked -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=byte_paths_compare_both_directions_and_blob_layout_is_exact)'</code></li>
+<li>Production differential file: <code>crates/panproto-io/tests/reference_value_io.rs</code></li>
+<li>Property differential test: <code>randomized_blob_writer; command: cargo nextest run --locked -p panproto-io --test reference_value_io --no-tests=fail -E 'test(=randomized_blob_writer)'</code></li>
+<li>Randomized input scope: link and media-type strings of length at most four and every u64 size; exact independent blob layout and parsed carrier.</li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+</ul>
+<h2 id="L-value-io-20"><a class="header" href="#L-value-io-20">CST parse then unedited emit is byte identity</a></h2>
+<h3 id="statement-19"><a class="header" href="#statement-19">Statement</a></h3>
+<p>For every route <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> and accepted byte sequence <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span>, <code>round_trip_cst(r, b)</code> holds: parsing <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span> into a CST value and emitting it with no replacement returns <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span> exactly.</p>
+<h3 id="outside-the-domain-19"><a class="header" href="#outside-the-domain-19">Outside the domain</a></h3>
+<p>When <code>parse_cst</code> refuses <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span>, the predicate is false. The law says nothing about edited emission, which uses the canonical emitter and may return <code>NotRepresentable</code>.</p>
+<h3 id="definitions-used-19"><a class="header" href="#definitions-used-19">Definitions used</a></h3>
+<p><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mclose">)</span></span></span></span> is the pair <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">b</span><span class="mclose">)</span></span></span></span>. <code>emit_cst(r, c, None)</code> is an unedited emission; <code>Some(v)</code> is an explicit replacement.</p>
+<h3 id="proof-19"><a class="header" href="#proof-19">Proof</a></h3>
+<p>By <a href="#L-value-io-22">L-value-io-22</a>, successful CST parsing stores <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span> unchanged. <code>emit_cst</code> with <code>None</code> clones those stored bytes. <code>round_trip_cst</code> compares the result with <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span>, so every accepted input satisfies the predicate and every parse refusal returns <code>false</code>.</p>
+<h3 id="executable-counterpart-19"><a class="header" href="#executable-counterpart-19">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.rcm-prop1-cst</code></li>
+<li>Reference: <code>panproto_reference::value_io::round_trip_cst</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::byte_strings; bound: length=2, bytes=256</code></li>
+<li>Exhaustive differential test: <code>value_io_oracles_are_independent_and_toml_rejects_reduced_years; command: cargo nextest run -p panproto-reference --test schema_v2 --no-tests=fail -E 'test(=value_io_oracles_are_independent_and_toml_rejects_reduced_years)'</code></li>
+<li>Property differential test: <code>registry_preserving_round_trip_is_byte_equal; command: cargo nextest run -p panproto-io --test registry_preserving --features tree-sitter --no-tests=fail -E 'test(=registry_preserving_round_trip_is_byte_equal)'</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/registry_preserving.rs</code></li>
+</ul>
+<h2 id="L-value-io-21"><a class="header" href="#L-value-io-21">An unedited CST retains every source byte</a></h2>
+<h3 id="statement-20"><a class="header" href="#statement-20">Statement</a></h3>
+<p>For CST source bytes <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span> and emitted bytes <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>, <code>preserve_cst(s, e)</code> holds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>. Layout trivia and scalar token spelling are part of this equality.</p>
+<h3 id="outside-the-domain-20"><a class="header" href="#outside-the-domain-20">Outside the domain</a></h3>
+<p>The relation applies to unedited CST emission. Once a semantic replacement is supplied, <code>emit_cst</code> delegates to the canonical route emitter.</p>
+<h3 id="definitions-used-20"><a class="header" href="#definitions-used-20">Definitions used</a></h3>
+<p>CST preservation compares the complete encoded source, not a token subset and not an abstract syntax tree.</p>
+<h3 id="proof-20"><a class="header" href="#proof-20">Proof</a></h3>
+<p><code>preserve_cst</code> aliases <code>preserve</code>, whose implementation is direct byte-slice equality. <code>emit_cst</code> additionally realizes the relation by cloning the stored source when its replacement argument is <code>None</code>.</p>
+<h3 id="executable-counterpart-20"><a class="header" href="#executable-counterpart-20">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.vf8-presentation-preservation-cst</code></li>
+<li>Reference: <code>panproto_reference::value_io::preserve</code></li>
+<li>Reference: <code>panproto_reference::value_io::preserve_cst</code></li>
+<li>Evidence scope: <code>fixed equality witnesses=3, noncanonical JSON registry documents=1</code></li>
+<li>Production certificate: <code>registry_preserving_round_trip_is_byte_equal; command: cargo nextest run -p panproto-io --test registry_preserving --features tree-sitter --no-tests=fail -E 'test(=registry_preserving_round_trip_is_byte_equal)'</code></li>
+<li>Independent reference anchor: <code>preservation_paths_accept_exact_bytes_and_reject_changed_bytes; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=preservation_paths_accept_exact_bytes_and_reject_changed_bytes)'</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/registry_preserving.rs</code></li>
+</ul>
+<h2 id="L-value-io-22"><a class="header" href="#L-value-io-22">CST reading pairs the parsed value with exact source bytes</a></h2>
+<h3 id="statement-21"><a class="header" href="#statement-21">Statement</a></h3>
+<p>For every route <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> and bytes <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span>, <code>parse_cst(r, b)</code> returns <code>Ok(CstValue { value: v, source: b })</code> exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm">Ok</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span>. It returns the same <code>ValueIoError</code> as <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> otherwise.</p>
+<h3 id="outside-the-domain-21"><a class="header" href="#outside-the-domain-21">Outside the domain</a></h3>
+<p>There is none beyond the route parser’s domain in <a href="#L-value-io-4">L-value-io-4</a>. CST parsing adds no recovery or alternative acceptance rule.</p>
+<h3 id="definitions-used-21"><a class="header" href="#definitions-used-21">Definitions used</a></h3>
+<p>A <code>CstValue</code> contains a semantic <code>Value</code> and an owned byte vector called <code>source</code>.</p>
+<h3 id="proof-21"><a class="header" href="#proof-21">Proof</a></h3>
+<p><code>parse_cst</code> first evaluates <code>parse(route, bytes)?</code>; the question-mark operator returns its error unchanged. On success it constructs <code>CstValue</code> from the returned value and <code>bytes.to_vec()</code>. These two branches are precisely the characterization in the Statement.</p>
+<h3 id="executable-counterpart-21"><a class="header" href="#executable-counterpart-21">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.vf9-reading-cst</code></li>
+<li>Reference: <code>panproto_reference::value_io::parse_cst</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::byte_strings; bound: length=2, bytes=256</code></li>
+<li>Exhaustive differential test: <code>value_io_oracles_are_independent_and_toml_rejects_reduced_years; command: cargo nextest run -p panproto-reference --test schema_v2 --no-tests=fail -E 'test(=value_io_oracles_are_independent_and_toml_rejects_reduced_years)'</code></li>
+<li>Property differential test: <code>registry_preserving_round_trip_is_byte_equal; command: cargo nextest run -p panproto-io --test registry_preserving --features tree-sitter --no-tests=fail -E 'test(=registry_preserving_round_trip_is_byte_equal)'</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/registry_preserving.rs</code></li>
+</ul>
+<h2 id="L-value-io-23"><a class="header" href="#L-value-io-23">CST object parsing refuses repeated member names</a></h2>
+<h3 id="statement-22"><a class="header" href="#statement-22">Statement</a></h3>
+<p>For a CST member sequence <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span></span></span></span>, <code>duplicate_member_cst(M)</code> holds exactly when two positions of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span></span></span></span> have the same member name.</p>
+<h3 id="outside-the-domain-22"><a class="header" href="#outside-the-domain-22">Outside the domain</a></h3>
+<p>The predicate accepts every finite sequence. The route parser maps a positive result to its own typed duplicate-member refusal.</p>
+<h3 id="definitions-used-22"><a class="header" href="#definitions-used-22">Definitions used</a></h3>
+<p>Member-name equality and the quantified duplicate condition are those of <a href="#L-value-io-9">L-value-io-9</a>.</p>
+<h3 id="proof-22"><a class="header" href="#proof-22">Proof</a></h3>
+<p><code>duplicate_member_cst</code> aliases <code>duplicate_member</code>. The set-insertion proof in <a href="#L-value-io-9">L-value-io-9</a> thus applies without alteration.</p>
+<h3 id="executable-counterpart-22"><a class="header" href="#executable-counterpart-22">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.duplicate-member-refusal-cst</code></li>
+<li>Reference: <code>panproto_reference::value_io::duplicate_member_cst</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::sequences; bound: length=2, names=2</code></li>
+<li>Exhaustive differential test: <code>duplicate_member_paths_find_nonadjacent_duplicates_only; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=duplicate_member_paths_find_nonadjacent_duplicates_only)'</code></li>
+<li>Property differential test: <code>preserving::json_cst_rejects_duplicate_keys_and_preserves_non_string_type_data; command: cargo nextest run -p panproto-io --test value_fidelity_corpus --features tree-sitter --no-tests=fail -E 'test(=preserving::json_cst_rejects_duplicate_keys_and_preserves_non_string_type_data)'</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/value_fidelity_corpus.rs</code></li>
+</ul>
+<h2 id="L-value-io-24"><a class="header" href="#L-value-io-24">CST encoding and byte-order marks are byte exact</a></h2>
+<h3 id="statement-23"><a class="header" href="#statement-23">Statement</a></h3>
+<p>For CST source bytes <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span> and emitted bytes <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>, <code>encoding_bom_cst(s, e)</code> holds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>, including any byte-order mark.</p>
+<h3 id="outside-the-domain-23"><a class="header" href="#outside-the-domain-23">Outside the domain</a></h3>
+<p>The relation presupposes an accepted CST and unedited emission. It neither repairs inconsistent encoding declarations nor permits transcoding.</p>
+<h3 id="definitions-used-23"><a class="header" href="#definitions-used-23">Definitions used</a></h3>
+<p>The source encoding signature is part of the complete CST byte sequence. No transcoding or prefix normalization is applied on an unedited emission.</p>
+<h3 id="proof-23"><a class="header" href="#proof-23">Proof</a></h3>
+<p><code>encoding_bom_cst</code> directly compares the source and emitted byte slices. This is intentionally stronger than the canonical normalization predicate in <a href="#L-value-io-10">L-value-io-10</a>.</p>
+<h3 id="executable-counterpart-23"><a class="header" href="#executable-counterpart-23">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.encoding-and-bom-preservation-cst</code></li>
+<li>Reference: <code>panproto_reference::value_io::encoding_bom_cst</code></li>
+<li>Evidence scope: <code>UTF-8-BOM equality witnesses=2, production corpus=all accepted declared protocol fixtures</code></li>
+<li>Production certificate: <code>fixture_corpus_is_byte_faithful; command: cargo nextest run -p panproto-io --test data_format_corpus --features tree-sitter --no-tests=fail -E 'test(=fixture_corpus_is_byte_faithful)'</code></li>
+<li>Independent reference anchor: <code>canonical_encoding_normalizes_while_cst_encoding_is_exact; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=canonical_encoding_normalizes_while_cst_encoding_is_exact)'</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/data_format_corpus.rs</code></li>
+</ul>
+<h2 id="L-value-io-25"><a class="header" href="#L-value-io-25">TOML CST preserves exact decimal and big-integer tokens</a></h2>
+<h3 id="statement-24"><a class="header" href="#statement-24">Statement</a></h3>
+<p>For source token <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span> and emitted token <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>, <code>decimal_bigint_cst(s, e)</code> holds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>. The CST route thus retains exact decimal scale and every big-integer digit until the scalar is edited.</p>
+<h3 id="outside-the-domain-24"><a class="header" href="#outside-the-domain-24">Outside the domain</a></h3>
+<p>Malformed tokens and typed emission refusals are outside the relation. Replacement emission follows TOML’s canonical exact-number writer.</p>
+<h3 id="definitions-used-24"><a class="header" href="#definitions-used-24">Definitions used</a></h3>
+<p>Token equality here is byte-for-byte string equality. It is stricter than the representation equality used by the canonical route in <a href="#L-value-io-11">L-value-io-11</a>.</p>
+<h3 id="proof-24"><a class="header" href="#proof-24">Proof</a></h3>
+<p><code>decimal_bigint_cst</code> directly compares the two token strings. Equal strings retain the source exponent form, separators and every digit, which proves the preserving claim.</p>
+<h3 id="executable-counterpart-24"><a class="header" href="#executable-counterpart-24">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.toml-decimal-bigint-round-trip-cst</code></li>
+<li>Reference: <code>panproto_reference::toml::decimal_bigint_cst</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::numerals; bound: digits=2, exponents=3</code></li>
+<li>Exhaustive differential test: <code>toml_scalar_paths_preserve_decimal_scale_and_bigint_digits; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=toml_scalar_paths_preserve_decimal_scale_and_bigint_digits)'</code></li>
+<li>Property differential test: <code>toml_cst_writes_exact_decimals_and_big_integers; command: cargo nextest run -p panproto-io --test text_route_repairs --features tree-sitter --no-tests=fail -E 'test(=toml_cst_writes_exact_decimals_and_big_integers)'</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/text_route_repairs.rs</code></li>
+</ul>
+<h2 id="L-value-io-26"><a class="header" href="#L-value-io-26">XML CST entity expansion has the same typed bounds</a></h2>
+<h3 id="statement-25"><a class="header" href="#statement-25">Statement</a></h3>
+<p>For CST text <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> and declaration map <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span></span></span></span>, <code>bounded_expansion_cst(t, D)</code> returns the recursive XML expansion characterized by <a href="#L-value-io-12">L-value-io-12</a>, with the same XML 1.0 character domain, depth bound, byte bound and five typed refusal classes.</p>
+<h3 id="outside-the-domain-25"><a class="header" href="#outside-the-domain-25">Outside the domain</a></h3>
+<p>Malformed, undeclared, recursive, over-depth and over-budget inputs receive the corresponding <code>EntityError</code>; no partial expansion is returned.</p>
+<h3 id="definitions-used-25"><a class="header" href="#definitions-used-25">Definitions used</a></h3>
+<p>All expansion terms and bounds are defined in <a href="#L-value-io-12">L-value-io-12</a>.</p>
+<h3 id="proof-25"><a class="header" href="#proof-25">Proof</a></h3>
+<p><code>bounded_expansion_cst</code> is an alias of <code>expand_entities</code>. The implementation and typed-refusal proof in <a href="#L-value-io-12">L-value-io-12</a> are thus definitionally the same for the CST route.</p>
+<h3 id="executable-counterpart-25"><a class="header" href="#executable-counterpart-25">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.xml-entity-bounded-expansion-cst</code></li>
+<li>Reference: <code>panproto_reference::xml::bounded_expansion_cst</code></li>
+<li>Reference: <code>panproto_reference::xml::expand_entities</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::sequences; bound: length=2, entities=2</code></li>
+<li>Exhaustive differential test: <code>standoff_forms_are_left_inverses_and_entities_are_bounded; command: cargo nextest run -p panproto-reference --test schema_v2 --no-tests=fail -E 'test(=standoff_forms_are_left_inverses_and_entities_are_bounded)'</code></li>
+<li>Property differential test: <code>xml_entity_text_canonical_emit_is_node_count_idempotent; command: cargo nextest run -p panproto-io --test data_format_corpus --features tree-sitter --no-tests=fail -E 'test(=xml_entity_text_canonical_emit_is_node_count_idempotent)'</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/data_format_corpus.rs</code></li>
+</ul>
+<h2 id="L-value-io-27"><a class="header" href="#L-value-io-27">XML CST round trips preserve exact bytes</a></h2>
+<h3 id="statement-26"><a class="header" href="#statement-26">Statement</a></h3>
+<p>For XML CST source bytes <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span> and emitted bytes <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>, <code>xml::round_trip_cst(s, e)</code> holds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>.</p>
+<h3 id="outside-the-domain-26"><a class="header" href="#outside-the-domain-26">Outside the domain</a></h3>
+<p>The relation covers an accepted, unedited XML CST. Edits may invoke canonical XML emission, and parse refusals do not produce a CST.</p>
+<h3 id="definitions-used-26"><a class="header" href="#definitions-used-26">Definitions used</a></h3>
+<p>Exact XML bytes include declarations, namespace-prefix spellings, entity spellings, quote choices and layout trivia.</p>
+<h3 id="proof-26"><a class="header" href="#proof-26">Proof</a></h3>
+<p><code>xml::round_trip_cst</code> aliases <code>preserve</code>, whose implementation is direct byte-slice equality. Every byte category in the Definitions is consequently retained.</p>
+<h3 id="executable-counterpart-26"><a class="header" href="#executable-counterpart-26">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.xml-byte-round-trip-cst</code></li>
+<li>Reference: <code>panproto_reference::xml::round_trip_cst</code></li>
+<li>Evidence scope: <code>fixed equality witnesses=3, mixed-content XML fixtures=4</code></li>
+<li>Production certificate: <code>xml_mixed_content_round_trips_byte_faithfully; command: cargo nextest run -p panproto-io --test data_format_corpus --features tree-sitter --no-tests=fail -E 'test(=xml_mixed_content_round_trips_byte_faithfully)'</code></li>
+<li>Independent reference anchor: <code>preservation_paths_accept_exact_bytes_and_reject_changed_bytes; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=preservation_paths_accept_exact_bytes_and_reject_changed_bytes)'</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/data_format_corpus.rs</code></li>
+</ul>
+<h2 id="L-value-io-28"><a class="header" href="#L-value-io-28">Tabular CST keeps underscore as text</a></h2>
+<h3 id="statement-27"><a class="header" href="#statement-27">Statement</a></h3>
+<p>For a CST cell <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span>, <code>missing_token_cst(c)</code> holds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> is <code>_</code>; a positive result witnesses ordinary underscore text rather than implicit absence.</p>
+<h3 id="outside-the-domain-27"><a class="header" href="#outside-the-domain-27">Outside the domain</a></h3>
+<p>The route has no default missing token. Explicit protocol-level missing-value syntax is outside this law.</p>
+<h3 id="definitions-used-27"><a class="header" href="#definitions-used-27">Definitions used</a></h3>
+<p>The cell predicate and ordinary-data interpretation are those of <a href="#L-value-io-15">L-value-io-15</a>.</p>
+<h3 id="proof-27"><a class="header" href="#proof-27">Proof</a></h3>
+<p><code>missing_token_cst</code> aliases <code>tabular_missing</code>; exactness follows from <a href="#L-value-io-15">L-value-io-15</a>.</p>
+<h3 id="executable-counterpart-27"><a class="header" href="#executable-counterpart-27">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.tabular-missing-token-cst</code></li>
+<li>Reference: <code>panproto_reference::tabular::missing_token_cst</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::sequences; bound: length=2, symbols=2</code></li>
+<li>Exhaustive differential test: <code>tabular_missing_paths_recognize_only_the_literal_missing_token; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=tabular_missing_paths_recognize_only_the_literal_missing_token)'</code></li>
+<li>Property differential test: <code>an_underscore_cell_is_text; command: cargo nextest run -p panproto-io --test text_route_repairs --no-tests=fail -E 'test(=an_underscore_cell_is_text)'</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/text_route_repairs.rs</code></li>
+</ul>
+<h2 id="L-value-io-29"><a class="header" href="#L-value-io-29">One-column CST tables retain an empty record</a></h2>
+<h3 id="statement-28"><a class="header" href="#statement-28">Statement</a></h3>
+<p>For column count <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> and CST line <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span></span></span></span>, <code>one_column_empty_cst(n, l)</code> holds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span></span></span></span> is empty. The accepted line is one record with one empty cell.</p>
+<h3 id="outside-the-domain-28"><a class="header" href="#outside-the-domain-28">Outside the domain</a></h3>
+<p>Other column counts and nonempty lines are outside this edge-case predicate and follow the ordinary tabular grammar.</p>
+<h3 id="definitions-used-28"><a class="header" href="#definitions-used-28">Definitions used</a></h3>
+<p>The one-column empty-row relation is defined in <a href="#L-value-io-16">L-value-io-16</a>.</p>
+<h3 id="proof-28"><a class="header" href="#proof-28">Proof</a></h3>
+<p><code>one_column_empty_cst</code> aliases <code>tabular_empty_row</code>, so <a href="#L-value-io-16">L-value-io-16</a> supplies both directions.</p>
+<h3 id="executable-counterpart-28"><a class="header" href="#executable-counterpart-28">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.one-column-empty-row-round-trip-cst</code></li>
+<li>Reference: <code>panproto_reference::tabular::one_column_empty_cst</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::sequences; bound: length=2, columns=2</code></li>
+<li>Exhaustive differential test: <code>tabular_empty_row_paths_require_one_column_and_an_empty_line; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=tabular_empty_row_paths_require_one_column_and_an_empty_line)'</code></li>
+<li>Property differential test: <code>one_column_empty_rows_and_tsv_quotes_round_trip; command: cargo nextest run -p panproto-io --test text_route_repairs --no-tests=fail -E 'test(=one_column_empty_rows_and_tsv_quotes_round_trip)'</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/text_route_repairs.rs</code></li>
+</ul>
+<h2 id="L-value-io-30"><a class="header" href="#L-value-io-30">TSV CST accepts quote as ordinary cell data</a></h2>
+<h3 id="statement-29"><a class="header" href="#statement-29">Statement</a></h3>
+<p>For a TSV CST cell <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span>, <code>tsv_quote_cst(c)</code> holds exactly when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> contains no tab, carriage return or line feed. A quote neither opens a quoted field nor requires doubling.</p>
+<h3 id="outside-the-domain-29"><a class="header" href="#outside-the-domain-29">Outside the domain</a></h3>
+<p>Cells containing the TSV delimiter or a record break are refused as one-cell CST values. CSV CST uses its own quote grammar.</p>
+<h3 id="definitions-used-29"><a class="header" href="#definitions-used-29">Definitions used</a></h3>
+<p>The TSV cell admissibility predicate is defined in <a href="#L-value-io-17">L-value-io-17</a>.</p>
+<h3 id="proof-29"><a class="header" href="#proof-29">Proof</a></h3>
+<p><code>tsv_quote_cst</code> aliases <code>tsv_quote</code>; <a href="#L-value-io-17">L-value-io-17</a> proves the exact accepted set.</p>
+<h3 id="executable-counterpart-29"><a class="header" href="#executable-counterpart-29">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.tsv-quote-acceptance-cst</code></li>
+<li>Reference: <code>panproto_reference::tabular::tsv_quote_cst</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::sequences; bound: length=2, symbols=4</code></li>
+<li>Exhaustive differential test: <code>tabular_edge_cases_are_literal; command: cargo nextest run -p panproto-reference --test schema_v2 --no-tests=fail -E 'test(=tabular_edge_cases_are_literal)'</code></li>
+<li>Property differential test: <code>preserving::csv_quotes_are_syntax_while_tsv_quotes_are_ordinary_text; command: cargo nextest run -p panproto-io --test value_fidelity_corpus --features tree-sitter --no-tests=fail -E 'test(=preserving::csv_quotes_are_syntax_while_tsv_quotes_are_ordinary_text)'</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/value_fidelity_corpus.rs</code></li>
+</ul>
+<h2 id="L-value-io-31"><a class="header" href="#L-value-io-31">XML CST expanded names ignore prefix spelling</a></h2>
+<h3 id="statement-30"><a class="header" href="#statement-30">Statement</a></h3>
+<p>For resolved namespace URI <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">u</span></span></span></span> and local name <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span></span></span></span>, <code>expanded_name_cst(u, l)</code> is <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mclose">)</span></span></span></span>. Two CST names with different prefixes thus have the same identity exactly when resolution gives equal namespace URIs and equal local names.</p>
+<h3 id="outside-the-domain-30"><a class="header" href="#outside-the-domain-30">Outside the domain</a></h3>
+<p>Unbound, reserved or malformed prefixes are refused during namespace resolution and never reach this function.</p>
+<h3 id="definitions-used-30"><a class="header" href="#definitions-used-30">Definitions used</a></h3>
+<p>Expanded-name identity is the ordered-pair definition in <a href="#L-value-io-18">L-value-io-18</a>.</p>
+<h3 id="proof-30"><a class="header" href="#proof-30">Proof</a></h3>
+<p><code>expanded_name_cst</code> aliases <code>xml_expanded_name</code>; <a href="#L-value-io-18">L-value-io-18</a> establishes that it returns exactly the ordered pair of its arguments.</p>
+<h3 id="executable-counterpart-30"><a class="header" href="#executable-counterpart-30">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>value-io.xml-expanded-name-function-cst</code></li>
+<li>Reference: <code>panproto_reference::xml::expanded_name_cst</code></li>
+<li>Enumerator: <code>panproto_reference::enumerate::value_io::sequences; bound: length=2, names=2</code></li>
+<li>Exhaustive differential test: <code>xml_expanded_name_paths_preserve_namespace_then_local_order; command: cargo nextest run -p panproto-reference --test values_io_direct --no-tests=fail -E 'test(=xml_expanded_name_paths_preserve_namespace_then_local_order)'</code></li>
+<li>Property differential test: <code>preserving::xml_cst_refuses_conflicting_nil_markers_and_namespace_rebinding; command: cargo nextest run -p panproto-io --test value_fidelity_corpus --features tree-sitter --no-tests=fail -E 'test(=preserving::xml_cst_refuses_conflicting_nil_markers_and_namespace_rebinding)'</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/value_io.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/value_fidelity_corpus.rs</code></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../correctness/values.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../correctness/theories.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../correctness/values.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../correctness/theories.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src=".././theme/cite-group.js"></script>
+        <script src=".././theme/mermaid.min.js"></script>
+        <script src=".././theme/mermaid-init.js"></script>
+        <script src=".././theme/bib-links.js"></script>
+        <script src=".././theme/bib-linkify.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

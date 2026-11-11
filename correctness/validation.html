@@ -1,0 +1,879 @@
+<!DOCTYPE HTML>
+<html lang="en" class="navy sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Validation - panproto</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Documentation: tutorials, how-to guides, reference, and explanation">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href=".././theme/cite.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "navy";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-1d2a83d6.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-19d298fc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('navy')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">panproto</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/panproto/panproto" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/panproto/panproto/edit/main/book/src/correctness/validation.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="validation"><a class="header" href="#validation">Validation</a></h1>
+<p>Validation has three linked obligations. First, whole-instance validation must return the same typed outcome for the same schema, protocol, instance, budget, and external evidence. Second, incremental validation must preserve that outcome while recomputing only the checks whose dependencies changed. Third, the smaller validation predicates used by keys, references, indices, and format annotations must agree with their production uses. We call these obligations the <em>validation agreement</em>. The first eleven laws establish its whole-instance and incremental parts. The final nine laws fix the auxiliary predicates.</p>
+<p>The notation <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span></span></span></span> names a compiled validation plan, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span> an instance, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span></span></span></span> an external-verdict projection, and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> one check instance. We write <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">c</span><span class="mclose">)</span></span></span></span> for the ordered diagnostic and incomplete entries produced at <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span>, and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">c</span><span class="mclose">)</span></span></span></span> for the ordered carrier references read at <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span>. Equality of two production reports below includes status, diagnostics, incomplete entries, coverage, multiplicity, and order. A production report and a reference report are compared on status, every diagnostic and incomplete entry with multiplicity and order, and, where stated, coverage counts.</p>
+<h2 id="L-validation-1"><a class="header" href="#L-validation-1">Passed status means that no required check is open</a></h2>
+<h3 id="statement"><a class="header" href="#statement">Statement</a></h3>
+<p>A report is <code>Passed</code> exactly when it contains neither a required diagnostic nor a required incomplete entry. It is <code>Failed</code> when at least one required diagnostic exists. Otherwise, it is <code>Incomplete</code> exactly when at least one required incomplete entry exists. Advisory entries do not alter status.</p>
+<h3 id="outside-the-domain"><a class="header" href="#outside-the-domain">Outside the domain</a></h3>
+<p>There is none. The fold accepts an empty sequence, whose status is <code>Passed</code>, and it accepts any finite mixture of required and advisory entries.</p>
+<h3 id="definitions-used"><a class="header" href="#definitions-used">Definitions used</a></h3>
+<p>An <em>open required check</em> is a required diagnostic or required incomplete entry. <code>CheckStatus::all</code> is conjunction on <code>Passed</code>, <code>Incomplete</code>, and <code>Failed</code>, with <code>Passed</code> as its unit and <code>Failed</code> absorbing.</p>
+<h3 id="proof"><a class="header" href="#proof">Proof</a></h3>
+<ol>
+<li><code>status</code> maps every required diagnostic to <code>Failed</code> and every required incomplete entry to <code>Incomplete</code>.</li>
+<li>The conjunction fold returns <code>Failed</code> when either input sequence contributes <code>Failed</code>; otherwise, it returns <code>Incomplete</code> when the incomplete sequence is nonempty.</li>
+<li>When both required sequences are empty, the fold retains its unit <code>Passed</code>. Filtering removes advisory entries before this calculation.</li>
+</ol>
+<h3 id="executable-counterpart"><a class="header" href="#executable-counterpart">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.v1</code></li>
+<li>Reference: <code>panproto_reference::validation::validate</code></li>
+<li>Reference: <code>panproto_reference::validation::validate_table</code></li>
+<li>Reference: <code>panproto_reference::validation::validate_tree</code></li>
+<li>Reference: <code>panproto_reference::validation::status</code></li>
+<li>Evidence scope: <code>the compact carrier: shapes=3, cases per shape=4; the same graph carrier with an application check under three verdicts (passed, rejected, missing), 12 cases reaching all three statuses, compared field by field with incomplete entries and the failed and incomplete coverage counts per kind; every sequence of at most three required or advisory diagnostics and incomplete entries (85 sequences)</code></li>
+<li>Production certificate: <code>status_law_holds_with_external_verdicts_on_every_shape_status; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=status_law_holds_with_external_verdicts_on_every_shape_status)'</code></li>
+<li>Status fold differential: <code>status_fold_agrees_with_the_reference_on_every_short_entry_sequence; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=status_fold_agrees_with_the_reference_on_every_short_entry_sequence)'</code></li>
+<li>Independent reference anchor: <code>whole_validation_agrees_exactly_on_the_compact_three_shape_carrier; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=whole_validation_agrees_exactly_on_the_compact_three_shape_carrier)'</code></li>
+<li>Exhaustive differential test: <code>whole_validation_agrees_exactly_on_the_compact_three_shape_carrier; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=whole_validation_agrees_exactly_on_the_compact_three_shape_carrier)'</code></li>
+<li>Production property test: <code>status_soundness_over_random_verdict_sets; command: cargo nextest run -p panproto-inst --test validation --no-tests=fail -E 'test(=status_soundness_over_random_verdict_sets)'</code></li>
+<li>Property differential test: <code>randomized::compact_reports_match_on_generated_shape_and_case; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=randomized::compact_reports_match_on_generated_shape_and_case)'</code></li>
+<li>Property scope: <code>three shapes and four compact cases per shape; ordered report comparison and repeated production report bytes within one process; separate process certificates remain required; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/report.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-2"><a class="header" href="#L-validation-2">Reports and witnesses are deterministic</a></h2>
+<h3 id="statement-1"><a class="header" href="#statement-1">Statement</a></h3>
+<p>Fix <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span></span></span></span>, and a budget. Repeated validation produces byte-identical reports. Repeated incremental execution from the same trusted state, edit, policy, budget, external projection, and witness options produces byte-identical states and witnesses. This includes the order and multiplicity of every finding and refusal.</p>
+<h3 id="outside-the-domain-1"><a class="header" href="#outside-the-domain-1">Outside the domain</a></h3>
+<p>The claim does not compare inputs that differ in application-supplied external evidence or in witness options. It also does not identify observationally similar values whose canonical bytes differ. It compares runs of one native build in separate processes. Identity between the native build and the WebAssembly build on a frozen corpus is a further obligation that this page does not discharge and no test listed here checks; it belongs to the binding conformance gates.</p>
+<h3 id="definitions-used-1"><a class="header" href="#definitions-used-1">Definitions used</a></h3>
+<p><em>Deterministic order</em> is ascending <code>CheckInstance</code> order, followed by each finding type’s canonical order. A report or witness is <em>byte-identical</em> when its canonical writer emits the same bytes; equality of a field projection does not suffice.</p>
+<h3 id="proof-1"><a class="header" href="#proof-1">Proof</a></h3>
+<ol>
+<li>Every iteration whose order reaches a report, state or witness is over an ordered collection or is followed by a canonical sort. Hashed collections occur, but only for keyed lookup: a node’s named fields are stored in a hash map and are read either by name or through the field enumeration, which sorts them by name before returning; the incidence lists, the placeholder table and the strongly connected component and breadth-first search bookkeeping inside the checks are hash maps read only by key, while the component search itself iterates an ordered map. Key and reference indexes are ordered maps and an ordered list.</li>
+<li>Evaluation traverses the canonical schedule once and sorts every per-check vector before report construction.</li>
+<li>Canonical writers serialize fields in declaration order and ordered collections in key order. By steps 1 and 2 the values handed to the writers, and their order, are functions of the inputs alone, so equal inputs produce equal bytes in separate processes. The process differential checks the report bytes, the witness bytes and the committed state bytes.</li>
+</ol>
+<h3 id="executable-counterpart-1"><a class="header" href="#executable-counterpart-1">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.v2</code></li>
+<li>Reference: <code>panproto_reference::validation::validate</code></li>
+<li>Evidence scope: <code>report corpus=48 cases × 9 process executions (the parent and 8 children); witness and committed-state corpus=1 case × 33 process executions (the parent and 32 children); reference repeatability=1 compact graph × 2 evaluations, a smoke check of the reference rather than evidence of byte identity</code></li>
+<li>Production certificate: <code>validation_reports_are_identical_across_processes; command: cargo nextest run -p panproto-inst --test validation_laws --no-tests=fail -E 'test(=validation_reports_are_identical_across_processes)'</code></li>
+<li>Production witness certificate: <code>validation_witnesses_are_identical_across_processes; command: cargo nextest run -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=validation_witnesses_are_identical_across_processes)'</code></li>
+<li>Independent reference anchor: <code>reference_validation_anchors_are_stable_on_compact_native_carriers; command: cargo nextest run --release --locked -p panproto-inst --test validation_laws --no-tests=fail -E 'test(=reference_validation_anchors_are_stable_on_compact_native_carriers)'</code></li>
+<li>Property differential test: <code>randomized::compact_reports_match_on_generated_shape_and_case; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=randomized::compact_reports_match_on_generated_shape_and_case)'</code></li>
+<li>Property scope: <code>three shapes and four compact cases per shape; ordered report comparison and repeated production report bytes within one process; separate process certificates remain required; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/report.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/witness.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-3"><a class="header" href="#L-validation-3">A footprint contains every changed dependency</a></h2>
+<h3 id="statement-2"><a class="header" href="#statement-2">Statement</a></h3>
+<p>Let an applicable edit take <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span> to <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7519em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span>, from a trusted state paired with <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span>. The footprint’s <code>created</code> and <code>retired</code> sets are exactly the two differences between the check-instance sets of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7519em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span>. Every persistent check outside <code>rerun</code> has equal ordered outcomes and equal read sets before and after the edit. <code>rerun</code> contains every persistent instance that a finite baseline budget skipped and every persistent external instance whose verdict or missingness changes. The footprint’s <code>reads</code> set is exactly the union of baseline and target reads stated by the rerun, created, and retired partitions.</p>
+<h3 id="outside-the-domain-2"><a class="header" href="#outside-the-domain-2">Outside the domain</a></h3>
+<p>The law assumes a trusted state paired with <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span>, the same compiled plan on both sides, an applicable normalized edit, and the target external projection. A lowering or application error has no footprint under this law. The law is a tested property, not a theorem: its argument rests on the two premises below, which are themselves tested, not proved.</p>
+<h3 id="definitions-used-2"><a class="header" href="#definitions-used-2">Definitions used</a></h3>
+<p>The <em>persistent set</em> is the intersection of the baseline and target check-instance sets. The <em>exact read union</em> contains both baseline and target reads for rerun instances, target reads for created instances, and baseline reads for retired instances. A <em>trusted state</em> of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span> is a state that <code>Validated::from_parts</code> accepts for <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span>: its stored open bundles, budget cuts, coverage, external projection and key indexes are those that evaluation of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span> produces. <em>Trace completeness</em> (T) says that an instance’s outcome and read sequence are a function of the plan, its external verdict and the values at the elements it reads. <em>Trigger completeness</em> says that every element kind whose change can alter an instance’s outcome or read set either names that instance’s kind in the trigger table or reaches the instance through candidate expansion. <em>Locality</em> says that whether an element carries a local check instance depends only on the element and its incident elements, so every element whose instances can appear or vanish is a candidate subject of the edit.</p>
+<h3 id="proof-2"><a class="header" href="#proof-2">Proof</a></h3>
+<ol>
+<li>The footprint applies the edit to a clone and enumerates instances at the candidate subjects on both sides, together with every whole-instance check and every non-local check that a trigger names. By locality, an instance that appears or vanishes has a candidate subject, so the set differences at the candidates are the whole differences, and <code>created</code> and <code>retired</code> are exact.</li>
+<li>Every persistent instance whose kind the edit’s element kinds trigger, at a candidate subject or with a non-local class, is a rerun candidate. Its baseline and target traces are recomputed, and it is rerun when either trace meets the touched elements. By trace completeness, an instance none of whose read elements changed has the same reads and outcome on both sides; by trigger completeness, every instance one of whose reads changed is a rerun candidate.</li>
+<li>Two classes are rerun whatever the triggers say: every persistent instance in the baseline’s exact budget-skipped suffix, whose stored outcome is a budget refusal rather than its evaluated outcome, and every persistent external instance whose verdict or missingness differs between the two projections.</li>
+<li>Each partition contributes reads from the side on which that check exists. The differential compares production’s footprint with an independent model that builds both complete schedules, takes their exact set differences, finds every persistent instance whose outcome or read set changed, and assigns reads to production’s partitions.</li>
+</ol>
+<h3 id="executable-counterpart-2"><a class="header" href="#executable-counterpart-2">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.v3</code></li>
+<li>Reference: <code>panproto_reference::validation::witness_with_trust</code></li>
+<li>Reference: <code>panproto_reference::validation::incremental_footprint</code></li>
+<li>Evidence scope: <code>independent differential: 12 transitions (four base graphs of the compact carrier, each with a value change, a relabel and an edge insertion or removal) compared with the reference footprint model; production property tests over graph, table, and tree transitions of the local finite generators</code></li>
+<li>Production certificate: <code>footprint_soundness_and_edit_agreement_hold_on_every_bounded_graph_transition; command: cargo nextest run -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=footprint_soundness_and_edit_agreement_hold_on_every_bounded_graph_transition)'</code></li>
+<li>Independent reference anchor: <code>incremental_transitions_agree_with_the_independent_reference; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=incremental_transitions_agree_with_the_independent_reference)'</code></li>
+<li>Witness anchor: <code>reference_incremental_witness_anchor_verifies; command: cargo nextest run --release --locked -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=reference_incremental_witness_anchor_verifies)'</code></li>
+<li>Supplemental production tests: <code>footprint_soundness_and_edit_agreement_hold_on_every_bounded_table_transition</code> and <code>footprint_soundness_and_edit_agreement_hold_on_every_bounded_tree_step</code>; <code>command: cargo nextest run -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(/v3_v4_hold_on_every_bounded_(table_transition|tree_step)/)'</code></li>
+<li>Property differential test: <code>footprint_soundness; command: cargo nextest run -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=footprint_soundness)'</code></li>
+<li>Property differential test: <code>randomized::incremental_footprints_reports_and_witnesses_match_on_generated_carrier_edits; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=randomized::incremental_footprints_reports_and_witnesses_match_on_generated_carrier_edits)'</code></li>
+<li>Property scope: <code>four compact graphs and their twelve applicable edits; created and retired checks, read sets, changed-check inclusion, reports and admitted witnesses; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/footprint.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/state.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-4"><a class="header" href="#L-validation-4">Incremental and whole-instance reports agree after one edit</a></h2>
+<h3 id="statement-3"><a class="header" href="#statement-3">Statement</a></h3>
+<p>Under the premises of <a href="#L-validation-3">L-validation-3</a>, an unlimited <code>check_edit</code> report is canonically equal to whole-instance validation of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7519em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span> under the target external projection, after rewriting only the whole report’s scope to the corresponding edit scope.</p>
+<h3 id="outside-the-domain-3"><a class="header" href="#outside-the-domain-3">Outside the domain</a></h3>
+<p>The edit must lower and apply. The target validation budget is unlimited. The baseline may have used a finite budget because checks skipped there are reconsidered by the transition.</p>
+<h3 id="definitions-used-3"><a class="header" href="#definitions-used-3">Definitions used</a></h3>
+<p><em>Edit agreement</em> means equality of status, every diagnostic, every incomplete entry, and every coverage entry. Scope rewriting changes no validation finding.</p>
+<h3 id="proof-3"><a class="header" href="#proof-3">Proof</a></h3>
+<ol>
+<li>Under <a href="#L-validation-3">L-validation-3</a>, every persistent instance outside the rerun set has equal outcomes on <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7519em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span>, and its stored bundle is its evaluated outcome on <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span>, since every instance that a finite baseline budget skipped is in the rerun set. Carrying its stored bundle therefore carries its outcome on <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7519em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span>.</li>
+<li>The transition evaluates every rerun and created check against <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7519em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span> and removes every retired outcome.</li>
+<li>These three partitions cover the complete target schedule. Whole validation evaluates the same checks, so report construction differs only in scope. The independent model splices the target outcomes of the rerun and created instances into the baseline outcomes of the rest and finds the target’s whole report; the differential compares production’s edit report with that spliced report on the same rerun set.</li>
+</ol>
+<h3 id="executable-counterpart-3"><a class="header" href="#executable-counterpart-3">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.v4</code></li>
+<li>Reference: <code>panproto_reference::validation::witness_with_trust</code></li>
+<li>Reference: <code>panproto_reference::validation::incremental_report</code></li>
+<li>Evidence scope: <code>graph, table, and tree transitions over the local finite generators; the reference anchor is one labelled nonidentity transition</code></li>
+<li>Production certificate: <code>footprint_soundness_and_edit_agreement_hold_on_every_bounded_table_transition; command: cargo nextest run -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=footprint_soundness_and_edit_agreement_hold_on_every_bounded_table_transition)'</code></li>
+<li>Independent reference anchor: <code>incremental_transitions_agree_with_the_independent_reference; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=incremental_transitions_agree_with_the_independent_reference)'</code></li>
+<li>Supplemental production tests: <code>footprint_soundness_and_edit_agreement_hold_on_every_bounded_graph_transition</code> and <code>footprint_soundness_and_edit_agreement_hold_on_every_bounded_tree_step</code>; <code>command: cargo nextest run -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(/v3_v4_hold_on_every_bounded_(graph_transition|tree_step)/)'</code></li>
+<li>Property differential test: <code>edit_agreement; command: cargo nextest run -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=edit_agreement)'</code></li>
+<li>Property differential test: <code>randomized::incremental_footprints_reports_and_witnesses_match_on_generated_carrier_edits; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=randomized::incremental_footprints_reports_and_witnesses_match_on_generated_carrier_edits)'</code></li>
+<li>Property scope: <code>four compact graphs and their twelve applicable edits; created and retired checks, read sets, changed-check inclusion, reports and admitted witnesses; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/state.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/validation_incremental.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-5"><a class="header" href="#L-validation-5">Agreement composes across admitted edit sequences</a></h2>
+<h3 id="statement-4"><a class="header" href="#statement-4">Statement</a></h3>
+<p>Start from a trusted validated instance. Apply a sequence of edits, each under an unlimited transition budget. After every admitted edit, the stored state report is canonically equal to whole-instance validation of the current instance, under an unlimited budget and that step’s external projection. Every rejected edit leaves the canonical instance and state bytes unchanged.</p>
+<h3 id="outside-the-domain-4"><a class="header" href="#outside-the-domain-4">Outside the domain</a></h3>
+<p>Each generated edit must lower to an applicable normalized transition. The law quantifies over both admission policies and over the external projection supplied at each step. A finite transition budget is outside the domain: the transition charges only the rerun and created instances, while whole validation under the same budget charges the whole schedule, so the two cut at different places. The counterexample is recorded as a test: from a passed baseline, an edit that reruns one instance under <code>max_reads: Some(0)</code> yields a report that differs both from whole validation under <code>Some(0)</code> and from whole validation under an unlimited budget. The initial value may have been validated under a finite budget.</p>
+<h3 id="definitions-used-4"><a class="header" href="#definitions-used-4">Definitions used</a></h3>
+<p>The <em>sequence agreement</em> is the induction of one-step edit agreement across committed states. <em>Atomic rejection</em> means equality of both instance bytes and state bytes before and after the rejected call. A <em>trusted state</em> of an instance <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span> is a state that <code>Validated::from_parts</code> accepts for <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span>: its stored open bundles, budget cuts, coverage, external projection and key indexes are those that evaluation of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span> produces.</p>
+<h3 id="proof-4"><a class="header" href="#proof-4">Proof</a></h3>
+<ol>
+<li>Initialization stores the state built by whole-instance validation, which is the trusted state of the initial instance. The induction hypothesis is that the committed state is the trusted state of the current instance.</li>
+<li>If a step is admitted, <code>apply_edit</code> commits the state that the transition built for <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7519em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span>. Under the hypothesis and an unlimited transition budget, <a href="#L-validation-4">L-validation-4</a> makes that state’s report canonically equal to whole validation of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7519em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span>. The transition evaluated every rerun and created instance on <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7519em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span> and carried every other persistent outcome, which <a href="#L-validation-3">L-validation-3</a> equates with its outcome on <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7519em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span>, so the committed state is the trusted state of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7519em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span>. The tests check this by reattaching every committed state with <code>Validated::from_parts</code>.</li>
+<li>If a step is rejected, the implementation commits neither the target instance nor its simulated state. Thus the preceding induction hypothesis remains true.</li>
+</ol>
+<h3 id="executable-counterpart-4"><a class="header" href="#executable-counterpart-4">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.v5</code></li>
+<li>Reference: <code>panproto_reference::validation::witness_with_trust</code></li>
+<li>Evidence scope: <code>graph, table, and tree edit sequences over the local finite generators; the reference anchor is one labelled nonidentity transition</code></li>
+<li>Production certificate: <code>sequence_law_holds_on_every_bounded_graph_sequence; command: cargo nextest run -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=sequence_law_holds_on_every_bounded_graph_sequence)'</code></li>
+<li>Independent reference anchor: <code>reference_incremental_witness_anchor_verifies; command: cargo nextest run --release --locked -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=reference_incremental_witness_anchor_verifies)'</code></li>
+<li>Supplemental production tests: <code>sequence_law_holds_on_every_bounded_table_sequence</code> and <code>sequence_law_holds_on_every_bounded_tree_sequence</code>; <code>command: cargo nextest run -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(/sequence_law_holds_on_every_bounded_(table|tree)_sequence/)'</code></li>
+<li>Property differential test: <code>sequence_agreement; command: cargo nextest run -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=sequence_agreement)'</code></li>
+<li>Domain-boundary counterexample: <code>a_finite_transition_budget_breaks_sequence_agreement; command: cargo nextest run --release --locked -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=a_finite_transition_budget_breaks_sequence_agreement)'</code></li>
+<li>Property differential test: <code>randomized::committed_sequences_match_reference_reports_and_admission; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=randomized::committed_sequences_match_reference_reports_and_admission)'</code></li>
+<li>Property scope: <code>four compact graph baselines and zero to four applicable value, anchor or edge edits; both admission policies, reference target witnesses, committed report agreement, state reattachment and atomic rejection; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/state.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/validation_incremental.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-6"><a class="header" href="#L-validation-6">Every edit witness replays the committed transition</a></h2>
+<h3 id="statement-5"><a class="header" href="#statement-5">Statement</a></h3>
+<p>Given the trusted baseline state and paired instance, every produced edit witness verifies under the same plan, delta, admission policy, budget, target external projection, and witness options. Changing any committed scalar, run, read, scheduler disposition, outcome entry, or replay input yields a typed mismatch unless the change is observationally irrelevant.</p>
+<h3 id="outside-the-domain-5"><a class="header" href="#outside-the-domain-5">Outside the domain</a></h3>
+<p>The verifier does not establish the provenance of the trusted baseline. It verifies one transition from that baseline. Unused external entries are outside the witness’s observable projection.</p>
+<h3 id="definitions-used-5"><a class="header" href="#definitions-used-5">Definitions used</a></h3>
+<p>A <em>committed witness field</em> is any field used to reconstruct the transition schedule, dependency reads, outcome bundles, optional instance digests, or admission decision. A change is <em>observationally irrelevant</em> when it leaves all of those reconstructed values unchanged.</p>
+<h3 id="proof-5"><a class="header" href="#proof-5">Proof</a></h3>
+<ol>
+<li>Verification reapplies the delta and recomputes the exact footprint and schedule from the trusted baseline. This is a functional replay check: it uses the same footprint and evaluation code as admission, so its independence comes from the differential, which checks each witness’s runs against an independent model of the two schedules: the runs are exactly the rerun and created instances, and each carries the target schedule’s reads and outcome multiplicities.</li>
+<li>It replays budget charging and every check outcome, comparing runs, reads, findings, refusals, options, policy, and optional digests.</li>
+<li>Thus a changed committed field disagrees at a named comparison. A value outside the active projection is never read and may change without affecting the replay.</li>
+</ol>
+<h3 id="executable-counterpart-5"><a class="header" href="#executable-counterpart-5">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.v6</code></li>
+<li>Reference: <code>panproto_reference::validation::witness_with_trust</code></li>
+<li>Evidence scope: <code>all locally generated one-step transitions, every run of every witness mutated (reads extended and dropped, disposition flipped, incomplete reasons extended, dropped and replaced, findings repeated and dropped), and every replay input varied (policy, budget, external projection, expected options, baseline, prior instance, delta, plan); the independent model checks each admitted witness of the 12 compact transitions run by run</code></li>
+<li>Production certificate: <code>witness_law_holds_on_every_bounded_step; command: cargo nextest run -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=witness_law_holds_on_every_bounded_step)'</code></li>
+<li>Independent reference anchor: <code>incremental_transitions_agree_with_the_independent_reference; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=incremental_transitions_agree_with_the_independent_reference)'</code></li>
+<li>Witness anchor: <code>reference_incremental_witness_anchor_verifies; command: cargo nextest run --release --locked -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=reference_incremental_witness_anchor_verifies)'</code></li>
+<li>Property differential test: <code>every_witness_verifies_and_mutations_fail; command: cargo nextest run -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=every_witness_verifies_and_mutations_fail)'</code></li>
+<li>Property differential test: <code>randomized::incremental_footprints_reports_and_witnesses_match_on_generated_carrier_edits; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=randomized::incremental_footprints_reports_and_witnesses_match_on_generated_carrier_edits)'</code></li>
+<li>Property scope: <code>four compact graphs and their twelve applicable edits; created and retired checks, read sets, changed-check inclusion, reports and admitted witnesses; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/witness.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/validation_incremental.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-7"><a class="header" href="#L-validation-7">Finite budgets expose an ordered suffix</a></h2>
+<h3 id="statement-6"><a class="header" href="#statement-6">Statement</a></h3>
+<p>A finite-budget run never returns <code>Passed</code> when the unlimited run is <code>Failed</code> or <code>Incomplete</code>. A limit at least the unlimited work count returns the same report as the unlimited run. When a limit cuts evaluation, every scheduled instance that is not statically incomplete and is not evaluated belongs to the exact suffix of the canonical schedule, and its family-level refusal records the limit, spent count, and first skipped subject.</p>
+<h3 id="outside-the-domain-6"><a class="header" href="#outside-the-domain-6">Outside the domain</a></h3>
+<p>The law assumes the same plan, instance, and external evidence in the finite and unlimited runs. Static findings are not charged as dynamic reads, and statically incomplete instances are neither evaluated, charged nor skipped.</p>
+<h3 id="definitions-used-6"><a class="header" href="#definitions-used-6">Definitions used</a></h3>
+<p>The <em>unlimited work count</em> is the sum, over every scheduled instance that is not statically incomplete, of the size of its exact read trace. It is the count the reference accumulates when no limit is given; a production report under an unlimited budget records no spent count, since it charges nothing. The <em>budget suffix</em> begins at the first check instance whose reads would exceed the limit. The production report stores one refusal per affected check key; the reference stores one refusal per skipped instance, each naming the first skipped subject of its key, and the differential collapses the reference’s refusals to one per key.</p>
+<h3 id="proof-6"><a class="header" href="#proof-6">Proof</a></h3>
+<ol>
+<li>Evaluation visits the scheduled instances in canonical order, statically incomplete instances removed, and charges each instance’s exact trace before evaluating it.</li>
+<li>Once the next trace exceeds the limit, no later instance is evaluated, which makes the skipped set a suffix of that schedule.</li>
+<li>A limit at least the unlimited work count never meets an instance whose trace exceeds what remains, so no instance is skipped and every instance is evaluated as in the unlimited run.</li>
+<li>An instance evaluated under a finite limit is evaluated on its full exact trace, so its outcome equals its unlimited outcome.</li>
+<li>A skipped instance contributes one budget refusal carrying its own check’s requirement. Hence every required diagnostic or required incomplete entry of the unlimited run either reappears, because its instance was evaluated or is static, or is replaced by a required budget refusal, because its instance was skipped. Either way the finite report has a required entry and is not <code>Passed</code>. A cut that skips only advisory instances adds only advisory refusals, which is consistent with the law because the unlimited run then has no required entry among the skipped instances.</li>
+</ol>
+<h3 id="executable-counterpart-6"><a class="header" href="#executable-counterpart-6">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.v7</code></li>
+<li>Reference: <code>panproto_reference::validation::witness_with_trust</code></li>
+<li>Evidence scope: <code>one passing graph carrier at limits 0 to 2; three failing graph carriers (unknown anchor, missing required edge, overlong value) at every limit from 0 to one past the unlimited work count, against the reference's complete schedule</code></li>
+<li>Production certificate: <code>finite_budget_cuts_are_the_same_ordered_suffix; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=finite_budget_cuts_are_the_same_ordered_suffix)'</code></li>
+<li>Independent reference anchor: <code>finite_budget_cuts_are_the_same_ordered_suffix; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=finite_budget_cuts_are_the_same_ordered_suffix)'</code></li>
+<li>Exhaustive differential test: <code>finite_budget_cuts_are_the_same_ordered_suffix; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=finite_budget_cuts_are_the_same_ordered_suffix)'</code></li>
+<li>Failing-carrier differential: <code>finite_budget_law_holds_against_the_reference_on_failing_carriers; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=finite_budget_law_holds_against_the_reference_on_failing_carriers)'</code></li>
+<li>Production property test: <code>finite_budget_never_passes_where_unlimited_does_not; command: cargo nextest run -p panproto-inst --test validation --no-tests=fail -E 'test(=finite_budget_never_passes_where_unlimited_does_not)'</code></li>
+<li>Property differential test: <code>randomized::budget_refusals_match_on_generated_existing_limits; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=randomized::budget_refusals_match_on_generated_existing_limits)'</code></li>
+<li>Property scope: <code>the documented budget fixture under limits zero through two; status, ordered diagnostics and exact incomplete suffix entries; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/schedule.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-8"><a class="header" href="#L-validation-8">Native and graph presentations commute with shared validation</a></h2>
+<h3 id="statement-7"><a class="header" href="#statement-7">Statement</a></h3>
+<p>For a tree or table that admits its graph presentation, the diagnostics of every shared check kind other than fan well-formedness, mapped through the corresponding embedding, are the same multiset as those of the graph presentation. Fan diagnostics are compared as the set of (fan record, fan violation) pairs: equal fans of a tree are one element of its fan multiset and give one diagnostic per reason, while the graph presentation has one fan node, and one diagnostic, for each. Native-only tree checks remain outside the comparison. Column constraints are included at their mapped sites.</p>
+<h3 id="outside-the-domain-7"><a class="header" href="#outside-the-domain-7">Outside the domain</a></h3>
+<p>The square is undefined when the production native-to-graph presentation (<code>GInstance::from_wtype_embedded</code> for trees, <code>GInstance::from_finstance</code> for tables) returns a typed refusal; production refuses a tree that carries reserved vocabulary or a fan naming an absent node, which the reference instead reports as a diagnostic. Such trees are rejected by the property test and replaced by fresh draws. Tree-only root, parent-map, reachability, and reserved-vocabulary checks have no graph-side counterpart.</p>
+<h3 id="definitions-used-7"><a class="header" href="#definitions-used-7">Definitions used</a></h3>
+<p>A <em>shared check</em> is a check kind defined on both the native shape and its graph presentation. The embedding map sends native rows, pairs, nodes, arcs, and fan sites to their graph references while preserving labels and values.</p>
+<h3 id="proof-7"><a class="header" href="#proof-7">Proof</a></h3>
+<ol>
+<li>Presentation preserves anchors, labels, endpoint incidence, value sites, and declared constraints.</li>
+<li>Every shared predicate reads only those preserved fields, and the embedding maps its complete read set.</li>
+<li>Applying the same predicate at mapped sites thus yields the same findings with the same multiplicity for every non-fan kind. A fan predicate is evaluated once per fan element on each side; the tree side has one element for a class of equal fans and the graph side one per copy, so fan findings agree as sets of (fan record, reason) pairs, not as multisets. Native-only checks are excluded because presentation intentionally adds no graph analogue for them.</li>
+</ol>
+<h3 id="executable-counterpart-7"><a class="header" href="#executable-counterpart-7">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.v8</code></li>
+<li>Reference: <code>panproto_reference::validation::validate</code></li>
+<li>Reference: <code>panproto_reference::validation::validate_table</code></li>
+<li>Reference: <code>panproto_reference::validation::validate_tree</code></li>
+<li>Evidence scope: <code>one reference graph, one one-row table, and one one-node tree that each fail the same required scalar property at native id 7; 512 compared production cases per native shape, trees without a graph presentation rejected and redrawn</code></li>
+<li>Production certificate: <code>the_table_square_commutes; command: cargo nextest run -p panproto-inst --test validation_laws --no-tests=fail -E 'test(=the_table_square_commutes)'</code></li>
+<li>Independent reference anchor: <code>reference_required_value_shape_square; command: cargo nextest run --release --locked -p panproto-inst --test validation_laws --no-tests=fail -E 'test(=reference_required_value_shape_square)'</code></li>
+<li>Production fixed test: <code>the_tree_square_holds_for_equal_fans; command: cargo nextest run -p panproto-inst --test validation_laws --no-tests=fail -E 'test(=the_tree_square_holds_for_equal_fans)'</code></li>
+<li>Production fixed table certificate: <code>column_constraints_are_read_from_cells_in_every_shape; command: cargo nextest run --release --locked -p panproto-inst --test validation_laws --no-tests=fail -E 'test(=column_constraints_are_read_from_cells_in_every_shape)'</code></li>
+<li>Production fixed tree certificate: <code>a_column_value_held_by_a_child_node_is_not_a_field_site; command: cargo nextest run --release --locked -p panproto-inst --test validation_laws --no-tests=fail -E 'test(=a_column_value_held_by_a_child_node_is_not_a_field_site)'</code></li>
+<li>Production property tests: <code>the_tree_square_commutes</code> and <code>the_table_square_commutes</code>, with 512 generated cases per native shape; <code>command: cargo nextest run -p panproto-inst --test validation_laws --no-tests=fail -E 'test(/v8_(tree|table)_square/)'</code></li>
+<li>Property differential test: <code>randomized::compact_reports_match_on_generated_shape_and_case; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=randomized::compact_reports_match_on_generated_shape_and_case)'</code></li>
+<li>Property scope: <code>three shapes and four compact cases per shape; ordered report comparison and repeated production report bytes within one process; separate process certificates remain required; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/checks.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/validation_laws.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-9"><a class="header" href="#L-validation-9">Restriction validates both sides of its boundary</a></h2>
+<h3 id="statement-8"><a class="header" href="#statement-8">Statement</a></h3>
+<p>A schema-taking restriction entry point first validates its input under the source plan. If restriction succeeds, it validates the output under the target plan. A nonpassing report returns a typed validation error naming <code>Input</code> or <code>Output</code>. Thus a successful validated restriction has a passed target report.</p>
+<h3 id="outside-the-domain-8"><a class="header" href="#outside-the-domain-8">Outside the domain</a></h3>
+<p>An engine error from the underlying restriction operation remains its own typed error. Plan-taking internal engines assume that their caller has already established the boundary conditions. The probe case, restricting an instance under a schema unrelated to its anchors, is tested on a two-node instance rather than on the fixture probe instance; it returns side <code>Input</code>.</p>
+<h3 id="definitions-used-8"><a class="header" href="#definitions-used-8">Definitions used</a></h3>
+<p>The <em>validation boundary</em> is the ordered pair of source validation before restriction and target validation after restriction. Boundary side is part of the error and cannot be inferred from the report alone.</p>
+<h3 id="proof-8"><a class="header" href="#proof-8">Proof</a></h3>
+<ol>
+<li>The wrapper compiles the source plan and returns immediately with side <code>Input</code> when its report is nonpassing.</li>
+<li>It then invokes the restriction engine. An engine refusal is preserved rather than relabelled as validation.</li>
+<li>On an engine result, the wrapper validates under the target plan and returns side <code>Output</code> for a nonpassing report. Only a passed output reaches success.</li>
+</ol>
+<h3 id="executable-counterpart-8"><a class="header" href="#executable-counterpart-8">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.v9</code></li>
+<li>Reference: <code>panproto_reference::validation::restriction_boundary</code></li>
+<li>Evidence scope: <code>all nine (input, output) status pairs over Passed, Failed and Incomplete, each realized on production and compared with the reference on the same two statuses; 256 generated production cases against an independent composition</code></li>
+<li>Production certificate: <code>restrict_boundary_agrees_with_the_reference_on_every_status_pair; command: cargo nextest run --release --locked -p panproto-inst --test restrict_boundary --no-tests=fail -E 'test(=restrict_boundary_agrees_with_the_reference_on_every_status_pair)'</code></li>
+<li>Independent reference anchor: <code>restrict_boundary_agrees_with_the_reference_on_every_status_pair; command: cargo nextest run --release --locked -p panproto-inst --test restrict_boundary --no-tests=fail -E 'test(=restrict_boundary_agrees_with_the_reference_on_every_status_pair)'</code></li>
+<li>Fixed boundary test: <code>restrict_boundary_errors_carry_the_side_and_report; command: cargo nextest run -p panproto-inst --test restrict_boundary --no-tests=fail -E 'test(=restrict_boundary_errors_carry_the_side_and_report)'</code></li>
+<li>Probe test: <code>restricting_the_probe_under_an_unrelated_schema_fails_at_input; command: cargo nextest run -p panproto-inst --test restrict_boundary --no-tests=fail -E 'test(=restricting_the_probe_under_an_unrelated_schema_fails_at_input)'</code></li>
+<li>Production property test: <code>restrict_is_validation_then_compilation_then_the_engine; command: cargo nextest run -p panproto-inst --test restrict_boundary --no-tests=fail -E 'test(=restrict_is_validation_then_compilation_then_the_engine)'</code></li>
+<li>Property differential test: <code>randomized_restriction_boundary_matches_on_all_status_pairs; command: cargo nextest run -p panproto-inst --test restrict_boundary --no-tests=fail -E 'test(=randomized_restriction_boundary_matches_on_all_status_pairs)'</code></li>
+<li>Property scope: <code>all nine input/output status pairs realized through the existing restriction fixtures; exact refusal side and status; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/src/restrict_boundary.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/graph_restrict.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/restrict_boundary.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-10"><a class="header" href="#L-validation-10">Endpoint diagnostics realize the graph-instance equations</a></h2>
+<h3 id="statement-9"><a class="header" href="#statement-9">Statement</a></h3>
+<p>On three schemas and every graph within their bounds, the <code>EndpointCoherence</code> diagnostics of a graph are exactly the refutations of the graph-instance theory’s endpoint equations on the model built from that graph and schema, as a multiset of (edge, side, expected anchor, found anchor). The schemas and bounds are: the vertices <code>a</code> and <code>b</code> with edges <code>ab</code> and <code>aa</code>, on every graph of at most four nodes and four edges; the same schema with an undeclared anchor <code>z</code> and an undeclared label <code>zb</code>, on every graph of at most three nodes and three edges; and a schema whose endpoints are a union with two variants, a recursion point and a reference vertex, on every graph of at most three nodes and three edges. On the first two schemas the reference validator reports the same multiset.</p>
+<h3 id="outside-the-domain-9"><a class="header" href="#outside-the-domain-9">Outside the domain</a></h3>
+<p>The bounded model checker may return <code>ModelCheckLimitExceeded</code>; such a case is a typed refusal, not agreement, and the sweeps assert that none occurs. The law concerns endpoint coherence, not unrelated validation kinds. Fan nodes and fan edges are exempt from endpoint coherence and are not in the model’s edge sort; the sweeps contain no fans. Graphs larger than the bounds are not claimed.</p>
+<h3 id="definitions-used-9"><a class="header" href="#definitions-used-9">Definitions used</a></h3>
+<p>The <em>endpoint equation</em> requires an edge’s source and target anchors to belong to the anchor families named by its declared source and target vertices. A finding records the edge, the side, the expected anchor (the label’s endpoint vertex) and the found anchor (the endpoint node’s).</p>
+<h3 id="proof-9"><a class="header" href="#proof-9">Proof</a></h3>
+<ol>
+<li>The production model builder gives every graph node and edge the same carriers used by validation.</li>
+<li>The theory’s endpoint equations are strict equalities between an edge’s endpoint anchor and the anchor its label requires. Anchor families enter through the model builder, which reads an endpoint’s anchor as the label’s vertex when the node’s anchor is in that vertex’s family. For unions, recursion points and reference vertices the comparison is therefore between two implementations of family membership, the validator’s and the model builder’s, not a derivation from the theory.</li>
+<li>Validation checks the same two equations at the same edge. The sweeps compare the two multisets of findings, expected and found anchors included, on every graph in the bounds.</li>
+</ol>
+<h3 id="executable-counterpart-9"><a class="header" href="#executable-counterpart-9">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.v10</code></li>
+<li>Reference: <code>panproto_reference::validation::validate</code></li>
+<li>Evidence scope: <code>schema a, b with edges ab, aa: every graph of at most 4 nodes and 4 edges up to node renaming (more than 300,000 graphs), against the theory and the reference; the same schema with undeclared anchor z and label zb: at most 3 nodes and 3 edges, against the theory and the reference; the anchor-family schema: at most 3 nodes and 3 edges, against the theory; one fixed reference carrier</code></li>
+<li>Production certificate: <code>endpoint_coherence_agrees_with_the_graph_instance_theory; command: cargo nextest run --release --locked -p panproto-protocols --test endpoint_coherence_is_the_graph_instance_theory --no-tests=fail -E 'test(=endpoint_coherence_agrees_with_the_graph_instance_theory)'</code></li>
+<li>Independent reference anchor: <code>endpoint_coherence_agrees_with_the_graph_instance_theory; command: cargo nextest run --release --locked -p panproto-protocols --test endpoint_coherence_is_the_graph_instance_theory --no-tests=fail -E 'test(=endpoint_coherence_agrees_with_the_graph_instance_theory)'</code></li>
+<li>Undeclared-boundary differential: <code>endpoint_coherence_agrees_on_undeclared_anchors_and_labels; command: cargo nextest run --release --locked -p panproto-protocols --test endpoint_coherence_is_the_graph_instance_theory --no-tests=fail -E 'test(=endpoint_coherence_agrees_on_undeclared_anchors_and_labels)'</code></li>
+<li>Anchor-family differential: <code>endpoint_coherence_agrees_on_anchor_families; command: cargo nextest run --release --locked -p panproto-protocols --test endpoint_coherence_is_the_graph_instance_theory --no-tests=fail -E 'test(=endpoint_coherence_agrees_on_anchor_families)'</code></li>
+<li>Property differential test: <code>randomized_endpoint_findings_match_the_reference_and_theory; command: cargo nextest run -p panproto-protocols --test endpoint_coherence_is_the_graph_instance_theory --no-tests=fail -E 'test(=randomized_endpoint_findings_match_the_reference_and_theory)'</code></li>
+<li>Property scope: <code>the documented undeclared-anchor and label carrier: up to three nodes and three edges, including empty graphs; exact endpoint-finding multisets and successful theory evaluation; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/checks.rs</code></li>
+<li>File: <code>crates/panproto-protocols/tests/endpoint_coherence_is_the_graph_instance_theory.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-11"><a class="header" href="#L-validation-11">Keys and references agree with direct finite search</a></h2>
+<h3 id="statement-10"><a class="header" href="#statement-10">Statement</a></h3>
+<p><code>KeyUnique</code> and <code>ReferenceResolves</code> agree with a brute-force oracle over bounded tables and trees. Composite keys preserve part order. A null or absent key part excludes the element from a key bucket. <code>Within(v)</code> uses the nearest ancestor anchored at <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span>; an element with no such ancestor is outside the key’s scope.</p>
+<h3 id="outside-the-domain-10"><a class="header" href="#outside-the-domain-10">Outside the domain</a></h3>
+<p>The oracle covers settled key parts, reference cardinalities, resolution policies, and bounded native shapes. An unsupported declaration is reported statically and is not assigned an invented dynamic meaning.</p>
+<h3 id="definitions-used-10"><a class="header" href="#definitions-used-10">Definitions used</a></h3>
+<p>A <em>key bucket</em> groups nonnull key vectors by declared scope. A <em>reference candidate</em> is a target in the holder’s scope whose key vector equals the reference vector. Zero, one, and several candidates yield dangling, passing, and ambiguous outcomes according to the declaration.</p>
+<h3 id="proof-10"><a class="header" href="#proof-10">Proof</a></h3>
+<ol>
+<li>The oracle reads every key part directly from the native instance and forms scope buckets without calling the maintained production indexes or the production scope function.</li>
+<li>Pairwise bucket comparison yields exactly the duplicate-key populations, including all members and their ordered key vector. Direct candidate enumeration yields the dangling and ambiguous reference populations.</li>
+<li>Production builds its key index in one pass over the elements anchored at the key’s vertex, in ascending element order. An element with a null or absent part is skipped; under <code>Within(v)</code> an element with no ancestor anchored at <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span> is recorded as outside the key; every other element is appended to the bucket named by its scope, the least nearest ancestor anchored at <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span>, and the key bytes of its part values under the key’s declared equality. A bucket with more than one element is one duplicate-key diagnostic, and a reference looks up its holder’s scope and key bytes in the target index. These are the three cases of steps 1 and 2, decided by the same predicates, so the two populations coincide on representation equality, which is the equality every generated key declares. This step is an argument about the code, not a proof checked by machine; the property test compares the two populations as sorted vectors, so multiplicity as well as membership is checked, and the coverage test shows that every failure kind and the outside-scope observation occur on the generated inputs.</li>
+</ol>
+<h3 id="executable-counterpart-10"><a class="header" href="#executable-counterpart-10">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.v11</code></li>
+<li>Reference: <code>panproto_reference::validation::validate</code></li>
+<li>Evidence scope: <code>512 generated production-oracle cases per shape draw compared as sorted vectors, 3,000 fixed coverage draws in which every failure kind occurs on every shape and the outside-scope observation occurs on graphs and trees, and matching fixed production and reference carriers with one duplicate-key bucket and four reference holders (two resolved, one dangling, and one ambiguous)</code></li>
+<li>Production certificate: <code>keys_and_references_match_the_oracle; command: cargo nextest run -p panproto-inst --test validation_laws --no-tests=fail -E 'test(=keys_and_references_match_the_oracle)'</code></li>
+<li>Independent reference anchor: <code>reference_validation_anchors_are_stable_on_compact_native_carriers; command: cargo nextest run --release --locked -p panproto-inst --test validation_laws --no-tests=fail -E 'test(=reference_validation_anchors_are_stable_on_compact_native_carriers)'</code></li>
+<li>Production fixed certificate: <code>fixed_key_and_reference_carrier_reports_each_v11_boundary_exactly; command: cargo nextest run --release --locked -p panproto-inst --test validation --no-tests=fail -E 'test(=fixed_key_and_reference_carrier_reports_each_v11_boundary_exactly)'</code></li>
+<li>Production coverage test: <code>the_oracle_expects_every_key_and_reference_failure; command: cargo nextest run -p panproto-inst --test validation_laws --no-tests=fail -E 'test(=the_oracle_expects_every_key_and_reference_failure)'</code></li>
+<li>Production property test: <code>keys_and_references_match_the_oracle; command: cargo nextest run -p panproto-inst --test validation_laws --no-tests=fail -E 'test(=keys_and_references_match_the_oracle)'</code></li>
+<li>Property differential test: <code>randomized::key_and_reference_reports_match_on_generated_person_values; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=randomized::key_and_reference_reports_match_on_generated_person_values)'</code></li>
+<li>Property scope: <code>four persons with independent key and reference values from 10, 20, 30 and 99; 65,536 assignments on the existing labelled person graph, comparing status and complete ordered key/reference diagnostics; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/checks.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/state.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-12"><a class="header" href="#L-validation-12">Admission compares complete required outcome bundles</a></h2>
+<h3 id="statement-11"><a class="header" href="#statement-11">Statement</a></h3>
+<p><code>RequirePassed</code> admits exactly a result whose status is <code>Passed</code>: one with no required bundle of any of the three kinds defined below. <code>NoNewFailures</code> admits exactly when every required bundle of the result has byte-identical evidence in the baseline or in the baseline’s virtual budget-cut bundles. Advisory entries, whether in their own check instance or inside a required one, do not affect admission.</p>
+<h3 id="outside-the-domain-11"><a class="header" href="#outside-the-domain-11">Outside the domain</a></h3>
+<p>The predicate assumes that bundle bytes are canonical and that each map key identifies one check instance or one plan-static finding. It does not validate the provenance of a supplied baseline. Baseline and result share one plan, so their plan-static findings coincide.</p>
+<h3 id="definitions-used-11"><a class="header" href="#definitions-used-11">Definitions used</a></h3>
+<p>A <em>required bundle</em> is one of three things: the required projection of an open check instance (its required diagnostics and required incomplete entries in canonical order, with its advisory entries removed); a <em>virtual cut bundle</em>, the required budget refusal assigned to a required instance that a budget skipped; or one required plan-static finding. A key with no required entry has no bundle. By the status fold of <a href="#L-validation-1">L-validation-1</a>, a state is <code>Passed</code> exactly when it has no required bundle.</p>
+<h3 id="proof-11"><a class="header" href="#proof-11">Proof</a></h3>
+<ol>
+<li>A report’s required entries are exactly the entries of its required bundles: open instances contribute their required projections, a budget cut contributes the refusal of each skipped required instance, and the plan contributes its required static findings. Under <code>RequirePassed</code>, an empty bundle map is therefore exactly status <code>Passed</code> by <a href="#L-validation-1">L-validation-1</a>, which is the production test <code>status == Passed</code>.</li>
+<li>Under <code>NoNewFailures</code>, lookup checks baseline bundles first and then virtual cut bundles. A plan-static bundle is present with equal bytes on both sides because the plan is shared, so it never causes a refusal under this policy.</li>
+<li>Requiring equal bytes at every result key admits repairs and unchanged open outcomes but refuses new or changed required outcomes. An advisory entry is outside every required projection, so adding, removing or changing one leaves every compared byte string unchanged.</li>
+</ol>
+<h3 id="executable-counterpart-11"><a class="header" href="#executable-counterpart-11">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.admission-policies</code></li>
+<li>Reference: <code>panproto_reference::validation::admits</code></li>
+<li>Evidence scope: <code>the test-local enumerator every_abstract_state: three required instances and one advisory instance, each required outcome passed, failed or incomplete with one of two byte values, a budget cut from each of four schedule positions with two spent counts or none, an advisory entry inside the first required bundle or not; 1,122 states and all 1,258,884 ordered pairs, once over a plan with no static finding and once over a plan with two required static findings</code></li>
+<li>Production certificate: <code>admission_policies_agree_with_their_predicates_on_three_bundles; command: cargo nextest run --release --locked -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=admission_policies_agree_with_their_predicates_on_three_bundles)'</code></li>
+<li>Independent reference anchor: <code>admission_policies_agree_with_their_predicates_on_three_bundles; command: cargo nextest run --release --locked -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=admission_policies_agree_with_their_predicates_on_three_bundles)'</code></li>
+<li>Property differential test: <code>randomized_admission_matches_reference_on_the_complete_bundle_carrier; command: cargo nextest run -p panproto-inst --test validation_incremental --no-tests=fail -E 'test(=randomized_admission_matches_reference_on_the_complete_bundle_carrier)'</code></li>
+<li>Property scope: <code>all 1,122 abstract bundle states on each side and both plans, with and without two required static findings; both admission policies; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/state.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/validation_incremental.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-13"><a class="header" href="#L-validation-13">Keys compare by the key function of their declared equality</a></h2>
+<h3 id="statement-12"><a class="header" href="#statement-12">Statement</a></h3>
+<p>Resolution and validation key every key-part value by the key function of the part’s declared equality, and two values match exactly when both keys are defined and equal. Representation equality preserves value kind and representation. Other declared equalities identify values only according to their stated numeric, collation and padding rules. The key function of a <code>Named</code> collation is undefined on text: resolution then returns a typed refusal, and <code>KeyUnique</code> reports an undecided <code>UnsupportedCollation</code> entry, never a pass and never a byte comparison.</p>
+<h3 id="outside-the-domain-12"><a class="header" href="#outside-the-domain-12">Outside the domain</a></h3>
+<p>A declared equality whose key function is undefined at a value decides no pair containing that value. The caller must preserve that refusal rather than substitute representation equality. The relation is compared over the six equalities and seven values of the carrier; other collations are named, not evaluated.</p>
+<h3 id="definitions-used-12"><a class="header" href="#definitions-used-12">Definitions used</a></h3>
+<p>The <em>key function</em> of an equality maps a part value to bytes; production computes it with <code>canonical_key_bytes</code>, and both resolution’s target buckets and validation’s key indexes are keyed by it. The <em>kernel</em> of the key function is the relation that holds of two values when both keys are defined and equal. The reference relation <code>declared_key_equality</code> returns <code>Some(true)</code>, <code>Some(false)</code>, or <code>None</code>; a value is <em>keyable</em> under it when the relation decides the value against itself, and its kernel decides a pair only when both values are keyable.</p>
+<h3 id="proof-12"><a class="header" href="#proof-12">Proof</a></h3>
+<ol>
+<li>Resolution looks up a reference’s key tuple in an index built with <code>canonical_key_bytes</code> of the target key, and validation builds its key and reference indexes with the same function, so both observe exactly the kernel of the production key function.</li>
+<li>The production key function branches on the declared equality before inspecting a value, and under a <code>Named</code> collation it returns <code>UnsupportedCollation</code> for text. The resolution lookup maps that error to its typed refusal, and the validation index build maps it to the undecided <code>UnsupportedCollation</code> entry.</li>
+<li>The differential computes the production kernel and the reference kernel on every ordered pair of the carrier and finds them equal, undecided pairs included. The validation test shows the undecided entry on text and a decided duplicate on two equal integers under the same <code>Named</code> part.</li>
+</ol>
+<h3 id="executable-counterpart-12"><a class="header" href="#executable-counterpart-12">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.key-equality-checks</code></li>
+<li>Reference: <code>panproto_reference::resolution::declared_key_equality</code></li>
+<li>Evidence scope: <code>equalities=6 (one Named collation), values=7 (null included), ordered value pairs=49 per equality, 294 in all; one KeyUnique validation case per value kind under a Named collation</code></li>
+<li>Production certificate: <code>declared_key_equality_is_the_kernel_of_the_production_key_function; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=declared_key_equality_is_the_kernel_of_the_production_key_function)'</code></li>
+<li>Independent reference anchor: <code>declared_key_equality_is_the_kernel_of_the_production_key_function; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=declared_key_equality_is_the_kernel_of_the_production_key_function)'</code></li>
+<li>Validation use test: <code>key_unique_under_a_named_collation_is_undecided_on_text; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=key_unique_under_a_named_collation_is_undecided_on_text)'</code></li>
+<li>Resolution test: <code>resolution_uses_the_exact_declared_key_equality_operation; command: cargo nextest run --release --locked -p panproto-io --test reference_resolution --no-tests=fail -E 'test(=resolution_uses_the_exact_declared_key_equality_operation)'</code></li>
+<li>Property differential test: <code>randomized::declared_key_kernel_matches_on_generated_existing_pairs; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=randomized::declared_key_kernel_matches_on_generated_existing_pairs)'</code></li>
+<li>Property scope: <code>six declared equalities and all pairs of seven values from the existing 294-pair kernel carrier; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/src/key.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/state.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-io/src/resolution/occur.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+</ul>
+<h2 id="L-validation-14"><a class="header" href="#L-validation-14">Variable binding chooses the declared preceding definition</a></h2>
+<h3 id="statement-13"><a class="header" href="#statement-13">Statement</a></h3>
+<p>For an occurrence at position <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span> with name <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span>, first-defines binding selects the least position below <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span> whose definition has name <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span>. Nearest-preceding binding selects the greatest such position. If no matching earlier definition exists, both return no binding.</p>
+<h3 id="outside-the-domain-13"><a class="header" href="#outside-the-domain-13">Outside the domain</a></h3>
+<p>Definitions at or after the occurrence and definitions of other names are outside the candidate set. The law assumes positions have a total order. A holder’s name matches a definition’s name when they are equal under the binder key’s declared equality, so under <code>NumericValue</code> the values <code>1</code> and <code>1.0</code> are one name.</p>
+<h3 id="definitions-used-13"><a class="header" href="#definitions-used-13">Definitions used</a></h3>
+<p>The <em>preceding candidate set</em> contains definitions <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span> with <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7335em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>. First-defines takes its minimum by <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span></span></span></span>; nearest-preceding takes its maximum. In the production resolver, this selection is observable as the target of the binding edge emitted for each occurrence.</p>
+<h3 id="proof-13"><a class="header" href="#proof-13">Proof</a></h3>
+<ol>
+<li>The resolver visits holders in document order and partitions occurrences by reference, scope, and the key bytes of the name under the binder key’s declared equality, which are equal exactly when the names are equal under that equality.</li>
+<li>First-defines retains the first matching definition in each partition. Nearest-preceding replaces that definition after each later matching definition, so the stored target is the greatest position strictly below the next occurrence.</li>
+<li>A later definition cannot affect an earlier occurrence, and a definition from another name or scope belongs to another partition.</li>
+<li>If a partition has no earlier definition, the resolver emits no binding edge for that occurrence.</li>
+</ol>
+<h3 id="executable-counterpart-13"><a class="header" href="#executable-counterpart-13">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.variable-binding-checks</code></li>
+<li>Reference: <code>panproto_reference::resolution::nearest_preceding</code></li>
+<li>Production: <code>panproto_io::resolution::Resolution::get</code></li>
+<li>Evidence scope: <code>every sequence of one to five holders over three binder values (363 sequences), under two binding modes and two declared equalities (Representation, and NumericValue with 1 and 1.0 as one name): 1,452 production resolutions compared with the reference binder on the same positions</code></li>
+<li>Production certificate: <code>variable_binding_matches_the_reference_on_every_bounded_holder_sequence; command: cargo nextest run --release --locked -p panproto-io --test reference_resolution --no-tests=fail -E 'test(=variable_binding_matches_the_reference_on_every_bounded_holder_sequence)'</code></li>
+<li>Independent reference anchor: <code>variable_binding_matches_the_reference_on_every_bounded_holder_sequence; command: cargo nextest run --release --locked -p panproto-io --test reference_resolution --no-tests=fail -E 'test(=variable_binding_matches_the_reference_on_every_bounded_holder_sequence)'</code></li>
+<li>Production fixed test: <code>nearest_preceding_binding_ignores_later_and_other_named_definitions; command: cargo nextest run --release --locked -p panproto-io --test reference_resolution --no-tests=fail -E 'test(=nearest_preceding_binding_ignores_later_and_other_named_definitions)'</code></li>
+<li>Supplemental observable test: <code>validation_key_binding_and_form_observables_execute_their_exact_paths; command: cargo nextest run -p panproto-reference --test validation --no-tests=fail -E 'test(=validation_key_binding_and_form_observables_execute_their_exact_paths)'</code></li>
+<li>Property differential test: <code>randomized::variable_bindings_match_on_generated_bounded_holder_sequences; command: cargo nextest run -p panproto-io --test reference_resolution --no-tests=fail -E 'test(=randomized::variable_bindings_match_on_generated_bounded_holder_sequences)'</code></li>
+<li>Property scope: <code>one to five holders over each existing three-value alphabet, both binding modes and both equalities; ordered binding edges and GetPut source; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-io/src/resolution/occur.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/reference_resolution.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-15"><a class="header" href="#L-validation-15">The finite declaration carrier preserves guard, target-set, sort, and key refusals</a></h2>
+<h3 id="statement-14"><a class="header" href="#statement-14">Statement</a></h3>
+<p>Across the named finite carrier, production declaration validation and the reference implementation return the same guard, target-set, sort-key, key, and reference refusal classes. The target-set differential has nine declaration fixtures; the eight with resolved member signatures are also projected to the local predicate.</p>
+<h3 id="outside-the-domain-14"><a class="header" href="#outside-the-domain-14">Outside the domain</a></h3>
+<p>The law checks 30 common declaration/refusal cases and nine target-set declaration fixtures, eight of which are projected to the local predicate. It does not quantify over every possible declaration. It concerns declaration form, not the dynamic truth of a well-formed guard or reference.</p>
+<h3 id="definitions-used-14"><a class="header" href="#definitions-used-14">Definitions used</a></h3>
+<p>The <em>declaration carrier</em> is the explicit collection of valid and invalid schemas in <code>reference_keys.rs</code>. Its expected observation is the ordered vector of refusal classes. Structural key-path refusals are returned separately and asserted empty, and a finding outside the declaration family fails the test rather than being dropped. Target-set well-formedness requires a nonempty set whose members are distinct, name declared keys of equal arity and equal declared equality, and are keyed in the set’s own scope; the carrier refuses an empty set and a set with a member of another scope as well as each of the other failures.</p>
+<h3 id="proof-14"><a class="header" href="#proof-14">Proof</a></h3>
+<ol>
+<li>Each reference schema is converted to the production schema without changing its declaration fields.</li>
+<li>The reference validator and the production validator independently produce refusal classes on that schema.</li>
+<li>The tests compare the ordered class vectors and separately compare the target-set predicate on every local member configuration in the carrier. The local <code>target_set</code> predicate is checked on the eight resolved signatures against the stated expectations, not against production; production agreement on target sets comes from the refusal vectors and the flagged members of each fixture. The claim is agreement on this carrier only; no step extends it to declarations outside the carrier.</li>
+</ol>
+<h3 id="executable-counterpart-14"><a class="header" href="#executable-counterpart-14">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.guard-target-set-sort-key-checks</code></li>
+<li>Reference: <code>panproto_reference::keys::target_set</code></li>
+<li>Reference: <code>panproto_reference::schema::validate_declarations</code></li>
+<li>Evidence scope: <code>9 target-set declaration fixtures, 8 projected to the local predicate, and 30 common declaration/refusal cases; this is the named finite carrier, not every possible declaration</code></li>
+<li>Production certificate: <code>target_sets_match_on_the_complete_local_predicate; command: cargo nextest run -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=target_sets_match_on_the_complete_local_predicate)'</code></li>
+<li>Independent reference anchor: <code>target_sets_match_on_the_complete_local_predicate; command: cargo nextest run -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=target_sets_match_on_the_complete_local_predicate)'</code></li>
+<li>Exhaustive differential tests: <code>target_sets_match_on_the_complete_local_predicate</code> and <code>declaration_validation_matches_reference_on_every_common_refusal</code>; <code>command: cargo nextest run -p panproto-schema --test reference_keys --no-tests=fail -E 'test(/(target_sets_match_on_the_complete_local_predicate|declaration_validation_matches_reference_on_every_common_refusal)/)'</code></li>
+<li>Property differential test: <code>randomized::target_set_admission_matches_on_generated_member_words; command: cargo nextest run -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=randomized::target_set_admission_matches_on_generated_member_words)'</code></li>
+<li>Property scope: <code>zero to four members from the existing eight-member carrier; target-set admission and exact member findings; configured successful cases per seed=256</code></li>
+<li>Property differential test: <code>randomized::key_and_reference_admission_match_on_generated_coordinates; command: cargo nextest run -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=randomized::key_and_reference_admission_match_on_generated_coordinates)'</code></li>
+<li>Property scope: <code>five roles, one or two key/source parts, equality arity zero through three and duplicate, nullable and FULL flags; common declaration classes and absence of unrelated structural errors; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-schema/src/validate.rs</code></li>
+<li>File: <code>crates/panproto-schema/tests/reference_keys.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+</ul>
+<h2 id="L-validation-16"><a class="header" href="#L-validation-16">Index targets are refused and composite null matching follows its declaration</a></h2>
+<h3 id="statement-15"><a class="header" href="#statement-15">Statement</a></h3>
+<p>A reference whose target key has role <code>Index</code> is refused by declaration validation with the typed <code>KeyNotResolvable</code> error, under either unresolved policy, <code>Complement</code> included, and the reference declaration validator refuses exactly the same schemas. For a composite foreign key under <code>Simple</code> null matching, any null part makes the tuple absent. Under <code>Full</code> null matching, an all-null tuple is absent, an all-present tuple is resolved normally, and a partly null tuple remains an occurrence that cannot match a present target tuple.</p>
+<h3 id="outside-the-domain-15"><a class="header" href="#outside-the-domain-15">Outside the domain</a></h3>
+<p>A non-unique referenced key carried as an <code>Index</code> under a <code>Complement</code> reference that derives no pair, with its referencing columns kept as cells, is not part of this release: such a declaration is refused, not given a meaning. The null-matching statement concerns explicit null values in a composite key. Absent paths, nullable single-part references, target sets, and null-vertex routing have separate resolution rules.</p>
+<h3 id="definitions-used-15"><a class="header" href="#definitions-used-15">Definitions used</a></h3>
+<p>An <em>index key</em> is a declared key whose role is <code>Index</code>; it supports ordering but promises neither uniqueness nor reference resolution. A <em>tuple occurrence</em> is the exact ordered list of source values retained by the resolution complement. <code>Simple</code> retains a tuple only when every part is non-null, while <code>Full</code> retains it when at least one part is non-null.</p>
+<h3 id="proof-15"><a class="header" href="#proof-15">Proof</a></h3>
+<ol>
+<li>Declaration validation checks the role of every reference’s resolving key before any instance is read and reports <code>KeyNotResolvable</code> for an <code>Index</code>, whatever the reference’s unresolved policy. The reference declaration validator states the same rule, and the differential compares the two refusal vectors on every role and both policies.</li>
+<li>Resolution compilation runs only on a schema that declaration validation accepts, so no <code>Index</code> target reaches the occurrence reader.</li>
+<li>For a resolvable composite key, the occurrence reader preserves each part, including explicit null, in declaration order. Under <code>Simple</code>, the reader drops every tuple containing a null. Under <code>Full</code>, it drops only the all-null tuple.</li>
+<li>An all-present tuple is compared with target tuples under the declared key equality. A partly null <code>Full</code> tuple has no equal present target tuple, so resolution records the exact tuple as dangling rather than silently omitting it.</li>
+</ol>
+<h3 id="executable-counterpart-15"><a class="header" href="#executable-counterpart-15">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.index-null-match-checks</code></li>
+<li>Reference: <code>panproto_reference::resolution::get</code></li>
+<li>Reference: <code>panproto_reference::resolution::put</code></li>
+<li>Reference: <code>panproto_reference::schema::validate_declarations</code></li>
+<li>Production: <code>panproto_schema::validate</code>, <code>panproto_io::resolution::Resolution::for_protocol</code> and <code>panproto_io::resolution::Resolution::get</code></li>
+<li>Evidence scope: <code>two null-match modes over five composite tuple classes; four key roles under two unresolved policies (eight declarations)</code></li>
+<li>Production certificate: <code>composite_foreign_key_null_matching_uses_real_resolution_occurrences; command: cargo nextest run --release --locked -p panproto-io --test reference_resolution --no-tests=fail -E 'test(=composite_foreign_key_null_matching_uses_real_resolution_occurrences)'</code></li>
+<li>Independent reference anchor: <code>every_index_target_is_refused_under_both_unresolved_policies; command: cargo nextest run --release --locked -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=every_index_target_is_refused_under_both_unresolved_policies)'</code></li>
+<li>Property differential test: <code>randomized::index_refusal_matches_under_generated_unresolved_policy; command: cargo nextest run -p panproto-io --test reference_resolution --no-tests=fail -E 'test(=randomized::index_refusal_matches_under_generated_unresolved_policy)'</code></li>
+<li>Property scope: <code>the existing index-target declaration under Error and Complement unresolved policies; typed key and reference refusal fields; configured successful cases per seed=256</code></li>
+<li>Property differential test: <code>randomized::null_match_outcomes_match_on_generated_existing_occurrences; command: cargo nextest run -p panproto-io --test reference_resolution --no-tests=fail -E 'test(=randomized::null_match_outcomes_match_on_generated_existing_occurrences)'</code></li>
+<li>Property scope: <code>five existing composite-key value pairs under SIMPLE and FULL; resolution outcome and complete dangling literal; configured successful cases per seed=256</code></li>
+<li>Property differential test: <code>randomized::key_and_reference_admission_match_on_generated_coordinates; command: cargo nextest run -p panproto-schema --test reference_keys --no-tests=fail -E 'test(=randomized::key_and_reference_admission_match_on_generated_coordinates)'</code></li>
+<li>Property scope: <code>five roles, one or two key/source parts, equality arity zero through three and duplicate, nullable and FULL flags; common declaration classes and absence of unrelated structural errors; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-schema/src/validate.rs</code></li>
+<li>File: <code>crates/panproto-schema/tests/reference_keys.rs</code></li>
+<li>File: <code>crates/panproto-io/src/resolution/occur.rs</code></li>
+<li>File: <code>crates/panproto-io/tests/reference_resolution.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/resolution.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/keys_and_registration.rs</code></li>
+</ul>
+<h2 id="L-validation-17"><a class="header" href="#L-validation-17">Lexical-space validation selects a kind and preserves the source text</a></h2>
+<h3 id="statement-16"><a class="header" href="#statement-16">Statement</a></h3>
+<p>Let a lexical-space constraint on vertex <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span> name an outgoing tag edge <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>. For a subject <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> with exactly one outgoing <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span>-edge whose target has textual value <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span>, validation looks up <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> in the protocol’s value-kind table <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> and applies that kind to each source lexeme of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>. If <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> is an XSD datatype and the lexeme lies outside <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span>’s XSD lexical space, or if coercion under <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mopen">(</span><span class="mord mathnormal">d</span><span class="mclose">)</span></span></span></span> fails, the check reports one advisory <code>ValueConstraint</code> whose bound is <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> and whose value is the unchanged source lexeme; otherwise it reports nothing. The XSD lexical space is checked first because a kind’s reader may accept more than the datatype’s lexical space: a leap second, the 30th of February and the year <code>01999</code> are outside it, while <code>24:00:00</code>, <code>INF</code>, <code>1.</code> and <code>.5</code> are inside. If <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> is absent from <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span>, it reports an advisory <code>UnsupportedDeclaration</code>. None of these advisory entries changes the report status.</p>
+<p>The selector boundary is typed as well. No matching selector value, a nontextual selector value, or more than one matching selector edge produces an advisory <code>Unsupported</code> entry. A constraint that names no schema edge produces a static advisory <code>UnsupportedDeclaration</code>; one that ambiguously names several schema edges is ill formed.</p>
+<h3 id="outside-the-domain-16"><a class="header" href="#outside-the-domain-16">Outside the domain</a></h3>
+<p>The statement assumes that the selected value kind has a settled coercion. The XSD lexical spaces checked are those of <code>integer</code>, <code>decimal</code>, <code>double</code>, <code>float</code>, <code>boolean</code>, <code>date</code>, <code>dateTime</code>, <code>time</code> and <code>gYear</code>; for any other datatype only coercion under <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mopen">(</span><span class="mord mathnormal">d</span><span class="mclose">)</span></span></span></span> decides. Which datatypes <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> holds, and with which kinds, is the format route’s declaration.</p>
+<h3 id="definitions-used-16"><a class="header" href="#definitions-used-16">Definitions used</a></h3>
+<p>The <em>source lexeme</em> is the exact stored <code>Str</code>, <code>Token</code>, or <code>CidLink</code> text. The <em>selector boundary</em> comprises the schema edge named by the constraint, the matching instance edge, and that edge’s target value. A <em>declared kind</em> is the <code>ValueSpec</code> obtained from <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mopen">(</span><span class="mord mathnormal">d</span><span class="mclose">)</span></span></span></span>, including the XSD numeral dialect for an XSD datatype IRI.</p>
+<h3 id="proof-16"><a class="header" href="#proof-16">Proof</a></h3>
+<ol>
+<li>Plan compilation resolves the constraint’s tag to exactly one schema edge. It records an advisory value check with a copy of the protocol’s ordered value-kind table; an unknown tag and an ambiguous tag take the two static branches stated above.</li>
+<li>Evaluation reads matching outgoing edges before it reads the selected target’s own value. The zero-, one-, and many-edge branches thus distinguish a missing selector from a nontextual value and from ambiguous selection, including the case in which one of several targets has no value.</li>
+<li>On the unique textual branch, table lookup either yields the named kind or the exact <code>UnsupportedDeclaration { sort: d }</code>. For a covered XSD datatype the stored text is first matched against the datatype’s lexical production and its stated constraints (the day of the month exists, a time is below 24:00:00 or is 24:00:00 with a zero fraction); the kind is then applied through exact coercion. Either failure records the same value and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> in <code>ValueConstraint</code>.</li>
+<li>Compilation fixes this check’s default requirement as <code>Advisory</code>. Report aggregation consequently retains every finding and incomplete entry without changing <code>Passed</code> status. The reference decides lexical-space membership from the XSD productions with its own backtracking pattern engine and decides coercion with its own coercion, so the differential compares production with two independent definitions.</li>
+</ol>
+<h3 id="executable-counterpart-16"><a class="header" href="#executable-counterpart-16">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.lexical-space-advisory</code></li>
+<li>Reference: <code>panproto_reference::validation::classify_selector</code></li>
+<li>Reference: <code>panproto_reference::validation::lexical_space</code></li>
+<li>Evidence scope: <code>23 literals over seven covered XSD datatypes, one unsuitable XSD datatype and one unknown datatype, including every boundary case (abc as integer, 2026-02-30, a leap second, 01999, inf, 24:00:00, INF, 1., .5); schema selector multiplicities=0,1,2; runtime subjects=6; separate carrier expansion=23 original pairs × Str/Token/CidLink (69 observations); supplemental integer coercion controls=3 pairs × 3 carriers (9 observations), covering XSD i64 overflow and non-XSD integer success/refusal; original 23-Str census retained</code></li>
+<li>Production certificate: <code>lexical_space_reports_exactly_the_ill_typed_literals; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=lexical_space_reports_exactly_the_ill_typed_literals)'</code></li>
+<li>Supplemental differential test: <code>lexical_space_checks_all_text_carriers_and_preserves_exact_findings; command: cargo nextest run --cargo-profile ci-test --profile ci --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=lexical_space_checks_all_text_carriers_and_preserves_exact_findings)'</code></li>
+<li>Boundary test: <code>lexical_space_is_selected_by_the_declared_tag_edge_and_is_advisory; command: cargo nextest run --release --locked -p panproto-inst --test validation --no-tests=fail -E 'test(=lexical_space_is_selected_by_the_declared_tag_edge_and_is_advisory)'</code></li>
+<li>Boundary test: <code>lexical_space_unknown_tag_is_advisory_and_preserves_passed_status; command: cargo nextest run --release --locked -p panproto-inst --test validation --no-tests=fail -E 'test(=lexical_space_unknown_tag_is_advisory_and_preserves_passed_status)'</code></li>
+<li>Boundary test: <code>lexical_space_ambiguous_tag_remains_a_required_declaration_failure; command: cargo nextest run --release --locked -p panproto-inst --test validation --no-tests=fail -E 'test(=lexical_space_ambiguous_tag_remains_a_required_declaration_failure)'</code></li>
+<li>Independent reference anchor: <code>lexical_space_reports_exactly_the_ill_typed_literals; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=lexical_space_reports_exactly_the_ill_typed_literals)'</code></li>
+<li>Supplemental test: <code>supplemental_validation_definitions_have_bounded_production_witnesses; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=supplemental_validation_definitions_have_bounded_production_witnesses)'</code></li>
+<li>Property differential test: <code>randomized::lexical_advisory_matches_on_generated_existing_literals; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=randomized::lexical_advisory_matches_on_generated_existing_literals)'</code></li>
+<li>Property scope: <code>the existing 23 datatype and lexeme pairs plus XSD integer overflow and non-XSD integer success/refusal, each sampled as Str, Token or CidLink; advisory status, lexical membership, coercion, exact preserved value/bound and unsupported datatype outcomes; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/plan.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/checks.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/xsd_lexical.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/witness.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/validation.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-18"><a class="header" href="#L-validation-18">Without the assertion vocabulary a format does not change the parse</a></h2>
+<h3 id="statement-17"><a class="header" href="#statement-17">Statement</a></h3>
+<p>Let a format be an annotation, as JSON Schema, OpenAPI and RAML read it without the format-assertion vocabulary. Then parsing a lexeme at a position under a schema gives the same value, or the same refusal, as parsing it under that schema with every <code>format</code> removed: the value of coercion under the kind the position’s <code>type</code> gives, with no parameter the format names.</p>
+<h3 id="outside-the-domain-17"><a class="header" href="#outside-the-domain-17">Outside the domain</a></h3>
+<p>The law is stated for the generic parse step that every route shares: a route reads a position’s value specification from its schema and coerces the lexeme under it. Whether a particular route records its formats as annotations is that route’s declaration and is outside this page. Assertion is the subject of <a href="#L-validation-20">L-validation-20</a>.</p>
+<h3 id="definitions-used-17"><a class="header" href="#definitions-used-17">Definitions used</a></h3>
+<p>An <em>annotated format</em> is a constraint whose sort the protocol means as <code>AnnotatedFormat</code>. The <em>value specification</em> of a position is the kind its vertex kind maps to, with every constraint the protocol means as a value parameter applied.</p>
+<h3 id="proof-17"><a class="header" href="#proof-17">Proof</a></h3>
+<ol>
+<li>A parse coerces a lexeme under the value specification of its position, and the value specification applies only constraints meant as value parameters.</li>
+<li>An annotated format is not a value parameter, so the value specification with the format equals the one without it, and coercion under equal specifications gives equal results.</li>
+<li>The differential checks both steps: the two specifications are equal for every format, and production coercion under them equals the reference coercion under the kind alone, written apart from production, on DESIGN’s grid of lexemes.</li>
+</ol>
+<h3 id="executable-counterpart-17"><a class="header" href="#executable-counterpart-17">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.annotated-format-no-assertion-equivalence</code></li>
+<li>Reference: <code>panproto_reference::validation::annotated_format_parse</code></li>
+<li>Production: <code>panproto_schema::ValueSpec::for_vertex</code> and <code>panproto_inst::value::coerce::coerce</code></li>
+<li>Evidence scope: <code>integer with int32, int64, no format and x-unknown, and number with float, double and no format, crossed with the lexemes 0, 1.0, 1e1, 1.5, 2147483648, 1099511627776, 9223372036854775808, 0.1 and 1e39: 63 parses</code></li>
+<li>Production certificate: <code>supplemental_validation_definitions_have_bounded_production_witnesses; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=supplemental_validation_definitions_have_bounded_production_witnesses)'</code></li>
+<li>Independent reference anchor: <code>supplemental_validation_definitions_have_bounded_production_witnesses; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=supplemental_validation_definitions_have_bounded_production_witnesses)'</code></li>
+<li>Reference unit test: <code>validation_format_observables_distinguish_advisory_and_asserting_use; command: cargo nextest run -p panproto-reference --test validation --no-tests=fail -E 'test(=validation_format_observables_distinguish_advisory_and_asserting_use)'</code></li>
+<li>Property differential test: <code>randomized::annotated_parse_matches_on_generated_existing_numeric_forms; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=randomized::annotated_parse_matches_on_generated_existing_numeric_forms)'</code></li>
+<li>Property scope: <code>the existing 63 numeric kind, format and lexeme combinations; identical bare/annotated specifications and paired coercion observations; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-schema/src/value_kinds.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/value/coerce.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-19"><a class="header" href="#L-validation-19">Advisory format reporting is the recognizer complement</a></h2>
+<h3 id="statement-18"><a class="header" href="#statement-18">Statement</a></h3>
+<p>An annotated format compiles to an advisory value check. For a width format (<code>int8</code>, <code>int16</code>, <code>int</code> or <code>int32</code>, <code>long</code> or <code>int64</code>, <code>float</code>, <code>double</code>) the check reports a value exactly when the value does not coerce under the kind the format names; for a named format such as <code>uuid</code> it reports a value exactly when the format’s recognizer rejects it; any other format compiles to no check. No entry of these checks changes the report status.</p>
+<h3 id="outside-the-domain-18"><a class="header" href="#outside-the-domain-18">Outside the domain</a></h3>
+<p>Named formats are covered for <code>uuid</code>, whose recognizer is the RFC 4122 textual form. Formats whose meaning depends on a family other than the annotation’s are outside this law.</p>
+<h3 id="definitions-used-18"><a class="header" href="#definitions-used-18">Definitions used</a></h3>
+<p>The <em>width kind</em> of a width format is the signed integer of its width or the binary float of its width. A value <em>coerces</em> under a kind when exact coercion returns a value, with no rounding.</p>
+<h3 id="proof-18"><a class="header" href="#proof-18">Proof</a></h3>
+<ol>
+<li>Plan compilation reads the annotated format’s value. A named format compiles to a format test with the protocol family’s rules; a width format compiles to a coercibility test under its width kind; any other format compiles to nothing.</li>
+<li>Evaluation applies the compiled test to each stored value and records one <code>ValueConstraint</code> diagnostic exactly when the test rejects it. The check’s requirement is fixed as advisory whatever the declaration, so the status is unchanged.</li>
+<li>The differential compares production with the reference on the same values: the reference decides a width format by its own exact coercion under the width kind and <code>uuid</code> by its own recognizer of the RFC 4122 form, so neither side’s answer is derived from the other’s.</li>
+</ol>
+<h3 id="executable-counterpart-18"><a class="header" href="#executable-counterpart-18">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.annotated-format-advisory-exactness</code></li>
+<li>Reference: <code>panproto_reference::validation::annotated_format_advisory</code></li>
+<li>Evidence scope: <code>six formats (int32, int64, float, double, uuid, x-unknown) crossed with eight values (integers inside and outside 32 bits, floats exact and inexact at 32 bits and beyond 32-bit range, a UUID and a non-UUID): 48 observations</code></li>
+<li>Production certificate: <code>supplemental_validation_definitions_have_bounded_production_witnesses; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=supplemental_validation_definitions_have_bounded_production_witnesses)'</code></li>
+<li>Independent reference anchor: <code>supplemental_validation_definitions_have_bounded_production_witnesses; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=supplemental_validation_definitions_have_bounded_production_witnesses)'</code></li>
+<li>Width and unknown-format test: <code>annotated_formats_are_advisory_and_width_formats_use_exact_coercion; command: cargo nextest run --release --locked -p panproto-inst --test validation --no-tests=fail -E 'test(=annotated_formats_are_advisory_and_width_formats_use_exact_coercion)'</code></li>
+<li>Property differential test: <code>randomized::annotated_advisory_matches_on_generated_existing_values; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=randomized::annotated_advisory_matches_on_generated_existing_values)'</code></li>
+<li>Property scope: <code>the existing 48 value and format pairs; status, check presence and advisory outcome; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/plan.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/checks.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+<h2 id="L-validation-20"><a class="header" href="#L-validation-20">With the assertion vocabulary acceptance is coercion under the format’s width</a></h2>
+<h3 id="statement-19"><a class="header" href="#statement-19">Statement</a></h3>
+<p>Let a format be an assertion, as a JSON Schema resource whose dialect requires the format-assertion vocabulary reads it. For an integer width format the parse accepts a lexeme exactly when the lexeme coerces under the position’s kind with the format’s width as its integer-width parameter, so 2^31 under <code>int32</code> is refused. A named format keeps its required check, and validation passes a value exactly when the format’s recognizer accepts it.</p>
+<h3 id="outside-the-domain-19"><a class="header" href="#outside-the-domain-19">Outside the domain</a></h3>
+<p>The assertion reading writes a width format as the integer-width value parameter; <code>float</code> and <code>double</code> name no such parameter and are outside this law. Which resources read formats as assertions is the route’s declaration. Named formats are covered for <code>uuid</code>.</p>
+<h3 id="definitions-used-19"><a class="header" href="#definitions-used-19">Definitions used</a></h3>
+<p>The <em>asserting specification</em> of a position is its value specification with the format’s width applied as the integer-width parameter. <em>Acceptance</em> is success of coercion under that specification.</p>
+<h3 id="proof-19"><a class="header" href="#proof-19">Proof</a></h3>
+<ol>
+<li>The assertion reading records the width as a value-parameter constraint, which the value specification applies, so a parse coerces under the asserting specification.</li>
+<li>Coercion under an integer kind with an integer-width parameter refuses a value outside that width, so acceptance is coercion under the kind with the format’s width.</li>
+<li>A named asserting format compiles to a required format check, so validation passes exactly the values its recognizer accepts.</li>
+<li>The differential compares production coercion under the asserting specification with the reference coercion under the kind and width, and the required <code>uuid</code> check with the reference’s own RFC 4122 recognizer.</li>
+</ol>
+<h3 id="executable-counterpart-19"><a class="header" href="#executable-counterpart-19">Executable counterpart</a></h3>
+<ul>
+<li>Law ID: <code>validation.format-assertion-acceptance</code></li>
+<li>Reference: <code>panproto_reference::validation::format_assertion_acceptance</code></li>
+<li>Evidence scope: <code>int32 and int64 asserted on integer, crossed with the nine grid lexemes (18 parses); the required uuid check on five texts</code></li>
+<li>Production certificate: <code>supplemental_validation_definitions_have_bounded_production_witnesses; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=supplemental_validation_definitions_have_bounded_production_witnesses)'</code></li>
+<li>Independent reference anchor: <code>supplemental_validation_definitions_have_bounded_production_witnesses; command: cargo nextest run --release --locked -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=supplemental_validation_definitions_have_bounded_production_witnesses)'</code></li>
+<li>Reference unit test: <code>validation_format_observables_distinguish_advisory_and_asserting_use; command: cargo nextest run -p panproto-reference --test validation --no-tests=fail -E 'test(=validation_format_observables_distinguish_advisory_and_asserting_use)'</code></li>
+<li>Property differential test: <code>randomized::assertion_acceptance_matches_on_generated_existing_numeric_forms; command: cargo nextest run -p panproto-inst --test reference_validation --no-tests=fail -E 'test(=randomized::assertion_acceptance_matches_on_generated_existing_numeric_forms)'</code></li>
+<li>Property scope: <code>the existing eighteen asserted integer-width and numeric-lexeme combinations; named-format fixed certificates remain required; configured successful cases per seed=256</code></li>
+<li>File: <code>crates/panproto-schema/src/value_kinds.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/value/coerce.rs</code></li>
+<li>File: <code>crates/panproto-inst/src/validation/plan.rs</code></li>
+<li>File: <code>crates/panproto-inst/tests/reference_validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/pages/validation.rs</code></li>
+<li>File: <code>crates/panproto-reference/src/enumerate/validation.rs</code></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../correctness/edits.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../correctness/segments.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../correctness/edits.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../correctness/segments.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src=".././theme/cite-group.js"></script>
+        <script src=".././theme/mermaid.min.js"></script>
+        <script src=".././theme/mermaid-init.js"></script>
+        <script src=".././theme/bib-links.js"></script>
+        <script src=".././theme/bib-linkify.js"></script>
+
+
+
+    </div>
+    </body>
+</html>
